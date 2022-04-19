@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kurs;
-use App\Http\Requests\StoreKursRequest;
-use App\Http\Requests\UpdateKursRequest;
+use App\Models\Data;
+use App\Http\Requests\StoreDataRequest;
+use App\Http\Requests\UpdateDataRequest;
 
-class KursController extends Controller
+class DataController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,10 +31,10 @@ class KursController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreKursRequest  $request
+     * @param  \App\Http\Requests\StoreDataRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreKursRequest $request)
+    public function store(StoreDataRequest $request)
     {
         //
     }
@@ -42,10 +42,10 @@ class KursController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Kurs  $kurs
+     * @param  \App\Models\Data  $data
      * @return \Illuminate\Http\Response
      */
-    public function show(Kurs $kurs)
+    public function show(Data $data)
     {
         //
     }
@@ -53,10 +53,10 @@ class KursController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Kurs  $kurs
+     * @param  \App\Models\Data  $data
      * @return \Illuminate\Http\Response
      */
-    public function edit(Kurs $kurs)
+    public function edit(Data $data)
     {
         //
     }
@@ -64,11 +64,11 @@ class KursController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateKursRequest  $request
-     * @param  \App\Models\Kurs  $kurs
+     * @param  \App\Http\Requests\UpdateDataRequest  $request
+     * @param  \App\Models\Data  $data
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateKursRequest $request, Kurs $kurs)
+    public function update(UpdateDataRequest $request, Data $data)
     {
         //
     }
@@ -76,10 +76,10 @@ class KursController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Kurs  $kurs
+     * @param  \App\Models\Data  $data
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Kurs $kurs)
+    public function destroy(Data $data)
     {
         //
     }

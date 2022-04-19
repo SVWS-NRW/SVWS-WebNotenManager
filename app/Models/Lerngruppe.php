@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User as Lehrer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,19 +17,15 @@ class Lerngruppe extends Model
     protected $table = 'lerngruppen';
 
     protected $fillable = [        
+        'ext_id',   
         'groupable_id',
         'groupable_type',
         'fach_id',
-        'kursart_id',
+        'kursartID',
         'bezeichnung',
         'bilingualeSprache',
         'wochenstunden',
     ];
-
-    public function bilingualeSprache(): BelongsTo
-    {
-        return $this->belongsTo(Fach::class);
-    }
 
     public function groupable(): MorphTo
     {

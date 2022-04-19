@@ -13,6 +13,7 @@ class Floskel extends Model
     protected $table = 'floskeln';
 
     protected $fillable = [
+        'floskelgruppe_id',
         'kuerzel',
         'text',
         'fach_id',
@@ -20,8 +21,18 @@ class Floskel extends Model
         'jahrgang_id'
     ];
 
+    public function floskelgruppe(): BelongsTo
+    {
+        return $this->belongsTo(Floskelgruppe::class);
+    }    
+
     public function jahrgang(): BelongsTo
     {
         return $this->belongsTo(Jahrgang::class);
+    }
+
+    public function fach(): BelongsTo
+    {
+        return $this->belongsTo(Fach::class);
     }
 }

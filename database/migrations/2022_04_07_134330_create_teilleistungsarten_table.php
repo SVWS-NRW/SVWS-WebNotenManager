@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('teilleistungsarten', function (Blueprint $table) {
             $table->id();
+            $table->integer('ext_id')->unique();
             $table->string('bezeichnung');
             $table->integer('sortierung')->nullable();
             $table->double('gewichtung')->nullable();

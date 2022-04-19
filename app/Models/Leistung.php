@@ -30,11 +30,6 @@ class Leistung extends Model
         return $this->belongsTo(Lerngruppe::class);
     }  
 
-    public function neueZuweisungKursart(): BelongsTo
-    {
-        return $this->belongsTo(Kurs::class);
-    }  
-
     public function note(): BelongsTo
     {
         return $this->belongsTo(Note::class);

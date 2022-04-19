@@ -15,6 +15,7 @@ class KlasseFactory extends Factory
     public function definition(): array
     {
         return [
+            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'kuerzel' => $this->faker->unique->word(),
             'kuerzelAnzeige' => $this->faker->unique->word(),
         ];

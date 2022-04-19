@@ -12,6 +12,7 @@ return new class extends Migration
     {
         Schema::create('schueler', function (Blueprint $table) {
             $table->id();
+            $table->integer('ext_id')->unique();
             $table->foreignIdFor(Jahrgang::class);
             $table->foreignIdFor(Klasse::class);
             $table->string('nachname');

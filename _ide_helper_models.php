@@ -137,9 +137,51 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Daten
+ *
+ * @property int $id
+ * @property int $enmRevision
+ * @property int $schuljahr
+ * @property int $anzahlAbschnitte
+ * @property int $aktuellerAbschnitt
+ * @property string|null $publicKey
+ * @property int $user_id
+ * @property int $fehlstundenEingabe
+ * @property int $fehlstundenSIFachbezogen
+ * @property int $fehlstundenSIIFachbezogen
+ * @property string $schulform
+ * @property string|null $mailadresse
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $lehrer
+ * @method static \Database\Factories\DatenFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereAktuellerAbschnitt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereAnzahlAbschnitte($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereEnmRevision($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereFehlstundenEingabe($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereFehlstundenSIFachbezogen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereFehlstundenSIIFachbezogen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereMailadresse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten wherePublicKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereSchulform($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereSchuljahr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereUserId($value)
+ */
+	class Daten extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Fach
  *
  * @property int $id
+ * @property int $ext_id
  * @property string $kuerzel
  * @property string $kuerzelAnzeige
  * @property int $sortierung
@@ -151,6 +193,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Fach newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Fach query()
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Fach whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereIstFremdsprache($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereKuerzel($value)
@@ -166,12 +209,16 @@ namespace App\Models{
  * App\Models\Floskel
  *
  * @property int $id
+ * @property int $floskelgruppe_id
  * @property string $kuerzel
+ * @property string $text
  * @property int|null $fach_id
  * @property int|null $niveau
  * @property int|null $jahrgang_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Fach|null $fach
+ * @property-read \App\Models\Floskelgruppe|null $floskelgruppe
  * @property-read \App\Models\Jahrgang|null $jahrgang
  * @method static \Database\Factories\FloskelFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel newModelQuery()
@@ -179,10 +226,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel query()
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereFachId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereFloskelgruppeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereJahrgangId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereNiveau($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereUpdatedAt($value)
  */
 	class Floskel extends \Eloquent {}
@@ -194,7 +243,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $kuerzel
- * @property string $beschreibung
+ * @property string $bezeichnung
  * @property string $hauptgruppe
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -204,7 +253,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe query()
- * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereBeschreibung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereBezeichnung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereHauptgruppe($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereId($value)
@@ -241,6 +290,7 @@ namespace App\Models{
  * App\Models\Jahrgang
  *
  * @property int $id
+ * @property int $ext_id
  * @property string $kuerzel
  * @property string $kuerzelAnzeige
  * @property string $beschreibung
@@ -254,6 +304,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang query()
  * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereBeschreibung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereKuerzelAnzeige($value)
@@ -269,6 +320,7 @@ namespace App\Models{
  * App\Models\Klasse
  *
  * @property int $id
+ * @property int $ext_id
  * @property string $kuerzel
  * @property string $kuerzelAnzeige
  * @property int|null $sortierung
@@ -281,6 +333,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse query()
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereKuerzelAnzeige($value)
@@ -295,6 +348,7 @@ namespace App\Models{
  * App\Models\Kurs
  *
  * @property int $id
+ * @property int $ext_id
  * @property string $kuerzel
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -305,6 +359,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Kurs newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Kurs query()
  * @method static \Illuminate\Database\Eloquent\Builder|Kurs whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kurs whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Kurs whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Kurs whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Kurs whereUpdatedAt($value)
@@ -319,13 +374,13 @@ namespace App\Models{
  * @property int $id
  * @property int $schueler_id
  * @property int $lerngruppe_id
- * @property int $note_id
+ * @property int|null $note_id
  * @property int $istSchriftlich
- * @property string $abiturfach
+ * @property string|null $abiturfach
  * @property int|null $fehlstundenGesamt
  * @property int|null $fehlstundenUnentschuldigt
  * @property string|null $fachbezogeneBemerkungen
- * @property \App\Models\Kurs|null $neueZuweisungKursart
+ * @property string|null $neueZuweisungKursart
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Lerngruppe|null $lerngruppe
@@ -358,6 +413,7 @@ namespace App\Models{
  * App\Models\Lernabschnitt
  *
  * @property int $id
+ * @property int $ext_id
  * @property int $schueler_id
  * @property string $pruefungsordnung
  * @property \App\Models\Note|null $lernbereich1note
@@ -372,6 +428,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt query()
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereFoerderschwerpunkt1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereFoerderschwerpunkt2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereId($value)
@@ -389,15 +446,19 @@ namespace App\Models{
  * App\Models\Lerngruppe
  *
  * @property int $id
+ * @property int $ext_id
  * @property int $groupable_id
  * @property string $groupable_type
  * @property int $fach_id
+ * @property string|null $kursartID
  * @property string $bezeichnung
- * @property \App\Models\Fach|null $bilingualeSprache
+ * @property int|null $bilingualeSprache
  * @property int $wochenstunden
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $groupable
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $lehrer
+ * @property-read int|null $lehrer_count
  * @method static \Database\Factories\LerngruppeFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe newQuery()
@@ -405,10 +466,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereBezeichnung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereBilingualeSprache($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereFachId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereGroupableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereGroupableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKursartID($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereWochenstunden($value)
  */
@@ -444,6 +507,7 @@ namespace App\Models{
  * App\Models\Schueler
  *
  * @property int $id
+ * @property int $ext_id
  * @property int $jahrgang_id
  * @property int $klasse_id
  * @property string $nachname
@@ -472,6 +536,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler query()
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereBilingualeSprache($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereIstDaZFoerderung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereIstZieldifferent($value)
@@ -557,6 +622,7 @@ namespace App\Models{
  * App\Models\Teilleistungsart
  *
  * @property int $id
+ * @property int $ext_id
  * @property string $bezeichnung
  * @property int|null $sortierung
  * @property float|null $gewichtung
@@ -570,6 +636,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart query()
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereBezeichnung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereGewichtung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereSortierung($value)
@@ -618,11 +685,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTwoFactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $ext_id
  * @property string $kuerzel
  * @property string $nachname
  * @property string|null $vorname
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Lerngruppe[] $lerngruppen
  * @property-read int|null $lerngruppen_count
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereNachname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereVorname($value)

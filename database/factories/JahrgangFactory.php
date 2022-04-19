@@ -15,10 +15,11 @@ class JahrgangFactory extends Factory
     public function definition(): array
     {
         return [
-            'kuerzel' => $this->faker->unique->word(),
-            'kuerzelAnzeige' => $this->faker->unique->word(),
+            'ext_id' => $this->faker->unique(true)->randomNumber(),
+            'kuerzel' => $this->faker->word(),
+            'kuerzelAnzeige' => $this->faker->word(),
             'beschreibung' => $this->faker->paragraph(),
-            'stufe' => $this->faker->unique->word(),
+            'stufe' => $this->faker->word(),
         ];
     }
 

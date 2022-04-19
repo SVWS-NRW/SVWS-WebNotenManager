@@ -48,6 +48,6 @@ class LeistungFactory extends Factory
 
     public function withNeueZuweisungKursart(): Factory
     {
-        return $this->state(fn () => ['neueZuweisungKursart' => Kurs::factory()]);
+        return $this->state(fn () => ['neueZuweisungKursart' => $this->faker->word()]);
     }  
 }

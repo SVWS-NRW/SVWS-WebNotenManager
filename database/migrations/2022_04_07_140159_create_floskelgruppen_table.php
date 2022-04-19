@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('floskelgruppen', function (Blueprint $table) {
             $table->id();
             $table->string('kuerzel');
-            $table->string('beschreibung');
+            $table->string('bezeichnung');
             $table->string('hauptgruppe');
             $table->timestamps();
         });

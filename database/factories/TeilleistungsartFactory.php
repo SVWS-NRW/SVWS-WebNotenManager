@@ -15,6 +15,7 @@ class TeilleistungsartFactory extends Factory
     public function definition()
     {
         return [
+            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'bezeichnung' => $this->faker->unique->word(),
         ];
     }

@@ -23,6 +23,7 @@ class LerngruppeFactory extends Factory
             'groupable_id' => $groupable::factory(),
             'groupable_type' => $groupable,
             'fach_id' => Fach::factory(),
+            'kursartID' => $this->faker->unique->word(),
             'bezeichnung' => $this->faker->unique->word(),
             'wochenstunden' => rand(1, 10),
         ];
@@ -35,6 +36,6 @@ class LerngruppeFactory extends Factory
 
     public function withBilingualeSprache(): Factory
     {
-        return $this->state(fn () => ['bilingualeSprache' => Fach::factory()]);
+        return $this->state(fn () => ['bilingualeSprache' => $this->faker->unique->word()]);
     }
 }

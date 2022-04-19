@@ -14,6 +14,7 @@ class Kurs extends Model
     protected $table = 'kurse';
 
     protected $fillable = [
+        'ext_id',
         'kuerzel', 
         // TODO: This complete model is missing in the json provided by the customer. This will be delivered soon.
     ];

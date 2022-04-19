@@ -16,7 +16,7 @@ class FloskelgruppeFactory extends Factory
     {
         return [
             'kuerzelAnzeige' => $this->faker->unique->word(),
-            'beschreibung' => $this->faker->paragraph,
+            'bezeichnung' => $this->faker->paragraph,
             'hauptgruppe' => $this->faker->unique->word(),
         ];
     }

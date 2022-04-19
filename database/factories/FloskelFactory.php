@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Fach;
 use App\Models\Floskel;
+use App\Models\Floskelgruppe;
 use App\Models\Jahrgang;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,7 +18,8 @@ class FloskelFactory extends Factory
     public function definition(): array
     {
         return [
-            'kuerzel' => $this->faker->unique->word(),
+            'floskelgruppe_id' => Floskelgruppe::class,
+            'kuerzel' => $this->faker->word(),
             'text' => $this->faker->paragraph(),
         ];
     }

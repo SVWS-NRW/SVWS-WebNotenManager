@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('kurse', function (Blueprint $table) {
             $table->id();
+            $table->integer('ext_id')->unique();
             $table->string('kuerzel');
             $table->timestamps();
         });

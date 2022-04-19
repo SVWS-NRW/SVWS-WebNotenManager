@@ -14,7 +14,7 @@ class UserFactory extends Factory
     
     public function definition()
     {
-        return [            
+        return [                        
             'kuerzel' => $this->faker->unique->word(),
             'nachname' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
@@ -23,6 +23,11 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
         ];
     }
+
+    public function withExtId(): Factory
+    {
+        return $this->state(fn () => ['ext_id' => $this->faker->unique(true)->randomNumber()]);
+    }    
 
     public function unverified(): Factory
     {

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('faecher', function (Blueprint $table) {
             $table->id();
+            $table->integer('ext_id')->unique();
             $table->string('kuerzel');
             $table->string('kuerzelAnzeige');
             $table->integer('sortierung');

@@ -14,6 +14,7 @@ class Klasse extends Model
     protected $table = 'klassen';
 
     protected $fillable = [
+        'ext_id',
         'kuerzel',
         'kuerzelAnzeige',
         'sortierung',

@@ -14,7 +14,7 @@ class Floskelgruppe extends Model
 
     protected $fillable = [
         'kuerzel',
-        'beschreibung',
+        'bezeichnung',
         'hauptgruppe',
     ];
 

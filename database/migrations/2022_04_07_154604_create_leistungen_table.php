@@ -15,16 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Schueler::class);
             $table->foreignIdFor(Lerngruppe::class);
-            $table->foreignIdFor(Note::class);
+            $table->foreignIdFor(Note::class)->nullable();
             $table->boolean('istSchriftlich')->default(false);
-            $table->string('abiturfach');
+            $table->string('abiturfach')->nullable();
             $table->integer('fehlstundenGesamt')->nullable();
             $table->integer('fehlstundenUnentschuldigt')->nullable();
-            $table->string('fachbezogeneBemerkungen')->nullable();
-            $table->unsignedBigInteger('neueZuweisungKursart')->nullable();
+            $table->text('fachbezogeneBemerkungen')->nullable();
+            $table->string('neueZuweisungKursart')->nullable();
             $table->timestamps();
-            
-            $table->foreign('neueZuweisungKursart')->references('id')->on('kurse');
         });
     }
     
