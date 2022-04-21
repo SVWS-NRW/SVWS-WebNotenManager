@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+      "target": "esnext",
+      "module": "esnext",
+      "strict": false,
+      "jsx": "preserve",
+      "importHelpers": true,
+      "moduleResolution": "node",
+      "experimentalDecorators": true,
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "allowJs": true,
+      "allowSyntheticDefaultImports": true,
+      "sourceMap": true,
+      "baseUrl": ".",
+      "types": [
+          "node"
+          // "webpack-env"
+      ],
+      "paths": {
+          "@/*": [
+              "resources/ts/*"
+          ]
+      },
+      "lib": [
+          "esnext",
+          "dom",
+          "dom.iterable",
+          "scripthost"
+      ]
+  },
+  "include": [
+      "resources/js/shims-tsx.d.ts",
+      "resources/js/shims-vue.d.ts",
+      "resources/js/shims-window.d.ts",
+      "resources/js/Jetstream/**/*.vue",
+      "resources/js/Pages/**/*.vue",
+      "resources/js/**/*",
+      "resources/js/**/*.ts"
+  ],
+  "exclude": [
+      "node_modules"
+  ]
+}

@@ -1,0 +1,52 @@
+task npmInstallDev(type: NpmInstall) {}
+
+task buildVueLib(type: NpmRun) {
+	dependsOn npmInstallDev
+	args = ['build']
+}
+
+task doZip(type: Zip) {
+    archiveFileName = "SVWS-UI.zip"
+    destinationDirectory = file("$buildDir")
+    from "$buildDir/output"
+}
+
+
+doZip.dependsOn buildVueLib
+assemble.dependsOn doZip
+/*
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackagesSVWSClient"
+            url = "https://maven.pkg.github.com/SVWS-NRW/SVWS-Packages"
+            credentials {
+                username = getGithubActor()
+                password = getGithubToken()
+            }
+        }
+    }
+    publications {
+        mavenUIZip(MavenPublication) {
+            artifact  'build/SVWS-UI.zip'
+            artifactId = 'svws-ui'
+            pom {
+                name = 'SVWS-UI'
+                description = 'Stellt das SVWS-UI-Framework zur Verfügung.'
+                url = 'http://www.svws.nrw.de'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                scm {
+                    connection = 'scm:git@github.com/SVWS-NRW/SVWS-Packages'
+                    developerConnection = 'scm:git@github.com/SVWS-NRW/SVWS-Packages.git'
+                    url = 'https://github.com/SVWS-NRW/SVWS-Packages.git'
+                }
+            }
+        }
+    }
+}
+*/
