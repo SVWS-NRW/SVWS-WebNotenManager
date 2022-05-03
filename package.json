@@ -20,6 +20,7 @@
         "babel-loader": "^8.2.3",
         "browser-sync": "^2.27.9",
         "browser-sync-webpack-plugin": "^2.3.0",
+        "inspectpack": "^4.7.1",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
@@ -27,7 +28,7 @@
         "tailwindcss": "^3.0.0",
         "ts-loader": "^9.2.8",
         "typescript": "^4.6.2",
-        "vue": "^3.2.31",
+        "vue": "./resources/js/SVWS-Server/svws-ui-components/node_modules/vue",
         "vue-loader": "^17.0.0",
         "webpack-env": "^0.8.0"
     }
