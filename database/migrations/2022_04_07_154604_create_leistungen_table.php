@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('leistungen', function (Blueprint $table) {
             $table->id();
+            $table->integer('ext_id')->unique();
             $table->foreignIdFor(Schueler::class);
             $table->foreignIdFor(Lerngruppe::class);
             $table->foreignIdFor(Note::class)->nullable();
@@ -22,10 +23,12 @@ return new class extends Migration
             $table->integer('fehlstundenUnentschuldigt')->nullable();
             $table->text('fachbezogeneBemerkungen')->nullable();
             $table->string('neueZuweisungKursart')->nullable();
+            $table->boolean('istGemahnt')->default(false);
+            $table->timestamp('mahndatum')->nullable();
             $table->timestamps();
         });
     }
-    
+
     public function down(): void
     {
         Schema::dropIfExists('leistungen');

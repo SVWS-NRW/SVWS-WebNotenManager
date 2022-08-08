@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\BKAbschluss;
-use App\Models\BKFach;
 use App\Models\Daten;
 use App\Models\Fach;
 use App\Models\Floskelgruppe;
@@ -12,23 +11,19 @@ use App\Models\Jahrgang;
 use App\Models\Klasse;
 use App\Models\Kurs;
 use App\Models\Leistung;
-use App\Models\Lernabschnitt;
 use App\Models\Lerngruppe;
 use App\Models\User as Lehrer;
 use App\Models\Note;
 use App\Models\Schueler;
-use App\Models\Sprachenfolge;
-use App\Models\Teilleistung;
 use App\Models\Teilleistungsart;
-use App\Models\Zp10;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class DataImportService
 {
-    private $json; 
+    private mixed $json;
 
     public function __construct(string $json)
     {
@@ -37,292 +32,340 @@ class DataImportService
 
     public function import(): void
     {
+        $this->importLehrer();
         $this->importDaten();
-
-        $this->importWithExtId('faecher', Fach::class);
-        $this->importWithExtId('jahrgaenge', Jahrgang::class);        
-        $this->importWithExtId('teilleistungsarten', Teilleistungsart::class);
-        $this->importDirect('foerderschwerpunkte', Foerderschwerpunkt::class);
-        $this->importDirect('noten', Note::class);
-        
+        $this->importNoten();
+        $this->importFoerderschwerpunkte();
+        $this->importFaecher();
+        $this->importTeilleistungsarten();
+        $this->importJahrgaenge();
         $this->importFloskelgruppen();
         $this->importKlassen();
         $this->importLerngruppen();
         $this->importSchueler();
     }
 
-    private function importLerngruppen(): void
-    {
-        collect($this->json['lerngruppen'])->each(function (array $row) {
-            $row['ext_id'] = $row['id'];
-
-            $this->getRelation($row, Fach::class, 'fachID', 'fach_id');
- 
-
-            if ($row['kursartID']) {
-                try {                    
-                    $kurs = Kurs::firstOrCreate(['ext_id' => $row['kursartID']], ['kuerzel' => $row['kursartKuerzel']])->id;
-                } catch (ModelNotFoundException $e) {
-                    echo "Kurs existiert nicht. lehrerID: " . $row['kID'] ."\n\n";
-                }                 
-
-                $row['groupable_id'] = $kurs;
-                $row['groupable_type'] = Kurs::class;
-            } else {                
-                try {                    
-                    $klasse = Klasse::where('ext_id', $row['kID'])->firstOrFail()->id;
-                } catch (ModelNotFoundException $e) {
-                    echo "Klasse existiert nicht. lehrerID: " . $row['kID'] ."\n\n";
-                }   
-
-                
-                $row['groupable_id'] = $klasse;
-                $row['groupable_type'] = Klasse::class;
-            }
-
-
-            $lerngruppe = Lerngruppe::firstOrCreate(['ext_id' => $row['id']], Arr::except($row, ['lehrerID', 'fachID', 'kID', 'kursartKuerzel', 'user_id']));
-
-            if ($row['lehrerID']) {
-                foreach($row['lehrerID'] as $lehrer) {
-                    try {                    
-                        $lehrer = Lehrer::where('ext_id', $row['lehrerID'])->firstOrFail()->id;
-                    } catch (ModelNotFoundException $e) {
-                        echo "Lehrer existiert nicht. lehrerID: " . $row['lehrerID'] ."\n\n";
-                    }
-                    $lerngruppe->lehrer()->attach($lehrer);
-
-                }
-            }
-
-        });
-    }
-
-    private function importSchueler(): void
-    {
-        collect($this->json['schueler'])->each(function (array $row) {
-            $row['ext_id'] = $row['id'];
-
-            $this->getRelation($row, Jahrgang::class, 'jahrgangID', 'jahrgang_id');
-
-            
-            // $this->getRelation($row, Klasse::class, 'klasseID', 'klasse_id'); // TODO: This cannot be found right now since all Schuelerklassen are 0. To be cleared with customer.
-            try {                    
-                $row['klasse_id'] = Klasse::first()->id;
-            } catch (ModelNotFoundException $e) {
-                echo "Schueler Klasse existiert nicht. klasseID: " . $row['klasseID'] ."\n\n";
-            }      
-
-            $schueler = Schueler::firstOrCreate(
-                ['ext_id' => $row['id']], 
-                Arr::only($row, ['ext_id', 'jahrgang_id', 'klasse_id', 'nachname', 'vorname', 'bilingualeSprache', 'istZieldifferent', 'istDaZFoerderung'])
-            );
-
-            if ($row['sprachenfolge']) {    
-                $this->getRelation($row['sprachenfolge'], Note::class, 'fachID', 'fach_id');     
-                Sprachenfolge::updateOrCreate(['schueler_id' => $schueler->id], Arr::except($row['sprachenfolge'], ['fachID']));  
-            }
-            
-            if ($row['lernabschnitt']) {                                   
-                $row['lernabschnitt']['ext_id'] = $row['lernabschnitt']['id'];           
-                
-                $this->getRelation($row['lernabschnitt'], Note::class, 'lernbereich1note', 'lernbereich1note', 'kuerzel');       
-                $this->getRelation($row['lernabschnitt'], Note::class, 'lernbereich2note', 'lernbereich2note', 'kuerzel');   
-                $this->getRelation($row['lernabschnitt'], Foerderschwerpunkt::class, 'foerderschwerpunkt1', 'foerderschwerpunkt1', 'kuerzel');   
-                $this->getRelation($row['lernabschnitt'], Foerderschwerpunkt::class, 'foerderschwerpunkt2', 'foerderschwerpunkt2', 'kuerzel');  
-                
-                Lernabschnitt::updateOrCreate(['schueler_id' => $schueler->id], $row['lernabschnitt']);           
-            }
-
-            if ($row['bemerkungen']) { 
-                collect($row['bemerkungen'])->each(fn (array $array) => $schueler->bemerkungen()->create($array)); 
-            }
-            
-
-            if ($row['leistungsdaten']) { 
-                foreach($row['leistungsdaten'] as $leistungsDaten) {             
-                    $this->getRelation($leistungsDaten, Lerngruppe::class, 'lerngruppenID', 'lerngruppe_id'); 
-                    $this->getRelation($leistungsDaten, Note::class, 'note', 'note_id'); 
-                    
-                    $leistung = Leistung::updateOrCreate(
-                        ['schueler_id' => $schueler->id], 
-                        Arr::except($leistungsDaten, ['lerngruppenID', 'note', 'teilleistungen'])
-                    );  
-                
-                    if ($leistungsDaten['teilleistungen']) {
-                        foreach ($leistungsDaten['teilleistungen'] as $teilleistungen) {
-                            $teilleistungen['ext_id'] = $teilleistungen['id'];
-                            $teilleistungen['leistung_id'] = $leistung->id;
-
-                            $this->getRelation($teilleistungen, Teilleistungsart::class, 'artID', 'teilleistungsart_id');          
-                            Teilleistung::updateOrCreate(
-                                ['ext_id' => $teilleistungen['id']], 
-                                Arr::except($teilleistungen, ['id', 'artID'])
-                            );          
-                        }
-                    }
-                }
-            }
-
-            if ($row['zp10']) {       
-                $this->getRelation($row['zp10'], Fach::class, 'fachID', 'fach_id');
-                $this->getRelation($row['zp10'], Note::class, 'vornote');
-                $this->getRelation($row['zp10'], Note::class, 'noteSchriftlichePruefung');
-                $this->getRelation($row['zp10'], Note::class, 'noteMuendlichePruefung');
-                $this->getRelation($row['zp10'], Note::class, 'abschlussnote');                        
-                        
-                Zp10::updateOrCreate(['schueler_id' => $schueler->id], Arr::except($row['zp10'], ['fachID']));         
-            }            
-
-            if ($row['bkabschluss']) {             
-                $this->getRelation($row['bkabschluss'], Note::class, 'notePraktischePruefung');                   
-                $this->getRelation($row['noteKolloqium'], Note::class, 'noteKolloqium');                   
-                $this->getRelation($row['noteFachpraxis'], Note::class, 'noteFachpraxis');                   
-                $this->getRelation($row['noteFachpraxis'], Note::class, 'noteFachpraxis');                   
-     
-                $bkAbschluss = BKAbschluss::updateOrCreate(
-                    ['schueler_id' => $schueler->id], 
-                    Arr::except($row['bkabschluss'], ['notePraktischePruefung', 'noteKolloqium', 'noteFachpraxis', 'faecher'])
-                );   
-                
-                if ($faecher = $row['bkabschluss']['faecher']) {
-                    foreach($faecher as $fach) {
-                        $this->getRelation($row, Fach::class, 'fachID', 'fach_id');     
-                        $this->getRelation($row, Lehrer::class, 'lehrerID', 'lehrer_id');      
-                        $this->getRelation($row, Note::class, 'vornote');   
-                        $this->getRelation($row, Note::class, 'noteSchriftlichePruefung');   
-                        $this->getRelation($row, Note::class, 'noteMuendlichePruefung');   
-                        $this->getRelation($row, Note::class, 'noteBerufsabschluss');   
-                        $this->getRelation($row, Note::class, 'abschlussnote');         
-
-                        BKFach::updateOrCreate(
-                            ['b_k_abschluss_id' => $bkAbschluss->id], 
-                            Arr::except($fach, ['fachID', 'lehrerID'])
-                        );   
-                    }                
-                } 
-            }
-        });
-    }
-
-    private function importKlassen(): void
-    {
-
-        collect($this->json['klassen'])->each(function (array $row) {
-            $row['ext_id'] = $row['id'];
-            $klasse = Klasse::firstOrCreate(['ext_id' => $row['id']], Arr::except($row, ['klassenlehrer']));
-
-            foreach($row['klassenlehrer'] as $klassenlehrer) {             
-                                 
-                try {                    
-                    $lehrer = Lehrer::where('ext_id', $klassenlehrer)->firstOrFail()->id;
-                    $klasse->klassenlehrer()->attach($lehrer);
-                } catch (ModelNotFoundException $e) {
-                    echo "Klassenlehrer existiert nicht. LehrerID: " .  $klassenlehrer ."\n\n";
-                }
-            }
-        });
-    }
-
-
     private function importDaten(): void
     {
-        $this->importLehrer();
-
-        try { 
-            Daten::updateOrCreate([
-                'user_id' => Lehrer::where('ext_id', $this->json['lehrerID'])->firstOrFail()->id,
-            ], [
+        Daten::updateOrCreate(
+            ['user_id' => Lehrer::where('ext_id', $this->json['lehrerID'])->firstOrFail()->id],
+            [
                 'enmRevision' => $this->json['enmRevision'],
                 'schuljahr' => $this->json['schuljahr'],
                 'anzahlAbschnitte' => $this->json['anzahlAbschnitte'],
                 'aktuellerAbschnitt' => $this->json['aktuellerAbschnitt'],
                 'publicKey' => $this->json['publicKey'],
+                'lehrerID' => $this->json['lehrerID'],
                 'fehlstundenEingabe' => $this->json['fehlstundenEingabe'],
                 'fehlstundenSIFachbezogen' => $this->json['fehlstundenSIFachbezogen'],
                 'fehlstundenSIIFachbezogen' => $this->json['fehlstundenSIIFachbezogen'],
                 'schulform' => $this->json['schulform'],
                 'mailadresse' => $this->json['mailadresse'],
-            ]);
-        } catch (ModelNotFoundException $e) {
-            echo "Daten Lehrer existiert nicht. LehrerID: " . $this->json['lehrerID'] ."\n\n";
+            ]
+        );
+    }
+
+    private function importLehrer(): void
+    {
+        collect($this->json['lehrer'])->each(fn (array $row) => Lehrer::updateOrCreate(
+            ['ext_id' => $row['id']],
+            [
+                'kuerzel' => $row['kuerzel'],
+                'nachname' => $row['nachname'],
+                'vorname' => $row['vorname'],
+                'email' => $row['eMailDienstlich'],
+                'password' => Str::random(),
+            ],
+        ));
+    }
+
+    private function importNoten(): void
+    {
+        collect($this->json['noten'])->each(fn (array $row) =>
+            Note::updateOrCreate(['kuerzel' => $row['kuerzel']], $row)
+        );
+    }
+
+    private function importFoerderschwerpunkte(): void
+    {
+        collect($this->json['foerderschwerpunkte'])->each(fn (array $row) =>
+            Foerderschwerpunkt::updateOrCreate(['kuerzel' => $row['kuerzel']], $row)
+        );
+    }
+
+    private function importFaecher(): void
+    {
+        collect($this->json['faecher'])->each(fn (array $row) =>
+            Fach::updateOrCreate(['ext_id' => $row['id']], $row)
+        );
+    }
+
+    private function importTeilleistungsarten(): void
+    {
+        collect($this->json['teilleistungsarten'])->each(fn (array $row) =>
+            Teilleistungsart::updateOrCreate(['ext_id' => $row['id']], $row)
+        );
+    }
+
+    private function importJahrgaenge(): void
+    {
+        collect($this->json['jahrgaenge'])->each(fn (array $row) =>
+            Jahrgang::updateOrCreate(['ext_id' => $row['id']], $row)
+        );
+    }
+
+    private function importFloskelgruppen(): void
+    {
+        foreach ($this->json['floskelgruppen'] as $row) {
+            $floskelgruppe = Floskelgruppe::firstOrCreate(
+                ['kuerzel' => $row['kuerzel']],
+                Arr::except($row, ['floskeln'])
+            );
+
+            $this->importFloskeln($floskelgruppe, $row);
         }
     }
 
-        
-    private function importLehrer(): void
-    {        
-        collect($this->json['lehrer'])->each(function (array $row) {      
-            $row['ext_id'] = $row['id'];
+    private function importFloskeln(Floskelgruppe $floskelgruppe, array $data): void
+    {
+        if (!$data['floskeln']) {
+            return;
+        }
 
-            Lehrer::updateOrCreate(
-                ['ext_id' => $row['ext_id']], 
-                [
-                    'kuerzel' => $row['kuerzel'], 
-                    'nachname' => $row['nachname'],
-                    'vorname' => $row['vorname'],
-                    'email' => Str::random() .'@'. Str::random(), // TODO: This has to be changed on api side, we have to have the emails delivered.
-                    'password' => Str::random(),
-                ],
+        foreach ($data['floskeln'] as $row) {
+            $floskel = $floskelgruppe->floskeln()->make(Arr::except($row, ['fachID', 'jahrgangID']));
+            $floskel->fach_id = $this->getRelation($row, Fach::class, 'fachID');
+            $floskel->jahrgang_id = $this->getRelation($row, Jahrgang::class, 'jahrgangID');
+            $floskel->save();
+        }
+    }
+
+    private function importKlassen(): void
+    {
+        collect($this->json['klassen'])->each(function (array $row) {
+            $klasse = Klasse::firstOrCreate(['ext_id' => $row['id']], Arr::except($row, ['klassenlehrer']));
+
+            collect($row['klassenlehrer'])->each(fn ($klassenlehrer) =>
+                $klasse->klassenlehrer()->syncWithoutDetaching([
+                    Lehrer::where('ext_id', $klassenlehrer)->firstOrFail()->id
+                ])
             );
         });
     }
 
-    private function importFloskelgruppen(): void
-    {        
-        collect($this->json['floskelgruppen'])->each(function (array $row) {
-            $floskelgruppe = Floskelgruppe::firstOrCreate(['kuerzel' => $row['kuerzel']], Arr::except($row, ['floskeln']));
+    private function getGroupableId(array $row): int
+    {
+        if ($row['kursartID'] === null) {
+            return Klasse::where('ext_id', $row['kID'])->firstOrFail()->id;
+        }
 
-            foreach($row['floskeln'] as $floskel) {
-                if ($floskel['fachID']) {
-                    $this->getRelation($floskel, Fach::class, 'fachID', 'fach_id');   
-                }
-
-                if ($floskel['jahrgangID']) {
-                    $this->getRelation($floskel, Jahrgang::class, 'jahrgangID', 'jahrgang_id');  
-                }
-
-                $floskelgruppe->floskeln()->create(Arr::except($floskel, ['fachID', 'jahrgangID']));
-            }
-        });
+        return Kurs::firstOrCreate(
+            ['ext_id' => $row['kursartID']],
+            ['bezeichnung' => $row['bezeichnung'], 'kuerzel' => $row['kursartKuerzel']]
+        )->id;
     }
 
-
-    private function importDirect(string $table, $model, $key = 'kuerzel'): void
+    private function getGroupableType(array $row): string
     {
-        collect($this->json[$table])->each(fn (array $row) => $model::updateOrCreate([$key => $row[$key]], $row));
+        return $row['kursartID'] !== null ? Kurs::class : Klasse::class;
     }
 
-    private function importWithExtId(string $table, string $model, string $source = 'id', string $destination = 'ext_id')
+    private function importLerngruppen(): void
     {
-        collect($this->json[$table])
-            ->map(fn (array $row) => $this->map($row, $destination, $source))
-            ->each(fn (array $row) => $model::updateOrCreate([$destination => $row[$destination]], Arr::except($row, $source)));
+        $excluded = ['ext_id', 'lehrerID', 'fachID', 'kID', 'kursartKuerzel', 'user_id'];
+
+        foreach ($this->json['lerngruppen'] as $row) {
+            $lerngruppe = Lerngruppe::firstOrNew(['ext_id' => $row['id']], Arr::except($row, $excluded));
+            $lerngruppe->fach_id =  $this->getRelation($row, Fach::class, 'fachID');
+            $lerngruppe->groupable_type = $this->getGroupableType($row);
+            $lerngruppe->groupable_id = $this->getGroupableId($row);
+            $lerngruppe->save();
+
+            $this->importLerngruppenLehrer($lerngruppe, $row);
+        }
     }
 
-    private function map(array $row, string $destination, string $source): string|array|null
+    private function importLerngruppenLehrer(Model|Lerngruppe $model, array $data): void
     {
-        $row[$destination] = $row[$source];
+        if (!$data['lehrerID']) {
+            return;
+        }
 
-        return $row;    
-    }    
+        foreach ($data['lehrerID'] as $lehrer) {
+            $model->lehrer()->attach(Lehrer::where('ext_id', $lehrer)->firstOrFail()->id);
+        }
+    }
 
-    private function getRelation(array &$array, string $class, string $source, string|null $destination = null, string $primary = 'ext_id'): string|array|null
+    private function importSchueler(): void
     {
-        if ($array[$source]) {            
-            $destination = $destination ?? $source;
+        foreach ($this->json['schueler'] as $row) {
+            $schueler = Schueler::firstOrNew(['ext_id' => $row['id']]);
+            $schueler->nachname = $row['nachname'];
+            $schueler->vorname = $row['vorname'];
+            $schueler->bilingualeSprache = $row['bilingualeSprache'];
+            $schueler->istZieldifferent = $row['istZieldifferent'];
+            $schueler->istDaZFoerderung = $row['istDaZFoerderung'];
+            $schueler->jahrgang_id = Jahrgang::where('ext_id', $row['jahrgangID'])->firstOrFail()->id;
+            $schueler->klasse_id = Klasse::first()->id; // TODO: Q2. This cannot be found right now since all Schuelerklassen are 0. To be cleared with customer.
+            $schueler->geschlecht = $this->gender($row);
+            $schueler->save();
 
-            try {                    
-                $array[$destination] = $class::where($primary, $array[$source])->firstOrFail()->id;                      
-            } catch (ModelNotFoundException $e) {
-                echo "{$class} existiert nicht. {$source}: {$array[$source]} \n\n";
-                Log::warning($e->getMessage());
-            }         
-            
-            return $array[$destination];
-        } 
-           
-        return null;
+            $schueler->bemerkung()->create($row['bemerkungen'] ?? []);
+            $this->importSprachenfolge($schueler, $row);
+            $this->importLernabschnitte($schueler, $row);
+            $this->importLeistungen($schueler, $row);
+            $this->importZp10($schueler, $row);
+            $this->importBkAbschluss($schueler, $row);
+        }
+    }
+
+    private function importLeistungen(Model|Schueler $model, array $data): void
+    {
+        if (!$data['leistungsdaten']) {
+            return;
+        }
+
+        $excluded = ['lerngruppenID', 'note', 'teilleistungen'];
+
+        foreach ($data['leistungsdaten'] as $row) {
+            $leistung = $model->leistungen()->firstOrNew(['ext_id' => $row['id']], Arr::except($row, $excluded));
+            $leistung->lerngruppe_id = $this->getRelation($row, Lerngruppe::class, 'lerngruppenID');
+            $leistung->note_id = $this->getRelation($row, Note::class, 'note', 'kuerzel');
+            $leistung->save();
+            $this->importTeilleistungen($leistung, $row);
+        }
+    }
+
+    private function importTeilleistungen(Model|Leistung $model, array $data): void
+    {
+        if (!$data['teilleistungen']) {
+            return;
+        }
+
+        foreach ($data['teilleistungen'] as $row) {
+            $teilleistung = $model->teilleistungen()->firstOrNew(
+                ['ext_id' => $row['id']],
+                Arr::only($row, ['datum', 'bemerkung']),
+            );
+
+            $teilleistung->teilleistungsart_id = $this->getRelation($row, Teilleistungsart::class, 'artID');
+            $teilleistung->note_id = $this->getRelation($row, Note::class, 'notenKuerzel', 'kuerzel');
+            $teilleistung->save();
+        }
+    }
+
+    private function importSprachenfolge(Model|Schueler $model, array $data): void
+    {
+        foreach ($data['sprachenfolge'] as $row) {
+            $sprachenfolge = $model->sprachenfolgen()->make(Arr::except($row, ['fachID', 'sprache', 'fachKuerzel']));
+
+            $sprachenfolge->fach_id = Fach::firstOrCreate(
+                ['ext_id' => $row['fachID']],
+                ['fachKuerzel' => $row['sprache'], 'kuerzelAnzeige' => $row['fachKuerzel']]
+            )->id;
+
+            $sprachenfolge->save();
+        }
+    }
+
+    public function importLernabschnitte(Model|Schueler $model, array $data): void
+    {
+        if (!$data['lernabschnitt']) {
+            return;
+        }
+
+        $row = $data['lernabschnitt'];
+
+        $lernabschnitt = $model->lernabschnitt()->firstOrNew(['ext_id' => $row['id']]);
+        $lernabschnitt->pruefungsordnung = $row['pruefungsordnung'];
+        $lernabschnitt->lernbereich1note = $this->getRelation($row, Note::class, 'lernbereich1note', 'kuerzel');
+        $lernabschnitt->lernbereich2note = $this->getRelation($row, Note::class, 'lernbereich2note', 'kuerzel');
+        $lernabschnitt->foerderschwerpunkt1 = $this->getRelation($row, Foerderschwerpunkt::class, 'foerderschwerpunkt1', 'kuerzel');
+        $lernabschnitt->foerderschwerpunkt2 = $this->getRelation($row, Foerderschwerpunkt::class, 'foerderschwerpunkt2', 'kuerzel');
+        $lernabschnitt->save();
+    }
+
+    public function importZp10(Model|Schueler $model, array $data): void
+    {
+        if (!$data['zp10']) {
+            return;
+        }
+
+        $row = $data['zp10'];
+
+        $zp10 = $model->zp10()->firstOrNew(['ext_id' => $row['id']], Arr::except($row, ['fachID']));
+        $zp10->fach_id = $this->getRelation($row, Fach::class, 'vornote');
+        $zp10->vornote = $this->getRelation($row, Note::class, 'vornote', 'kuerzel');
+        $zp10->noteSchriftlichePruefung = $this->getRelation($row, Note::class, 'noteSchriftlichePruefung', 'kuerzel');
+        $zp10->noteMuendlichePruefung = $this->getRelation($row, Note::class, 'noteMuendlichePruefung', 'kuerzel');
+        $zp10->abschlussnote = $this->getRelation($row, Note::class, 'abschlussnote', 'kuerzel');
+        $zp10->save();
+    }
+
+    public function importBkAbschluss(Model|Schueler $model, array $data): void
+    {
+        if (!$data['bkabschluss']) {
+            return;
+        }
+
+        $row = $data['bkabschluss'];
+        $excluded = ['notePraktischePruefung', 'noteKolloqium', 'noteFachpraxis', 'faecher'];
+
+        $bkAbschluss = $model->bkabschluss()->firstOrNew(['ext_id' => $row['id']], Arr::except($row, $excluded));
+        $bkAbschluss->notePraktischePruefung = $this->getRelation($row, Note::class, 'notePraktischePruefung', 'kuerzel');
+        $bkAbschluss->noteKolloqium = $this->getRelation($row, Note::class, 'noteKolloqium', 'kuerzel');
+        $bkAbschluss->noteFachpraxis = $this->getRelation($row, Note::class, 'noteFachpraxis', 'kuerzel');
+        $bkAbschluss->save();
+
+        $this->importBkAbschlussFach($bkAbschluss, $row['faecher']);
+    }
+
+    public function importBkAbschlussFach(Model|BKAbschluss $model, array $data): void
+    {
+        if (!$data['faecher']) {
+            return;
+        }
+
+        $row = $data['faecher'];
+
+        $bkFach = $model->bkFaecher()->make(Arr::except($data, ['fachID', 'lehrerID']));
+        $bkFach->fach_id = $this->getRelation($row, Fach::class, 'fachID');
+        $bkFach->lehrer_id = $this->getRelation($row, Lehrer::class, 'lehrerID');
+        $bkFach->vornote = $this->getRelation($row, Note::class, 'vornote', 'kuerzel');
+        $bkFach->noteSchriftlichePruefung = $this->getRelation($row, Note::class, 'noteSchriftlichePruefung', 'kuerzel');
+        $bkFach->noteMuendlichePruefung = $this->getRelation($row, Note::class, 'noteMuendlichePruefung', 'kuerzel');
+        $bkFach->noteBerufsabschluss = $this->getRelation($row, Note::class, 'noteBerufsabschluss', 'kuerzel');
+        $bkFach->abschlussnote = $this->getRelation($row, Note::class, 'abschlussnote', 'kuerzel');
+        $bkFach->save();
+    }
+
+    private function getRelation(
+        array $data,
+        string $class,
+        string $currentKey,
+        string $foreignKey = 'ext_id',
+        string $value = 'id'
+    ): int|string|null {
+        if (!$data[$currentKey]) {
+            return null;
+        }
+
+        try {
+            return $class::where($foreignKey, $data[$currentKey])->firstOrFail()->$value;
+        } catch (ModelNotFoundException $e) {
+            dd($e->getMessage());
+        }
+    }
+
+    public function gender(array $data): string
+    {
+        $allowed = ['m', 'w', 'd', 'x'];
+
+        if (array_key_exists('geschlecht', $data) && in_array($data['geschlecht'], $allowed)) {
+            return $data['geschlecht'];
+        }
+
+        return 'x';
     }
 }
 

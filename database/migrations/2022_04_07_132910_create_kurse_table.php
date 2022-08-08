@@ -11,11 +11,12 @@ return new class extends Migration
         Schema::create('kurse', function (Blueprint $table) {
             $table->id();
             $table->integer('ext_id')->unique();
+            $table->text('bezeichnung');
             $table->string('kuerzel');
             $table->timestamps();
         });
     }
-    
+
     public function down(): void
     {
         Schema::dropIfExists('kurse');

@@ -1,35 +1,40 @@
 {
     "private": true,
     "scripts": {
-        "dev": "npm run development",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production"
+        "dev": "vite",
+        "build": "vite build"
     },
     "devDependencies": {
+        "@iconify-json/ri": "^1.0.2",
         "@inertiajs/inertia": "^0.11.0",
         "@inertiajs/inertia-vue3": "^0.6.0",
         "@inertiajs/progress": "^0.2.7",
         "@tailwindcss/forms": "^0.5.0",
         "@tailwindcss/typography": "^0.5.2",
+        "@vitejs/plugin-vue": "^2.3.3",
         "@vue/compiler-sfc": "^3.2.31",
-        "axios": "^0.25",
+        "autoprefixer": "^10.4.7",
+        "axios": "^0.25.0",
         "babel-loader": "^8.2.3",
         "browser-sync": "^2.27.9",
         "browser-sync-webpack-plugin": "^2.3.0",
         "inspectpack": "^4.7.1",
-        "laravel-mix": "^6.0.6",
+        "laravel-vite-plugin": "^0.3.0",
         "lodash": "^4.17.19",
+        "pinia": "^2.0.14",
         "postcss": "^8.1.14",
         "postcss-import": "^14.0.2",
+        "postcss-loader": "^7.0.0",
+        "style-loader": "^3.3.1",
         "tailwindcss": "^3.0.0",
         "ts-loader": "^9.2.8",
         "typescript": "^4.6.2",
-        "vue": "./resources/js/SVWS-Server/svws-ui-components/node_modules/vue",
+        "unplugin-icons": "^0.14.1",
+        "unplugin-vue-components": "^0.19.3",
+        "vite": "^2.9.13",
+        "vue": "^3.2.31",
+        "vue-axios": "^3.4.1",
         "vue-loader": "^17.0.0",
-        "webpack-env": "^0.8.0"
+        "vue-template-compiler": "^2.6.14"
     }
 }

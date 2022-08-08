@@ -4,7 +4,7 @@
 
 <script lang="ts">
 	import { defineComponent } from "vue";
-	// import imageFile from "/src/assets/img/avatar_placeholder.svg";
+	import imageFile from "/src/assets/img/avatar_placeholder.svg";
 
 	export default defineComponent({
 		name: "SvwsUiAvatar",
@@ -19,7 +19,7 @@
 		},
 		methods: {
 			onError(e) {
-				// e.target.src = imageFile;
+				e.target.src = imageFile;
 			}
 		}
 	});

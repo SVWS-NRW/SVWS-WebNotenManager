@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('bemerkungen', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Schueler::class);
-            $table->string('asv')->nullable();
-            $table->string('aue');
-            $table->string('zb')->nullable();
+            $table->text('asv')->nullable();
+            $table->text('aue')->nullable();
+            $table->text('zb')->nullable();
             $table->string('lels')->nullable();
             $table->string('schulformEmpf')->nullable();
             $table->string('individuelleVersetzungsbemerkungen')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-    
+
     public function down(): void
     {
         Schema::dropIfExists('bemerkungen');

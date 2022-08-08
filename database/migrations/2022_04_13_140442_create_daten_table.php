@@ -16,7 +16,8 @@ return new class extends Migration
             $table->integer('anzahlAbschnitte');
             $table->integer('aktuellerAbschnitt');            
             $table->string('publicKey')->nullable();
-            $table->foreignIdFor(Lehrer::class);
+			$table->integer('lehrerID')->unique()->comment('API LehrerID value');
+            $table->foreignIdFor(Lehrer::class)->comment('User/Lehrer model relation');
             $table->boolean('fehlstundenEingabe')->default(false);
             $table->boolean('fehlstundenSIFachbezogen')->default(false);
             $table->boolean('fehlstundenSIIFachbezogen')->default(false);

@@ -49,7 +49,8 @@
 					:tabindex="items.indexOf(item) + 1"
 					class="svws-ui--table--row"
 					:class="{
-						'svws-ui--table--row-selected': current === item
+						'svws-ui--table--row-selected':
+							current.data.id === item.data.id
 					}"
 					@keydown.space="onKeyDownSpace"
 					@keydown.down="onKeyDown"
@@ -77,7 +78,7 @@
 							<template
 								v-if="
 									current === item &&
-									tr_slot &&
+									arrows &&
 									col === cols[0]
 								"
 							>
@@ -166,6 +167,10 @@
 	export default defineComponent({
 		name: "SvwsUiTable",
 		props: {
+			arrows: {
+				type: Boolean,
+				default: false
+			},
 			border: {
 				type: Boolean,
 				default: true
@@ -218,18 +223,12 @@
 					selected: false
 				},
 				selectedItems: [],
-				slot_open: false
+				slot_open: false,
 			};
 		},
 		computed: {
-			tr_slot() {
-				return this.$slots.tr;
-			}
 		},
 		watch: {
-			current() {
-				//console.log(this.current);
-			},
 			sort() {
 				this.sorting.column = this.sort;
 			},

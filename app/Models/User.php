@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -51,6 +50,17 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTwoFactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $ext_id
+ * @property string $kuerzel
+ * @property string $nachname
+ * @property string|null $vorname
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Lerngruppe[] $lerngruppen
+ * @property-read int|null $lerngruppen_count
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereExtId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereKuerzel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereNachname($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereVorname($value)
+ * @property-read \App\Models\Daten|null $daten
  */
 class User extends Authenticatable
 {
@@ -59,30 +69,30 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
-    
+
     protected $fillable = [
-        'kuerzel', 
+        'ext_id',
+        'kuerzel',
         'nachname',
         'vorname',
         'email',
         'password',
     ];
-    
+
     protected $hidden = [
         'password',
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
     ];
-    
+
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
+
     protected $appends = [
         'profile_photo_url',
     ];
-
 
     public function lerngruppen(): BelongsToMany
     {
@@ -91,6 +101,6 @@ class User extends Authenticatable
 
     public function daten(): HasOne
     {
-        return $this->hasObe(Daten::class);
+        return $this->hasOne(Daten::class);
     }
 }

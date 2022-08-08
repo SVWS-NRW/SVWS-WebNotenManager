@@ -2,12 +2,13 @@
 
 namespace App\Providers;
 
-use App\Models\Jahrgang;
-use App\Observers\JahrgangObserver;
+use App\Models\Bemerkung;
+use App\Models\Leistung;
+use App\Observers\BemerkungObserver;
+use App\Observers\LeistungObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -19,8 +20,9 @@ class EventServiceProvider extends ServiceProvider
     
     public function boot(): void
     {
-        //
-    }
+		Bemerkung::observe(BemerkungObserver::class);
+		Leistung::observe(LeistungObserver::class);
+	}
 
     public function shouldDiscoverEvents(): bool
     {

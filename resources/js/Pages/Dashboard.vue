@@ -1,22 +1,38 @@
-<script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Jetstream/Welcome.vue';
+<script setup lang="ts">
+    import { Inertia  } from '@inertiajs/inertia';
+    import { onMounted } from 'vue';
+    import { useStore } from '../store'
+    import Menubar from '../Components/Menubar.vue'
+    import TableInput from '../Components/TableInput.vue'
+    import FloskelnMenu from "../Components/FloskelnMenu.vue";
+    import axios from 'axios';
+
+    const store = useStore();
+    let props = defineProps({
+        auth: Object,
+    });
+
+    onMounted(() => axios.get(route('get_noten')).then(response => store.noten = response.data));
+
+    const dashboard = route('dashboard');
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
-        </template>
+    <div>
+        <SvwsUiAppLayout :collapsed="store.sidebarCollapsed">
+            <template #sidebar>
+                <Menubar :auth="props.auth" />
+            </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <Welcome />
+            <template #main>
+                <div class="w-full dark:bg-zinc-900">
+                    <TableInput></TableInput>
                 </div>
-            </div>
-        </div>
-    </AppLayout>
+            </template>
+
+            <template #contentSidebar>
+                <FloskelnMenu></FloskelnMenu>
+            </template>
+        </SvwsUiAppLayout>
+    </div>
 </template>

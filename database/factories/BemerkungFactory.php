@@ -12,14 +12,18 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class BemerkungFactory extends Factory
 {
     protected $model = Bemerkung::class;
-    
+
     public function definition(): array
     {
         return [
-            'shueler_id' => Schueler::factory(), 
-            'aue' => $this->faker->unique->word(), 
+            'shueler_id' => Schueler::factory(),
         ];
-    }        
+    }
+
+    public function withAue(): Factory
+    {
+        return $this->state(fn () => ['aue' => $this->faker->unique->word()]);
+    }
 
     public function withAsv(): Factory
     {

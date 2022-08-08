@@ -13,7 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('teilleistungen', function (Blueprint $table) {
-            $table->id();        
+            $table->id();
+            $table->integer('ext_id')->unique();
             $table->foreignIdFor(Leistung::class);
             $table->foreignIdFor(Teilleistungsart::class);
             $table->date('datum')->nullable();

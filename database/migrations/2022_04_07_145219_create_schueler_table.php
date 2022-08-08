@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Daten;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
 use Illuminate\Database\Migrations\Migration;
@@ -17,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Klasse::class);
             $table->string('nachname');
             $table->string('vorname');
+            $table->char('geschlecht', 1);
             $table->string('bilingualeSprache')->nullable();
             $table->boolean('istZieldifferent')->default(false);
             $table->boolean('istDaZFoerderung')->default(false);

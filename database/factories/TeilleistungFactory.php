@@ -18,6 +18,7 @@ class TeilleistungFactory extends Factory
     public function definition(): array
     {
         return [
+            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'leistung_id' => Leistung::factory(),
             'teilleistungsart_id' => Teilleistungsart::factory(),
         ];

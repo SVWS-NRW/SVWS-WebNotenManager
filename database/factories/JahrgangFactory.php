@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Daten;
 use App\Models\Jahrgang;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

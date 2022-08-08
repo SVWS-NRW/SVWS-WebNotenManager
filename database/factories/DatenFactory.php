@@ -20,7 +20,8 @@ class DatenFactory extends Factory
             'schuljahr' => rand(2000, 2022),
             'anzahlAbschnitte' => rand(1, 4),
             'aktuellerAbschnitt' => rand(1, 4),  
-            'lehrer_id' => Lehrer::factory(),
+            'lehrerID' => $this->faker->unique()->numberBetween(1, 1_000_000),
+            'user_id' => Lehrer::factory(),
         ];
     }
 

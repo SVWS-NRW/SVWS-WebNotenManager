@@ -16,12 +16,13 @@ class SchuelerFactory extends Factory
 
     public function definition(): array
     {
-        return [            
+        return [
             'ext_id' => $this->faker->unique(true)->randomNumber(),
             'jahrgang_id' => Jahrgang::factory(),
             'klasse_id' => Klasse::factory(),
             'nachname' => $this->faker->lastName(),
             'vorname' => $this->faker->firstName(),
+            'geschlecht' => $this->faker->randomElement(['m', 'w', 'd', 'x']),
         ];
     }
 

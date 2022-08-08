@@ -2,9 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Daten;
 use App\Models\Fach;
 use App\Models\Klasse;
-use App\Models\Lehrer;
+use App\Models\Kurs;
 use App\Models\Lerngruppe;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +20,7 @@ class LerngruppeFactory extends Factory
     {
         $groupable = $this->groupable();
 
-        return [            
+        return [
             'groupable_id' => $groupable::factory(),
             'groupable_type' => $groupable,
             'fach_id' => Fach::factory(),
@@ -27,7 +28,7 @@ class LerngruppeFactory extends Factory
             'bezeichnung' => $this->faker->unique->word(),
             'wochenstunden' => rand(1, 10),
         ];
-    }    
+    }
 
     public function groupable(): string
     {
