@@ -1,0 +1,28 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Klasse;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Klasse>
+ */
+class KlasseFactory extends Factory
+{
+    protected $model = Klasse::class;
+
+    public function definition(): array
+    {
+        return [
+            'ext_id' => $this->faker->unique(true)->randomNumber(),
+            'kuerzel' => $this->faker->unique->word(),
+            'kuerzelAnzeige' => $this->faker->unique->word(),
+        ];
+    }
+
+    public function withSortierung(): Factory
+    {
+        return $this->state(fn () => ['sortierung' => rand(1, 15)]);
+    }
+}

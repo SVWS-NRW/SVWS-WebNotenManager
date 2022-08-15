@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\User as Lehrer;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * App\Models\BKFach
+ *
+ * @property int $id
+ * @property int $b_k_abschluss_id
+ * @property int $fach_id
+ * @property int $user_id
+ * @property int $istSchriftlich
+ * @property \App\Models\Note|null $vornote
+ * @property \App\Models\Note|null $noteSchriftlichePruefung
+ * @property int $muendlichePruefung
+ * @property int $muendlichePruefungFreiwillig
+ * @property \App\Models\Note|null $noteMuendlichePruefung
+ * @property int $istSchriftlichBerufsabschluss
+ * @property \App\Models\Note|null $noteBerufsabschluss
+ * @property \App\Models\Note|null $abschlussnote
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\BKAbschluss|null $bkabschluss
+ * @property-read \App\Models\Fach|null $fach
+ * @property-read Lehrer|null $lehrer
+ * @method static \Database\Factories\BKFachFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereAbschlussnote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereBKAbschlussId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereFachId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereIstSchriftlich($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereIstSchriftlichBerufsabschluss($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereMuendlichePruefung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereMuendlichePruefungFreiwillig($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereNoteBerufsabschluss($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereNoteMuendlichePruefung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereNoteSchriftlichePruefung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereVornote($value)
+ * @mixin \Eloquent
+ */
+class BKFach extends Model
+{
+    use HasFactory;
+
+    protected $table = 'bkfaecher';
+
+    protected $fillable = [
+        'bkabschluss_id', 
+        'fach_id', 
+        'user_id',
+        'istSchriftlich',
+        'vornote',  
+        'noteSchriftlichePruefung', 
+        'muendlichePruefung',
+        'muendlichePruefungFreiwillig',
+        'noteMuendlichePruefung', 
+        'istSchriftlichBerufsabschluss',
+        'noteBerufsabschluss',  
+        'abschlussnote',  
+    ];
+
+    public function abschlussnote(): BelongsTo
+    {
+        return $this->belongsTo(Note::class);
+    }    
+
+    public function bkabschluss(): BelongsTo
+    {
+        return $this->belongsTo(BKAbschluss::class);
+    }    
+
+    public function fach(): BelongsTo
+    {
+        return $this->belongsTo(Fach::class);
+    }
+
+    public function lehrer(): BelongsTo
+    {
+        return $this->belongsTo(Lehrer::class);
+    }
+
+    public function noteBerufsabschluss(): BelongsTo
+    {
+        return $this->belongsTo(Note::class);
+    }
+
+    public function noteMuendlichePruefung(): BelongsTo
+    {
+        return $this->belongsTo(Note::class);
+    }
+
+    public function noteSchriftlichePruefung(): BelongsTo
+    {
+        return $this->belongsTo(Note::class);
+    }
+
+    public function vornote(): BelongsTo
+    {
+        return $this->belongsTo(Note::class);
+    }
+}

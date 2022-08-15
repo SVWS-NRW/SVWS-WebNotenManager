@@ -1,0 +1,38 @@
+<?php
+
+use App\Models\Leistung;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('leistung_normalized', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(Leistung::class);
+            $table->string('klasse')->nullable();
+            $table->string('vorname');
+            $table->string('nachname');
+			$table->char('geschlecht', 1);
+            $table->string('jahrgang');
+            $table->string('fach')->nullable();
+            $table->string('lehrer');
+            $table->string('kurs')->nullable();
+            $table->string('note')->nullable();
+            $table->boolean('istGemahnt')->default(false);
+			$table->integer('fs')->default(0);
+			$table->integer('ufs')->default(0);
+			$table->boolean('asv')->default(false);
+			$table->boolean('aue')->default(false);
+			$table->boolean('zb')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('leistung_normalized');
+    }
+};
