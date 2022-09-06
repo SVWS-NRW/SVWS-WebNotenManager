@@ -29,7 +29,7 @@
 * npm install
 * npm install --prefix resources/js/SVWS-Server/svws-ui-components
 * npm run build --prefix resources/js/SVWS-Server/svws-ui-components
-* npm run production
+* npm run build
 
 ### Lokale Docker Installation
 * git clone
