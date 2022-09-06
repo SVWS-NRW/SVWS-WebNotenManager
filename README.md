@@ -27,8 +27,8 @@
 * php artisan key:generate
 * php artisan migrate:fresh --seed
 * npm install
-* npm install --prefix resources\js\SVWS-Server\svws-ui-components
-* npm run build --prefix resources\js\SVWS-Server\svws-ui-components
+* npm install --prefix resources/js/SVWS-Server/svws-ui-components
+* npm run build --prefix resources/js/SVWS-Server/svws-ui-components
 * npm run production
 
 ### Lokale Docker Installation
@@ -40,8 +40,8 @@
 * php artisan migrate:fresh --seed
 * /vendon/bin/sail up -d
 * /vendon/bin/sail npm install
-* /vendon/bin/sail npm install --prefix resources\js\SVWS-Server\svws-ui-components
-* /vendon/bin/sail npm run build --prefix resources\js\SVWS-Server\svws-ui-components
+* /vendon/bin/sail npm install --prefix resources/js/SVWS-Server/svws-ui-components
+* /vendon/bin/sail npm run build --prefix resources/js/SVWS-Server/svws-ui-components
 * /vendon/bin/sail npm run dev
 
 ## Plugins: 
