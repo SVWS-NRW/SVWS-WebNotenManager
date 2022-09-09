@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create('daten', function (Blueprint $table) {
             $table->id();
             $table->integer('enmRevision');
+            $table->integer('schulnummer');
             $table->integer('schuljahr');
             $table->integer('anzahlAbschnitte');
             $table->integer('aktuellerAbschnitt');            

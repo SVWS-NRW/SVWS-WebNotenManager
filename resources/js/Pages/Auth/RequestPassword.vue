@@ -1,36 +1,35 @@
 <script setup lang="ts">
-    import { Head, useForm, usePage, Link } from '@inertiajs/inertia-vue3';
+    import { Head, Link } from '@inertiajs/inertia-vue3';
     import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
-    import {Inertia} from "@inertiajs/inertia";
-    import {computed} from "vue";
+    import { Inertia } from '@inertiajs/inertia'
+    import { reactive } from 'vue'
 
-    defineProps({
-        status: String,
-    });
-
-    const form = useForm({
+    const initialState = {
         email: '',
-        password: '',
-        remember: false,
+        kuerzel: '',
+        schulnummer: '',
+    };
+
+    const form = reactive({
+        ...initialState,
     });
 
-    const schoolName = computed(() => usePage().props.value.schoolName)
+    const state = reactive({
+        successMessage: false,
+    })
 
-    const requestPassword = () => Inertia.get(route('request_password'))
-    const submit = () => {
-        form.transform(data => ({
-            ...data,
-            remember: form.remember ? 'on' : '',
-        })).post(route('login'), {
-            onFinish: () => form.reset('password'),
-        });
-    };
+    const submit = () => Inertia.post(route('request_password'), form, {
+        onSuccess: () => {
+            Object.assign(form, initialState)
+            state.successMessage = true
+        }
+    })
 </script>
 
 <template>
     <div>
         <Head>
-            <title>Log in</title>
+            <title>Passwort anfordern</title>
         </Head>
 
         <SvwsUiAppLayout>
@@ -52,15 +51,15 @@
 
                         <div class="form">
                             <JetValidationErrors />
-                            <h2 class="svws-ui-headline-4">{{ schoolName }}</h2>
+                            <p class="status" v-if="state.successMessage">
+                                <strong>Hinweis:</strong> <br>
+                                Ihre Eingaben wurden empfangen. Wenn wir ein Konto haben, das Ihrer E-Mail-Adresse entspricht, erhalten Sie eine E-Mail mit einem Link, um Ihr Passwort zu setzen.
+                            </p>
+                            <h2 class="svws-ui-headline-4">Passwort anfordern</h2>
+                            <SvwsUiTextInput v-model="form.schulnummer" type="text" placeholder="Schulnummer" required :disabled="form.processing" v-on:keyup.enter="submit" />
                             <SvwsUiTextInput v-model="form.email" type="email" placeholder="E-Mail-Adresse" required :disabled="form.processing" v-on:keyup.enter="submit" />
-                            <SvwsUiTextInput v-model="form.password" type="password" placeholder="Passwort" required :disabled="form.processing" v-on:keyup.enter="submit" />
-                            <SvwsUiCheckbox v-model="form.remember" :disabled="form.processing">Angemeldet bleiben</SvwsUiCheckbox>
-                            <div class="flex justify-between gap-6">
-                                <SvwsUiButton @click="submit()" :disabled="form.processing">Anmelden</SvwsUiButton>
-                                <SvwsUiButton @click="requestPassword()">Passwort anfordern</SvwsUiButton>
-
-                            </div>
+                            <SvwsUiTextInput v-model="form.kuerzel" type="text" placeholder="Lehrkraftkürzel" required :disabled="form.processing" v-on:keyup.enter="submit" />
+                            <SvwsUiButton @click="submit()" :disabled="form.processing">Link zusenden</SvwsUiButton>
                         </div>
                     </header>
 
@@ -73,7 +72,7 @@
                         </p>
                         <nav>
                             <a href="#" title="Impressum">Impressum</a>
-                            <a href="#" title="Datenschutz">Datenschutz</a>
+                            <a href="#" title="Datenschutz">Datenschutz"</a>
                             <a href="#" title="Hilfe">Hilfe</a>
                         </nav>
                     </footer>
@@ -119,8 +118,8 @@
         @apply space-y-6
     }
 
-    #login > header > .form > a {
-        @apply block
+    #login > header > .form > p.status {
+        @apply font-medium text-sm text-green-600
     }
 
     #login > footer  {

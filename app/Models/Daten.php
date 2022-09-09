@@ -57,6 +57,7 @@ class Daten extends Model
 
     protected $fillable = [
         'enmRevision',
+        'schulnummer',
         'schuljahr',
         'anzahlAbschnitte',
         'aktuellerAbschnitt',

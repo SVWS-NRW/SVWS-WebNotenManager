@@ -1,5 +1,6 @@
 {
   "enmRevision": -1,
+  "schulnummer": 123456,
   "schuljahr": 2021,
   "anzahlAbschnitte": 4,
   "aktuellerAbschnitt": 4,
@@ -1951,6 +1952,14 @@
       "vorname": "Benjamin",
       "geschlecht": "m",
       "eMailDienstlich": "B.Frankenstein@lmail.de"
+    },
+    {
+      "id": 128,
+      "kuerzel": "SENS",
+      "nachname": "Senstius",
+      "vorname": "Karolin",
+      "geschlecht": "x",
+      "eMailDienstlich": null
     },
     {
       "id": 226,

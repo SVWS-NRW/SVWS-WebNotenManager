@@ -51,6 +51,7 @@ class DataImportService
             ['user_id' => Lehrer::where('ext_id', $this->json['lehrerID'])->firstOrFail()->id],
             [
                 'enmRevision' => $this->json['enmRevision'],
+                'schulnummer' => $this->json['schulnummer'],
                 'schuljahr' => $this->json['schuljahr'],
                 'anzahlAbschnitte' => $this->json['anzahlAbschnitte'],
                 'aktuellerAbschnitt' => $this->json['aktuellerAbschnitt'],
@@ -208,9 +209,20 @@ class DataImportService
             $schueler->jahrgang_id = Jahrgang::where('ext_id', $row['jahrgangID'])->firstOrFail()->id;
             $schueler->klasse_id = Klasse::first()->id; // TODO: Q2. This cannot be found right now since all Schuelerklassen are 0. To be cleared with customer.
             $schueler->geschlecht = $this->gender($row);
+
+			// Bemerkungen
+			if ($row['bemerkungen'] != null) {
+				dd($row['bemerkungen']);
+				$schueler->asv = $this->getBemerkung($row['bemerkungen'], 'asv');
+				$schueler->aue = $this->getBemerkung($row['bemerkungen'], 'aue');
+				$schueler->zb = $this->getBemerkung($row['bemerkungen'], 'zb');
+				$schueler->lels = $this->getBemerkung($row['bemerkungen'], 'lels');
+				$schueler->schulformEmpf = $this->getBemerkung($row['bemerkungen'], 'schulformEmpf');
+				$schueler->individuelleVersetzungsbemerkungen = $this->getBemerkung($row['bemerkungen'], 'individuelleVersetzungsbemerkungen');
+				$schueler->foerderbemerkungen = $this->getBemerkung($row['bemerkungen'], 'foerderbemerkungen');
+			}
             $schueler->save();
 
-            $schueler->bemerkung()->create($row['bemerkungen'] ?? []);
             $this->importSprachenfolge($schueler, $row);
             $this->importLernabschnitte($schueler, $row);
             $this->importLeistungen($schueler, $row);
@@ -218,6 +230,11 @@ class DataImportService
             $this->importBkAbschluss($schueler, $row);
         }
     }
+
+	private function getBemerkung(array|null $array, $key): null|string
+	{
+		return array_key_exists($key, $array) ? $array[$key] : null;
+	}
 
     private function importLeistungen(Model|Schueler $model, array $data): void
     {

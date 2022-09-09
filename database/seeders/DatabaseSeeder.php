@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -9,7 +10,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        \App\Models\User::factory()->create(['email' => 'user@cgi.com']);
+        User::factory()->administrator()->create(['email' => 'user@user.com']);
+
         $this->call([
             JsonImportSeeder::class,
         ]);
