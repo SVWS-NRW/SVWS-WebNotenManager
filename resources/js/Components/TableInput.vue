@@ -1,18 +1,16 @@
-
-
 <script setup lang="ts">
     import { ref, watch, computed, reactive, onMounted } from 'vue';
     import { useStore } from '../store'
     import axios from 'axios';
     import MahnungIndicator from "./MahnungIndicator.vue";
-    import BemerkungenIndicator from "./BemerkungenIndicator.vue";
     import NoteInput from "./NoteInput.vue";
+    import TopMenu from "../Components/TopMenu.vue"
 
     type columnType = { id: string, title: string, sortable: boolean, visible: boolean };
 
     type leistungType = {
         id: number, klasse: string|null, vorname: string, nachname: string,  geschlecht: string, fach: string|null, lehrer: string, jahrgang: string,
-        kurs: string|null, note: string|null, fs: number, ufs: number, mahnung: boolean
+        kurs: string|null, note: string|null, fs: number, ufs: number, istGemahnt: boolean, mahndatum: boolean
     }
 
     type filterElementType = Array<{ id: string, label: string }>
@@ -28,6 +26,7 @@
     let klassenleitung = ref(true)
 
     let state = reactive({
+        leistungen: <leistungType[]> [],
         teilleistungen: <boolean>true,
         klassenleitung: <boolean>true,
         filterValues: <filterValuesType> {
@@ -47,12 +46,9 @@
             {id: 'lehrer', title: 'Lehrer', visible: true},
             {id: 'kurs', title: 'Kurs', sortable: true, visible: true},
             {id: 'note', title: 'Note', sortable: true, visible: true},
-            {id: 'mahnung', title: 'M', sortable: true, visible: true},
+            {id: 'mahnung', title: 'M', sortable: false, visible: true},
             {id: 'fs', title: 'FS', visible: klassenleitung },
             {id: 'ufs', title: 'uFS', visible: klassenleitung},
-            {id: 'asv', title: 'ASV', visible: klassenleitung},
-            {id: 'aue', title: 'AuE', visible: klassenleitung},
-            {id: 'zb', title: 'ZB', visible: klassenleitung},
         ],
         filters: {
             search: <string> '',
@@ -75,7 +71,7 @@
     const doSort = () => {
         if (state.sorting.column == '') return;
 
-        store.leistungen.sort((left: leistungType, right: leistungType) => {
+        state.leistungen.sort((left: leistungType, right: leistungType) => {
             const column = (column: leistungType) =>
                 state.sorting.column
                     .split('.')
@@ -94,11 +90,11 @@
 
     onMounted(() => {
         axios.get(route('get_filters')).then(response => state.filterValues = response.data)
-        axios.get(route('get_leistungen')).then(response => store.leistungen = response.data)
+        axios.get(route('get_leistungen')).then(response => state.leistungen = response.data)
     })
 
     const filteredLeistungen = computed(() =>
-        store.leistungen.filter(leistung =>
+        state.leistungen.filter(leistung =>
             searchFilter(leistung)
             && tableFilter(leistung, 'klasse', true)
             && tableFilter(leistung, 'kurs')
@@ -119,29 +115,25 @@
         return leistung[column] == state.filters[column]
     }
 
-    const toggleDarkmode = () => store.toggleDarkMode()
+
+    const updateLeistungMahnung = (leistung: leistungType, istGemahnt: boolean, mahndatum: string) => {
+        let current = state.leistungen.find(current => current.id === leistung.id)
+        current.istGemahnt = istGemahnt
+        current.mahndatum = Boolean(mahndatum)
+    }
+
+    const updateLeistungNote = (leistung, note) => {
+        state.leistungen.find(current => current.id === leistung.id)['note'] = note;
+    }
 </script>
 
 <template>
     <div>
         <div class="wrapper">
-            <div id="top-menu">
-                <div class="filters">
-                    <h1 class="svws-ui-headline-2 dark:text-zinc-200">Notenmanager</h1>
-                    <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="klassenleitung">Klassenleitung</SvwsUiCheckbox>
-                </div>
-                <div class="functions svws-ui-text-black">
-                    <SvwsUiIcon>
-                        <span>Drucken</span>
-                        <i-ri-printer-line   aria-hidden="true"></i-ri-printer-line>
-                    </SvwsUiIcon>
-                    <SvwsUiIcon>
-                        <span>Teilen</span>
-                        <i-ri-folder-shared-line aria-hidden="true"></i-ri-folder-shared-line>
-                    </SvwsUiIcon>
-                </div>
-            </div>
+            <TopMenu>
+                <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
+                <SvwsUiCheckbox v-model="klassenleitung">Klassenleitung</SvwsUiCheckbox>
+            </TopMenu>
             <div id="filter-menu">
                 <SvwsUiTextInput type="search" v-model="state.filters.search" placeholder="Suche"></SvwsUiTextInput>
                 <SvwsUiSelectInput placeholder="Klasse" v-model="state.klasse" @update:value="(klasse: Number) => state.filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>
@@ -202,8 +194,8 @@
                             <td>
                                 <NoteInput :leistung="leistung"></NoteInput>
                             </td>
-                            <td class="checkbox">                                
-                                <MahnungIndicator :leistung="leistung" :key="leistung.id"></MahnungIndicator>
+                            <td :class="{ danger: leistung.istGemahnt, success: leistung.mahndatum }">
+                                <MahnungIndicator :leistung="leistung" :key="leistung.id" @updated="updateLeistungMahnung"></MahnungIndicator>
                             </td>
                             <td v-show="klassenleitung">
                                 {{ leistung.fs }}
@@ -211,47 +203,38 @@
                             <td v-show="klassenleitung">
                                 {{ leistung.ufs }}
                             </td>
-                            <td v-show="klassenleitung" class="checkbox">
-                                <BemerkungenIndicator :leistung="leistung" floskelgruppe="asv"></BemerkungenIndicator>
-                            </td>
-                            <td v-show="klassenleitung" class="checkbox">
-                                <BemerkungenIndicator :leistung="leistung" floskelgruppe="aue"></BemerkungenIndicator>
-                            </td>
-                            <td v-show="klassenleitung" class="checkbox">
-                                <BemerkungenIndicator :leistung="leistung" floskelgruppe="zb"></BemerkungenIndicator>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div id="table-footer">
-                <SvwsUiCheckbox />
-                <div class="functions">
-                    <SvwsUiCheckbox>Markierungen</SvwsUiCheckbox>
-                    <SvwsUiButton type="secondary">
-                        Klassenübersicht
-                    </SvwsUiButton>
-                    <SvwsUiButton type="secondary">
-                        Notentabelle
-                    </SvwsUiButton>
-                </div>
+<!--            <div id="table-footer">-->
+<!--                <SvwsUiCheckbox />-->
+<!--                <div class="functions">-->
+<!--                    <SvwsUiCheckbox>Markierungen</SvwsUiCheckbox>-->
+<!--                    <SvwsUiButton type="secondary">-->
+<!--                        Klassenübersicht-->
+<!--                    </SvwsUiButton>-->
+<!--                    <SvwsUiButton type="secondary">-->
+<!--                        Notentabelle-->
+<!--                    </SvwsUiButton>-->
+<!--                </div>-->
 
-                <div class="info">
-                    <div id="progress-bar">
-                        <span>Neue Daten... {{ store.progress }} %</span>
-                        <div class="svws-ui-bg-dark-20">
-                            <div class="svws-ui-bg-blue" :style="{ 'width': store.progress + '%' }"></div>
-                        </div>
-                    </div>
-                    <button title="Dunkelmodus" @click="toggleDarkmode">
-                        <SvwsUiIcon>
-                            <i-ri-moon-line aria-hidden="true"></i-ri-moon-line>
-                        </SvwsUiIcon>
-                        Dark-Mode
-                    </button>
-                </div>
-            </div>
+<!--                <div class="info">-->
+<!--                    <div id="progress-bar">-->
+<!--                        <span>Neue Daten... {{ store.progress }} %</span>-->
+<!--                        <div class="svws-ui-bg-dark-20">-->
+<!--                            <div class="svws-ui-bg-blue" :style="{ 'width': store.progress + '%' }"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <button title="Dunkelmodus" @click="toggleDarkmode">-->
+<!--                        <SvwsUiIcon>-->
+<!--                            <i-ri-moon-line aria-hidden="true"></i-ri-moon-line>-->
+<!--                        </SvwsUiIcon>-->
+<!--                        Dark-Mode-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </div>
 </template>
@@ -348,6 +331,14 @@
         @apply pt-4
     }
 
+    #table > table > tbody > tr > td.danger {
+        @apply bg-red-600 text-white
+    }
+
+    #table > table > tbody > tr > td.success {
+        @apply bg-green-600 text-white
+    }
+
     #table-footer {
         @apply flex justify-between gap-6 p-6 shadow-[0_-10px_15px_-5px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_15px_-5px_rgba(0,0,0,0.3)]
     }
@@ -375,8 +366,6 @@
     #table-footer  > .info > #progress-bar > div > div {
         @apply  h-2.5 rounded-full
     }
-
-
 
     #table-footer > .info > button {
         @apply flex gap-2 items-center justify-start font-medium text-sm  hover:underline underline-offset-2 focus-visible:outline outline-offset-2 outline-2 outline-black dark:outline-zinc-300 rounded

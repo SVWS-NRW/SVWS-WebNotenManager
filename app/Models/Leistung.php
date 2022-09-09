@@ -69,6 +69,10 @@ class Leistung extends Model
         'mahndatum',
     ];
 
+	protected $casts = [
+		'mahndatum' => 'datetime',
+	];
+
     public function lerngruppe(): BelongsTo
     {
         return $this->belongsTo(Lerngruppe::class);

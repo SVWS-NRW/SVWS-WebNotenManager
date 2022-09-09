@@ -12,20 +12,28 @@ use App\Models\Note;
 use App\Models\Schueler;
 use App\Models\Teilleistungsart;
 use App\Models\User as Lehrer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DatenResource extends JsonResource
 {
-
     public function toArray($request): array
     {
+		$schueler = Schueler::query()
+			->with('leistungen', 'bemerkung')
+			->whereHas('leistungen', fn (Builder $leistung) =>
+				$leistung->whereIn('lerngruppe_id', $this->lehrer->lerngruppen->pluck('id')->toArray())
+			)
+			->get();
+
         return [
             'enmRevision' => $this->enmRevision,
             'schuljahr' => $this->schuljahr,
             'anzahlAbschnitte' => $this->anzahlAbschnitte,
             'aktuellerAbschnitt' => $this->aktuellerAbschnitt,
 			'schulform' => $this->schulform,
-            'schueler' => SchuelerResource::collection(Schueler::with('leistungen', 'bemerkung')->get()), // TODO: get binding
+			'lehrerID' => $this->lehrer->ext_id,
+            'schueler' => SchuelerResource::collection($schueler),
 
 
 //            'noten' => $this->attributes['noten'],

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import { Inertia  } from '@inertiajs/inertia';
     import { onMounted } from 'vue';
     import { useStore } from '../store'
     import Menubar from '../Components/Menubar.vue'
@@ -14,7 +13,6 @@
 
     onMounted(() => axios.get(route('get_noten')).then(response => store.noten = response.data));
 
-    const dashboard = route('dashboard');
 </script>
 
 <template>
