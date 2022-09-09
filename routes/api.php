@@ -3,8 +3,10 @@
 use App\Http\Controllers\Api\GetBemerkungen;
 use App\Http\Controllers\Api\GetFloskeln;
 use App\Http\Controllers\Api\GetLeistungen;
+use App\Http\Controllers\Api\GetSchueler;
 use App\Http\Controllers\Api\NotenController;
 use App\Http\Controllers\Api\MahnungController;
+use App\Http\Controllers\Api\SchuelerBemerkung;
 use App\Http\Controllers\GetFilters;
 use App\Services\DataExportService;
 use Illuminate\Http\Request;
@@ -28,6 +30,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::get('get-floskeln', GetFloskeln::class)->name('get_floskeln');
     Route::get('get-leistungen', GetLeistungen::class)->name('get_leistungen');
     Route::get('get-filters', GetFilters::class)->name('get_filters');
+    Route::get('get-schueler', GetSchueler::class)->name('get_schueler');
+    Route::post('set-schueler-bemerkung/{schueler}', SchuelerBemerkung::class)->name('set_schueler_bemerkung');
 
 
     Route::post('set-mahnung/{leistungNormalized}', MahnungController::class)->name('set_mahnung');

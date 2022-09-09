@@ -40,4 +40,39 @@ class SchuelerFactory extends Factory
     {
         return $this->state(fn () => ['istDaZFoerderung' => true]);
     }
+
+	public function withAue(): Factory
+	{
+		return $this->state(fn () => ['aue' => $this->faker->unique->word()]);
+	}
+
+	public function withAsv(): Factory
+	{
+		return $this->state(fn () => ['asv' => $this->faker->unique->word()]);
+	}
+
+	public function withZb(): Factory
+	{
+		return $this->state(fn () => ['zb' => $this->faker->unique->word()]);
+	}
+
+	public function withLels(): Factory
+	{
+		return $this->state(fn () => ['lels' => $this->faker->unique->word()]);
+	}
+
+	public function withSchulformEmpf(): Factory
+	{
+		return $this->state(fn () => ['schulformEmpf' => $this->faker->unique->word()]);
+	}
+
+	public function withIndividuelleVersetzungsbemerkungen(): Factory
+	{
+		return $this->state(fn () => ['individuelleVersetzungsbemerkungen' => $this->faker->unique->word()]);
+	}
+
+	public function withFoerderbemerkungen(): Factory
+	{
+		return $this->state(fn () => ['foerderbemerkungen' => $this->faker->unique->word()]);
+	}
 }

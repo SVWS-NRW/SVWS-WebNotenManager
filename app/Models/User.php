@@ -77,6 +77,7 @@ class User extends Authenticatable
         'vorname',
         'email',
         'password',
+		'administrator',
     ];
 
     protected $hidden = [
@@ -88,6 +89,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'administrator' => 'boolean',
     ];
 
     protected $appends = [

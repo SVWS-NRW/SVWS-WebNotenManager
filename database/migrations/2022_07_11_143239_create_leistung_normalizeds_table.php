@@ -22,11 +22,9 @@ return new class extends Migration
             $table->string('kurs')->nullable();
             $table->string('note')->nullable();
             $table->boolean('istGemahnt')->default(false);
+			$table->timestamp('mahndatum')->nullable();
 			$table->integer('fs')->default(0);
 			$table->integer('ufs')->default(0);
-			$table->boolean('asv')->default(false);
-			$table->boolean('aue')->default(false);
-			$table->boolean('zb')->default(false);
             $table->timestamps();
         });
     }

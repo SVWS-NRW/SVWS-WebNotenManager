@@ -70,6 +70,13 @@ class Schueler extends Model
         'bilingualeSprache',
         'istZieldifferent',
         'istDaZFoerderung',
+		'asv',
+		'aue',
+		'zb',
+		'lels',
+		'schulformEmpf',
+		'individuelleVersetzungsbemerkungen',
+		'foerderbemerkungen',
     ];
 
     public function bilingualeSprache(): BelongsTo

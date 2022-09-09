@@ -22,6 +22,13 @@ return new class extends Migration
             $table->string('bilingualeSprache')->nullable();
             $table->boolean('istZieldifferent')->default(false);
             $table->boolean('istDaZFoerderung')->default(false);
+			$table->text('asv')->nullable();
+			$table->text('aue')->nullable();
+			$table->text('zb')->nullable();
+			$table->string('lels')->nullable();
+			$table->string('schulformEmpf')->nullable();
+			$table->string('individuelleVersetzungsbemerkungen')->nullable();
+			$table->string('foerderbemerkungen')->nullable();
             $table->timestamps();
         });
     }

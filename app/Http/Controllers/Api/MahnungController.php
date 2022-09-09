@@ -4,20 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\LeistungNormalized;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class MahnungController extends Controller
 {
-    public function __invoke(LeistungNormalized $leistungNormalized)
-    {
-        $istGemahnt = request()->istGemahnt;
+    public function __invoke(LeistungNormalized $leistungNormalized): JsonResponse
+	{
+        $leistungNormalized->update(request()->all());
+        $leistungNormalized->leistung->update(request()->all());
 
-        $leistungNormalized->update(['istGemahnt' => $istGemahnt]);
-        $leistungNormalized->leistung->update([
-            'istGemahnt' => $istGemahnt,
-            'mahndatum' => $istGemahnt ? now() : null,
-        ]);
-
-        return response()->json(['istGemahnt' => $istGemahnt], Response::HTTP_OK);
+        return response()->json(request()->all(), Response::HTTP_OK);
     }
 }

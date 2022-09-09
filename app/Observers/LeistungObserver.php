@@ -27,11 +27,9 @@ class LeistungObserver
 			'kurs' => $this->getMorphable($leistung->lerngruppe, Kurs::class),
 			'note' => $leistung->note?->kuerzel,
 			'istGemahnt' => (bool) $leistung->istGemahnt,
+			'mahndatum' => $leistung->mahndatum,
 			'fs' => $leistung->fehlstundenGesamt,
 			'ufs' => $leistung->fehlstundenUnentschuldigt,
-			'asv' => (bool) $leistung->schueler->bemerkung->asv,
-			'aue' => (bool) $leistung->schueler->bemerkung->aue,
-			'zb' => (bool) $leistung->schueler->bemerkung->zb,
 		];
 	}
 

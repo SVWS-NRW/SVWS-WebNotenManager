@@ -34,6 +34,11 @@ class UserFactory extends Factory
         return $this->state(fn () => ['email_verified_at' => null]);
     }
 
+    public function administrator(): Factory
+    {
+        return $this->state(fn () => ['administrator' => true]);
+    }
+
     public function withPersonalTeam(): Factory
     {
         if (! Features::hasTeamFeatures()) {

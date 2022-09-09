@@ -24,18 +24,14 @@ class LeistungNormalized extends Model
 		'kurs',
 		'note',
         'istGemahnt',
+        'mahndatum',
 		'fs',
 		'ufs',
-		'asv',
-		'aue',
-		'zb',
 	];
 
 	protected $casts = [
 		'istGemahnt' => 'bool',
-		'asv' => 'bool',
-		'aue' => 'bool',
-		'zb' => 'bool',
+		'mahndatum' => 'datetime',
 	];
 
 	public function leistung(): BelongsTo

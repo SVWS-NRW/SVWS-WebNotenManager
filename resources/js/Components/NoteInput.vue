@@ -1,6 +1,6 @@
 <script setup lang="ts">
-    import { watch, computed, reactive } from 'vue'
-    import { useStore } from '../store'
+    import {watch, computed, reactive} from 'vue'
+    import {useStore} from '../store'
     import axios, {AxiosError, AxiosResponse} from 'axios'
 
     const store = useStore()
