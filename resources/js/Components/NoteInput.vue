@@ -1,11 +1,9 @@
 <script setup lang="ts">
     import {watch, computed, reactive} from 'vue'
     import {useStore} from '../store'
-<<<<<<< HEAD
-    import axios, {AxiosError, AxiosResponse} from 'axios'
-=======
+
     import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios'
->>>>>>> develop
+
 
     const store = useStore()
     const props = defineProps(['leistung'])

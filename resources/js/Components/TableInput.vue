@@ -9,11 +9,9 @@
     type columnType = { key: string, label: string, sortable: boolean };
 
     type leistungType = {
-<<<<<<< HEAD
-        id: number, klasse: string|null, vorname: string, nachname: string,  geschlecht: string, fach: string|null, lehrer: string, jahrgang: string,
-=======
+
         id: number, klasse: string|null, name: string, vorname: string, nachname: string,  geschlecht: string, fach: string|null, lehrer: string, jahrgang: string,
->>>>>>> develop
+
         kurs: string|null, note: string|null, fs: number, ufs: number, istGemahnt: boolean, mahndatum: boolean
     }
 
@@ -39,24 +37,7 @@
             'kurse': [],
             'noten': [],
         },
-<<<<<<< HEAD
-        sorting: {
-            column: <string> '',
-            asc: <boolean> true,
-        },
-        cols: <columnType[]> [
-            {id: 'klasse', title: 'Klasse', sortable: true, visible: true},
-            {id: 'nachname', title: 'Name', sortable: true, visible: true},
-            {id: 'fach', title: 'Fach', sortable: true, visible: true},
-            {id: 'lehrer', title: 'Lehrer', visible: true},
-            {id: 'kurs', title: 'Kurs', sortable: true, visible: true},
-            {id: 'note', title: 'Note', sortable: true, visible: true},
-            {id: 'mahnung', title: 'M', sortable: false, visible: true},
-            {id: 'fs', title: 'FS', visible: klassenleitung },
-            {id: 'ufs', title: 'uFS', visible: klassenleitung},
-        ],
-=======
->>>>>>> develop
+
         filters: {
             search: <string> '',
             klasse: <Number|string> '',
@@ -66,36 +47,7 @@
         },
     });
 
-<<<<<<< HEAD
-    watch (state.sorting, () => doSort());
 
-    const changeSort = (column: columnType) => {
-        if (column.sortable) {
-            state.sorting.asc = column.id === state.sorting.column ? !state.sorting.asc : true
-            state.sorting.column = column.id
-        }
-    }
-
-    const doSort = () => {
-        if (state.sorting.column == '') return;
-
-        state.leistungen.sort((left: leistungType, right: leistungType) => {
-            const column = (column: leistungType) =>
-                state.sorting.column
-                    .split('.')
-                    .reduce((value: Array<string>, entry: string) => value && value[entry], column)
-
-            let a: string|null = column(left)
-            let b: string|null = column(right)
-
-            if (a === null) return 1
-            if (b === null) return -1
-            if (!state.sorting.asc) [a, b] = [b, a]
-
-            return a.toString().localeCompare(b.toString(),"de-DE")
-        });
-    }
-=======
     const columns = <{ key: string, label: string, sortable: boolean }[]> [
         {key: 'klasse', label: 'Klasse', sortable: true },
         {key: 'name', label: 'Name', sortable: true },
@@ -107,7 +59,6 @@
         {key: 'fs', label: 'FS'},
         {key: 'ufs', label: 'uFS'},
     ]
->>>>>>> develop
 
     onMounted(() => {
         axios.get(route('get_filters')).then(response => state.filterValues = response.data)
@@ -115,15 +66,7 @@
     })
 
     const filteredLeistungen = computed(() =>
-<<<<<<< HEAD
-        state.leistungen.filter(leistung =>
-            searchFilter(leistung)
-            && tableFilter(leistung, 'klasse', true)
-            && tableFilter(leistung, 'kurs')
-            && tableFilter(leistung, 'jahrgang')
-            && tableFilter(leistung, 'note')
-        )
-=======
+
         state.leistungen
             .map(leistung => {
                 leistung.name = [leistung.nachname, leistung.vorname].join(' ')
@@ -136,7 +79,7 @@
                 && tableFilter(leistung, 'jahrgang')
                 && tableFilter(leistung, 'note')
             )
->>>>>>> develop
+
     );
 
     const searchFilter = (leistung: leistungType) => {
@@ -185,65 +128,6 @@
             </div>
 
             <div id="table" v-if="filteredLeistungen.length > 0">
-<<<<<<< HEAD
-                <table>
-                    <thead>
-                        <tr>
-                            <th v-for="col in state.cols" :key="col.id" v-show="col.visible" @click="changeSort(col)">
-                                <div>
-                                    <span class="title">
-                                        {{ col.title }}
-                                    </span>
-                                    <div class="sortable" v-if="col.sortable">
-                                        <svws-ui-icon v-show="col.sortable && col.id !== state.sorting.column">
-                                            <span>Sortieren</span>
-                                            <svg fill="currentColor" viewBox="0 0 24 24">
-                                                <path fill="none" d="M0 0h24v24H0z"/>
-                                                <path d="M13 16.172l5.364-5.364 1.414 1.414L12 20l-7.778-7.778 1.414-1.414L11 16.172V4h2v12.172z"/>
-                                            </svg>
-                                        </svws-ui-icon>
-                                        <svws-ui-icon v-show="col.sortable && state.sorting.asc && col.id === state.sorting.column">
-                                            <span>Aufsteigend</span>
-                                            <svg viewBox="0 0 24 24">
-                                                <path fill="none" d="M0 0H24V24H0z"/>
-                                                <path d="M19 3l4 5h-3v12h-2V8h-3l4-5zm-5 15v2H3v-2h11zm0-7v2H3v-2h11zm-2-7v2H3V4h9z"/>
-                                            </svg>
-                                        </svws-ui-icon>
-                                        <svws-ui-icon v-show="col.sortable && !state.sorting.asc && col.id === state.sorting.column">
-                                            <span>Absteigend</span>
-                                            <svg viewBox="0 0 24 24">
-                                                <path fill="none" d="M0 0H24V24H0z"/>
-                                                <path d="M20 4v12h3l-4 5-4-5h3V4h2zm-8 14v2H3v-2h9zm2-7v2H3v-2h11zm0-7v2H3V4h11z"/>
-                                            </svg>
-                                        </svws-ui-icon>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="leistung in filteredLeistungen" :key="leistung.id">
-                            <td>{{ leistung.klasse }}</td>
-                            <td>{{ leistung.nachname }}, {{ leistung.vorname }}</td>
-                            <td>{{ leistung.fach }}</td>
-                            <td>{{ leistung.lehrer }}</td>
-                            <td>{{ leistung.kurs }}</td>
-                            <td>
-                                <NoteInput :leistung="leistung"></NoteInput>
-                            </td>
-                            <td :class="{ danger: leistung.istGemahnt, success: leistung.mahndatum }">
-                                <MahnungIndicator :leistung="leistung" :key="leistung.id" @updated="updateLeistungMahnung"></MahnungIndicator>
-                            </td>
-                            <td v-show="klassenleitung">
-                                {{ leistung.fs }}
-                            </td>
-                            <td v-show="klassenleitung">
-                                {{ leistung.ufs }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-=======
                 <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
                     <template #cell-mahnung="{ row }">
                         <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
@@ -306,7 +190,7 @@
 <!--                        </tr>-->
 <!--                    </tbody>-->
 <!--                </table>-->
->>>>>>> develop
+
             </div>
 
 <!--            <div id="table-footer">-->

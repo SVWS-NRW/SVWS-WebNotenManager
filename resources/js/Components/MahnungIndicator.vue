@@ -24,29 +24,14 @@
         let url: string = route('set_mahnung', props.leistung)
         let config: config = state
 
-<<<<<<< HEAD
-        axios.post(url, config)
-            .then((): void => emit('updated', props.leistung, state.istGemahnt, state.mahndatum))
-=======
+
         axios.post(url, config).then((): void => emit('updated', props.leistung, state.istGemahnt, state.mahndatum))
->>>>>>> develop
+
     }
 </script>
 
 <template>
-<<<<<<< HEAD
-    <button @click="modal.openModal()">
-        <SvwsUiIcon v-if="state.istGemahnt">
-            <span>Ist gemahnt</span>
-            <i-ri-checkbox-line aria-hidden="true"></i-ri-checkbox-line>
-        </SvwsUiIcon>
 
-        <SvwsUiIcon v-else>
-            <span>Ist nicht gemahnt</span>
-            <i-ri-checkbox-blank-line aria-hidden="true"></i-ri-checkbox-blank-line>
-        </SvwsUiIcon>
-    </button>
-=======
     <div class="text-center" :class="{ red: state.istGemahnt, green: state.mahndatum }">
         <button @click="modal.openModal()">
             <SvwsUiIcon v-if="state.istGemahnt">
@@ -58,7 +43,6 @@
             </SvwsUiIcon>
         </button>
     </div>
->>>>>>> develop
 
     <SvwsUiModal ref="modal">
         <template #modalTitle>Mahnung</template>
@@ -88,16 +72,13 @@
         @apply w-7 h-7
     }
 
-<<<<<<< HEAD
-    .svws-ui--icon > svg {
-        @apply w-7 h-7
-=======
+
     .red {
         @apply bg-red-500 text-white
     }
 
     .green {
         @apply bg-green-500 text-white
->>>>>>> develop
+
     }
 </style>

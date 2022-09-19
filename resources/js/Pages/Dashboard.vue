@@ -1,9 +1,7 @@
 <script setup lang="ts">
-<<<<<<< HEAD
-    import { onMounted } from 'vue';
-=======
+
     import { ref, computed, reactive, onMounted, watch } from 'vue'
->>>>>>> develop
+
     import { useStore } from '../store'
     import axios, {AxiosResponse} from 'axios'
     import MahnungIndicator from "../Components/MahnungIndicator.vue"
@@ -48,8 +46,7 @@
     });
 
 
-<<<<<<< HEAD
-=======
+
 
     onMounted((): void => {
         axios.get(route('get_filters')).then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
@@ -122,7 +119,7 @@
         ...(fachbezogeneBemerkungen.value ? fachbezogeneBemerkungenColumns : []),
         ...(fehlstunden.value ? fehlstundenColumns : []),
     ]
->>>>>>> develop
+
 </script>
 
 <template>
