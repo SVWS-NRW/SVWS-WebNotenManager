@@ -47,7 +47,7 @@ const submit = () => {
 
                         <div class="form">
                             <JetValidationErrors />
-                            <h2 class="svws-ui-headline-4">Passwort eingeben</h2>
+                            <h2 class="headline-4">Passwort eingeben</h2>
                             <SvwsUiTextInput v-model="form.email" type="email" placeholder="E-Mail-Adresse" required :disabled="form.processing" v-on:keyup.enter="submit" />
                             <SvwsUiTextInput v-model="form.password" type="password" placeholder="Passwort" required :disabled="form.processing" v-on:keyup.enter="submit" />
                             <SvwsUiTextInput v-model="form.password_confirmation" type="password" placeholder="Passwort bestätigen" required :disabled="form.processing" v-on:keyup.enter="submit" />

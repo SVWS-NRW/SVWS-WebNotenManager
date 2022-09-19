@@ -24,23 +24,22 @@
         let url: string = route('set_mahnung', props.leistung)
         let config: config = state
 
-        axios.post(url, config)
-            .then((): void => emit('updated', props.leistung, state.istGemahnt, state.mahndatum))
+        axios.post(url, config).then((): void => emit('updated', props.leistung, state.istGemahnt, state.mahndatum))
     }
 </script>
 
 <template>
-    <button @click="modal.openModal()">
-        <SvwsUiIcon v-if="state.istGemahnt">
-            <span>Ist gemahnt</span>
-            <i-ri-checkbox-line aria-hidden="true"></i-ri-checkbox-line>
-        </SvwsUiIcon>
+    <div class="text-center" :class="{ red: state.istGemahnt, green: state.mahndatum }">
+        <button @click="modal.openModal()">
+            <SvwsUiIcon v-if="state.istGemahnt">
+                <i-ri-checkbox-line aria-hidden="true" aria-description="Ist gemahnt"></i-ri-checkbox-line>
+            </SvwsUiIcon>
 
-        <SvwsUiIcon v-else>
-            <span>Ist nicht gemahnt</span>
-            <i-ri-checkbox-blank-line aria-hidden="true"></i-ri-checkbox-blank-line>
-        </SvwsUiIcon>
-    </button>
+            <SvwsUiIcon v-else>
+                <i-ri-checkbox-blank-line aria-hidden="true" aria-description="Ist nicht gemahnt gemahnt"></i-ri-checkbox-blank-line>
+            </SvwsUiIcon>
+        </button>
+    </div>
 
     <SvwsUiModal ref="modal">
         <template #modalTitle>Mahnung</template>
@@ -66,11 +65,15 @@
 </template>
 
 <style scoped>
-    .svws-ui--icon > span {
-        @apply sr-only
+    .icon > svg {
+        @apply w-7 h-7
     }
 
-    .svws-ui--icon > svg {
-        @apply w-7 h-7
+    .red {
+        @apply bg-red-500 text-white
+    }
+
+    .green {
+        @apply bg-green-500 text-white
     }
 </style>

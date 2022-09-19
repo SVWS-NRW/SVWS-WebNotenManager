@@ -1,0 +1,1 @@
+import{c as t,e as s,o}from"./app.97da3a2c.js";/* empty css            */const a={class:"font-sans text-gray-900 antialiased"},l={__name:"TermsOfService",props:{terms:String},setup(r){const e=()=>console.log(123);return(c,n)=>(o(),t("div",a,[s("button",{onClick:e},"qwe")]))}};export{l as default};

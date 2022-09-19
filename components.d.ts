@@ -5,10 +5,6 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    IRiApps2Line: typeof import('~icons/ri/apps2-line')['default']
-    IRiBarChartFill: typeof import('~icons/ri/bar-chart-fill')['default']
-    IRiBuildingLine: typeof import('~icons/ri/building-line')['default']
-    IRiCalendarLine: typeof import('~icons/ri/calendar-line')['default']
     IRiCheckboxBlankLine: typeof import('~icons/ri/checkbox-blank-line')['default']
     IRiCheckboxLine: typeof import('~icons/ri/checkbox-line')['default']
     IRiCloseLine: typeof import('~icons/ri/close-line')['default']

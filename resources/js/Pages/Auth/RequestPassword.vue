@@ -55,7 +55,7 @@
                                 <strong>Hinweis:</strong> <br>
                                 Ihre Eingaben wurden empfangen. Wenn wir ein Konto haben, das Ihrer E-Mail-Adresse entspricht, erhalten Sie eine E-Mail mit einem Link, um Ihr Passwort zu setzen.
                             </p>
-                            <h2 class="svws-ui-headline-4">Passwort anfordern</h2>
+                            <h2 class="headline-4">Passwort anfordern</h2>
                             <SvwsUiTextInput v-model="form.schulnummer" type="text" placeholder="Schulnummer" required :disabled="form.processing" v-on:keyup.enter="submit" />
                             <SvwsUiTextInput v-model="form.email" type="email" placeholder="E-Mail-Adresse" required :disabled="form.processing" v-on:keyup.enter="submit" />
                             <SvwsUiTextInput v-model="form.kuerzel" type="text" placeholder="Lehrkraftkürzel" required :disabled="form.processing" v-on:keyup.enter="submit" />

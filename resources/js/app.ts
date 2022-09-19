@@ -1,12 +1,12 @@
 import './bootstrap';
 import './../css/app.css';
-import "./SVWS-Server/svws-ui-components/dist/style.css";
 
 import { createApp, h, Plugin } from 'vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createInertiaApp, InertiaApp, InertiaAppProps } from '@inertiajs/inertia-vue3';
 import { createPinia } from 'pinia'
-import SvwsUi from "./SVWS-Server/svws-ui-components";
+import SvwsUi from "./SVWS-Server/svws-webclient/src/ui-components/ts";
+import "./SVWS-Server/svws-webclient/src/ui-components/ts/dist/style.css";
 
 const pinia = createPinia()
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';

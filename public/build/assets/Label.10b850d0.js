@@ -1,0 +1,1 @@
+import{o as e,c as t,t as o,v as n}from"./app.97da3a2c.js";const l={class:"block font-medium text-sm text-gray-700"},c={key:0},r={key:1},m={__name:"Label",props:{value:String},setup(s){return(a,_)=>(e(),t("label",l,[s.value?(e(),t("span",c,o(s.value),1)):(e(),t("span",r,[n(a.$slots,"default")]))]))}};export{m as _};
