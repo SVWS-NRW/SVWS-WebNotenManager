@@ -48,7 +48,7 @@
     const fetchFloskelGruppen = (): AxiosPromise => axios.get(route('get_floskeln')).then((res: AxiosResponse) => state.floskelgruppen = res.data)
     const openFloskelMenu = (selected: selected): selected => state.selected = selected
     const closeFloskelMenu = (): selected|null => state.selected = null
-
+</script>
 
 <template>
     <div>
