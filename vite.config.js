@@ -35,7 +35,7 @@ export default defineConfig({
         dedupe: ["vue"],
         alias: {
             '@': '/resources/js',
-            "@svws-nrw/svws-ui": "@/svws-ui-components",
+            "@svws-nrw/svws-ui": "@/ui-components",
         }
     }
 });

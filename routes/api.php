@@ -17,6 +17,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:sanctum')->group(function () { // TODO: Fix sanctum for vite
     Route::controller(GetBemerkungen::class)->group(function () {
         Route::get('get-bemerkung/{leistungNormalized}/{group}', 'get')->name('get_bemerkungen');
         Route::post('set-bemerkung/{leistungNormalized}', 'set')->name('set_bemerkungen');
@@ -35,8 +36,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
     Route::post('set-mahnung/{leistungNormalized}', MahnungController::class)->name('set_mahnung');
-
-Route::middleware('auth:sanctum')->group(function () { // TODO: Fix sanctum for vite
 });
 
 

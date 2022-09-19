@@ -10,7 +10,9 @@
 
     const logout = (): void => Inertia.post(route('logout'))
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
-    const toggleSidebar = (value: boolean) => store.sidebarCollapsed = value
+
+    const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value
+
 
 
     const darkMode = (): void => {
@@ -93,7 +95,9 @@
 
 
 <style scoped>
-    .svws-ui--sidebar--menu-header {
+
+    .sidebar--menu-header {
+
         @apply py-3
     }
 </style>

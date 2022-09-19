@@ -22,7 +22,9 @@
 </template>
 
 <style scoped>
-    .svws-ui--icon > svg {
-        @apply w-7 h-7
+
+    .icon > svg {
+        @apply w-6 h-6
+
     }
 </style>
