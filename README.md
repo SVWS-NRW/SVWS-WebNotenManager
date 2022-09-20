@@ -26,12 +26,17 @@
     * DB_* mit die Datenbank Credentials befüllen
     * MAIL_* mit SMTP Credentials befüllen
     * SCHOOL_NAME mit Name der Schuele befuellen
-* php artisan key:generate
-* php artisan migrate:fresh --seed
-* npm install
-* npm install --prefix resources\js\SVWS-Server\svws-ui-components
-* npm run build --prefix resources\js\SVWS-Server\svws-ui-components
-* npm run production
+
+In den Arbeitsordner das folgende Kommando ausfuhren:
+```
+php artisan key:generate \
+&& php artisan migrate:fresh --seed \
+&& npm install \
+&& npm audit fix \
+&& npm install --prefix resources/js/SVWS-Server/svws-webclient/ \
+&& npm run build --prefix resources/js/SVWS-Server/svws-webclient/src/ui-components/ts/ \
+&& npm run build
+```
 
 ### Lokale Docker Installation
 * git clone
@@ -50,13 +55,20 @@
   * DB_PASSWORD=password
   * MAIL_* mit SMTP Credentials befüllen
   * SCHOOL_NAME mit Name der Schuele befuellen
-* php artisan key:generate
-* php artisan migrate:fresh --seed
-* /vendon/bin/sail up -d
-* /vendon/bin/sail npm install
-* /vendon/bin/sail npm install --prefix resources\js\SVWS-Server\svws-ui-components
-* /vendon/bin/sail npm run build --prefix resources\js\SVWS-Server\svws-ui-components
-* /vendon/bin/sail npm run build
+
+
+In den Arbeitsordner das folgende Kommando ausfuhren:
+```
+alias sail="./vendor/bin/sail" \
+&& sail up -d \
+&& sail php artisan key:generate \
+&& sail php artisan migrate:fresh --seed \
+&& sail npm install \
+&& sail npm audit fix \
+&& sail npm install --prefix resources/js/SVWS-Server/svws-webclient \
+&& sail npm run build --prefix resources/js/SVWS-Server/svws-webclient/src/ui-components/ts/ \
+&& sail npm run build
+```
 
 ## Plugins: 
 * Backend
@@ -68,3 +80,5 @@
     * https://github.com/tailwindlabs/tailwindcss
     * https://github.com/axios/axios
 
+echo 123 && \
+echo 4356

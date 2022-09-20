@@ -80,7 +80,6 @@
                             <a href="#" title="Impressum" class="inline-block text-sm underline">Impressum</a>
                             <a href="#" title="Datenschutz" class="inline-block text-sm underline">Datenschutz</a>
                             <a href="#" title="Hilfe" class="inline-block text-sm underline">Hilfe</a>
-
                         </nav>
                     </footer>
                 </div>
