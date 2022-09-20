@@ -21,7 +21,7 @@ class LeistungObserver
 			'vorname' => $leistung->schueler->vorname,
 			'nachname' => $leistung->schueler->nachname,
 			'geschlecht' => $leistung->schueler->geschlecht,
-			'fach' => $leistung->abiturfach,
+			'fach' => $leistung->lerngruppe->fach->kuerzelAnzeige,
 			'jahrgang' => $leistung->schueler->jahrgang->kuerzel,
 			'lehrer' => $leistung->lerngruppe->lehrer->pluck('nachname')->implode(', '),
 			'kurs' => $this->getMorphable($leistung->lerngruppe, Kurs::class),
