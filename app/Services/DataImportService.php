@@ -19,6 +19,7 @@ use App\Models\Teilleistungsart;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DataImportService
@@ -74,7 +75,7 @@ class DataImportService
                 'kuerzel' => $row['kuerzel'],
                 'nachname' => $row['nachname'],
                 'vorname' => $row['vorname'],
-                'email' => $row['eMailDienstlich'],
+                'email' => $row['eMailDienstlich'] ?? sprintf('%s@%s', Str::random(), Str::random()),
                 'password' => Str::random(),
             ],
         ));

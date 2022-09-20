@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fach;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
 use App\Models\Kurs;
@@ -17,9 +18,10 @@ class GetFilters extends Controller
 	{
 		return response()->json([
 			'noten' => $this->getOptions(Note::class, true),
-			'jahrgaenge' => $this->getOptions(Jahrgang::class, true),
+			'jahrgaenge' => $this->getOptions(Jahrgang::class, true, false),
 			'klassen' => $this->getOptions(Klasse::class, true, true),
 			'kurse' => $this->getOptions(Kurs::class, true, true),
+			'faecher' => $this->getOptions(Fach::class, true, false),
 		]);
 	}
 
@@ -33,13 +35,14 @@ class GetFilters extends Controller
 
 		// Add the empty option only if it's not already in the collection
 		$emptyIsNotInCollection = (new $class)->where('kuerzel', '=', '')->doesntExist();
+
 		if ($showEmptyOption && $emptyIsNotInCollection) {
 			$options = array_merge($options, [self::OPTION_EMPTY]);
 		}
 
 		$modelOptions = (new $class)
 			->get(['kuerzel as index', 'kuerzel as label'])
-			->map(function (Note|Jahrgang|Klasse|Kurs $model) {
+			->map(function (Note|Jahrgang|Klasse|Kurs|Fach $model) {
 				if ($model->label == '') {
 					$model->label = self::OPTION_EMPTY['label'];
 				}
