@@ -55,20 +55,17 @@
 
 <template>
     <div class="flex flex-col gap-6">
+    <h2 class="headline-4">Floskeln</h2>
+    <hr class="border-gray">
+    <div class="pb-0">
+        <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
+    </div>
 
-        <h2 class="headline-4">Floskeln</h2>
-        <hr class="border-gray">
-        <div class="pb-0">
-            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
-        </div>
-        <div class="h-full overflow-y-scroll">
-            <SvwsUiNewTable :data="computedFloskeln" :columns="columns" selectionMode="multiple" :footer="true" v-on:update:modelValue="select">
-                <template #footer>
-                    <SvwsUiButton @click="add" :type="type">Zuweisen</SvwsUiButton>
-                </template>
-            </SvwsUiNewTable>
-
-        </div>
+    <SvwsUiNewTable :data="computedFloskeln" :columns="columns" selectionMode="multiple" :footer="true" v-on:update:modelValue="select">
+        <template #footer>
+            <SvwsUiButton @click="add" :type="type">Zuweisen</SvwsUiButton>
+        </template>
+    </SvwsUiNewTable>
     </div>
 </template>
 
