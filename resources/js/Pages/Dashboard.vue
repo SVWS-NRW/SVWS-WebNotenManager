@@ -111,7 +111,6 @@
     watch(fehlstunden, () => drawTable());
 
     let columns = ref( [
-        { key: 'id', label: 'id', sortable: true },
         { key: 'klasse', label: 'Klasse', sortable: true },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'fach', label: 'Fach', sortable: true },
@@ -164,7 +163,7 @@
                         </SvwsUiButton>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto">
+                    <div class="flex-1 overflow-y-auto ">
                         <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
                             <template #cell-mahnung="{ row }">
                                 <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>

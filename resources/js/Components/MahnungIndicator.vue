@@ -1,17 +1,15 @@
 <script setup lang="ts">
     import {reactive, ref} from 'vue'
-    import axios, {AxiosResponse} from 'axios'
+    import axios from 'axios'
     import moment from 'moment'
 
     const emit = defineEmits(['updated'])
     const props = defineProps(['leistung'])
     const modal = ref(true)
 
-    type config = { istGemahnt: boolean, mahndatum: string|null }
-
     let mahndatumFormatted = (): string|null => {
         if (!props.leistung.mahndatum) return null
-        return moment(new Date(props.leistung.mahndatum)).format('YYYY-MM-DD')
+        return moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY')
     }
 
     let state = reactive({
@@ -19,19 +17,12 @@
         mahndatum: mahndatumFormatted(),
     });
 
-    const setMahnung = (): void => {
-        if (!state.istGemahnt) state.mahndatum = null
-        let url: string = route('set_mahnung', props.leistung)
-        let config: config = state
-
-
-        axios.post(url, config).then((): void => emit('updated', props.leistung, state.istGemahnt, state.mahndatum))
-
-    }
+    const setMahnung = () => axios
+        .post(route('set_mahnung', props.leistung), state)
+        .then((): void => emit('updated', props.leistung, state.istGemahnt))
 </script>
 
 <template>
-
     <div class="text-center" :class="{ red: state.istGemahnt, green: state.mahndatum }">
         <button @click="modal.openModal()">
             <SvwsUiIcon v-if="state.istGemahnt">
@@ -56,7 +47,7 @@
         <template #modalContent>
             <div class="flex flex-col gap-6">
                 <SvwsUiCheckbox v-model="state.istGemahnt">Ist gemahnt</SvwsUiCheckbox>
-                <SvwsUiTextInput v-model="state.mahndatum" type="date" placeholder="Mahndatum" :disabled="!state.istGemahnt"></SvwsUiTextInput>
+                <span v-if="state.mahndatum"><strong>Mahndatum:</strong> {{ state.mahndatum }}</span>
             </div>
         </template>
 
