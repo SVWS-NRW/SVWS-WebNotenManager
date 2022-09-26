@@ -10,15 +10,12 @@
     type bemerkung = string|null
     type selected = { floskelgruppe: string, schueler: schueler }
     type occurrenceType = { '$vorname$ $nachname$': string; '$vorname$': string, '$nachname$': string|null };
-
     type floskel = { gruppe: string, id: number, kuerzel: string, text: string };
     type floskelgruppe = { kuerzel: string, floskeln: floskel };
     type columns = { id: string, title: string, sortable: boolean };
 
-
     interface Props { selected?: selected|null, floskelgruppen: floskelgruppe[] }
     interface State { schueler?: schueler|null, bemerkung?: String, storedBemerkung?: String, isDirty: boolean, floskelgruppen }
-
 
     const emit = defineEmits(['close', 'updated'])
 
@@ -28,9 +25,7 @@
         bemerkung: <bemerkung> '',
         storedBemerkung: <bemerkung> '',
         schueler : <schueler> null,
-
         isDirty: false,
-
         floskelgruppen: [],
         columns: <columns[]> [
             { id: 'kuerzel', title: 'Kürzel', sortable: true },
@@ -38,20 +33,14 @@
         ],
     })
 
-
-
     watch(() => props.selected, (selected: selected): void => {
-
         state.schueler = selected?.schueler
         state.bemerkung = state.storedBemerkung = selected?.schueler[selected?.floskelgruppe]
         state.floskelgruppen = props.floskelgruppen
     })
 
-
-
     const computedBemerkung = computed((): string => {
         state.isDirty = state.bemerkung != state.storedBemerkung
-
 
         if (!state.bemerkung) return
 
@@ -139,23 +128,16 @@
                 </SvwsUiIcon>
             </SvwsUiButton>
         </header>
-        <div class="flex flex-col h-full gap-12">
-            <div class="h-1/3 flex flex-col gap-3">
-                <SvwsUiTextareaInput
-                    resizeable="none"
-                    class="flex-1"
-                    :modelValue="computedBemerkung"
-                    placeholder="Tragen Sie bitte hier Ihre Bemerkungen ein."
-                    @update:modelValue="updateBemerkung"
-                ></SvwsUiTextareaInput>
+        <div class="flex flex-col gap-12">
+            <div class="h-1/2 flex flex-col gap-3">
+                <SvwsUiTextareaInput resizeable="none" class="flex-1" :modelValue="computedBemerkung" placeholder="Tragen Sie bitte hier Ihre Bemerkungen ein." @update:modelValue="updateBemerkung"></SvwsUiTextareaInput>
                 <div class="flex gap-3">
                     <SvwsUiButton @click="setBemerkungen" :type="state.isDirty ? 'primary' : 'secondary'">Speichern</SvwsUiButton>
                     <SvwsUiButton @click="close" v-show="state.isDirty" type="secondary">Verwerfen</SvwsUiButton>
-
                 </div>
             </div>
 
-            <div v-if="currentFloskelGruppe" class="h-1/3 flex flex-col gap-3 mt-3">
+            <div v-if="currentFloskelGruppe">
                 <FloskelTable floskelgruppe="zb" :floskelgruppen="props.floskelgruppen" @added="addFloskeln"></FloskelTable>
             </div>
         </div>
@@ -163,9 +145,7 @@
 </template>
 
 <style scoped>
-
     .icon > svg {
         @apply w-8 h-8
-
     }
 </style>

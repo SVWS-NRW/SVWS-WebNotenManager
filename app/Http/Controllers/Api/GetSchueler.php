@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\KlassenleitungResource;
 use App\Models\Schueler;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class GetSchueler extends Controller
 {
-	public function __invoke(): JsonResponse
+	public function __invoke(): AnonymousResourceCollection
 	{
-		return response()->json(Schueler::with('bemerkung')->get());
+		return KlassenleitungResource::collection(Schueler::with('klasse')->get());
 	}
 }

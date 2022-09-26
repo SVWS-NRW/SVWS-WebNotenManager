@@ -18,19 +18,24 @@ import {computed, onMounted, reactive} from 'vue'
 
     const store = useStore()
 
+    type filterElement = Array<{ id: string, label: string }>
+    type filterValues = { klassen: filterElement}
 
     let props = defineProps({
         auth: Object,
     })
 
     let state = reactive({
-        search: <string> '',
         floskelgruppen: <floskelgruppe[]> [],
         schueler: <schueler[]> [],
         selected: <selected> null,
+        filterValues: <filterValues> {
+            'klassen': [],
+        },
     })
 
     const columns = <column[]>[
+        {key: 'klasse', label: 'Klasse', sortable: true},
         {key: 'vorname', label: 'Vorname', sortable: true},
         {key: 'nachname', label: 'Nachname', sortable: true},
         {key: 'asv', label: 'Asv', sortable: true},
@@ -38,19 +43,33 @@ import {computed, onMounted, reactive} from 'vue'
         {key: 'zb', label: 'Zb', sortable: true},
     ]
 
+    const filters = reactive({
+        search: <string> '',
+        klasse: <Number|string> 0,
+    })
+
     onMounted((): void => {
         fetchSchueler()
         fetchFloskelGruppen()
+        axios.get(route('get_filters')).then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
     })
 
     const filteredSchueler = computed((): Array<schueler> =>
-        state.schueler.filter((schueler: schueler): boolean => searchFilter(schueler))
+        state.schueler.filter((schueler: schueler): boolean =>
+            searchFilter(schueler) && tableFilter(schueler, 'klasse', true)
+        )
     )
 
     const searchFilter = (schueler: schueler) => {
         if (state.search === '') return true
-        const search = (search: string) => search.toLowerCase().includes(state.search.toLowerCase())
+        const search = (search: string) => search.toLowerCase().includes(filters.search.toLowerCase())
         return search(schueler.vorname) || search(schueler.nachname)
+    }
+
+    const tableFilter = (schueler: schueler, column: string, withOnlyEmptyOption: boolean = false) => {
+        if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return schueler[column] == null
+        if (filters[column] == 0) return true
+        return schueler[column] == filters[column]
     }
 
     const fetchSchueler = (): AxiosPromise => axios.get(route('get_schueler')).then((res: AxiosResponse) => state.schueler = res.data)
@@ -69,9 +88,12 @@ import {computed, onMounted, reactive} from 'vue'
             <template #main>
                 <div class="relative flex flex-col w-full h-screen">
                     <TopMenu headline="Klassenleitung"></TopMenu>
-                    <div class="px-6 relative pt-1.5 mb-6">
+                    <div class="flex gap-6 px-6 relative pt-1.5 mb-6">
+                        <div class="max-w-xs">
+                            <SvwsUiTextInput type="search" v-model="filters.search" placeholder="Suche"></SvwsUiTextInput>
+                        </div>
                         <div class="max-w-xs w-full">
-                            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
+                            <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" @update:value="(klasse: Number) => filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>
                         </div>
                     </div>
                     <div class="h-full flex-1 overflow-auto">
