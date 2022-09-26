@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-    import {onMounted, reactive} from 'vue'
+import {computed, onMounted, reactive} from 'vue'
 
     import { useStore } from '../store'
     import Menubar from '../Components/Menubar.vue'
@@ -24,7 +24,7 @@
     })
 
     let state = reactive({
-
+        search: <string> '',
         floskelgruppen: <floskelgruppe[]> [],
         schueler: <schueler[]> [],
         selected: <selected> null,
@@ -43,6 +43,15 @@
         fetchFloskelGruppen()
     })
 
+    const filteredSchueler = computed((): Array<schueler> =>
+        state.schueler.filter((schueler: schueler): boolean => searchFilter(schueler))
+    )
+
+    const searchFilter = (schueler: schueler) => {
+        if (state.search === '') return true
+        const search = (search: string) => search.toLowerCase().includes(state.search.toLowerCase())
+        return search(schueler.vorname) || search(schueler.nachname)
+    }
 
     const fetchSchueler = (): AxiosPromise => axios.get(route('get_schueler')).then((res: AxiosResponse) => state.schueler = res.data)
     const fetchFloskelGruppen = (): AxiosPromise => axios.get(route('get_floskeln')).then((res: AxiosResponse) => state.floskelgruppen = res.data)
@@ -60,10 +69,13 @@
             <template #main>
                 <div class="relative flex flex-col w-full h-screen">
                     <TopMenu headline="Klassenleitung"></TopMenu>
-
-
+                    <div class="px-6 relative pt-1.5 mb-6">
+                        <div class="max-w-xs w-full">
+                            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
+                        </div>
+                    </div>
                     <div class="h-full flex-1 overflow-auto">
-                        <SvwsUiNewTable :data="state.schueler" :columns="columns" class="relative">
+                        <SvwsUiNewTable :data="filteredSchueler" :columns="columns" class="relative">
                             <template #cell-asv="{ row }">
                                 <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'asv' })" :bemerkung="Boolean(row.asv)"></BemerkungenIndicator>
                             </template>
@@ -74,13 +86,11 @@
                                 <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'zb' })" :bemerkung="Boolean(row.zb)"></BemerkungenIndicator>
                             </template>
                         </SvwsUiNewTable>
-
                     </div>
                 </div>
             </template>
 
             <template #contentSidebar>
-
                 <FloskelnMenu :selected="state.selected" :floskelgruppen="state.floskelgruppen" @close="closeFloskelMenu" @updated="fetchSchueler"></FloskelnMenu>
             </template>
         </SvwsUiAppLayout>
