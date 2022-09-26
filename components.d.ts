@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     IRiCloseLine: typeof import('~icons/ri/close-line')['default']
     IRiFilter3Line: typeof import('~icons/ri/filter3-line')['default']
     IRiFolderSharedLine: typeof import('~icons/ri/folder-shared-line')['default']
+    IRiLineLine: typeof import('~icons/ri/line-line')['default']
     IRiLogoutBoxLine: typeof import('~icons/ri/logout-box-line')['default']
     IRiMailCheckLine: typeof import('~icons/ri/mail-check-line')['default']
     IRiMailLine: typeof import('~icons/ri/mail-line')['default']
@@ -19,6 +20,7 @@ declare module '@vue/runtime-core' {
     IRiSettings3Line: typeof import('~icons/ri/settings3-line')['default']
     IRiSunLine: typeof import('~icons/ri/sun-line')['default']
     IRiTeamLine: typeof import('~icons/ri/team-line')['default']
+    IRiUser2Line: typeof import('~icons/ri/user2-line')['default']
   }
 }
 

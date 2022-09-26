@@ -10,10 +10,7 @@
 
     const logout = (): void => Inertia.post(route('logout'))
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
-
     const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value
-
-
 
     const darkMode = (): void => {
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -53,8 +50,8 @@
                 <template #label>{{ item.caption }}</template>
                 <template #icon>
                      <SvwsUiIcon>
-                        <i-ri-newspaper-fill aria-hidden="true" v-if="item.value === 'notenmanager'"></i-ri-newspaper-fill>
-                        <i-ri-team-line aria-hidden="true" v-if="item.value === 'klassenleitung'"></i-ri-team-line>
+                        <i-ri-team-line aria-hidden="true" v-if="item.value === 'notenmanager'"></i-ri-team-line>
+                        <i-ri-user2-line aria-hidden="true" v-if="item.value === 'klassenleitung'"></i-ri-user2-line>
                     </SvwsUiIcon>
                 </template>
             </SvwsUiSidebarMenuItem>
