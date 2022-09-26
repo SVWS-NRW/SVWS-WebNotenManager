@@ -23,7 +23,7 @@ class LeistungObserver
 			'geschlecht' => $leistung->schueler->geschlecht,
 			'fach' => $leistung->lerngruppe->fach->kuerzelAnzeige,
 			'jahrgang' => $leistung->schueler->jahrgang->kuerzel,
-			'lehrer' => $leistung->lerngruppe->lehrer->pluck('nachname')->implode(', '),
+			'lehrer' => $leistung->lerngruppe->lehrer->pluck('kuerzel')->implode(', '),
 			'kurs' => $this->getMorphable($leistung->lerngruppe, Kurs::class, 'bezeichnung'),
 			'note' => $leistung->note?->kuerzel,
 			'istGemahnt' => (bool) $leistung->istGemahnt,
