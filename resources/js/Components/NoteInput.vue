@@ -25,7 +25,13 @@
 </script>
 
 <template>
-    <div class="lowScore">
+    <span :class="{'bg-red-500' : lowScore}">
         <SvwsUiTextInput v-model="leistung.note" :valid="!lowScore"></SvwsUiTextInput>
-    </div>
+    </span>
 </template>
+
+<style scoped>
+    .text-input-component {
+        max-width: 48px !important;
+    }
+</style>

@@ -122,7 +122,7 @@
         { key: 'fach', label: 'Fach', sortable: true },
         { key: 'lehrer', label: 'Lehrer', sortable: true },
         { key: 'kurs', label: 'Kurs', sortable: true },
-        { key: 'note', label: 'Note', sortable: true },
+        { key: 'note', label: 'Note', sortable: false },
         { key: 'mahnung', label: 'M', sortable: false },
     ]
 
@@ -177,12 +177,12 @@
                         </SvwsUiButton>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto ">
+                    <div class="flex-1 overflow-y-auto max-w-7xl">
                         <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
                             <template #cell-mahnung="{ row }">
                                 <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
                             </template>
-                            <template #cell-note="{ row }" >
+                            <template #cell-note="{ row }">
                                 <NoteInput :leistung="row"></NoteInput>
                             </template>
                         </SvwsUiNewTable>
