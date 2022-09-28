@@ -32,6 +32,7 @@
                         <nav class="flex flex-row items-center space-x-2">
                             <a :href="route('impressum')" title="Impressum" class="inline-block text-sm underline">Impressum</a>
                             <a :href="route('datenschutz')" title="Datenschutz" class="inline-block text-sm underline">Datenschutz</a>
+                            <a :href="route('barrierefreiheit')" title="Barrierefreiheit" class="inline-block text-sm underline">Barrierefreiheit</a>
                             <a href="https://schulverwaltungsinfos.nrw.de/svws/wiki/index.php?title=WeNoM:Handbuch" target="_blank" title="Hilfe" class="inline-block text-sm underline">Hilfe</a>
                         </nav>
                     </footer>

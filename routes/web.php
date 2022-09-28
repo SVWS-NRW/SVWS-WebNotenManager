@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\RequestPasswordController;
-use App\Http\Controllers\Datenschutz;
-use App\Http\Controllers\Impressum;
 use App\Http\Controllers\KlassenleitungController;
 use App\Http\Controllers\LeistungsController;
 use App\Http\Controllers\SettingsController;
@@ -14,8 +12,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 	Route::get('einstellungen', SettingsController::class)->name('settings');
 });
 
-Route::get('impressum', Impressum::class)->name('impressum');
-Route::get('datenschutz', Datenschutz::class)->name('datenschutz');
+Route::inertia('impressum', 'Impressum')->name('impressum');
+Route::inertia('datenschutz', 'Datenschutz')->name('datenschutz');
+Route::inertia('barrierefreiheit', 'Barrierefreiheit')->name('barrierefreiheit');
 
 Route::controller(RequestPasswordController::class)
 	->middleware('guest')
