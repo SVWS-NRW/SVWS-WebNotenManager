@@ -17,7 +17,7 @@ class LeistungObserver
 	private function getData(Leistung $leistung): array
 	{
 		return [
-			'klasse' => $this->getMorphable($leistung->lerngruppe, Klasse::class),
+			'klasse' => $leistung->schueler->klasse->kuerzel,
 			'vorname' => $leistung->schueler->vorname,
 			'nachname' => $leistung->schueler->nachname,
 			'geschlecht' => $leistung->schueler->geschlecht,
