@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 	Route::get('/', LeistungsController::class)->name('dashboard');
 	Route::get('klassenleitung', KlassenleitungController::class)->name('klassenleitung');
-	Route::get('einstellungen', SettingsController::class)->name('settings');
+	Route::inertia('einstellungen', 'Settings/Index')->name('settings.index');
+	Route::inertia('einstellungen/schule', 'Settings/School')->name('settings.school');
 });
 
 Route::inertia('impressum', 'Impressum')->name('impressum');

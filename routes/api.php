@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\GetBemerkungen;
 use App\Http\Controllers\Api\GetFloskeln;
 use App\Http\Controllers\Api\GetLeistungen;
 use App\Http\Controllers\Api\GetSchueler;
+use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\NotenController;
 use App\Http\Controllers\Api\MahnungController;
 use App\Http\Controllers\Api\SchuelerBemerkung;
@@ -27,6 +28,12 @@ Route::middleware('auth:sanctum')->group(function () { // TODO: Fix sanctum for 
         Route::get('get-noten', 'get')->name('get_noten');
         Route::post('set-noten/{leistungNormalized}', 'set')->name('set_noten');
     });
+
+	Route::controller(SettingController::class)->group(function () {
+        Route::get('get-settings/{type}', 'get')->name('get_settings');
+        Route::post('set-settings', 'set')->name('set_settings');
+    });
+
 
     Route::get('get-floskeln', GetFloskeln::class)->name('get_floskeln');
     Route::get('get-leistungen', GetLeistungen::class)->name('get_leistungen');

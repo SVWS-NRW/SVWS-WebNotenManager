@@ -68,7 +68,7 @@
                 </template>
             </SvwsUiSidebarMenuItem>
 
-            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings')" @click="navigate('settings')">
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.index')">
                 <template #label>Einstellungen</template>
                 <template #icon>
                     <SvwsUiIcon>

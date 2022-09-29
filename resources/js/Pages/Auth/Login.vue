@@ -7,6 +7,7 @@
 
     defineProps({
         status: String,
+        settings: Array,
     });
 
     const form = useForm({
@@ -15,7 +16,6 @@
         remember: false,
     });
 
-    const schoolName = computed(() => usePage().props.value.schoolName)
 
     const requestPassword = () => Inertia.get(route('request_password'))
     const submit = () => {
@@ -38,7 +38,7 @@
             <template #sidebar>
                 <div class="space-y-6">
                     <JetValidationErrors />
-                    <h2 class="headline-4">{{ schoolName }}</h2>
+                    <h2 class="headline-4">{{ settings.school_name }}</h2>
 
                     <SvwsUiTextInput v-model="form.email" type="email" placeholder="E-Mail-Adresse" required :disabled="form.processing" v-on:keyup.enter="submit" />
                     <SvwsUiTextInput v-model="form.password" type="password" placeholder="Passwort" required :disabled="form.processing" v-on:keyup.enter="submit" />
