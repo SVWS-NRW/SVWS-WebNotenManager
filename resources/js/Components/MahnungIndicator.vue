@@ -1,7 +1,8 @@
 <script setup lang="ts">
-    import {reactive, ref} from 'vue'
+    import { reactive, ref } from 'vue'
     import axios from 'axios'
     import moment from 'moment'
+    import { usePage } from '@inertiajs/inertia-vue3'
 
     const emit = defineEmits(['updated'])
     const props = defineProps(['leistung'])
@@ -26,7 +27,12 @@
                 <i-ri-mail-line aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></i-ri-mail-line>
             </SvwsUiIcon>
         </button>
-        <SvwsUiCheckbox v-else v-model="state.istGemahnt" @update:modelValue="setMahnung"></SvwsUiCheckbox>
+        <div v-else>
+            <SvwsUiIcon v-if="usePage().props.value.warning_entry_disabled">
+                <i-ri-check-line v-if="state.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></i-ri-check-line>
+            </SvwsUiIcon>
+            <SvwsUiCheckbox v-else v-model="state.istGemahnt" @update:modelValue="setMahnung"></SvwsUiCheckbox>
+        </div>
     </div>
 
     <SvwsUiModal ref="modal">

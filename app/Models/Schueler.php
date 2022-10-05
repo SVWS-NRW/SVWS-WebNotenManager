@@ -53,6 +53,20 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereVorname($value)
  * @mixin \Eloquent
+ * @property string|null $asv
+ * @property string|null $aue
+ * @property string|null $zb
+ * @property string|null $lels
+ * @property string|null $schulformEmpf
+ * @property string|null $individuelleVersetzungsbemerkungen
+ * @property string|null $foerderbemerkungen
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereAsv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereAue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereFoerderbemerkungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereIndividuelleVersetzungsbemerkungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereLels($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereSchulformEmpf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereZb($value)
  */
 class Schueler extends Model
 {

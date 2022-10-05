@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('type');
             $table->string('key')->unique();
-            $table->text('value');
+            $table->text('value')->nullable();
             $table->timestamps();
         });
     }

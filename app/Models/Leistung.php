@@ -47,6 +47,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @mixin \Eloquent
  * @property int $ext_id
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereExtId($value)
+ * @property int $istGemahnt
+ * @property \Illuminate\Support\Carbon|null $mahndatum
+ * @property-read \App\Models\LeistungNormalized|null $leistungNormalized
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereIstGemahnt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereMahndatum($value)
  */
 class Leistung extends Model
 {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, watch} from 'vue'
     import { useStore } from '../../store'
     import Menubar from '../../Components/Menubar.vue'
     import TopMenu from "../../Components/TopMenu.vue"
@@ -22,11 +21,11 @@ import {computed, onMounted, reactive, watch} from 'vue'
             <template #secondaryMenu>
                 <SvwsUiSecondaryMenu>
                     <template #headline>
-                        Schulverwaltung1
+                        Schulverwaltung
                     </template>
 
                     <template #content>
-                        <SvwsUiSidebarMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')" >
+                        <SvwsUiSidebarMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')" v-if="props.auth.user.administrator">
                             <template #label>Schule bearbeiten</template>
                         </SvwsUiSidebarMenuItem>
                     </template>

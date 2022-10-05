@@ -12,6 +12,7 @@ class GetLeistungen extends Controller
     public function __invoke(): JsonResponse
     {
 		$leistungen = LeistungNormalized::query()
+			->whereIn('lerngruppe_id', auth()->user()->lerngruppen->pluck('id'))
 			->orderBy(DB::raw('ISNULL(klasse), klasse'), 'ASC')
 			->orderBy('nachname')
 			->get();

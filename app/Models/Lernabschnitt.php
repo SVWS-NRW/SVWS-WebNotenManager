@@ -37,6 +37,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  * @property-read \App\Models\Note|null $lernbereich1Note
  * @property-read \App\Models\Note|null $lernbereich2Note
+ * @property-read \App\Models\Foerderschwerpunkt|null $foerderschwerpunkt1Relation
+ * @property-read \App\Models\Foerderschwerpunkt|null $foerderschwerpunkt2Relation
  */
 class Lernabschnitt extends Model
 {

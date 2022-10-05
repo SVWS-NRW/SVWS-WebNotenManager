@@ -21,6 +21,8 @@ class HandleInertiaRequests extends Middleware
             'auth.user' => fn () => $request->user() ? $request->user()->only('id', 'vorname', 'nachname', 'email', 'administrator') : null,
 			'schoolName' => config('app.school_name'),
 			'settings' => Setting::all()->pluck('value','key'),
+			'note_entry_disabled' => Setting::entryDisabled('note_entry_until'),
+			'warning_entry_disabled' => Setting::entryDisabled('warning_entry_until'),
         ]);
     }
 }

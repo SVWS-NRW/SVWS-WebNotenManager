@@ -21,6 +21,9 @@ class SettingSeeder extends Seeder
 		['type' => 'school', 'key' => 'school_gdpr_address', 'value' => '[Anschrift des Datenschutzbeauftragten]'],
 		['type' => 'school', 'key' => 'hosting_provider_name', 'value' => '[Name des Hosters] '],
 		['type' => 'school', 'key' => 'hosting_provider_address', 'value' => '[Anschrift des Hosters]'],
+
+		['type' => 'school', 'key' => 'warning_entry_until', 'value' => null],
+		['type' => 'school', 'key' => 'note_entry_until', 'value' => null],
 	];
 
     public function run(): void

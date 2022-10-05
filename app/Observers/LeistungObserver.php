@@ -17,6 +17,7 @@ class LeistungObserver
 	private function getData(Leistung $leistung): array
 	{
 		return [
+			'lerngruppe_id' => $leistung->lerngruppe->id,
 			'klasse' => $leistung->schueler->klasse->kuerzel,
 			'vorname' => $leistung->schueler->vorname,
 			'nachname' => $leistung->schueler->nachname,

@@ -72,9 +72,13 @@
                             <SvwsUiTextInput v-model="settings.hosting_provider_name" placeholder="[Name des Hosters]"></SvwsUiTextInput>
                             <SvwsUiTextInput v-model="settings.hosting_provider_address" placeholder="[Anschrift des Hosters]"></SvwsUiTextInput>
                         </div>
+                        <div class="flex flex-col gap-6 justify-start">
+                            <h3 class="headline-3">Datenschutz</h3>
+                            <SvwsUiTextInput v-model="settings.warning_entry_until" type="date" placeholder="Mahnungeingabe möglich bis"></SvwsUiTextInput>
+                            <SvwsUiTextInput v-model="settings.note_entry_until" type="date" placeholder="Noteneingabe möglich bis"></SvwsUiTextInput>
+                        </div>
 
                         <SvwsUiButton @click="saveSettings" class="self-start">Speichern</SvwsUiButton>
-
                     </div>
                 </div>
             </template>
