@@ -17,7 +17,7 @@ module.exports = {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
             },
             backgroundImage: {
-                'class': "url('@/Images/depositphotos_207646682-stock-photo-interior-empty-modern-classroom-school.jpg')",
+                'class': "url('@/Images/placeholder-background.jpg')",
             },
         },
     },

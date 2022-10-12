@@ -1,5 +1,9 @@
 <script setup lang="ts">
     import AuthLayout from "../Layouts/AuthLayout.vue";
+
+    let props = defineProps({
+        settings: Array,
+    })
 </script>
 
 <template>
@@ -13,24 +17,24 @@
                 <div class="mx-auto w-full max-w-6xl bg-white rounded shadow-lg p-12 flex flex-col gap-6 grow">
                     <h2 class="headline-2">Impressum</h2>
                     <p>
-                        [Name der Schule] <br>
-                        [Adresse der Schule]
+                        {{ settings.school_name }} <br>
+                        {{ settings.school_address }}
                     </p>
 
                     <h3 class="headline-3">Schulleitung</h3>
                     <p>
-                        [Name Schulleitung] <br>
-                        Telefon-Nr.: [Sekretariat] <br>
-                        E-Mail: [E-Mail Adresse der Schule]
+                        {{ settings.school_management_name }} <br>
+                        Telefon-Nr.: {{ settings.school_management_telephone }} <br>
+                        E-Mail: {{ settings.school_management_email }}
                     </p>
-                    <p>Die [Name der Schule] ist eine Körperschaft des Öffentlichen Rechts. Sie wird durch den Schulleiter gesetzlich vertreten.</p>
+                    <p>Die {{ settings.school_name }} ist eine Körperschaft des Öffentlichen Rechts. Sie wird durch den Schulleiter gesetzlich vertreten.</p>
 
                     <h3 class="headline-3">Schulträger</h3>
                     <h4 class="headline-4">Diensteanbieter im Sinne des TMG</h4>
                     <p>
-                        [Name des Schulträgers] <br>
-                        [Anschrift des Schulträgers] <br>
-                        [Kontaktdaten des Schulträgers]
+                        {{ settings.school_board_name }} <br>
+                        {{ settings.school_board_address }} <br>
+                        {{ settings.school_board_contact }}
                     </p>
 
                     <h3 class="headline-3">Urheberrecht</h3>

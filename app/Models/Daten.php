@@ -48,6 +48,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Schueler[] $schueler
  * @property-read int|null $schueler_count
+ * @property int $schulnummer
+ * @property int $lehrerID API LehrerID value
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereLehrerID($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Daten whereSchulnummer($value)
  */
 class Daten extends Model
 {

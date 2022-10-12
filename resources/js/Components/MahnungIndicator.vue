@@ -1,21 +1,19 @@
 <script setup lang="ts">
-    import {reactive, ref} from 'vue'
+    import { reactive, ref } from 'vue'
     import axios from 'axios'
     import moment from 'moment'
+    import { usePage } from '@inertiajs/inertia-vue3'
 
     const emit = defineEmits(['updated'])
     const props = defineProps(['leistung'])
     const modal = ref(true)
 
-    let mahndatumFormatted = (): string|null => {
-        if (!props.leistung.mahndatum) return null
-        return moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY')
-    }
-
     let state = reactive({
         istGemahnt: Boolean(props.leistung.istGemahnt),
-        mahndatum: mahndatumFormatted(),
+        mahndatum: props.leistung.mahndatum,
     });
+
+    const mahndatumFormatted = (): string => moment(new Date(state.mahndatum)).format('DD.MM.YYYY')
 
     const setMahnung = () => axios
         .post(route('set_mahnung', props.leistung), state)
@@ -24,15 +22,17 @@
 
 <template>
     <div class="text-center" :class="{ red: state.istGemahnt, green: state.mahndatum }">
-        <button @click="modal.openModal()">
-            <SvwsUiIcon v-if="state.istGemahnt">
-                <i-ri-checkbox-line aria-hidden="true" aria-description="Ist gemahnt"></i-ri-checkbox-line>
-            </SvwsUiIcon>
-
-            <SvwsUiIcon v-else>
-                <i-ri-checkbox-blank-line aria-hidden="true" aria-description="Ist nicht gemahnt gemahnt"></i-ri-checkbox-blank-line>
+        <button @click="modal.openModal()" v-if="state.mahndatum">
+            <SvwsUiIcon>
+                <i-ri-mail-line aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></i-ri-mail-line>
             </SvwsUiIcon>
         </button>
+        <div v-else>
+            <SvwsUiIcon v-if="usePage().props.value.warning_entry_disabled">
+                <i-ri-check-line v-if="state.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></i-ri-check-line>
+            </SvwsUiIcon>
+            <SvwsUiCheckbox v-else v-model="state.istGemahnt" @update:modelValue="setMahnung"></SvwsUiCheckbox>
+        </div>
     </div>
 
     <SvwsUiModal ref="modal">
@@ -45,14 +45,10 @@
         </template>
 
         <template #modalContent>
-            <div class="flex flex-col gap-6">
-                <SvwsUiCheckbox v-model="state.istGemahnt">Ist gemahnt</SvwsUiCheckbox>
-                <span v-if="state.mahndatum"><strong>Mahndatum:</strong> {{ state.mahndatum }}</span>
-            </div>
+            <strong>Mahndatum:</strong> {{ mahndatumFormatted() }}
         </template>
 
         <template #modalActions>
-            <SvwsUiButton @click="setMahnung()" type="primary">Speichern</SvwsUiButton>
             <SvwsUiButton @click="modal.closeModal()" type="secondary">Schließen</SvwsUiButton>
         </template>
     </SvwsUiModal>
@@ -60,9 +56,8 @@
 
 <style scoped>
     .icon > svg {
-        @apply w-7 h-7
+        @apply w-6 h-6
     }
-
 
     .red {
         @apply bg-red-500 text-white
@@ -70,6 +65,5 @@
 
     .green {
         @apply bg-green-500 text-white
-
     }
 </style>

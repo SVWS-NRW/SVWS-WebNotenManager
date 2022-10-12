@@ -13,7 +13,6 @@
     * DB_* mit die Datenbank Credentials befüllen
     * MAIL_* mit SMTP Credentials befüllen
     * APP_KEY mit den Ergebnis von `echo 'base64:'.base64_encode(random_bytes(32));` befüllen
-    * SCHOOL_NAME mit Name der Schuele befuellen
 
 ### SSH Installation
 * git clone
@@ -25,7 +24,6 @@
     * APP_URL= mit den URL wo die App erreichbar wird befüllen
     * DB_* mit die Datenbank Credentials befüllen
     * MAIL_* mit SMTP Credentials befüllen
-    * SCHOOL_NAME mit Name der Schuele befuellen
 
 In den Arbeitsordner das folgende Kommando ausfuhren:
 ```
@@ -54,7 +52,6 @@ php artisan key:generate \
   * DB_USERNAME=sail 
   * DB_PASSWORD=password
   * MAIL_* mit SMTP Credentials befüllen
-  * SCHOOL_NAME mit Name der Schuele befuellen
 
 
 In den Arbeitsordner das folgende Kommando ausfuhren:

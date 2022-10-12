@@ -17,13 +17,14 @@ class LeistungObserver
 	private function getData(Leistung $leistung): array
 	{
 		return [
-			'klasse' => $this->getMorphable($leistung->lerngruppe, Klasse::class),
+			'lerngruppe_id' => $leistung->lerngruppe->id,
+			'klasse' => $leistung->schueler->klasse->kuerzel,
 			'vorname' => $leistung->schueler->vorname,
 			'nachname' => $leistung->schueler->nachname,
 			'geschlecht' => $leistung->schueler->geschlecht,
 			'fach' => $leistung->lerngruppe->fach->kuerzelAnzeige,
 			'jahrgang' => $leistung->schueler->jahrgang->kuerzel,
-			'lehrer' => $leistung->lerngruppe->lehrer->pluck('nachname')->implode(', '),
+			'lehrer' => $leistung->lerngruppe->lehrer->pluck('kuerzel')->implode(', '),
 			'kurs' => $this->getMorphable($leistung->lerngruppe, Kurs::class, 'bezeichnung'),
 			'note' => $leistung->note?->kuerzel,
 			'istGemahnt' => (bool) $leistung->istGemahnt,

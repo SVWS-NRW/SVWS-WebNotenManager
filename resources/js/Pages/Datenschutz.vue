@@ -1,5 +1,9 @@
 <script setup lang="ts">
-    import AuthLayout from "../Layouts/AuthLayout.vue";
+    import AuthLayout from "../Layouts/AuthLayout.vue"
+
+    let props = defineProps({
+        settings: Array,
+    })
 </script>
 
 <template>
@@ -15,13 +19,14 @@
                     <h4 class="headline-4">Verantwortlicher</h4>
                     <p>Verantwortlicher gem. Art. 4 Nr. 7 EU-Datenschutz-Grundverordnung (EU-DSGVO) ist</p>
                     <p>
-                        [Name Schulleitung] <br> [Anschrift der Schule]
+                        {{ settings.school_management_name }} <br>
+                        {{ settings.school_address }}
                     </p>
 
-                    <p>Den Datenschutzbeauftragten erreichen Sie per E-Mail unter [Email des Datenschutzbeauftragten] oder über die Adresse:</p>
+                    <p>Den Datenschutzbeauftragten erreichen Sie per E-Mail unter {{ settings.school_gdpr_email }} oder über die Adresse:</p>
 
                     <h4 class="headline-4">Datenschutzbeauftragter</h4>
-                    <p>[Anschrift des Datenschutzbeauftragten]</p>
+                    <p>{{ settings.school_gdpr_address }}</p>
                     <p>Die Schule unterliegt als öffentliche Stelle den Bestimmungen des Nordrhein-Westfälischen Datenschutzgesetzes. Es ist sichergestellt, dass die Vorschriften über den Datenschutz auch von beteiligten externen Dienstleistern beachtet werden.</p>
 
                     <h3 class="headline-3">Ihre Rechte als Nutzerinnen und Nutzer</h3>
@@ -45,10 +50,9 @@
 
                     <h3 class="headline-3">Hinweise zur Datenverarbeitung</h3>
                     <p>Bereitstellung der Website und Erstellung von Protokoll- oder Log-Dateien:</p>
-                    <p>Das Internetangebot der Schule wird bei [Name des Hosters] gehostet.</p>
-                    <p>[Anschrift des Hosters]</p>
+                    <p>Das Internetangebot der Schule wird bei {{ settings.hosting_provider_name }} gehostet.</p>
+                    <p>{{ settings.hosting_provider_address }}</p>
                     <p>verarbeitet im Auftrag zu diesem Zweck die unten genannten Daten.</p>
-
 
                     <h4 class="headline-4">Speicherung</h4>
                     <p>Welche Daten werden verarbeitet? Sofern nicht anders angegeben, werden nachfolgend erläuterte Daten bei gespeichert:</p>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Leistung;
+use App\Models\Lerngruppe;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,6 +13,7 @@ return new class extends Migration
         Schema::create('leistung_normalized', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Leistung::class);
+            $table->foreignIdFor(Lerngruppe::class);
             $table->string('klasse')->nullable();
             $table->string('vorname');
             $table->string('nachname');

@@ -26,6 +26,12 @@
         mahndatum: boolean
     }
 
+    type column = {
+        key: string,
+        label: string,
+        sortable: boolean
+    }
+
     type filterElementType = Array<{ id: string, label: string }>
     type filterValuesType = {
         jahrgaenge: filterElementType,
@@ -106,32 +112,40 @@
     let fachbezogeneBemerkungen = ref(false)
     let fehlstunden = ref(false)
 
-    watch(teilleistungen, () => drawTable());
-    watch(fachbezogeneBemerkungen, () => drawTable());
-    watch(fehlstunden, () => drawTable());
+    watch([teilleistungen, fachbezogeneBemerkungen, fehlstunden], () => drawTable());
 
-    let columns = ref( [
+    let columns = ref( [])
+
+    const baseColumns = [
         { key: 'klasse', label: 'Klasse', sortable: true },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'fach', label: 'Fach', sortable: true },
         { key: 'lehrer', label: 'Lehrer', sortable: true },
         { key: 'kurs', label: 'Kurs', sortable: true },
-        { key: 'note', label: 'Note', sortable: true },
+        { key: 'note', label: 'Note', sortable: false },
         { key: 'mahnung', label: 'M', sortable: false },
-        { key: 'fs', label: 'FS', sortable: true },
-        { key: 'ufs', label: 'FSU', sortable: true },
-    ])
-
-    const teilleistungenColumns = []
-    const fachbezogeneBemerkungenColumns = []
-    const fehlstundenColumns = []
-
-    const drawTable = () => columns.value = [ // https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/8
-        ...(teilleistungen.value ? teilleistungenColumns : []),
-        ...(fachbezogeneBemerkungen.value ? fachbezogeneBemerkungenColumns : []),
-        ...(fehlstunden.value ? fehlstundenColumns : []),
     ]
 
+    const teilleistungenColumns: Array<column> = []
+    const fachbezogeneBemerkungenColumns: Array<column> = []
+    const fehlstundenColumns: Array<column> = [
+        { key: 'fs', label: 'FS', sortable: true },
+        { key: 'ufs', label: 'FSU', sortable: true },
+    ]
+
+    const drawTable = () => {
+        columns.value.length = 0
+        pushTable(false, baseColumns, true)
+        pushTable(teilleistungen.value, teilleistungenColumns)
+        pushTable(fachbezogeneBemerkungen.value, fachbezogeneBemerkungenColumns)
+        pushTable(fehlstunden.value, fehlstundenColumns)
+    }
+
+    const pushTable = (model: boolean, array: Array<column>, always: boolean = false): void => {
+        if (model || always) array.forEach(column => columns.value.push(column))
+    }
+
+    drawTable()
 </script>
 
 <template>
@@ -163,21 +177,18 @@
                         </SvwsUiButton>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto ">
+                    <div class="flex-1 overflow-y-auto max-w-7xl">
                         <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
                             <template #cell-mahnung="{ row }">
                                 <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
                             </template>
-                            <template #cell-note="{ row }" >
+                            <template #cell-note="{ row }">
                                 <NoteInput :leistung="row"></NoteInput>
                             </template>
                         </SvwsUiNewTable>
                     </div>
-
-
                 </div>
             </template>
-
         </SvwsUiAppLayout>
     </div>
 </template>

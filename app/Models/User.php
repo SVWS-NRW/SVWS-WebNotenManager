@@ -61,6 +61,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereNachname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereVorname($value)
  * @property-read \App\Models\Daten|null $daten
+ * @property bool $administrator
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAdministrator($value)
  */
 class User extends Authenticatable
 {
@@ -101,8 +103,18 @@ class User extends Authenticatable
         return $this->belongsToMany(Lerngruppe::class, 'lehrer_lerngruppe');
     }
 
+    public function klassen(): BelongsToMany
+    {
+        return $this->belongsToMany(Klasse::class, 'klasse_lehrer');
+    }
+
     public function daten(): HasOne
     {
         return $this->hasOne(Daten::class);
     }
+
+	public function administrator(): bool
+	{
+		return (bool) $this->administrator;
+	}
 }

@@ -11,6 +11,11 @@ class GetSchueler extends Controller
 {
 	public function __invoke(): AnonymousResourceCollection
 	{
-		return KlassenleitungResource::collection(Schueler::with('klasse')->get());
+		return KlassenleitungResource::collection(
+			Schueler::query()
+				->with('klasse')
+				->whereIn('klasse_id', auth()->user()->klassen()->pluck('id'))
+				->get()
+		);
 	}
 }
