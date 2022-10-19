@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fach;
+use App\Models\Floskel;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
 use App\Models\Kurs;
@@ -14,19 +15,31 @@ class GetFilters extends Controller
 	const OPTION_ALL = ['index' => 0, 'label' => 'Alle'];
 	const OPTION_EMPTY = ['index' => '', 'label' => 'Leer'];
 
-	public function __invoke(): JsonResponse
+	public function dashboard(): JsonResponse
 	{
 		return response()->json([
-			'noten' => $this->getOptions(Note::class, true),
-			'jahrgaenge' => $this->getOptions(Jahrgang::class, true, false),
-			'klassen' => $this->getOptions(Klasse::class, true, true),
-			'kurse' => $this->getOptions(Kurs::class, true, true),
-			'faecher' => $this->getOptions(Fach::class, true, false),
+			'noten' => $this->getOptions(class: Note::class, showAllOption: true),
+			'jahrgaenge' => $this->getOptions(class: Jahrgang::class, showAllOption: true),
+			'klassen' => $this->getOptions(class: Klasse::class, showAllOption: true, showEmptyOption: true),
+			'kurse' => $this->getOptions(class: Kurs::class, showAllOption: true, showEmptyOption: true),
+			'faecher' => $this->getOptions(class: Fach::class, showAllOption: true),
 		]);
 	}
 
-	private function getOptions(string $class, bool $showAllOption = false, bool $showEmptyOption = false): array
+	public function fachbezogeneFloskeln(): JsonResponse
 	{
+		return response()->json([
+			'niveau' => $this->getOptions(class: Floskel::class, showAllOption: true, column: 'niveau'),
+			'jahrgaenge' => $this->getOptions(class: Floskel::class, showAllOption: true, column: 'jahrgang_id'),
+		]);
+	}
+
+	private function getOptions(
+		mixed $class,
+		bool $showAllOption = false,
+		bool $showEmptyOption = false,
+		string $column = 'kuerzel'
+	): array {
 		$options = [];
 
 		if ($showAllOption) {
@@ -34,15 +47,16 @@ class GetFilters extends Controller
 		}
 
 		// Add the empty option only if it's not already in the collection
-		$emptyIsNotInCollection = (new $class)->where('kuerzel', '=', '')->doesntExist();
+		$emptyIsNotInCollection = (new $class)->where($column, '=', '')->doesntExist();
 
 		if ($showEmptyOption && $emptyIsNotInCollection) {
 			$options = array_merge($options, [self::OPTION_EMPTY]);
 		}
 
-		$modelOptions = (new $class)
-			->get(['kuerzel as index', 'kuerzel as label'])
-			->map(function (Note|Jahrgang|Klasse|Kurs|Fach $model) {
+		$modelOptions = (gettype($class) == 'string' ? (new $class) : $class)
+			->whereNotNull($column)
+			->get(["{$column} as index", "$column as label"])
+			->map(function ($model) {
 				if ($model->label == '') {
 					$model->label = self::OPTION_EMPTY['label'];
 				}

@@ -11,25 +11,29 @@ class LeistungResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->id,
-            'klasse' => new KlasseResource($this->lerngruppe(Klasse::class)),
-            'schueler' => new SchuelerResource($this->schueler),
-//            'fach' => $this->lerngruppe->fach->kuerzel,
-            'lehrer' => $this->schueler->klasse->klassenlehrer->pluck('nachname')->implode(', '),
-//            'kurs' => new KursResource($this->lerngruppe(Kurs::class)),
-            'note' => new NoteResource($this->note),
-            'fs' => $this->fehlstundenGesamt,
-            'ufs' => $this->fehlstundenUnentschuldigt,
-            'mahnung' => (bool) rand(0,1), // TODO: Mahnung fehlt
+			'lerngruppe_id' => $this->lerngruppe->id,
+			'klasse' => $this->schueler->klasse->kuerzel,
+			'vorname' => $this->schueler->vorname,
+			'nachname' => $this->schueler->nachname,
+			'geschlecht' => $this->schueler->geschlecht,
+			'fach' => $this->lerngruppe->fach->kuerzelAnzeige,
+			'jahrgang' => $this->schueler->jahrgang->kuerzel,
+			'lehrer' => $this->lerngruppe->lehrer->pluck('kuerzel')->implode(', '),
+			'kurs' => $this->getMorphable($this->lerngruppe, Kurs::class, 'bezeichnung'),
+			'note' => $this->note?->kuerzel,
+			'istGemahnt' => (bool) $this->istGemahnt,
+			'mahndatum' => $this->mahndatum,
+			'fs' => $this->fehlstundenGesamt,
+			'ufs' => $this->fehlstundenUnentschuldigt,
         ];
     }
 
-    private function lerngruppe(string $class): Klasse|Kurs|null
-    {
-        if ($this->lerngruppe->groupable instanceof $class) {
-            return $this->lerngruppe->groupable;
-        }
+	private function getMorphable($lerngruppe, string $class, string $column = 'kuerzel'): string|null
+	{
+		if ($lerngruppe->groupable instanceof $class) {
+			return $lerngruppe->groupable->$column;
+		}
 
-        return null;
-    }
+		return null;
+	}
 }
