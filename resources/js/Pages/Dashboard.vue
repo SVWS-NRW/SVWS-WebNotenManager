@@ -141,9 +141,6 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
         { key: 'fs', label: 'FS', sortable: true },
         { key: 'ufs', label: 'FSU', sortable: true },
     ]
-    const spacer: Array<column> = [
-        { key: 'spacer', label: '', sortable: false },
-    ]
 
     const drawTable = () => {
         columns.value.length = 0
@@ -151,7 +148,6 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
         pushTable(teilleistungen.value, teilleistungenColumns)
         pushTable(fachbezogeneBemerkungen.value, fachbezogeneBemerkungenColumns)
         pushTable(fehlstunden.value, fehlstundenColumns)
-        pushTable([], spacer)
     }
 
     const pushTable = (model: boolean, array: Array<column>, always: boolean = false): void => {
@@ -193,7 +189,7 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
                         </SvwsUiButton>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto">
+                    <div class="flex-1 flex flex-row overflow-y-auto">
                         <SvwsUiNewTable :data="filteredLeistungen" :columns="columns" selectionMode="single">
                             <template #cell-mahnung="{ row }">
                                 <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
@@ -204,10 +200,8 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
                             <template #cell-fachbezogeneBemerkungen="{ row }">
                                 <BemerkungenIndicator @open="openFloskelMenu({ leistung: row })" :bemerkung="Boolean(row.fachbezogeneBemerkungen)"></BemerkungenIndicator>
                             </template>
-                            <template #cell-spacer="{ row }">
-                                <div class="w-[33vw]"></div>
-                            </template>
                         </SvwsUiNewTable>
+                        <div class="block w-1/3"></div>
                     </div>
                 </div>
             </template>
