@@ -15,6 +15,7 @@ class GetLeistungen extends Controller
 			->whereIn('lerngruppe_id', auth()->user()->lerngruppen->pluck('id'))
 			->orderBy(DB::raw('ISNULL(klasse), klasse'), 'ASC')
 			->orderBy('nachname')
+			->orderBy('fach')
 			->get();
 
         return response()->json($leistungen);

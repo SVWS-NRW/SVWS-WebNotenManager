@@ -190,7 +190,7 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
                     </div>
 
                     <div class="flex-1 overflow-y-auto max-w-7xl">
-                        <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
+                        <SvwsUiNewTable :data="filteredLeistungen" :columns="columns" selectionMode="single">
                             <template #cell-mahnung="{ row }">
                                 <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
                             </template>
