@@ -24,22 +24,13 @@ class LeistungObserver
 			'geschlecht' => $leistung->schueler->geschlecht,
 			'fach' => $leistung->lerngruppe->fach->kuerzelAnzeige,
 			'jahrgang' => $leistung->schueler->jahrgang->kuerzel,
-			'lehrer' => $leistung->lerngruppe->lehrer->pluck('kuerzel')->implode(', '),
-			'kurs' => $this->getMorphable($leistung->lerngruppe, Kurs::class, 'bezeichnung'),
+			'lehrer' => $leistung->schueler->klasse->klassenlehrer->pluck('kuerzel')->implode(', '),
+			'kurs' => $leistung->lerngruppe->kursartID ? $leistung->lerngruppe->bezeichnung : null,
 			'note' => $leistung->note?->kuerzel,
 			'istGemahnt' => (bool) $leistung->istGemahnt,
 			'mahndatum' => $leistung->mahndatum,
 			'fs' => $leistung->fehlstundenGesamt,
 			'ufs' => $leistung->fehlstundenUnentschuldigt,
 		];
-	}
-
-	private function getMorphable(Lerngruppe $lerngruppe, string $class, string $column = 'kuerzel'): string|null
-	{
-		if ($lerngruppe->groupable instanceof $class) {
-			return $lerngruppe->groupable->$column;
-		}
-
-		return null;
 	}
 }

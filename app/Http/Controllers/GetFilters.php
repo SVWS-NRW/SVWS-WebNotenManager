@@ -55,6 +55,7 @@ class GetFilters extends Controller
 
 		$modelOptions = (gettype($class) == 'string' ? (new $class) : $class)
 			->whereNotNull($column)
+			->distinct($column)
 			->get(["{$column} as index", "$column as label"])
 			->map(function ($model) {
 				if ($model->label == '') {

@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 
 class JsonImportSeeder extends Seeder
 {
-	private string $path = 'database/seeders/data';
+	private string $path = 'database/seeders/data/single';
 
 	public function run(): void
 	{
