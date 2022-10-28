@@ -2,7 +2,6 @@
     import {computed, reactive, ref, watch} from "vue";
 
     import axios from "axios";
-
     import FloskelTable from "./Klassenleitung/FloskelTable.vue"
 
     type schueler = { id: Number, vorname: string, nachname: string, geschlecht: string, bemerkung: object }
