@@ -76,7 +76,7 @@ class DataImportService
                 'nachname' => $row['nachname'],
                 'vorname' => $row['vorname'],
                 'email' => $row['eMailDienstlich'] ?? sprintf('%s@%s', Str::random(), Str::random()),
-                'password' => Str::random(),
+                'password' => /*Str::random() */ Hash::make('password'),
             ],
         ));
     }
@@ -208,7 +208,7 @@ class DataImportService
             $schueler->istZieldifferent = $row['istZieldifferent'];
             $schueler->istDaZFoerderung = $row['istDaZFoerderung'];
             $schueler->jahrgang_id = Jahrgang::where('ext_id', $row['jahrgangID'])->firstOrFail()->id;
-            $schueler->klasse_id = Klasse::first()->id; // TODO: Q2. This cannot be found right now since all Schuelerklassen are 0. To be cleared with customer.
+            $schueler->klasse_id = Klasse::where('ext_id', $row['klasseID'])->firstOrFail()->id;
             $schueler->geschlecht = $this->gender($row);
 
 			// Bemerkungen

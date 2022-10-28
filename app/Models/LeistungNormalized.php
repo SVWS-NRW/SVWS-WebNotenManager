@@ -72,6 +72,7 @@ class LeistungNormalized extends Model
         'mahndatum',
 		'fs',
 		'ufs',
+		'fachbezogeneBemerkungen',
 	];
 
 	protected $casts = [

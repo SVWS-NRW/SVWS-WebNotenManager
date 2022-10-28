@@ -1,31 +1,37 @@
 <script setup lang="ts">
-    import { Head, useForm, usePage, Link } from '@inertiajs/inertia-vue3';
-    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
     import {Inertia} from "@inertiajs/inertia";
-    import {computed} from "vue";
+    import {reactive} from "vue";
     import AuthLayout from "../../Layouts/AuthLayout.vue";
+    import axios, {AxiosError, AxiosResponse} from 'axios'
 
     defineProps({
         status: String,
         settings: Array,
     });
 
-    const form = useForm({
-        email: '',
-        password: '',
-        remember: false,
-    });
+    let data = reactive({
+        form:{
+            email: '',
+            password: '',
+            remember: false,
+        },
+        processing: false,
+        errors: []
+    })
+
+    const getError = (column) => data.errors[column][0]
+    const hasErrors = (column) => column in data.errors
 
 
     const requestPassword = () => Inertia.get(route('request_password'))
+
     const submit = () => {
-        form.transform(data => ({
-            ...data,
-            remember: form.remember ? 'on' : '',
-        })).post(route('login'), {
-            onFinish: () => form.reset('password'),
-        });
-    };
+        data.processing = true
+        axios.post(route('login'), data.form)
+            .then(() => Inertia.get(route('dashboard')))
+            .catch((error): AxiosError => data.errors = error.response.data.errors)
+            .finally((): boolean => data.processing = false)
+    }
 </script>
 
 <template>
@@ -37,14 +43,17 @@
         <AuthLayout>
             <template #sidebar>
                 <div class="space-y-6">
-                    <JetValidationErrors />
                     <h2 class="headline-4">{{ settings.school_name }}</h2>
 
-                    <SvwsUiTextInput v-model="form.email" type="email" placeholder="E-Mail-Adresse" required :disabled="form.processing" v-on:keyup.enter="submit" />
-                    <SvwsUiTextInput v-model="form.password" type="password" placeholder="Passwort" required :disabled="form.processing" v-on:keyup.enter="submit" />
-                    <SvwsUiCheckbox v-model="form.remember" :disabled="form.processing">Angemeldet bleiben</SvwsUiCheckbox>
+                    <SvwsUiTextInput v-model="data.form.email" type="email" placeholder="E-Mail-Adresse" required :disabled="data.processing" v-on:keyup.enter="submit" />
+                    <span v-if="hasErrors('email')" class="error">{{ getError('email')}}</span>
+
+                    <SvwsUiTextInput v-model="data.form.password" type="password" placeholder="Passwort" required :disabled="data.processing" v-on:keyup.enter="submit" />
+                    <span v-if="hasErrors('password')" class="error">{{ getError('password')}}</span>
+
+                    <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing">Angemeldet bleiben</SvwsUiCheckbox>
                     <div class="flex justify-between gap-6">
-                        <SvwsUiButton @click="submit()" :disabled="form.processing">Anmelden</SvwsUiButton>
+                        <SvwsUiButton @click="submit()" :disabled="data.processing">Anmelden</SvwsUiButton>
                         <SvwsUiButton @click="requestPassword()">Passwort anfordern</SvwsUiButton>
                     </div>
                 </div>
@@ -53,4 +62,10 @@
         </AuthLayout>
     </div>
 </template>
+
+<style scoped>
+    span.error {
+        @apply text-red-500 text-sm mt-2
+    }
+</style>
 

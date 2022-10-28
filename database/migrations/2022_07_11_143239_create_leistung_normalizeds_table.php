@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('lehrer');
             $table->string('kurs')->nullable();
             $table->string('note')->nullable();
+            $table->text('fachbezogeneBemerkungen')->nullable();
             $table->boolean('istGemahnt')->default(false);
 			$table->timestamp('mahndatum')->nullable();
 			$table->integer('fs')->default(0);

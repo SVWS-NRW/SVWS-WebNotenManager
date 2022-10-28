@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export const useStore = defineStore('main', {
     state: () => ({
         sidebarCollapsed: true,
-		darkmode: false,
+				darkmode: false,
         progress: 0,
     }),
     actions: {

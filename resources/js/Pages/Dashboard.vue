@@ -3,10 +3,12 @@
     import { useStore } from '../store'
     import axios, {AxiosResponse} from 'axios'
 
-    import MahnungIndicator from "../Components/MahnungIndicator.vue"
-    import NoteInput from "../Components/NoteInput.vue"
+    import MahnungIndicator from "../Components/Dashboard/MahnungIndicator.vue"
+    import FloskelnMenu from "../Components/Dashboard/FloskelnMenu.vue"
+    import NoteInput from "../Components/Dashboard/NoteInput.vue"
     import TopMenu from "../Components/TopMenu.vue"
     import Menubar from '../Components/Menubar.vue'
+    import BemerkungenIndicator from '../Components/Klassenleitung/BemerkungenIndicator.vue'
 
     type leistungType = {
         id: number,
@@ -20,6 +22,7 @@
         jahrgang: string,
         kurs: string|null,
         note: string|null,
+        fachbezogeneBemerkungen: string|null,
         fs: number,
         ufs: number,
         istGemahnt: boolean,
@@ -41,6 +44,8 @@
         faecher: filterElementType
     }
 
+    type selected = { leistung: leistungType }|null
+
     let props = defineProps({
         auth: Object,
     })
@@ -48,6 +53,7 @@
     const store = useStore();
 
     let state = reactive({
+        selected: <selected> null,
         leistungen: <leistungType[]> [],
         filterValues: <filterValuesType> {
             'jahrgaenge': [],
@@ -67,10 +73,11 @@
     })
 
     onMounted((): void => {
+        getLeistungen()
         axios.get(route('get_filters')).then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
-        axios.get(route('get_leistungen')).then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
     })
 
+const getLeistungen = () => axios.get(route('get_leistungen')).then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
     const filteredLeistungen = computed((): Array<leistungType> =>
         state.leistungen
             .map((leistung: leistungType): leistungType => {
@@ -109,7 +116,7 @@
         state.leistungen.find(current => current.id === leistung.id)['note'] = note
 
     let teilleistungen = ref(false)
-    let fachbezogeneBemerkungen = ref(false)
+    let fachbezogeneBemerkungen = ref(true)
     let fehlstunden = ref(false)
 
     watch([teilleistungen, fachbezogeneBemerkungen, fehlstunden], () => drawTable());
@@ -127,7 +134,9 @@
     ]
 
     const teilleistungenColumns: Array<column> = []
-    const fachbezogeneBemerkungenColumns: Array<column> = []
+    const fachbezogeneBemerkungenColumns: Array<column> = [
+        { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: false },
+    ]
     const fehlstundenColumns: Array<column> = [
         { key: 'fs', label: 'FS', sortable: true },
         { key: 'ufs', label: 'FSU', sortable: true },
@@ -146,6 +155,9 @@
     }
 
     drawTable()
+
+    const openFloskelMenu = (selected: selected): selected => state.selected = selected
+    const closeFloskelMenu = (): selected|null => state.selected = null
 </script>
 
 <template>
@@ -156,7 +168,7 @@
             </template>
 
             <template #main>
-                <div class="relative flex flex-col w-full h-screen">
+                <div class="relative flex flex-col w-full h-screen overflow-hidden">
                     <TopMenu>
                         <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="fachbezogeneBemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
@@ -177,17 +189,24 @@
                         </SvwsUiButton>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto max-w-7xl">
-                        <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
+                    <div class="flex-1 flex flex-row overflow-y-auto">
+                        <SvwsUiNewTable :data="filteredLeistungen" :columns="columns" selectionMode="single">
                             <template #cell-mahnung="{ row }">
                                 <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
                             </template>
                             <template #cell-note="{ row }">
                                 <NoteInput :leistung="row"></NoteInput>
                             </template>
+                            <template #cell-fachbezogeneBemerkungen="{ row }">
+                                <BemerkungenIndicator @open="openFloskelMenu({ leistung: row })" :bemerkung="Boolean(row.fachbezogeneBemerkungen)"></BemerkungenIndicator>
+                            </template>
                         </SvwsUiNewTable>
+                        <div class="block w-1/3"></div>
                     </div>
                 </div>
+            </template>
+            <template #contentSidebar>
+                <FloskelnMenu :selected="state.selected" @close="closeFloskelMenu" @updated="getLeistungen()"></FloskelnMenu>
             </template>
         </SvwsUiAppLayout>
     </div>

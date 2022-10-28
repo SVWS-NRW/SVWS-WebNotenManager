@@ -5,19 +5,15 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    IRiCheckboxBlancLine: typeof import('~icons/ri/checkbox-blanc-line')['default']
     IRiCheckboxBlankLine: typeof import('~icons/ri/checkbox-blank-line')['default']
     IRiCheckboxLine: typeof import('~icons/ri/checkbox-line')['default']
     IRiCheckLine: typeof import('~icons/ri/check-line')['default']
     IRiCloseLine: typeof import('~icons/ri/close-line')['default']
     IRiFilter3Line: typeof import('~icons/ri/filter3-line')['default']
     IRiFolderSharedLine: typeof import('~icons/ri/folder-shared-line')['default']
-    IRiLineLine: typeof import('~icons/ri/line-line')['default']
     IRiLogoutBoxLine: typeof import('~icons/ri/logout-box-line')['default']
-    IRiMailCheckLine: typeof import('~icons/ri/mail-check-line')['default']
     IRiMailLine: typeof import('~icons/ri/mail-line')['default']
     IRiMoonLine: typeof import('~icons/ri/moon-line')['default']
-    IRiNewspaperFill: typeof import('~icons/ri/newspaper-fill')['default']
     IRiPrinterLine: typeof import('~icons/ri/printer-line')['default']
     IRiSettings3Line: typeof import('~icons/ri/settings3-line')['default']
     IRiSunLine: typeof import('~icons/ri/sun-line')['default']
