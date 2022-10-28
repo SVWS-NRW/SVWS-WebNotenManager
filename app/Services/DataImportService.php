@@ -177,7 +177,7 @@ class DataImportService
         $excluded = ['ext_id', 'lehrerID', 'fachID', 'kID', 'kursartKuerzel', 'user_id'];
 
         foreach ($this->json['lerngruppen'] as $row) {
-            $lerngruppe = Lerngruppe::firstOrNew(['ext_id' => $row['id']], Arr::except($row, $excluded));
+            $lerngruppe = Lerngruppe::firstOrNew(['ext_id' => $row['id']], Arr::except($row, $excluded)); // Todo: KID or id #48
             $lerngruppe->fach_id =  $this->getRelation($row, Fach::class, 'fachID');
             $lerngruppe->groupable_type = $this->getGroupableType($row);
             $lerngruppe->groupable_id = $this->getGroupableId($row);
