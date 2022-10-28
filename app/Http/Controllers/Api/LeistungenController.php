@@ -18,9 +18,9 @@ class LeistungenController extends Controller
      */
     public function index()
     {
-        return new \App\Http\Resources\LeistungCollection(
-            Leistung::with(["schueler.klasse.klassenlehrer","lerngruppe","note","lerngruppe.fach"])->get()
-        );
+//        return new \App\Http\Resources\LeistungCollection(
+//            Leistung::with(["schueler.klasse.klassenlehrer","lerngruppe","note","lerngruppe.fach"])->get()
+//        );
 
     }
 

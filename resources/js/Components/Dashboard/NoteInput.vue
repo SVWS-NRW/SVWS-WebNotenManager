@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import {watch, computed, reactive} from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import { useStore } from '../store'
+    import { useStore } from '../../store'
     import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios'
 
     const store = useStore()

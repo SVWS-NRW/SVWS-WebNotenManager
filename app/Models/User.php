@@ -117,4 +117,9 @@ class User extends Authenticatable
 	{
 		return (bool) $this->administrator;
 	}
+
+	public function lehrer(): bool
+	{
+		return (bool) !$this->administrator;
+	}
 }

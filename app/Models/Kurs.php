@@ -40,7 +40,6 @@ class Kurs extends Model
         'ext_id',
         'bezeichnung',
         'kuerzel',
-
     ];
 
     public function lerngruppen(): MorphMany

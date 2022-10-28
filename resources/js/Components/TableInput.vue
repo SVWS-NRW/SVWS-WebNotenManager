@@ -2,8 +2,8 @@
     import { ref, watch, computed, reactive, onMounted } from 'vue';
     import { useStore } from '../store'
     import axios from 'axios';
-    import MahnungIndicator from "./MahnungIndicator.vue";
-    import NoteInput from "./NoteInput.vue";
+    import MahnungIndicator from "./Dashboard/MahnungIndicator.vue";
+    import NoteInput from "./Dashboard/NoteInput.vue";
     import TopMenu from "../Components/TopMenu.vue"
 
     type columnType = { key: string, label: string, sortable: boolean };

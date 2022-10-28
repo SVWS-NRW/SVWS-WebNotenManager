@@ -12,7 +12,7 @@ class LeistungsdatenResource extends JsonResource
             'id' => $this->ext_id,
             'note' => $this->note?->kuerzel,
             'istGemahnt' => (bool) $this->istGemahnt,
-            'mahndatum' => $this->mahndatum?->format('Y-m-d\TH:i:s'),
+			'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
 			'updated_at' => $this->updated_at->format('Y-m-d\TH:i:s'),
         ];
     }
