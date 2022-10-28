@@ -11,12 +11,8 @@ declare module '@vue/runtime-core' {
     IRiCloseLine: typeof import('~icons/ri/close-line')['default']
     IRiFilter3Line: typeof import('~icons/ri/filter3-line')['default']
     IRiFolderSharedLine: typeof import('~icons/ri/folder-shared-line')['default']
-    IRiLogoutBoxLine: typeof import('~icons/ri/logout-box-line')['default']
     IRiMailLine: typeof import('~icons/ri/mail-line')['default']
-    IRiMoonLine: typeof import('~icons/ri/moon-line')['default']
     IRiPrinterLine: typeof import('~icons/ri/printer-line')['default']
-    IRiSettings3Line: typeof import('~icons/ri/settings3-line')['default']
-    IRiSunLine: typeof import('~icons/ri/sun-line')['default']
     IRiTeamLine: typeof import('~icons/ri/team-line')['default']
     IRiUser2Line: typeof import('~icons/ri/user2-line')['default']
   }

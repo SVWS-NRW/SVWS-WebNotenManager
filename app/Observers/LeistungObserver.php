@@ -25,11 +25,7 @@ class LeistungObserver
 			'fach' => $leistung->lerngruppe->fach->kuerzelAnzeige,
 			'jahrgang' => $leistung->schueler->jahrgang->kuerzel,
 			'lehrer' => $leistung->schueler->klasse->klassenlehrer->pluck('kuerzel')->implode(', '),
-<<<<<<< HEAD
-			'kurs' => $leistung->lerngruppe->kursartID !== null ? $leistung->lerngruppe->bezeichnung : null,
-=======
 			'kurs' => $leistung->lerngruppe->kursartID ? $leistung->lerngruppe->bezeichnung : null,
->>>>>>> 88a76df9bfe4f62ef7cfb156e3cbc5806bfe601f
 			'note' => $leistung->note?->kuerzel,
 			'istGemahnt' => (bool) $leistung->istGemahnt,
 			'mahndatum' => $leistung->mahndatum,
