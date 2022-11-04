@@ -9,6 +9,8 @@
     import TopMenu from "../Components/TopMenu.vue"
     import Menubar from '../Components/Menubar.vue'
     import BemerkungenIndicator from '../Components/Klassenleitung/BemerkungenIndicator.vue'
+    import Tooltip from "../SVWS-Server/svws-webclient/src/ui-components/ts/src/components/Tooltip.vue";
+    import BottomMenu from "../Components/BottomMenu.vue";
 
     type leistungType = {
         id: number,
@@ -168,7 +170,7 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
             </template>
 
             <template #main>
-                <div class="relative flex flex-col w-full h-screen overflow-hidden">
+                <div class="relative flex flex-col w-full h-screen overflow-hidden bg-white">
                     <TopMenu>
                         <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="fachbezogeneBemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
@@ -181,16 +183,13 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
                         <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" @update:value="(kurs: Number) => filters.fach = kurs" :options="state.filterValues.faecher"></SvwsUiSelectInput>
                         <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" @update:value="(kurs: Number) => filters.kurs = kurs" :options="state.filterValues.kurse"></SvwsUiSelectInput>
                         <SvwsUiSelectInput placeholder="Note" v-model="filters.note" @update:value="(note: Number) => filters.note = note" :options="state.filterValues.noten"></SvwsUiSelectInput>
-                        <SvwsUiButton type="secondary" class="flex gap-2 items-center whitespace-nowrap">
-                            <SvwsUiIcon>
-                                <i-ri-filter-3-line aria-hidden="true"></i-ri-filter-3-line>
-                            </SvwsUiIcon>
-                            Erweiterte Filter
-                        </SvwsUiButton>
                     </div>
 
                     <div class="flex-1 flex flex-row overflow-y-auto">
-                        <SvwsUiNewTable :data="filteredLeistungen" :columns="columns" selectionMode="single">
+                        <div v-if="filteredLeistungen.length === 0" class="px-6">
+                            <h4 class="headline-4">Keine Einträge gefunden!</h4>
+                        </div>
+                        <SvwsUiNewTable :data="filteredLeistungen" :columns="columns" v-if="filteredLeistungen.length">
                             <template #cell-mahnung="{ row }">
                                 <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
                             </template>
@@ -203,6 +202,7 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
                         </SvwsUiNewTable>
                         <div class="block w-1/3"></div>
                     </div>
+                    <BottomMenu></BottomMenu>
                 </div>
             </template>
             <template #contentSidebar>

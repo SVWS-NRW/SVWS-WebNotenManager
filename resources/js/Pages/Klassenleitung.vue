@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {computed, onMounted, reactive} from 'vue'
+    import {computed, onMounted, reactive} from 'vue'
 
     import { useStore } from '../store'
     import Menubar from '../Components/Menubar.vue'
@@ -97,7 +97,10 @@ import {computed, onMounted, reactive} from 'vue'
                         </div>
                     </div>
                     <div class="h-full flex-1 overflow-auto">
-                        <SvwsUiNewTable :data="filteredSchueler" :columns="columns" class="relative">
+                        <div v-if="filteredSchueler.length === 0" class="px-6">
+                            <h4 class="headline-4">Keine Einträge gefunden!</h4>
+                        </div>
+                        <SvwsUiNewTable :data="filteredSchueler" :columns="columns" class="relative" v-if="filteredSchueler.length">
                             <template #cell-asv="{ row }">
                                 <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'asv' })" :bemerkung="Boolean(row.asv)"></BemerkungenIndicator>
                             </template>

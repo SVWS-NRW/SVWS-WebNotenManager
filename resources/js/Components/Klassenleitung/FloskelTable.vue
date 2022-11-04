@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive} from "vue";
-import axios, {AxiosResponse} from "axios";
+    import {computed, onMounted, reactive} from "vue";
+    import axios, {AxiosResponse} from "axios";
 
     const emit = defineEmits(['added'])
 
@@ -56,7 +56,6 @@ import axios, {AxiosResponse} from "axios";
     <h2 class="headline-4">Floskeln</h2>
     <hr class="border-gray">
     <div class="pb-0">
-
         <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
     </div>
 

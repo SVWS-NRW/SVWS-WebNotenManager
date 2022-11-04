@@ -3,7 +3,7 @@
 
     import axios from "axios";
 
-    import FloskelTable from "./Klassenleitung/FloskelTable.vue"
+    import FloskelTable from "./FloskelTable.vue"
 
     type schueler = { id: Number, vorname: string, nachname: string, geschlecht: string, bemerkung: object }
     type bemerkung = string|null

@@ -12,19 +12,6 @@
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
     const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value
 
-    const darkMode = (): void => {
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.remove('dark', 'theme-dark')
-            localStorage.removeItem('theme')
-            store.darkmode = false
-            return
-        }
-
-        document.documentElement.classList.add('dark', 'theme-dark')
-        localStorage.theme = 'dark'
-        store.darkmode = true
-    }
-
     const items =  [
         {
             caption: 'Notenmanager',
@@ -58,16 +45,6 @@
         </template>
 
         <template #footer>
-            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click.capture="darkMode">
-                <template #label>Dunkelmodus</template>
-                <template #icon>
-                    <SvwsUiIcon>
-                        <i-ri-sun-line aria-hidden="true" v-if="store.darkmode"></i-ri-sun-line>
-                        <i-ri-moon-line aria-hidden="true" v-else></i-ri-moon-line>
-                    </SvwsUiIcon>
-                </template>
-            </SvwsUiSidebarMenuItem>
-
             <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.index')">
                 <template #label>Einstellungen</template>
                 <template #icon>
@@ -92,9 +69,7 @@
 
 
 <style scoped>
-
     .sidebar--menu-header {
-
         @apply py-3
     }
 </style>
