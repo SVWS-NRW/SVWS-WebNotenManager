@@ -2,6 +2,7 @@
     import {computed, reactive, ref, watch} from "vue";
 
     import axios from "axios";
+    import FloskelTable from "./FloskelTable.vue"
 
 
     type schueler = { id: Number, vorname: string, nachname: string, geschlecht: string, bemerkung: object }
@@ -136,8 +137,7 @@
             </div>
 
             <div v-if="currentFloskelGruppe">
-<!--                @todo: fix-->
-<!--                <FloskelTable floskelgruppe="zb" :floskelgruppen="props.floskelgruppen" @added="addFloskeln"></FloskelTable>-->
+                <FloskelTable floskelgruppe="zb" :floskelgruppen="props.floskelgruppen" @added="addFloskeln"></FloskelTable>
             </div>
         </div>
     </aside>
