@@ -21,7 +21,7 @@ class GetFilters extends Controller
 			'noten' => $this->getOptions(class: Note::class, showAllOption: true),
 			'jahrgaenge' => $this->getOptions(class: Jahrgang::class, showAllOption: true),
 			'klassen' => $this->getOptions(class: Klasse::class, showAllOption: true, showEmptyOption: true),
-			'kurse' => $this->getOptions(class: Kurs::class, showAllOption: true, showEmptyOption: true),
+			'kurse' => $this->getOptions(class: Kurs::class, showAllOption: true, showEmptyOption: true, column: 'bezeichnung'),
 			'faecher' => $this->getOptions(class: Fach::class, showAllOption: true),
 		]);
 	}

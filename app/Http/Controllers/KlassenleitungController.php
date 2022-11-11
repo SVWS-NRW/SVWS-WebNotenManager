@@ -10,8 +10,6 @@ class KlassenleitungController extends Controller
 {
     public function __invoke(): Response
     {
-		$schueler = Schueler::all();
-
-		return Inertia::render('Klassenleitung', ['schueler' => $schueler]);
+		return Inertia::render('Klassenleitung', ['schueler' => Schueler::all()]);
     }
 }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
     import {computed, onMounted, reactive} from 'vue'
 
     import { useStore } from '../store'
@@ -25,6 +24,7 @@
         auth: Object,
     })
 
+
     let state = reactive({
         floskelgruppen: <floskelgruppe[]> [],
         schueler: <schueler[]> [],
@@ -38,9 +38,11 @@
         {key: 'klasse', label: 'Klasse', sortable: true},
         {key: 'vorname', label: 'Vorname', sortable: true},
         {key: 'nachname', label: 'Nachname', sortable: true},
-        {key: 'asv', label: 'Asv', sortable: true},
-        {key: 'aue', label: 'Aue', sortable: true},
-        {key: 'zb', label: 'Zb', sortable: true},
+        {key: 'asv', label: 'ASV', sortable: true},
+        {key: 'aue', label: 'AUE', sortable: true},
+        {key: 'zb', label: 'ZB', sortable: true},
+        {key: 'gfs', label: 'gFS', sortable: true},
+        {key: 'gfsu', label: 'gFSU', sortable: true},
     ]
 
     const filters = reactive({
