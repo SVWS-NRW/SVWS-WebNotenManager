@@ -119,9 +119,10 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
 
     let teilleistungen = ref(false)
     let fachbezogeneBemerkungen = ref(true)
+    let mahnungen = ref(true)
     let fehlstunden = ref(false)
 
-    watch([teilleistungen, fachbezogeneBemerkungen, fehlstunden], () => drawTable());
+    watch([teilleistungen, fachbezogeneBemerkungen, fehlstunden, mahnungen], () => drawTable());
 
     let columns = ref( [])
 
@@ -132,13 +133,17 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
         { key: 'lehrer', label: 'Lehrer', sortable: true },
         { key: 'kurs', label: 'Kurs', sortable: true },
         { key: 'note', label: 'Note', sortable: false },
-        { key: 'mahnung', label: 'M', sortable: false },
     ]
 
     const teilleistungenColumns: Array<column> = []
     const fachbezogeneBemerkungenColumns: Array<column> = [
         { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: false },
     ]
+
+    const mahnungenColumns: Array<column> = [
+        { key: 'mahnung', label: 'M', sortable: false },
+    ]
+
     const fehlstundenColumns: Array<column> = [
         { key: 'fs', label: 'FS', sortable: true },
         { key: 'ufs', label: 'FSU', sortable: true },
@@ -148,6 +153,7 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
         columns.value.length = 0
         pushTable(false, baseColumns, true)
         pushTable(teilleistungen.value, teilleistungenColumns)
+        pushTable(mahnungen.value, mahnungenColumns)
         pushTable(fachbezogeneBemerkungen.value, fachbezogeneBemerkungenColumns)
         pushTable(fehlstunden.value, fehlstundenColumns)
     }
@@ -171,10 +177,13 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
 
             <template #main>
                 <div class="relative flex flex-col w-full h-screen overflow-hidden bg-white">
-                    <TopMenu>
-                        <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="fachbezogeneBemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="fehlstunden">Fehlstunden</SvwsUiCheckbox>
+                    <TopMenu headline="Mein Unterricht" :vertical="true">
+                        <span class="flex gap-3">
+                            <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
+                            <SvwsUiCheckbox v-model="mahnungen">Mahnungen</SvwsUiCheckbox>
+                            <SvwsUiCheckbox v-model="fachbezogeneBemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                            <SvwsUiCheckbox v-model="fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                        </span>
                     </TopMenu>
                     <div id="filterMenu" class="flex gap-6 px-6 relative pt-1.5 mb-6">
                         <SvwsUiTextInput type="search" v-model="filters.search" placeholder="Suche"></SvwsUiTextInput>

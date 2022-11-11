@@ -4,7 +4,10 @@
 
     const tbd = () => alert('TBD')
 
-    interface Props { headline?: string|null }
+    interface Props {
+        headline?: string|null
+        vertical?: boolean
+    }
     let props = defineProps<Props>()
 
     let headline = computed(() => {
@@ -21,8 +24,8 @@
 </script>
 
 <template>
-    <div class="h-24 flex items-center justify-between px-6 w-full bg-white -my-1.5">
-        <div class="flex gap-6 items-center">
+    <div class="py-6 flex items-center justify-between px-6 w-full bg-white -my-1.5">
+        <div :class="{ 'flex-col': props.vertical }" class="flex gap-6">
             <h1 class="headline-2 dark:text-zinc-200">{{ headline }}</h1>
             <slot></slot>
         </div>

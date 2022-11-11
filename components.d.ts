@@ -5,6 +5,7 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    IRiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
     IRiCheckboxBlankLine: typeof import('~icons/ri/checkbox-blank-line')['default']
     IRiCheckboxLine: typeof import('~icons/ri/checkbox-line')['default']
     IRiCheckLine: typeof import('~icons/ri/check-line')['default']

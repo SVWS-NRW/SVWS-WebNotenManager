@@ -11,19 +11,6 @@
     const logout = (): void => Inertia.post(route('logout'))
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
     const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value
-
-    const items =  [
-        {
-            caption: 'Notenmanager',
-            value: 'notenmanager',
-            route: 'dashboard',
-        },
-        {
-            caption: 'Klassenleitung',
-            value: 'klassenleitung',
-            route: 'klassenleitung',
-        },
-    ];
 </script>
 
 <template>
@@ -33,12 +20,27 @@
         </template>
 
         <template #default>
-            <SvwsUiSidebarMenuItem v-for="item in items" :key="item.caption" :collapsed="store.sidebarCollapsed" @click="navigate(item.route)" :active="route().current(item.route)">
-                <template #label>{{ item.caption }}</template>
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click="navigate('dashboard')" :active="route().current('dashboard')">
+                <template #label>Notenmanager</template>
                 <template #icon>
                      <SvwsUiIcon>
-                        <i-ri-team-line aria-hidden="true" v-if="item.value === 'notenmanager'"></i-ri-team-line>
-                        <i-ri-user2-line aria-hidden="true" v-if="item.value === 'klassenleitung'"></i-ri-user2-line>
+                        <i-ri-team-line aria-hidden="true"></i-ri-team-line>
+                    </SvwsUiIcon>
+                </template>
+            </SvwsUiSidebarMenuItem>
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click="navigate('leistungsdatenuebersicht')" :active="route().current('leistungsdatenuebersicht')">
+                <template #label>Leistungsdatenübersicht</template>
+                <template #icon>
+                     <SvwsUiIcon>
+                        <i-ri-book-read-line aria-hidden="true"></i-ri-book-read-line>
+                    </SvwsUiIcon>
+                </template>
+            </SvwsUiSidebarMenuItem>
+            <SvwsUiSidebarMenuItem v-if=" props.auth.user.klassen.length != 0" :collapsed="store.sidebarCollapsed" @click="navigate('klassenleitung')" :active="route().current('klassenleitung')">
+                <template #label>Klassenleitung</template>
+                <template #icon>
+                     <SvwsUiIcon>
+                         <i-ri-user2-line aria-hidden="true"></i-ri-user2-line>
                     </SvwsUiIcon>
                 </template>
             </SvwsUiSidebarMenuItem>
