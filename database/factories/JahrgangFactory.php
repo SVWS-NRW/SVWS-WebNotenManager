@@ -16,16 +16,11 @@ class JahrgangFactory extends Factory
     public function definition(): array
     {
         return [
-            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'kuerzel' => $this->faker->word(),
             'kuerzelAnzeige' => $this->faker->word(),
             'beschreibung' => $this->faker->paragraph(),
             'stufe' => $this->faker->word(),
+			'sortierung' => rand(1, 15)
         ];
-    }
-
-    public function withSortierung(): Factory
-    {
-        return $this->state(fn () => ['sortierung' => rand(1, 15)]);
     }
 }

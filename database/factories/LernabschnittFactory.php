@@ -15,7 +15,6 @@ class LernabschnittFactory extends Factory
     public function definition(): array
     {
         return [
-            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'schueler_id' => Schueler::factory(),
             'pruefungsordnung' => $this->faker->unique->word(),
             'lernbereich1note' => Note::factory(),

@@ -50,4 +50,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::get('export/{id}', [DataExportService::class, 'export']);
+Route::get('export', [DataExportService::class, 'export']);

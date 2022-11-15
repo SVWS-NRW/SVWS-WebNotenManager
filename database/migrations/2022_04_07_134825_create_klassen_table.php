@@ -13,8 +13,7 @@ return new class extends Migration
             $table->integer('ext_id')->unique();
             $table->string('kuerzel');
             $table->string('kuerzelAnzeige');
-            $table->integer('sortierung')->nullable();
-            $table->timestamps();
+            $table->integer('sortierung');
         });
     }
     

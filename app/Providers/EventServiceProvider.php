@@ -21,7 +21,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
 		Bemerkung::observe(BemerkungObserver::class);
-		Leistung::observe(LeistungObserver::class);
+//		Leistung::observe(LeistungObserver::class);
 	}
 
     public function shouldDiscoverEvents(): bool

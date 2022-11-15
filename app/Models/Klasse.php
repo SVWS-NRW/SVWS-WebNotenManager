@@ -45,6 +45,8 @@ class Klasse extends Model
         'sortierung',
     ];
 
+	public $timestamps = false;
+
     public function klassenlehrer(): BelongsToMany
     {
         return $this->belongsToMany(Lehrer::class, 'klasse_lehrer');

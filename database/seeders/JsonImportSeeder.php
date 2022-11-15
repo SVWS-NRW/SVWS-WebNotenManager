@@ -12,17 +12,7 @@ class JsonImportSeeder extends Seeder
 
 	public function run(): void
 	{
-		collect($this->getFiles())->each(fn (string $file) => $this->seed($file));
-	}
-
-	private function getFiles(): array
-	{
-		return array_diff(scandir($this->path), ['.', '..']);
-	}
-
-	private function seed(string $file): void
-	{
-		$json = File::get("{$this->path}/{$file}");
+		$json = File::get("{$this->path}/gesamt.json");
 		$service = new DataImportService($json);
 		$service->import();
 	}

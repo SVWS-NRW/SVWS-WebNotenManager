@@ -72,10 +72,11 @@ class Schueler extends Model
 {
     use HasFactory;
 
+	const GENDERS = ['m', 'w', 'd', 'x'];
+
     protected $table = 'schueler';
 
     protected $fillable = [
-        'ext_id',
         'jahrgang_id',
         'klasse_id',
         'nachname',
@@ -84,26 +85,21 @@ class Schueler extends Model
         'bilingualeSprache',
         'istZieldifferent',
         'istDaZFoerderung',
-		'asv',
-		'aue',
-		'zb',
-		'lels',
-		'schulformEmpf',
-		'individuelleVersetzungsbemerkungen',
-		'foerderbemerkungen',
     ];
 
-    public function bilingualeSprache(): BelongsTo
+	public $timestamps = false;
+
+    public function bilingualeSprache(): BelongsTo // TODO: not in json
     {
         return $this->belongsTo(Fach::class);
     }
 
-    public function bemerkung(): HasOne
+    public function bemerkung(): HasOne // TODO: not in json
     {
         return $this->hasOne(Bemerkung::class);
     }
 
-    public function bkabschluss(): HasOne // TODO: redo import from hasmany to has one
+    public function bkabschluss(): HasOne // TODO: redo import from hasmany to has one, // TODO: not in json
     {
         return $this->hasOne(BKAbschluss::class);
     }
@@ -123,7 +119,7 @@ class Schueler extends Model
         return $this->hasMany(Leistung::class);
     }
 
-    public function sprachenfolgen(): HasMany
+    public function sprachenfolgen(): HasMany // TODO: not in json
     {
         return $this->hasMany(Sprachenfolge::class);
     }
@@ -133,7 +129,7 @@ class Schueler extends Model
         return $this->hasOne(Lernabschnitt::class);
     }
 
-    public function zp10(): HasOne // TODO: check imnport after changing hasmany to hasone
+    public function zp10(): HasOne // TODO: check imnport after changing hasmany to hasone // TODO: not in json
     {
         return $this->hasOne(Zp10::class);
     }

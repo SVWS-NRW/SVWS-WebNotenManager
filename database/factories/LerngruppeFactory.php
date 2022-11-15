@@ -26,6 +26,8 @@ class LerngruppeFactory extends Factory
             'fach_id' => Fach::factory(),
             'kursartID' => $this->faker->unique->word(),
             'bezeichnung' => $this->faker->unique->word(),
+            'kursartKuerzel' => $this->faker->unique->word(),
+			'bilingualeSprache' => $this->faker->unique->word(),
             'wochenstunden' => rand(1, 10),
         ];
     }
@@ -33,10 +35,5 @@ class LerngruppeFactory extends Factory
     public function groupable(): string
     {
         return $this->faker->randomElement([Klasse::class, Kurs::class]);
-    }
-
-    public function withBilingualeSprache(): Factory
-    {
-        return $this->state(fn () => ['bilingualeSprache' => $this->faker->unique->word()]);
     }
 }

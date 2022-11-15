@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('lerngruppen', function (Blueprint $table) {
             $table->id();
-            $table->integer('ext_id')->unique();
             $table->integer('groupable_id');
             $table->string('groupable_type');
             $table->foreignIdFor(Fach::class);
             $table->string('kursartID')->nullable();
             $table->string('bezeichnung');
+            $table->string('kursartKuerzel')->nullable();
             $table->string('bilingualeSprache')->nullable();
             $table->integer('wochenstunden');
             $table->timestamps();

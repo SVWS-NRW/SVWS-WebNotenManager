@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('leistungen', function (Blueprint $table) {
             $table->id();
-            $table->integer('ext_id')->unique();
             $table->foreignIdFor(Schueler::class);
             $table->foreignIdFor(Lerngruppe::class);
             $table->foreignIdFor(Note::class)->nullable();

@@ -53,12 +53,12 @@ class Lerngruppe extends Model
     protected $table = 'lerngruppen';
 
     protected $fillable = [
-        'ext_id',
         'groupable_id',
         'groupable_type',
         'fach_id',
         'kursartID',
         'bezeichnung',
+        'kursartKuerzel',
         'bilingualeSprache',
         'wochenstunden',
     ];
@@ -70,7 +70,7 @@ class Lerngruppe extends Model
 
     public function lehrer(): BelongsToMany
     {
-        return $this->belongsToMany(Lehrer::class, 'lehrer_lerngruppe');
+        return $this->belongsToMany(Lehrer::class, 'lerngruppe_lehrer');
     }
 
     public function fach(): BelongsTo

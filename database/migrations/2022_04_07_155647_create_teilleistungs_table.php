@@ -14,7 +14,6 @@ return new class extends Migration
     {
         Schema::create('teilleistungen', function (Blueprint $table) {
             $table->id();
-            $table->integer('ext_id')->unique();
             $table->foreignIdFor(Leistung::class);
             $table->foreignIdFor(Teilleistungsart::class);
             $table->date('datum')->nullable();

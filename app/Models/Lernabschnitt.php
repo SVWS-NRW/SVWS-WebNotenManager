@@ -47,7 +47,6 @@ class Lernabschnitt extends Model
     protected $table = 'lernabschnitte';
 
     protected $fillable = [
-        'ext_id',
         'schuler_id',
         'pruefungsordnung',
         'lernbereich1note',
@@ -58,22 +57,22 @@ class Lernabschnitt extends Model
 
     public function foerderschwerpunkt1Relation(): BelongsTo
     {
-        return $this->belongsTo(Foerderschwerpunkt::class);
+        return $this->belongsTo(Foerderschwerpunkt::class, 'foerderschwerpunkt1', 'id');
     }
 
     public function foerderschwerpunkt2Relation(): BelongsTo
     {
-        return $this->belongsTo(Foerderschwerpunkt::class);
+        return $this->belongsTo(Foerderschwerpunkt::class, 'foerderschwerpunkt2', 'id');
     }
 
     public function lernbereich1Note(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(Note::class, 'lernbereich1note', 'id');
     }
 
     public function lernbereich2Note(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(Note::class, 'lernbereich2note', 'id');
     }
 
     public function schueler(): BelongsTo

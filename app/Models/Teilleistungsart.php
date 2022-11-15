@@ -38,7 +38,6 @@ class Teilleistungsart extends Model
     protected $table = 'teilleistungsarten';
 
     protected $fillable = [
-        'ext_id',
         'bezeichnung',
         'sortierung',
         'gewichtung',

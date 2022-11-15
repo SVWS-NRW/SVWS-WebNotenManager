@@ -42,7 +42,6 @@ class Teilleistung extends Model
     protected $table = 'teilleistungen';
 
     protected $fillable = [
-        'ext_id',
         'leistung_id',
         'teilleistungsart_id',
         'datum',

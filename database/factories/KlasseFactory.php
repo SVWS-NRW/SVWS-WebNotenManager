@@ -15,14 +15,9 @@ class KlasseFactory extends Factory
     public function definition(): array
     {
         return [
-            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'kuerzel' => $this->faker->unique->word(),
             'kuerzelAnzeige' => $this->faker->unique->word(),
+			'sortierung' => rand(1, 15)
         ];
-    }
-
-    public function withSortierung(): Factory
-    {
-        return $this->state(fn () => ['sortierung' => rand(1, 15)]);
     }
 }

@@ -37,10 +37,11 @@ class Fach extends Model
     protected $table = 'faecher';
 
     protected $fillable = [
-        'ext_id',
         'kuerzel', 
         'kuerzelAnzeige',
         'sortierung',
         'istFremdsprache',
     ];
+
+	public $timestamps = false;
 }

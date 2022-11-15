@@ -9,9 +9,11 @@ class SchuelerResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->ext_id,
+            'id' => $this->id,
             'leistungsdaten' => LeistungsdatenResource::collection($this->leistungen),
-            'bemerkungen' => new BemerkungResource($this->bemerkung),
+            'lernabschnitt' => new LernabschnittResource($this->lernabschnitt),
+//            'bemerkungen' => new BemerkungResource($this->bemerkung),
+
         ];
     }
 }

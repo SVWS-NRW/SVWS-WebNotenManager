@@ -11,10 +11,9 @@ return new class extends Migration
     {
         Schema::create('noten', function (Blueprint $table) {
             $table->id();
-            $table->string('kuerzel');
+            $table->string('kuerzel')->unique();
             $table->integer('notenpunkte')->nullable();
-            $table->string('text');
-            $table->timestamps();
+            $table->string('text')->nullable();
         });
     }
 

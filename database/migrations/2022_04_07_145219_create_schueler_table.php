@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('schueler', function (Blueprint $table) {
             $table->id();
-            $table->integer('ext_id')->unique();
             $table->foreignIdFor(Jahrgang::class);
             $table->foreignIdFor(Klasse::class);
             $table->string('nachname');
@@ -22,14 +21,6 @@ return new class extends Migration
             $table->string('bilingualeSprache')->nullable();
             $table->boolean('istZieldifferent')->default(false);
             $table->boolean('istDaZFoerderung')->default(false);
-			$table->text('asv')->nullable();
-			$table->text('aue')->nullable();
-			$table->text('zb')->nullable();
-			$table->string('lels')->nullable();
-			$table->string('schulformEmpf')->nullable();
-			$table->string('individuelleVersetzungsbemerkungen')->nullable();
-			$table->string('foerderbemerkungen')->nullable();
-            $table->timestamps();
         });
     }
 

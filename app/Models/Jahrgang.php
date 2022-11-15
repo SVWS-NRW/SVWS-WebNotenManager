@@ -41,11 +41,12 @@ class Jahrgang extends Model
     protected $table = 'jahrgaenge';
 
     protected $fillable = [
-        'ext_id',
         'kuerzel',
         'kuerzelAnzeige',
         'beschreibung',
         'stufe',
         'sortierung',
     ];
+
+	public $timestamps = false;
 }

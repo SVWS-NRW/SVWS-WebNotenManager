@@ -11,7 +11,6 @@ return new class extends Migration
     {
         Schema::create('lernabschnitte', function (Blueprint $table) {
             $table->id();
-            $table->integer('ext_id')->unique();
             $table->foreignIdFor(Schueler::class);
             $table->string('pruefungsordnung');
             $table->unsignedBigInteger('lernbereich1note')->nullable();

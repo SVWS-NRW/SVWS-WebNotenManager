@@ -11,9 +11,8 @@ return new class extends Migration
     {
         Schema::create('foerderschwerpunkte', function (Blueprint $table) {
             $table->id();
-            $table->string('kuerzel');
+            $table->string('kuerzel')->unique();
             $table->string('beschreibung');
-            $table->timestamps();
         });
     }
 

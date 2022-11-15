@@ -11,13 +11,11 @@ return new class extends Migration
     {
         Schema::create('jahrgaenge', function (Blueprint $table) {
             $table->id();
-            $table->integer('ext_id')->unique();
             $table->string('kuerzel');
             $table->string('kuerzelAnzeige');
             $table->string('beschreibung');
             $table->string('stufe');
-            $table->integer('sortierung')->nullable();
-            $table->timestamps();
+            $table->integer('sortierung');
         });
     }
 

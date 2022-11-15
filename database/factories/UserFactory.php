@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Team;
+use App\Models\User;
 use App\Models\User as Lehrer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -12,22 +13,19 @@ class UserFactory extends Factory
 {
     protected $model = Lehrer::class;
     
-    public function definition()
+    public function definition(): array
     {
         return [                        
             'kuerzel' => $this->faker->unique->word(),
+            'vorname' => $this->faker->firstName(),
             'nachname' => $this->faker->lastName(),
+            'geschlecht' => $this->faker->randomElement(User::GENDERS),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
             'remember_token' => Str::random(10),
         ];
     }
-
-    public function withExtId(): Factory
-    {
-        return $this->state(fn () => ['ext_id' => $this->faker->unique(true)->randomNumber()]);
-    }    
 
     public function unverified(): Factory
     {

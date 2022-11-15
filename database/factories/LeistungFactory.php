@@ -19,7 +19,6 @@ class LeistungFactory extends Factory
     public function definition(): array
     {
         return [
-            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'schueler_id' => Schueler::factory(),
             'lerngruppe_id' => Lerngruppe::factory(),
             'note_id' => Note::Factory(),

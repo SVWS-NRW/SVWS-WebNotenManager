@@ -7,9 +7,6 @@ use App\Models\Klasse;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Schueler>
- */
 class SchuelerFactory extends Factory
 {
     protected $model = Schueler::class;
@@ -17,12 +14,11 @@ class SchuelerFactory extends Factory
     public function definition(): array
     {
         return [
-            'ext_id' => $this->faker->unique(true)->randomNumber(),
             'jahrgang_id' => Jahrgang::factory(),
             'klasse_id' => Klasse::factory(),
             'nachname' => $this->faker->lastName(),
             'vorname' => $this->faker->firstName(),
-            'geschlecht' => $this->faker->randomElement(['m', 'w', 'd', 'x']),
+            'geschlecht' => $this->faker->randomElement(Schueler::GENDERS),
         ];
     }
 

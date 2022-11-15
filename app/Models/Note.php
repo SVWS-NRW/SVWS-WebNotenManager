@@ -39,4 +39,6 @@ class Note extends Model
         'notenpunkte',
         'text',
     ];
+
+	public $timestamps = false;
 }

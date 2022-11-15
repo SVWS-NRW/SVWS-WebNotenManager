@@ -17,9 +17,8 @@ return new class extends Migration
             $table->string('kuerzel');
             $table->text('text');
             $table->foreignIdFor(Fach::class)->nullable();
-            $table->integer('niveau')->nullable();
             $table->foreignIdFor(Jahrgang::class)->nullable();
-            $table->timestamps();
+            $table->integer('niveau')->nullable();
         });
     }
     

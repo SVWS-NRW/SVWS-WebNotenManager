@@ -9,7 +9,7 @@ class LeistungsdatenResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->ext_id,
+            'id' => $this->id,
             'note' => $this->note?->kuerzel,
             'istGemahnt' => (bool) $this->istGemahnt,
 			'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,

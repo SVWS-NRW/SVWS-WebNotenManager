@@ -35,4 +35,6 @@ class Foerderschwerpunkt extends Model
         'kuerzel',
         'beschreibung',
     ];
+
+	public $timestamps = false;
 }

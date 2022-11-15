@@ -41,6 +41,8 @@ class Floskelgruppe extends Model
         'hauptgruppe',
     ];
 
+	public $timestamps = false;
+
     public function floskeln(): HasMany
     {
         return $this->hasMany(Floskel::class);

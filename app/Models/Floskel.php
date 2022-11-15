@@ -47,9 +47,11 @@ class Floskel extends Model
         'kuerzel',
         'text',
         'fach_id',
+        'jahrgang_id',
         'niveau',
-        'jahrgang_id'
     ];
+
+	public $timestamps = false;
 
     public function floskelgruppe(): BelongsTo
     {
