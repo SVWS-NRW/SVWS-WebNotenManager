@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\User as Lehrer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $b_k_abschluss_id
  * @property int $fach_id
- * @property int $user_id
  * @property int $istSchriftlich
  * @property \App\Models\Note|null $vornote
  * @property \App\Models\Note|null $noteSchriftlichePruefung
@@ -48,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereVornote($value)
  * @mixin \Eloquent
+ * @property int $lehrer_id
+ * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereLehrerId($value)
  */
 class BKFach extends Model
 {
@@ -58,7 +58,7 @@ class BKFach extends Model
     protected $fillable = [
         'bkabschluss_id', 
         'fach_id', 
-        'user_id',
+        'lehrer_id',
         'istSchriftlich',
         'vornote',  
         'noteSchriftlichePruefung', 

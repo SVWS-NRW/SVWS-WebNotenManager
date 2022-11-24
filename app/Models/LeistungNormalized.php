@@ -49,6 +49,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|LeistungNormalized whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LeistungNormalized whereVorname($value)
  * @mixin \Eloquent
+ * @property int $lerngruppe_id
+ * @property string|null $fachbezogeneBemerkungen
+ * @method static \Illuminate\Database\Eloquent\Builder|LeistungNormalized whereFachbezogeneBemerkungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LeistungNormalized whereLerngruppeId($value)
  */
 class LeistungNormalized extends Model
 {

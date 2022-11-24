@@ -2,7 +2,7 @@
 
 use App\Models\BKAbschluss;
 use App\Models\Fach;
-use App\Models\User as Lehrer;
+use App\Models\Lehrer;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('noteMuendlichePruefung');
             $table->boolean('istSchriftlichBerufsabschluss')->default(false);
             $table->unsignedBigInteger('noteBerufsabschluss');
-            $table->unsignedBigInteger('abschlussnote');         
+            $table->unsignedBigInteger('abschlussnote');
             $table->timestamps();
             
             $table->foreign('vornote')->references('id')->on('noten');

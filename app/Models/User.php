@@ -72,16 +72,10 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
-	const GENDERS = ['m', 'w', 'd', 'x'];
-
     protected $fillable = [
-        'kuerzel',
-        'vorname',
-        'nachname',
-        'geschlecht',
+        'name',
         'email',
         'password',
-		'administrator',
     ];
 
     protected $hidden = [
@@ -93,35 +87,9 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'administrator' => 'boolean',
     ];
 
     protected $appends = [
         'profile_photo_url',
     ];
-
-    public function lerngruppen(): BelongsToMany
-    {
-        return $this->belongsToMany(Lerngruppe::class, 'lerngruppe_lehrer');
-    }
-
-    public function klassen(): BelongsToMany
-    {
-        return $this->belongsToMany(Klasse::class, 'klasse_lehrer');
-    }
-
-    public function daten(): HasOne // TODO
-    {
-        return $this->hasOne(Daten::class);
-    }
-
-	public function administrator(): bool
-	{
-		return (bool) $this->administrator;
-	}
-
-	public function lehrer(): bool
-	{
-		return (bool) !$this->administrator;
-	}
 }

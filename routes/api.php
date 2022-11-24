@@ -28,8 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('set-noten/{leistungNormalized}', 'set')->name('set_noten');
     });
 
-	Route::middleware('admin')
-		->controller(SettingController::class)->group(function () {
+	Route::middleware('administrator')
+		->controller(SettingController::class)
+		->group(function () {
 			Route::get('get-settings/{type}', 'get')->name('get_settings');
 			Route::post('set-settings', 'set')->name('set_settings');
 		});

@@ -11,7 +11,7 @@ class RedirectIfAdministrator
 {
     public function handle(Request $request, Closure $next): JsonResponse|RedirectResponse
 	{
-		if (auth()->check() && auth()->user()->administrator()) {
+		if (auth()->guard('administrator')->check()) {
 			return $next($request);
 		}
 

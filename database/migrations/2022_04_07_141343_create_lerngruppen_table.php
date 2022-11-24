@@ -2,6 +2,7 @@
 
 use App\Models\Daten;
 use App\Models\Fach;
+use App\Models\Klasse;
 use App\Models\Lehrer;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,10 +14,9 @@ return new class extends Migration
     {
         Schema::create('lerngruppen', function (Blueprint $table) {
             $table->id();
-            $table->integer('groupable_id');
-            $table->string('groupable_type');
+            $table->foreignIdFor(Klasse::class)->nullable();
             $table->foreignIdFor(Fach::class);
-            $table->string('kursartID')->nullable();
+            $table->string('kID');
             $table->string('bezeichnung');
             $table->string('kursartKuerzel')->nullable();
             $table->string('bilingualeSprache')->nullable();

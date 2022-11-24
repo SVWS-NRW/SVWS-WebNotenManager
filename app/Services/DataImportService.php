@@ -8,12 +8,12 @@ use App\Models\Floskelgruppe;
 use App\Models\Foerderschwerpunkt;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
-use App\Models\Kurs;
 use App\Models\Lerngruppe;
-use App\Models\User as Lehrer;
+use App\Models\Lehrer;
 use App\Models\Note;
 use App\Models\Schueler;
 use App\Models\Teilleistungsart;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -36,7 +36,6 @@ class DataImportService
         $this->importLehrer();
         $this->importKlassen();
         $this->importNoten();
-        $this->importKursarten();
         $this->importFoerderschwerpunkte();
         $this->importJahrgaenge();
         $this->importFaecher();
@@ -52,16 +51,30 @@ class DataImportService
 //        $this->importDaten();
     }
 
+
+	/**
+	 * Creates the Lehrer model. The model can be updated anytime.
+	 * If the model does not exist yet, sets a new password depending on if in production or not.
+	 * Sets a random email if not provided.
+	 *
+	 * @return void
+	 */
 	public function importLehrer(): void
 	{
 		$this->start('Lehrer');
 
 		foreach($this->json['lehrer'] as $row) {
-			$row['email'] = $row['eMailDienstlich'] ?? Str::random() .'@'. Str::random() .'.'.  Str::random(); // TODO: https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/15#note_7329
-			$row['password'] = app()->environment('production') ? Str::random() : Hash::make('password');
+			$row['email'] = $this->email($row['eMailDienstlich']);
 			$row['geschlecht'] = $this->gender(data: $row, allowed: Lehrer::GENDERS);
 
 			unset($row['eMailDienstlich']);
+
+			try {
+				Lehrer::findOrFail($row['id']);
+			} catch (ModelNotFoundException $e) {
+				$row['password'] = app()->environment('production') ? Str::random() : Hash::make('password');
+				report($e);
+			}
 
 			Lehrer::updateOrCreate(['id' => $row['id']], $row);
 		}
@@ -69,25 +82,43 @@ class DataImportService
 		$this->stop();
 	}
 
+	/**
+	 * Creates the Klasse model. The model will not be updated with future requests.
+	 * After creating the model, the Lehrer model relationships are created.
+	 * The relationships are only being set once, and will not trigger at consecutive requests.
+	 *
+	 * @return void
+	 */
 	public function importKlassen(): void
 	{
 		$this->start('Klassen');
 
 		foreach($this->json['klassen'] as $row) {
-			$klasse = Klasse::firstOrCreate(['ext_id' => $row['id']], Arr::except($row, ['klassenlehrer']));
-			$klasse->klassenlehrer()->sync($row['klassenlehrer']);
+			$klasse = Klasse::firstOrCreate(['id' => $row['id']], Arr::except($row, ['klassenlehrer']));
+
+			if ($klasse->wasRecentlyCreated === true) {
+				$klasse->klassenlehrer()->attach($row['klassenlehrer']);
+			}
 		}
 
 		$this->stop();
 	}
 
+	/**
+	 * Creates the Note model. The model will not be updated with future requests.
+	 * Resources with an negative id are filtered out. Relatable models are nullable.
+	 *
+	 * TODO: All Models are stored in an array to be called by ID in different resources.
+	 *
+	 * @return void
+	 */
 	public function importNoten(): void
     {
 		$this->start('Noten');
 
-		foreach($this->json['noten'] as $row) {
-			Note::updateOrCreate(['kuerzel' => $row['kuerzel']], $row);
-		}
+		collect($this->json['noten'])
+			->filter(fn (array $row) => $row['id'] >= 0)
+			->each(fn (array $row) => Note::firstOrCreate(['id' => $row['id']], $row));
 
 		$this->noten = Note::query()
 			->orderBy('kuerzel')
@@ -97,20 +128,19 @@ class DataImportService
 		$this->stop();
     }
 
-	public function importKursarten(): void
-    {
-		$this->start('Kursarten');
-		echo "  ! No importer yet \r\n";
-
-		$this->stop();
-    }
-
+	/**
+	 * Creates the Foerderschwerpunkt model. The model will not be updated with future requests.
+	 *
+	 * TODO: All Models are stored in an array to be called by ID in different resources.
+	 *
+	 * @return void
+	 */
 	public function importFoerderschwerpunkte(): void
 	{
 		$this->start('foerderschwerpunkte');
 
 		foreach($this->json['foerderschwerpunkte'] as $row) {
-			Foerderschwerpunkt::updateOrCreate(['kuerzel' => $row['kuerzel']], $row);
+			Foerderschwerpunkt::firstOrCreate(['id' => $row['id']], $row);
 		}
 
 		$this->foerderschwerpunkte = Foerderschwerpunkt::query()
@@ -121,29 +151,47 @@ class DataImportService
 		$this->stop();
 	}
 
+	/**
+	 * Creates the Jahrgang model. The model will not be updated with future requests.
+	 *
+	 * TODO: On customers site there were formatting problems with whitespaces.
+	 *
+	 * @return void
+	 */
 	public function importJahrgaenge(): void
 	{
 		$this->start('Jahrgaenge');
 
 		foreach($this->json['jahrgaenge'] as $row) {
-			$row['beschreibung'] = $this->trimWhitespaces($row['beschreibung']);
-			Jahrgang::updateOrCreate(['id' => $row['id']], $row);
+			$row['beschreibung'] = $this->trimWhitespaces($row['beschreibung']); // TODO: Check with customer
+			Jahrgang::firstOrCreate(['id' => $row['id']], $row);
 		}
 
 		$this->stop();
 	}
 
+	/**
+	 * Creates the Fach model. The model will not be updated with future requests.
+	 *
+	 * @return void
+	 */
 	public function importFaecher(): void
 	{
 		$this->start('Faecher');
 
 		foreach($this->json['faecher'] as $row) {
-			Fach::updateOrCreate(['id' => $row['id']], $row);
+			Fach::firstOrCreate(['id' => $row['id']], $row);
 		}
 
 		$this->stop();
 	}
 
+	/**
+	 * Creates the Floskelgruppe model. The model will not be updated with future requests.
+	 * Related floskel will be created only if the Floskelgruppe model was recently created.
+	 *
+	 * @return void
+	 */
 	public function importFloskelgruppen(): void
 	{
 		$this->start('Floskelgruppen mit Floskeln');
@@ -154,12 +202,15 @@ class DataImportService
 				Arr::except($row, ['floskeln'])
 			);
 
+			if ($floskelgruppe->wasRecentlyCreated === false) {
+				continue;
+			}
+
 			foreach ($row['floskeln'] as $floskel) {
 				$floskel['fach_id'] = $floskel['fachID'];
 				$floskel['jahrgang_id'] = $floskel['jahrgangID'];
 
-				unset($floskel['fachID']);
-				unset($floskel['jahrgangID']);
+				unset($floskel['fachID'], $floskel['jahrgangID']);
 
 				$floskelgruppe->floskeln()->create($floskel);
 			}
@@ -168,20 +219,37 @@ class DataImportService
 		$this->stop();
 	}
 
+	/**
+	 * Creates the Lerngruppe model. The model will not be updated with future requests.
+	 * Related Lehrer models will be created only if the Lerngruppe model was recently created.
+	 *
+	 * A lerngruppe either belongs to a Klasse model or is a Kurs. Depending on the presence of kursartID.
+	 *
+	 * TODO: A question to the Customer was sent regarding the newly introduced `-1` value for kursartID
+	 *
+	 * @return void
+	 */
 	public function importLerngruppen(): void
 	{
 		$this->start('Lerngruppen');
 
 		foreach ($this->json['lerngruppen'] as $row) {
 			$row['fach_id'] = $row['fachID'];
-			$row['groupable_type'] = $row['kursartID'] !== null ? Kurs::class : Klasse::class;
-			$row['groupable_id'] = $row['kID'];
 
-			unset($row['fachID']);
-			unset($row['kID']);
+			if (in_array($row['kursartID'], [null, -1])) { // TODO: Check the `-1`
+				$row['klasse_id'] = $row['kID'];
+			}
 
-			$lerngruppe = Lerngruppe::firstOrCreate(['id' => $row['id']], Arr::except($row, ['lehrerID']));
-			$lerngruppe->lehrer()->sync($row['lehrerID']);
+			unset($row['kursartID'], $row['fachID']);
+
+			$lerngruppe = Lerngruppe::firstOrCreate(
+				['id' => $row['id']],
+				Arr::except($row, ['lehrerID'])
+			);
+
+			if ($lerngruppe->wasRecentlyCreated === true) {
+				$lerngruppe->lehrer()->attach($row['lehrerID']);
+			}
 		}
 
 		$this->stop();
@@ -198,6 +266,13 @@ class DataImportService
 		$this->stop();
 	}
 
+	/**
+	 * Creates the Schueler model. The model will not be updated with future requests.
+	 * Related Lernabschnitt model will be created only if the Lerngruppe model was recently created.
+	 * TODO: ^^^ To be cleared with Customer
+	 *
+	 * @return void
+	 */
 	public function importSchueler(): void
 	{
 		$this->start('Schueler');
@@ -207,8 +282,7 @@ class DataImportService
 			$row['klasse_id'] = $row['klasseID'];
 			$row['geschlecht'] = $this->gender(data: $row, allowed: Schueler::GENDERS);
 
-			unset($row['klasseID']);
-			unset($row['jahrgangID']);
+			unset($row['klasseID'], $row['jahrgangID']);
 
 			// TODO: Temporary unset. TO BE CLEARED
 			unset($row['sprachenfolge']);
@@ -217,14 +291,14 @@ class DataImportService
 
 			$schueler = Schueler::firstOrCreate(
 				['id' => $row['id']],
-				Arr::except(
-					$row,
-					['bemerkungen', 'lernabschnitt', 'leistungsdaten']
-				)
+				Arr::except($row, ['bemerkungen', 'lernabschnitt', 'leistungsdaten'])
 			);
 
-			$this->importLernabschnitte(schueler: $schueler, data: $row['lernabschnitt']);
-			$this->importLeistungsdaten(schueler: $schueler, data: $row);
+			if ($schueler->wasRecentlyCreated === true) {
+				$this->importLernabschnitte(schueler: $schueler, data: $row['lernabschnitt']);
+			}
+
+			$this->importLeistungsdaten(schueler: $schueler, data: $row['leistungsdaten']);
 
 
 //			// Bemerkungen
@@ -240,6 +314,8 @@ class DataImportService
 //			}
 //			$schueler->save();
 //
+
+//	TODO: Still missing in json
 //			$this->importSprachenfolge($schueler, $row);
 //			$this->importZp10($schueler, $row);
 //			$this->importBkAbschluss($schueler, $row);
@@ -248,11 +324,18 @@ class DataImportService
 		$this->stop();
 	}
 
-
-
+	/**
+	 * Creates the Lernabschnitt model.
+	 * TODO: It is not yet clear if the model will not be updated with future requests or will.
+	 * TODO: Still waiting for the information if the 4 fields will have the `id` instead of the `kuerze`
+	 *
+	 * @param Schueler $schueler
+	 * @param array $data
+	 * @return void
+	 */
 	private function importLernabschnitte(Schueler $schueler, array $data): void
 	{
-		if ($data) { // TODO: To be updated if noteID is available // TODO: Idea to put into schuller
+		if ($data) { // TODO: To be updated if noteID is available // TODO: Idea to put into schueler
 
 			$data['foerderschwerpunkt1'] = $this->getValueFromArray(
 				data: $data,
@@ -278,29 +361,38 @@ class DataImportService
 				collection: $this->noten
 			);
 
+			$data['pruefungsordnung'] = $data['pruefungsordnung'] ?? 'Lorem ipsum'; // TOOD: Check with customer
+
 			$schueler->lernabschnitt()->create($data);
 		}
 	}
 
+	/**
+	 * Creates the Leistung model. The model will be updated with future requests.
+	 * The timestamp will be compared to check if the data was updated on the SVWS server.
+	 * TODO: ^^^ Date missing. To be cleared which timestamp for which columns should be valid.
+	 *
+	 * @param Schueler $schueler
+	 * @param array $data
+	 * @return void
+	 */
 	private function importLeistungsdaten(Schueler $schueler, array $data): void
 	{
-		foreach($data['leistungsdaten'] as $row) {
+		foreach($data as $row) {
 			$row['lerngruppe_id'] = $row['lerngruppenID'];
 			$row['note_id'] = $this->getValueFromArray(data: $row, column: 'note', collection: $this->noten);
 
 			unset($row['lerngruppenID']);
 
-			$schueler->leistungen()->firstOrCreate(
+			$schueler->leistungen()->updateOrCreate( // TODO: Timestamp comparison
 				['id' => $row['id']],
 				Arr::except($row, ['teilleistungen', 'lerngruppenID', 'note'])
 			);
 
-// TODO: To be cleared how the structure ist
-//				foreach($leistungsdaten['teilleistungen'] as $teilleistung) {
-//					$leistung->teilleistungen()->create($teilleistung);
-//				}
-
-
+			//TODO: To be cleared how the structure ist
+			//foreach($leistungsdaten['teilleistungen'] as $teilleistung) {
+			//	$leistung->teilleistungen()->create($teilleistung);
+			//}
 		}
 	}
 
@@ -340,6 +432,15 @@ class DataImportService
 		return 'x';
 	}
 
+	private function email(string|null $email): string
+	{
+		if ($email !== null && $email !== '') {
+			return $email;
+		}
+
+		return sprintf('%s@%s', Str::random(32), Str::random(32));
+	}
+
 
 
 
@@ -367,6 +468,8 @@ class DataImportService
             ]
         );
     }
+
+
 
 
 

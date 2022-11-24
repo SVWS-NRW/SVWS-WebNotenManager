@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\User as Lehrer;
-use App\Models\Fach;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -45,6 +42,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereWochenstunden($value)
  * @mixin \Eloquent
  * @property-read Fach|null $fach
+ * @property string|null $kursartKuerzel
+ * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKursartKuerzel($value)
  */
 class Lerngruppe extends Model
 {
@@ -53,20 +52,14 @@ class Lerngruppe extends Model
     protected $table = 'lerngruppen';
 
     protected $fillable = [
-        'groupable_id',
-        'groupable_type',
+        'klasse_id',
         'fach_id',
-        'kursartID',
+		'kID',
         'bezeichnung',
         'kursartKuerzel',
         'bilingualeSprache',
         'wochenstunden',
     ];
-
-    public function groupable(): MorphTo
-    {
-        return $this->morphTo();
-    }
 
     public function lehrer(): BelongsToMany
     {
@@ -76,5 +69,10 @@ class Lerngruppe extends Model
     public function fach(): BelongsTo
     {
         return $this->belongsTo(Fach::class);
+    }
+
+    public function klasse(): BelongsTo
+    {
+        return $this->belongsTo(Klasse::class);
     }
 }

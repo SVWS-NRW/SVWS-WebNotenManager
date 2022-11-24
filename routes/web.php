@@ -1,12 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\RequestPasswordController;
-use App\Http\Controllers\Datenschutz;
-use App\Http\Controllers\Impressum;
 use App\Http\Controllers\KlassenleitungController;
 use App\Http\Controllers\LeistungsController;
 use App\Http\Controllers\LeistungsUebersichtController;
-use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
@@ -19,8 +16,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 		->name('klassenleitung')
 		->middleware('klassenleitung');
 
-	Route::inertia('einstellungen', 'Settings/Index')->name('settings.index');
-	Route::inertia('einstellungen/schule', 'Settings/School')->name('settings.school');
+	Route::middleware('admin')
+		->prefix('einstellungen')
+		->namespace('settings.')
+		->group(function () {
+			Route::inertia('/', 'Settings/Index')->name('index');
+			Route::inertia('schule', 'Settings/School')->name('school');
+		});
 });
 
 Route::inertia('impressum', 'Impressum')->name('impressum');
@@ -34,3 +36,6 @@ Route::controller(RequestPasswordController::class)
 		Route::get('passwort-anfordern', 'index');
 		Route::post('passwort-anfordern', 'store');
 	});
+
+
+

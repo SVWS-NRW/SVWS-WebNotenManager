@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User as Lehrer;
+use App\Models\Lehrer;
 use App\Models\Lerngruppe;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

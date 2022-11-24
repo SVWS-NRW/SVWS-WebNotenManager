@@ -18,13 +18,10 @@ class LerngruppeFactory extends Factory
 
     public function definition(): array
     {
-        $groupable = $this->groupable();
-
         return [
-            'groupable_id' => $groupable::factory(),
-            'groupable_type' => $groupable,
             'fach_id' => Fach::factory(),
-            'kursartID' => $this->faker->unique->word(),
+            'klasse_id' => Klasse::factory(),
+			'kID' => $this->faker->numberBetween(1, 1_000_000),
             'bezeichnung' => $this->faker->unique->word(),
             'kursartKuerzel' => $this->faker->unique->word(),
 			'bilingualeSprache' => $this->faker->unique->word(),
@@ -32,8 +29,5 @@ class LerngruppeFactory extends Factory
         ];
     }
 
-    public function groupable(): string
-    {
-        return $this->faker->randomElement([Klasse::class, Kurs::class]);
-    }
+
 }

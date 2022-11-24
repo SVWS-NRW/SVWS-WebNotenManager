@@ -18,7 +18,8 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'auth.user' => fn () => $request->user() ? $request->user()->only('id', 'vorname', 'nachname', 'email', 'administrator', 'klassen') : null,
+            'auth.user' => fn () => $request->user() ? $request->user()->only('id', 'vorname', 'nachname', 'email', 'klassen') : null,
+			'auth.administrator' => auth()->guard('admin')->check(),
 			'schoolName' => config('app.school_name'),
 			'settings' => Setting::all()->pluck('value','key'),
 			'note_entry_disabled' => Setting::entryDisabled('note_entry_until'),

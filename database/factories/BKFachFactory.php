@@ -6,7 +6,7 @@ use App\Models\BKAbschluss;
 use App\Models\BKFach;
 use App\Models\Fach;
 use App\Models\Note;
-use App\Models\User as Lehrer;
+use App\Models\Lehrer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

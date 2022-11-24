@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\User as Lehrer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\Klasse
@@ -46,6 +46,11 @@ class Klasse extends Model
     ];
 
 	public $timestamps = false;
+
+	public function lerngruppen(): HasMany
+	{
+		return $this->hasMany(Lerngruppe::class);
+	}
 
     public function klassenlehrer(): BelongsToMany
     {

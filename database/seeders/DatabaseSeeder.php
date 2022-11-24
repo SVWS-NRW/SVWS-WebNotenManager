@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->administrator()->create(['email' => 'user@user.com']);
+        User::factory()->create(['email' => 'user@user.com']);
 
         $this->call([
             JsonImportSeeder::class,

@@ -47,7 +47,7 @@
         </template>
 
         <template #footer>
-            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.index')">
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.index')" v-if="props.auth.administrator">
                 <template #label>Einstellungen</template>
                 <template #icon>
                     <SvwsUiIcon>

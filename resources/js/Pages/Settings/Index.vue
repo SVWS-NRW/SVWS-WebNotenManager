@@ -25,7 +25,7 @@
                     </template>
 
                     <template #content>
-                        <SvwsUiSidebarMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')" v-if="props.auth.user.administrator">
+                        <SvwsUiSidebarMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')">
                             <template #label>Schule bearbeiten</template>
                         </SvwsUiSidebarMenuItem>
                     </template>

@@ -3,11 +3,9 @@
 namespace App\Models;
 
 
-use App\Models\User as Lehrer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\Daten
@@ -18,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $anzahlAbschnitte
  * @property int $aktuellerAbschnitt
  * @property string|null $publicKey
- * @property int $user_id
  * @property int $fehlstundenEingabe
  * @property int $fehlstundenSIFachbezogen
  * @property int $fehlstundenSIIFachbezogen
@@ -52,6 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $lehrerID API LehrerID value
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereLehrerID($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereSchulnummer($value)
+ * @property int $lehrer_id User/Lehrer model relation
  */
 class Daten extends Model
 {
@@ -67,7 +65,7 @@ class Daten extends Model
         'aktuellerAbschnitt',
         'publicKey',
         'lehrerID',
-        'user_id',
+        'lerher_id',
         'fehlstundenEingabe',
         'fehlstundenSIFachbezogen',
         'fehlstundenSIIFachbezogen',
@@ -77,6 +75,6 @@ class Daten extends Model
 
     public function lehrer(): BelongsTo
     {
-        return $this->belongsTo(Lehrer::class, 'user_id', 'id');
+        return $this->belongsTo(Lehrer::class, 'lehrer_id', 'id');
     }
 }
