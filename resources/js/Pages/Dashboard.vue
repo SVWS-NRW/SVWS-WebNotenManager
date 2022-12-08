@@ -1,52 +1,19 @@
 <script setup lang="ts">
     import { ref, computed, reactive, onMounted, watch } from 'vue'
     import { useStore } from '../store'
-    import axios, {AxiosResponse} from 'axios'
+    import axios, { AxiosPromise, AxiosResponse } from 'axios'
 
-    import MahnungIndicator from "../Components/Dashboard/MahnungIndicator.vue"
-    import FloskelnMenu from "../Components/Dashboard/FloskelnMenu.vue"
-    import NoteInput from "../Components/Dashboard/NoteInput.vue"
-    import TopMenu from "../Components/TopMenu.vue"
+    import { Leistung } from '../Interfaces/Leistung'
+    import { Column } from '../Interfaces/Column'
+    import { Filter } from '../Interfaces/Filter'
+
+    import MahnungIndicator from '../Components/Dashboard/MahnungIndicator.vue'
+    import FloskelnMenu from '../Components/Dashboard/FloskelnMenu.vue'
+    import NoteInput from '../Components/Dashboard/NoteInput.vue'
+    import TopMenu from '../Components/TopMenu.vue'
     import Menubar from '../Components/Menubar.vue'
     import BemerkungenIndicator from '../Components/Klassenleitung/BemerkungenIndicator.vue'
-    import Tooltip from "../SVWS-Server/svws-webclient/src/ui-components/ts/src/components/Tooltip.vue";
-    import BottomMenu from "../Components/BottomMenu.vue";
-
-    type leistungType = {
-        id: number,
-        klasse: string|Number|null,
-        name: string,
-        vorname: string,
-        nachname: string,
-        geschlecht: string,
-        fach: string|null,
-        lehrer: string,
-        jahrgang: string,
-        kurs: string|null,
-        note: string|null,
-        fachbezogeneBemerkungen: string|null,
-        fs: number,
-        ufs: number,
-        istGemahnt: boolean,
-        mahndatum: boolean
-    }
-
-    type column = {
-        key: string,
-        label: string,
-        sortable: boolean
-    }
-
-    type filterElementType = Array<{ id: string, label: string }>
-    type filterValuesType = {
-        jahrgaenge: filterElementType,
-        noten: filterElementType,
-        klassen: filterElementType,
-        kurse: filterElementType,
-        faecher: filterElementType
-    }
-
-    type selected = { leistung: leistungType }|null
+    import BottomMenu from '../Components/BottomMenu.vue'
 
     let props = defineProps({
         auth: Object,
@@ -55,78 +22,91 @@
     const store = useStore();
 
     let state = reactive({
-        selected: <selected> null,
-        leistungen: <leistungType[]> [],
-        filterValues: <filterValuesType> {
+        selected: <Leistung | null> null,
+        leistungen: <Leistung[]> [],
+        filterValues: <{
+            jahrgaenge: Array<Filter>,
+            noten: Array<Filter>,
+            klassen: Array<Filter>,
+            kurse: Array<Filter>,
+            faecher: Array<Filter>,
+        }> {
             'jahrgaenge': [],
             'klassen': [],
             'kurse': [],
             'noten': [],
+            'faecher': [],
         },
     })
 
     const filters = reactive({
         search: <string> '',
-        klasse: <Number|string> 0,
-        jahrgang: <Number|string> 0,
-        kurs: <Number|string> 0,
-        fach: <Number|string> '0',
-        note: <Number|string> 0,
+        klasse: <Number | string> 0,
+        jahrgang: <Number | string> 0,
+        kurs: <Number | string> 0,
+        fach: <Number | string> '0',
+        note: <Number | string> 0,
     })
 
     onMounted((): void => {
+        getFilters()
         getLeistungen()
-        axios.get(route('get_filters')).then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
     })
 
-const getLeistungen = () => axios.get(route('get_leistungen')).then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
-    const filteredLeistungen = computed((): Array<leistungType> =>
-        state.leistungen
-            .map((leistung: leistungType): leistungType => {
-                leistung.name = [leistung.nachname, leistung.vorname].join(', ')
-                return leistung
-            })
-            .filter((leistung: leistungType): boolean =>
-                searchFilter(leistung)
-                && tableFilter(leistung, 'klasse', true)
-                && tableFilter(leistung, 'kurs', true)
-                && tableFilter(leistung, 'jahrgang')
-                && tableFilter(leistung, 'note', true)
-                && tableFilter(leistung, 'fach')
-            )
+    const getFilters = (): AxiosPromise => axios
+        .get(route('get_filters'))
+        .then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
+
+    const getLeistungen = (): AxiosPromise => axios
+        .get(route('get_leistungen'))
+        .then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
+
+    const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
+        .map((leistung: Leistung): Leistung => {
+            leistung.name = [leistung.nachname, leistung.vorname].join(', ')
+            return leistung
+        })
+        .filter((leistung: Leistung): boolean =>
+            searchFilter(leistung)
+            && tableFilter(leistung, 'klasse', true)
+            && tableFilter(leistung, 'kurs', true)
+            && tableFilter(leistung, 'jahrgang')
+            && tableFilter(leistung, 'note', true)
+            && tableFilter(leistung, 'fach')
+        )
     );
 
-    const searchFilter = (leistung: leistungType) => {
+    const searchFilter = (leistung: Leistung): boolean => {
         if (filters.search === '') return true
         const search = (search: string) => search.toLowerCase().includes(filters.search.toLowerCase())
         return search(leistung.vorname) || search(leistung.nachname)
     }
 
-    const tableFilter = (leistung: leistungType, column: string, withOnlyEmptyOption: boolean = false) => {
+    const tableFilter = (leistung: Leistung, column: string, withOnlyEmptyOption: boolean = false): boolean => {
         if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] == null
         if (filters[column] == 0) return true
         return leistung[column] == filters[column]
     }
 
-    const updateLeistungMahnung = (leistung: leistungType, istGemahnt: boolean, mahndatum: string) => {
-        let current = state.leistungen.find(current => current.id === leistung.id)
+    const updateLeistungMahnung = (leistung: Leistung, istGemahnt: boolean, mahndatum: string): void => {
+        let current = state.leistungen.find((current: Leistung) => current.id === leistung.id)
         current.istGemahnt = istGemahnt
         current.mahndatum = Boolean(mahndatum)
     }
 
-    const updateLeistungNote = (leistung: leistungType, note: string) =>
-        state.leistungen.find(current => current.id === leistung.id)['note'] = note
+    const updateLeistungNote = (leistung: Leistung, note: string): string =>
+        state.leistungen.find((current: Leistung): boolean => current.id === leistung.id)['note'] = note
 
     let teilleistungen = ref(false)
     let fachbezogeneBemerkungen = ref(true)
     let mahnungen = ref(true)
     let fehlstunden = ref(false)
 
-    watch([teilleistungen, fachbezogeneBemerkungen, fehlstunden, mahnungen], () => drawTable());
+    watch([teilleistungen, fachbezogeneBemerkungen, fehlstunden, mahnungen], (): void => drawTable());
 
     let columns = ref( [])
 
-    const baseColumns = [
+    const baseColumns: Array<Column> = [
         { key: 'klasse', label: 'Klasse', sortable: true },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'fach', label: 'Fach', sortable: true },
@@ -135,21 +115,21 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
         { key: 'note', label: 'Note', sortable: false },
     ]
 
-    const teilleistungenColumns: Array<column> = []
-    const fachbezogeneBemerkungenColumns: Array<column> = [
+    const teilleistungenColumns: Array<Column> = []
+    const fachbezogeneBemerkungenColumns: Array<Column> = [
         { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: false },
     ]
 
-    const mahnungenColumns: Array<column> = [
+    const mahnungenColumns: Array<Column> = [
         { key: 'mahnung', label: 'M', sortable: false },
     ]
 
-    const fehlstundenColumns: Array<column> = [
+    const fehlstundenColumns: Array<Column> = [
         { key: 'fs', label: 'FS', sortable: true },
         { key: 'ufs', label: 'FSU', sortable: true },
     ]
 
-    const drawTable = () => {
+    const drawTable = (): void => {
         columns.value.length = 0
         pushTable(false, baseColumns, true)
         pushTable(teilleistungen.value, teilleistungenColumns)
@@ -158,14 +138,14 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
         pushTable(fehlstunden.value, fehlstundenColumns)
     }
 
-    const pushTable = (model: boolean, array: Array<column>, always: boolean = false): void => {
-        if (model || always) array.forEach(column => columns.value.push(column))
+    const pushTable = (model: boolean, array: Array<Column>, always: boolean = false): void => {
+        if (model || always) array.forEach((column: Column) => columns.value.push(column))
     }
 
-    drawTable()
+    const openFloskelMenu = (leistung: Leistung): Leistung => state.selected = leistung
+    const closeFloskelMenu = (): null => state.selected = null
 
-    const openFloskelMenu = (selected: selected): selected => state.selected = selected
-    const closeFloskelMenu = (): selected|null => state.selected = null
+    drawTable()
 </script>
 
 <template>
@@ -206,7 +186,7 @@ const getLeistungen = () => axios.get(route('get_leistungen')).then((response: A
                                 <NoteInput :leistung="row"></NoteInput>
                             </template>
                             <template #cell-fachbezogeneBemerkungen="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu({ leistung: row })" :bemerkung="Boolean(row.fachbezogeneBemerkungen)"></BemerkungenIndicator>
+                                <BemerkungenIndicator @open="openFloskelMenu({ leistung: row} )" :bemerkung="Boolean(row.fachbezogeneBemerkungen)"></BemerkungenIndicator>
                             </template>
                         </SvwsUiNewTable>
                         <div class="block w-1/3"></div>

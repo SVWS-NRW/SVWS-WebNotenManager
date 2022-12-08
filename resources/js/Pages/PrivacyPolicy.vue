@@ -1,10 +1,10 @@
 <script setup>
-import { Head } from '@inertiajs/inertia-vue3';
-import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
+    import { Head } from '@inertiajs/inertia-vue3';
+    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
 
-defineProps({
-    policy: String,
-});
+    defineProps({
+        policy: String,
+    });
 </script>
 
 <template>

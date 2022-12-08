@@ -2,11 +2,13 @@
     import { useStore } from '../store.js'
     import { Inertia } from '@inertiajs/inertia'
 
+    import { Auth } from '../Interfaces/Auth'
+
     const store = useStore()
 
-    let props = defineProps({
-        auth: Object,
-    })
+    let props = defineProps<{
+        auth: Auth
+    }>()
 
     const logout = (): void => Inertia.post(route('logout'))
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
@@ -36,7 +38,7 @@
                     </SvwsUiIcon>
                 </template>
             </SvwsUiSidebarMenuItem>
-            <SvwsUiSidebarMenuItem v-if=" props.auth.user.klassen.length != 0" :collapsed="store.sidebarCollapsed" @click="navigate('klassenleitung')" :active="route().current('klassenleitung')">
+            <SvwsUiSidebarMenuItem v-if=" props.auth.user.klassen.length > 0" :collapsed="store.sidebarCollapsed" @click="navigate('klassenleitung')" :active="route().current('klassenleitung')">
                 <template #label>Klassenleitung</template>
                 <template #icon>
                      <SvwsUiIcon>

@@ -1,31 +1,34 @@
 <script setup lang="ts">
     import { onMounted, reactive, watch} from 'vue';
-    import axios from 'axios';
+    import axios, {AxiosPromise, AxiosResponse} from 'axios';
 
-    let props = defineProps({
-        leistung: Object,
-    });
+    import { Leistung } from '../Interfaces/Leistung'
+    import { Floskel } from '../Interfaces/Floskel'
+
+    let props = defineProps<{
+        leistung: Leistung
+    }>()
 
     const state = reactive({
-        leistung: null,
+        leistung: <Leistung | null> null,
         floskelgruppen: [],
-        floskeln: [],
+        floskeln: <Floskel[]> [],
         floskelnColumns: [
             {id: 'gruppe', title: 'Gruppe'},
-            {id: 'kuerzel', title: 'Kurzel', sortable: true},
+            {id: 'kuerzel', title: 'Kuerzel', sortable: true},
             {id: 'text', title: 'Text', sortable: true},
         ],
     });
 
-    const test = () => alert(123)
+    const setFloskelgruppe = (id: number): Number => state.floskeln = state.floskelgruppen[id].floskeln;
+    const close = (): void => state.leistung = null;
 
-    const setFloskelgruppe = (id: number) => state.floskeln = state.floskelgruppen[id].floskeln;
-    const close = () => state.leistung = null;
+    onMounted((): AxiosPromise => axios
+        .get("/api/getFloskeln")
+        .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data));
 
-    onMounted(() => axios.get("/api/getFloskeln").then(response => state.floskelgruppen = response.data));
-
-    watch(() => props.leistung, (leistung) => state.leistung = leistung);
-    watch(() => state.floskelgruppen, () => setFloskelgruppe(0));
+    watch(() => props.leistung, (leistung: Leistung): Leistung => state.leistung = leistung);
+    watch(() => state.floskelgruppen, (): Number => setFloskelgruppe(0));
 </script>
 
 <template>

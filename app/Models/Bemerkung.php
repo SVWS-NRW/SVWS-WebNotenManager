@@ -43,6 +43,10 @@ class Bemerkung extends Model
 {
     use HasFactory;
 
+	const ALLOWED_BEMERKUNGEN = [
+		'avs', 'aue', 'zb',
+	];
+
     protected $table = 'bemerkungen';
 
     protected $fillable = [

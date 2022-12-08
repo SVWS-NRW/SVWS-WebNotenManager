@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import {watch, computed, reactive} from 'vue'
+    import { watch, computed, reactive } from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
     import { useStore } from '../../store'
     import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios'
@@ -25,7 +25,7 @@
 </script>
 
 <template>
-    <span :class="{'bg-red-500' : lowScore}">
+    <span :class="{ 'bg-red-500' : lowScore }">
         <span v-if="usePage().props.value.note_entry_disabled">{{ leistung.note }}</span>
         <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore"></SvwsUiTextInput>
     </span>

@@ -19,9 +19,9 @@ class KlassenleitungResource extends JsonResource
 			'vorname' => $this->vorname,
 			'nachname' => $this->nachname,
 			'klasse' => $this->klasse->kuerzel,
-			'asv' => $this->asv,
-			'aue' => $this->aue,
-			'zb' => $this->zb,
+			'asv' => $this->bemerkung?->asv,
+			'aue' => $this->bemerkung?->aue,
+			'zb' => $this->bemerkung?->zb,
 			'gfs' => $this->leistungen->sum('fehlstundenGesamt'),
 			'gfsu' => $this->leistungen->sum('fehlstundenUnentschuldigt'),
 		];

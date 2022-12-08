@@ -6,6 +6,10 @@ use App\Http\Controllers\LeistungsController;
 use App\Http\Controllers\LeistungsUebersichtController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('test', function () {
+	dd(auth()->user());
+});
+
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 	Route::get('/', LeistungsController::class)->name('dashboard');
 

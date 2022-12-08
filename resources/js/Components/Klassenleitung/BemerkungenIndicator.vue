@@ -1,6 +1,6 @@
 <script setup lang="ts">
     const emit = defineEmits(['open'])
-    const open = () => emit('open')
+    const open = (): void => emit('open')
 
     let props = defineProps({
         bemerkung: Boolean,
@@ -22,7 +22,6 @@
 </template>
 
 <style scoped>
-
     .icon > svg {
         @apply w-6 h-6
 

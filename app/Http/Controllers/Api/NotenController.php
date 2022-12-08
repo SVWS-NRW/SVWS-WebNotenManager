@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NoteResource;
-use App\Models\LeistungNormalized;
+use App\Models\Leistung;
 use App\Models\Note;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -18,18 +18,20 @@ class NotenController extends Controller
 		return NoteResource::collection(Note::all());
 	}
 
-	public function set(LeistungNormalized $leistungNormalized): JsonResponse
+	public function set(Leistung $leistung): JsonResponse
 	{
 		try {
-			$note = Note::where(['kuerzel' => (string) request()->note])->firstOrFail();
-			$leistungNormalized->leistung->update(['note_id' => $note->id]);
-			$leistungNormalized->update(['note' =>  request()->note]);
+			$note = Note::query()
+				->where(['kuerzel' => (string) request()->note])
+				->firstOrFail();
+
+			$leistung->update(['note_id' => $note->id]);
 
 			return response()->json(['note' => $note->kuerzel], Response::HTTP_OK);
 		} catch (ModelNotFoundException $e) {
 			return response()->json([
-				"message" => $e->getMessage(),
-				'note' => $leistungNormalized->note
+				'message' => $e->getMessage(),
+				'note' => $leistung->note
 			], Response::HTTP_UNPROCESSABLE_ENTITY);
 		}
     }

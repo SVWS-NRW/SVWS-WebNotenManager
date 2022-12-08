@@ -15,8 +15,8 @@
 
     const mahndatumFormatted = (): string => moment(new Date(state.mahndatum)).format('DD.MM.YYYY')
 
-    const setMahnung = () => axios
-        .post(route('set_mahnung', props.leistung), state)
+    const setMahnung = (): Promise<void> => axios
+        .post(route('set_mahnung', props.leistung.id), state)
         .then((): void => emit('updated', props.leistung, state.istGemahnt))
 </script>
 

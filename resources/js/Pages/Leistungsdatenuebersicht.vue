@@ -1,93 +1,69 @@
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted, watch } from 'vue'
-import { useStore } from '../store'
-import axios, {AxiosResponse} from 'axios'
+    import { ref, computed, reactive, onMounted, watch } from 'vue'
+    import { useStore } from '../store'
+    import axios, { AxiosPromise, AxiosResponse } from 'axios'
 
-import MahnungIndicator from "../Components/Dashboard/MahnungIndicator.vue"
-import FloskelnMenu from "../Components/Dashboard/FloskelnMenu.vue"
-import NoteInput from "../Components/Dashboard/NoteInput.vue"
-import TopMenu from "../Components/TopMenu.vue"
-import Menubar from '../Components/Menubar.vue'
-import BemerkungenIndicator from '../Components/Klassenleitung/BemerkungenIndicator.vue'
-import Tooltip from "../SVWS-Server/svws-webclient/src/ui-components/ts/src/components/Tooltip.vue";
-import BottomMenu from "../Components/BottomMenu.vue";
-import FloskelnMenuReadOnly from "../Components/FloskelnMenuReadOnly.vue";
+    import { Leistung } from '../Interfaces/Leistung'
+    import { Column } from '../Interfaces/Column'
+    import { Filter } from '../Interfaces/Filter'
 
-type leistungType = {
-    id: number,
-    klasse: string|Number|null,
-    name: string,
-    vorname: string,
-    nachname: string,
-    geschlecht: string,
-    fach: string|null,
-    lehrer: string,
-    jahrgang: string,
-    kurs: string|null,
-    note: string|null,
-    fachbezogeneBemerkungen: string|null,
-    fs: number,
-    ufs: number,
-    istGemahnt: boolean,
-    mahndatum: boolean
-}
+    import TopMenu from '../Components/TopMenu.vue'
+    import Menubar from '../Components/Menubar.vue'
+    import BemerkungenIndicator from '../Components/Klassenleitung/BemerkungenIndicator.vue'
+    import BottomMenu from '../Components/BottomMenu.vue'
+    import FloskelnMenuReadOnly from '../Components/FloskelnMenuReadOnly.vue'
 
-type column = {
-    key: string,
-    label: string,
-    sortable: boolean
-}
+    const store = useStore()
 
-type filterElementType = Array<{ id: string, label: string }>
-type filterValuesType = {
-    jahrgaenge: filterElementType,
-    noten: filterElementType,
-    klassen: filterElementType,
-    kurse: filterElementType,
-    faecher: filterElementType
-}
+    let props = defineProps({
+        auth: Object,
+    })
 
-type selected = { schueler: leistungType }|null
+    let state = reactive({
+        selected: <Leistung | null> null,
+        leistungen: <Leistung[]> [],
+        filterValues: <{
+            jahrgaenge: Array<Filter>,
+            noten: Array<Filter>,
+            klassen: Array<Filter>,
+            kurse: Array<Filter>,
+            faecher: Array<Filter>
+        }> {
+            'jahrgaenge': [],
+            'klassen': [],
+            'kurse': [],
+            'noten': [],
+        },
+    })
 
-let props = defineProps({
-    auth: Object,
-})
+    const filters = reactive({
+        search: <string> '',
+        klasse: <Number | string> 0,
+        jahrgang: <Number | string> 0,
+        kurs: <Number | string> 0,
+        fach: <Number | string> '0',
+        note: <Number | string> 0,
+    })
 
-const store = useStore();
+    onMounted((): void => {
+        getFilters()
+        getLeistungen()
+    })
 
-let state = reactive({
-    selected: null,
-    leistungen: <leistungType[]> [],
-    filterValues: <filterValuesType> {
-        'jahrgaenge': [],
-        'klassen': [],
-        'kurse': [],
-        'noten': [],
-    },
-})
+    const getFilters = (): AxiosPromise => axios
+        .get(route('get_filters'))
+        .then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
 
-const filters = reactive({
-    search: <string> '',
-    klasse: <Number|string> 0,
-    jahrgang: <Number|string> 0,
-    kurs: <Number|string> 0,
-    fach: <Number|string> '0',
-    note: <Number|string> 0,
-})
+    const getLeistungen = (): AxiosPromise => axios
+        .get(route('get_leistungen'))
+        .then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
 
-onMounted((): void => {
-    getLeistungen()
-    axios.get(route('get_filters')).then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
-})
-
-const getLeistungen = () => axios.get(route('get_leistungen')).then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
-const filteredLeistungen = computed((): Array<leistungType> =>
-    state.leistungen
-        .map((leistung: leistungType): leistungType => {
+    const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
+        .map((leistung: Leistung): Leistung => {
             leistung.name = [leistung.nachname, leistung.vorname].join(', ')
             return leistung
         })
-        .filter((leistung: leistungType): boolean =>
+        .filter((leistung: Leistung): boolean =>
             searchFilter(leistung)
             && tableFilter(leistung, 'klasse', true)
             && tableFilter(leistung, 'kurs', true)
@@ -95,29 +71,29 @@ const filteredLeistungen = computed((): Array<leistungType> =>
             && tableFilter(leistung, 'note', true)
             && tableFilter(leistung, 'fach')
         )
-);
+    )
 
-const searchFilter = (leistung: leistungType) => {
-    if (filters.search === '') return true
-    const search = (search: string) => search.toLowerCase().includes(filters.search.toLowerCase())
-    return search(leistung.vorname) || search(leistung.nachname)
-}
+    const searchFilter = (leistung: Leistung): boolean => {
+        if (filters.search === '') return true
+        const search = (search: string): boolean => search.toLowerCase().includes(filters.search.toLowerCase())
+        return search(leistung.vorname) || search(leistung.nachname)
+    }
 
-const tableFilter = (leistung: leistungType, column: string, withOnlyEmptyOption: boolean = false) => {
-    if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] == null
-    if (filters[column] == 0) return true
-    return leistung[column] == filters[column]
-}
+    const tableFilter = (leistung: Leistung, column: string, withOnlyEmptyOption: boolean = false): boolean => {
+        if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] == null
+        if (filters[column] == 0) return true
+        return leistung[column] == filters[column]
+    }
 
-let fachlehrer = ref(false)
-let fachbezogeneBemerkungen = ref(true)
-let mahnungen = ref(false)
+    let fachlehrer = ref(false)
+    let fachbezogeneBemerkungen = ref(true)
+    let mahnungen = ref(false)
 
-watch([fachlehrer, fachbezogeneBemerkungen, mahnungen], () => drawTable());
+    watch([fachlehrer, fachbezogeneBemerkungen, mahnungen], (): void => drawTable())
 
     let columns = ref( [])
 
-    const baseColumns = [
+    const baseColumns: Array<Column> = [
         { key: 'klasse', label: 'Klasse', sortable: true },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'fach', label: 'Fach', sortable: true },
@@ -125,19 +101,19 @@ watch([fachlehrer, fachbezogeneBemerkungen, mahnungen], () => drawTable());
         { key: 'note', label: 'Note', sortable: false },
     ]
 
-    const fachlehrerColumns: Array<column> = [
+    const fachlehrerColumns: Array<Column> = [
         { key: 'lehrer', label: 'Lehrer', sortable: true },
     ]
 
-    const fachbezogeneBemerkungenColumns: Array<column> = [
+    const fachbezogeneBemerkungenColumns: Array<Column> = [
         { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: false },
     ]
 
-    const mahnungenColumns: Array<column> = [
+    const mahnungenColumns: Array<Column> = [
         { key: 'mahnung', label: 'M', sortable: false },
     ]
 
-    const drawTable = () => {
+    const drawTable = (): void => {
         columns.value.length = 0
         pushTable(false, baseColumns, true)
         pushTable(fachlehrer.value, fachlehrerColumns)
@@ -145,14 +121,14 @@ watch([fachlehrer, fachbezogeneBemerkungen, mahnungen], () => drawTable());
         pushTable(fachbezogeneBemerkungen.value, fachbezogeneBemerkungenColumns)
     }
 
-    const pushTable = (model: boolean, array: Array<column>, always: boolean = false): void => {
-        if (model || always) array.forEach(column => columns.value.push(column))
+    const pushTable = (model: boolean, array: Array<Column>, always: boolean = false): void => {
+        if (model || always) array.forEach((column: Column) => columns.value.push(column))
     }
 
-    drawTable()
+    const openFloskelMenu = (selected: Leistung): Leistung => state.selected = selected
+    const closeFloskelMenu = (): Leistung|null => state.selected = null
 
-    const openFloskelMenu = (selected: selected) => state.selected = selected
-    const closeFloskelMenu = (): selected|null => state.selected = null
+    drawTable()
 </script>
 
 <template>
@@ -164,7 +140,7 @@ watch([fachlehrer, fachbezogeneBemerkungen, mahnungen], () => drawTable());
 
             <template #main>
                 <div class="relative flex flex-col w-full h-screen overflow-hidden bg-white">
-                    <TopMenu headline="Leistungdatenübersicht" :vertical="true">
+                    <TopMenu headline="Leistungsdatenübersicht" :vertical="true">
                         <span class="flex gap-3">
                             <SvwsUiCheckbox v-model="fachlehrer">Fachlehrer</SvwsUiCheckbox>
                             <SvwsUiCheckbox v-model="fachbezogeneBemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
@@ -203,7 +179,7 @@ watch([fachlehrer, fachbezogeneBemerkungen, mahnungen], () => drawTable());
                 </div>
             </template>
             <template #contentSidebar>
-                <FloskelnMenuReadOnly :schueler="state.selected" @close="closeFloskelMenu" ></FloskelnMenuReadOnly>
+                <FloskelnMenuReadOnly :schueler="state.selected" @close="closeFloskelMenu"></FloskelnMenuReadOnly>
             </template>
         </SvwsUiAppLayout>
     </div>

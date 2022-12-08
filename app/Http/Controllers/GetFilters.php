@@ -7,6 +7,7 @@ use App\Models\Floskel;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
 use App\Models\Kurs;
+use App\Models\Lerngruppe;
 use App\Models\Note;
 use Illuminate\Http\JsonResponse;
 
@@ -21,8 +22,24 @@ class GetFilters extends Controller
 			'noten' => $this->getOptions(class: Note::class, showAllOption: true),
 			'jahrgaenge' => $this->getOptions(class: Jahrgang::class, showAllOption: true),
 			'klassen' => $this->getOptions(class: Klasse::class, showAllOption: true, showEmptyOption: true),
-			'kurse' => $this->getOptions(class: Kurs::class, showAllOption: true, showEmptyOption: true, column: 'bezeichnung'),
+			'kurse' => $this->getOptions(class: Lerngruppe::class, showAllOption: true, showEmptyOption: true, column: 'bezeichnung'),
 			'faecher' => $this->getOptions(class: Fach::class, showAllOption: true),
+		]);
+	}
+
+	public function klassenleitung(): JsonResponse
+	{
+		$options = [self::OPTION_ALL];
+		$lehrerKlassen = auth()->user()->klassen()->pluck('id');
+
+		$klassen = Klasse::query()
+			->whereIn('id', $lehrerKlassen)
+			->whereNotNull('kuerzel')
+			->get(['kuerzel as index', 'kuerzel as label'])
+			->toArray();
+
+		return response()->json([
+			'klassen' => array_merge($options, $klassen)
 		]);
 	}
 

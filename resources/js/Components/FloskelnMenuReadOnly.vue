@@ -1,21 +1,11 @@
 <script setup lang="ts">
-    import {computed, reactive, ref, watch} from "vue";
+    import { Schueler } from 'resources/js/Interfaces/Schueler'
 
-    import axios from "axios";
-
-    import FloskelTable from "./FloskelTable.vue"
-
-    type schueler = { id: Number, vorname: string, nachname: string, geschlecht: string, bemerkung: object }
-
-
-    interface Props { schueler?: schueler|null}
+    let props = defineProps<{
+        schueler?: Schueler | null
+    }>()
 
     const emit = defineEmits(['close', 'updated'])
-
-    let props = defineProps<Props>()
-
-
-
     const close = () => emit('close')
 
 </script>
@@ -38,7 +28,7 @@
         </header>
         <div class="flex flex-col gap-12">
             <div class="h-1/2 flex flex-col gap-3">
-                <p>{{ props.schueler.fachbezogeneBemerkungen }}</p>
+                <p>{{ props.schueler.fachbezogeneBemerkungen ?? 'Keine Angabe' }}</p>
             </div>
         </div>
     </aside>

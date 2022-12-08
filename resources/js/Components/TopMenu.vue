@@ -1,16 +1,17 @@
 <script setup lang="ts">
     import { computed } from "vue";
-    import {Inertia} from "@inertiajs/inertia";
+    import { Inertia } from "@inertiajs/inertia";
 
-    const tbd = () => alert('TBD')
+    const tbd = (): void => alert('TBD')
 
     interface Props {
-        headline?: string|null
+        headline?: string | null
         vertical?: boolean
     }
+
     let props = defineProps<Props>()
 
-    let headline = computed(() => {
+    let headline = computed((): string => {
         let array = ['Notenmanager']
 
         if (props.headline != null) {

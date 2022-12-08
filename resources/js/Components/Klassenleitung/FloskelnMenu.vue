@@ -1,38 +1,38 @@
 <script setup lang="ts">
-    import {computed, reactive, ref, watch} from "vue";
+    import {computed, reactive, watch} from "vue";
 
-    import axios from "axios";
-    import FloskelTable from "./FloskelTable.vue"
+    import axios, { AxiosPromise, AxiosResponse } from "axios";
 
+    import { Column } from 'resources/js/Interfaces/Column'
+    import { Schueler } from 'resources/js/Interfaces/Schueler'
+    import { Floskelgruppe } from 'resources/js/Interfaces/Floskelgruppe'
+    import { Occurrence } from 'resources/js/Interfaces/Occurrence'
+    import { Pronoun } from 'resources/js/Interfaces/Pronoun'
 
-    type schueler = { id: Number, vorname: string, nachname: string, geschlecht: string, bemerkung: object }
-    type bemerkung = string|null
-    type selected = { floskelgruppe: string, schueler: schueler }
-    type occurrenceType = { '$vorname$ $nachname$': string; '$vorname$': string, '$nachname$': string|null };
-    type floskel = { gruppe: string, id: number, kuerzel: string, text: string };
-    type floskelgruppe = { kuerzel: string, floskeln: floskel };
-    type columns = { id: string, title: string, sortable: boolean };
+    type Selected = { floskelgruppe: string, schueler: Schueler }
 
-    interface Props { selected?: selected|null, floskelgruppen: floskelgruppe[] }
-    interface State { schueler?: schueler|null, bemerkung?: String, storedBemerkung?: String, isDirty: boolean, floskelgruppen }
+    import FloskelTable from './FloskelTable.vue'
+
+    interface Props { selected?: Selected | null, floskelgruppen: Floskelgruppe[] }
+
 
     const emit = defineEmits(['close', 'updated'])
 
     let props = defineProps<Props>()
 
     let state = reactive({
-        bemerkung: <bemerkung> '',
-        storedBemerkung: <bemerkung> '',
-        schueler : <schueler> null,
-        isDirty: false,
-        floskelgruppen: [],
-        columns: <columns[]> [
-            { id: 'kuerzel', title: 'Kürzel', sortable: true },
-            { id: 'text', title: 'Text', sortable: true },
+        bemerkung: <string> '',
+        storedBemerkung: <string> '',
+        schueler : <Schueler | null> null,
+        isDirty: <boolean> false,
+        floskelgruppen: <Floskelgruppe[]> [],
+        columns: <Column[]> [
+            { key: 'kuerzel', label: 'Kürzel', sortable: true },
+            { key: 'text', label: 'Text', sortable: true },
         ],
     })
 
-    watch(() => props.selected, (selected: selected): void => {
+    watch(() => props.selected, (selected: Selected): void => {
         state.schueler = selected?.schueler
         state.bemerkung = state.storedBemerkung = selected?.schueler[selected?.floskelgruppe]
         state.floskelgruppen = props.floskelgruppen
@@ -46,61 +46,58 @@
         const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/
         let schueler = state.schueler
 
-        let pronouns: { m: string, w: string } = { m: 'Er', w: 'Sie' };
-        let pronoun: string|null = pronouns[schueler.geschlecht] !== undefined ? pronouns[schueler.geschlecht] : null;
+        let pronouns: Pronoun = { m: 'Er', w: 'Sie' };
+        let pronoun: string | null = pronouns[schueler.geschlecht] !== undefined ? pronouns[schueler.geschlecht] : null;
 
-        let initialOccurrence: occurrenceType = {
+        let initialOccurrence: Occurrence = {
             "$vorname$ $nachname$": [schueler.vorname, schueler.nachname].join(' '),
             "$vorname$": schueler.vorname,
             "$nachname$": schueler.nachname,
         };
 
-        let succeedingOccurrences: occurrenceType = {
+        let succeedingOccurrences: Occurrence = {
             "$vorname$ $nachname$": pronoun ?? schueler.vorname,
             "$vorname$": pronoun ?? schueler.vorname,
             "$nachname$": null
         };
 
         return state.bemerkung
-            .replace(new RegExp(pattern,"i"), (matched: string) => initialOccurrence[matched.toLowerCase()])
-            .replaceAll(new RegExp(pattern ,"gi"), (matched: string) => succeedingOccurrences[matched.toLowerCase()]);
+            .replace(new RegExp(pattern,"i"), (matched: string): string => initialOccurrence[matched.toLowerCase()])
+            .replaceAll(new RegExp(pattern ,"gi"), (matched: string): string => succeedingOccurrences[matched.toLowerCase()]);
     });
 
     const updateBemerkung = (bemerkung: string): string => state.bemerkung = bemerkung;
 
-    const setBemerkungen = (): void => {
-        let url: string = route('set_schueler_bemerkung', state.schueler.id);
-
-        let config: object = {
-            [props.selected?.floskelgruppe] : state.bemerkung
-        };
-
-        axios.post(url, config).then((): void => {
+    const setBemerkungen = (): AxiosPromise => axios
+        .post(
+            route('set_schueler_bemerkung', state.schueler.id),
+            {key: props.selected?.floskelgruppe, value: state.bemerkung}
+        ).then((): AxiosResponse => {
             emit('updated')
             state.storedBemerkung = state.bemerkung
-
             state.isDirty = false
+            return;
         })
-    }
 
-    const currentFloskelGruppe = computed((): void => state.floskelgruppen.find(
+
+    const currentFloskelGruppe = computed((): Floskelgruppe => state.floskelgruppen.find(
         floskelgruppe => floskelgruppe.kuerzel == props.selected.floskelgruppe
     ));
 
     const addFloskeln = (bemerkung: string): string => state.bemerkung = [state.bemerkung, bemerkung].join(' ').trim()
 
-    const deleteConfirmation: string = "Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren."
+    const deleteConfirmationText: string = "Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren."
 
-    const close = () => {
-        if (state.isDirty ? confirm(deleteConfirmation) : true) {
+    const close = (): void => {
+        if (state.isDirty ? confirm(deleteConfirmationText) : true) {
             emit('close')
         }
     }
 
     window.addEventListener("beforeunload", e => {
         if (state.isDirty) {
-            (e || window.event).returnValue = deleteConfirmation
-            return deleteConfirmation
+            (e || window.event).returnValue = deleteConfirmationText
+            return deleteConfirmationText
         }
 
         emit('close')
