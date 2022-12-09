@@ -72,9 +72,9 @@ class DataImportService
 			try {
 				Lehrer::findOrFail($row['id']);
 			} catch (ModelNotFoundException $e) {
-				$row['password'] = app()->environment('production') ? Str::random() : Hash::make('password');
 				report($e);
 			}
+			$row['password'] = app()->environment('production') ? Str::random() : Hash::make('password');
 
 			Lehrer::updateOrCreate(['id' => $row['id']], $row);
 		}
