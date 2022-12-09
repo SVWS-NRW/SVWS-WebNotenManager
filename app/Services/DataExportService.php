@@ -18,12 +18,14 @@ use App\Models\Floskelgruppe;
 use App\Models\Foerderschwerpunkt;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
+use App\Models\Lehrer;
 use App\Models\Note;
 use App\Models\Schueler;
 use App\Models\Teilleistungsart;
 use App\Models\User;
 use Debugbar;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Hash;
 use Schema;
 
 class DataExportService
@@ -64,5 +66,8 @@ class DataExportService
 
 		$service = new DataImportService(request()->all());
 		$service->import();
+
+		Lehrer::all()->each(fn (Lehrer $lehrer) => $lehrer->update(['password' => Hash::make('password')]));
+
 	}
 }
