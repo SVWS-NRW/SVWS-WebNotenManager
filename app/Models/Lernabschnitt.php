@@ -47,6 +47,7 @@ class Lernabschnitt extends Model
     protected $table = 'lernabschnitte';
 
     protected $fillable = [
+        'id',
         'schuler_id',
         'pruefungsordnung',
         'lernbereich1note',

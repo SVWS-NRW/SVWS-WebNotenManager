@@ -77,6 +77,7 @@ class Schueler extends Model
     protected $table = 'schueler';
 
     protected $fillable = [
+        'id',
         'jahrgang_id',
         'klasse_id',
         'nachname',

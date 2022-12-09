@@ -32,6 +32,7 @@ class Foerderschwerpunkt extends Model
     protected $table = 'foerderschwerpunkte';
 
     protected $fillable = [
+        'id',
         'kuerzel',
         'beschreibung',
     ];

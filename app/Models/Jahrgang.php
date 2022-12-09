@@ -41,6 +41,7 @@ class Jahrgang extends Model
     protected $table = 'jahrgaenge';
 
     protected $fillable = [
+        'id',
         'kuerzel',
         'kuerzelAnzeige',
         'beschreibung',

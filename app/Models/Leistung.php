@@ -60,6 +60,7 @@ class Leistung extends Model
     protected $table = 'leistungen';
 
     protected $fillable = [
+        'id',
         'schueler_id',
         'lerngruppe_id',
         'note_id',

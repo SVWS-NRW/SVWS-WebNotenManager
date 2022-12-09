@@ -35,6 +35,7 @@ class Note extends Model
     protected $table = 'noten';
 
     protected $fillable = [
+        'id',
         'kuerzel',
         'notenpunkte',
         'text',

@@ -52,6 +52,7 @@ class Lerngruppe extends Model
     protected $table = 'lerngruppen';
 
     protected $fillable = [
+        'id',
         'klasse_id',
         'fach_id',
 		'kID',

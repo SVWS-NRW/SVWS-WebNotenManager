@@ -66,6 +66,7 @@ class Lehrer extends Authenticatable
 	const GENDERS = ['m', 'w', 'd', 'x'];
 
 	protected $fillable = [
+		'id',
 		'kuerzel',
 		'vorname',
 		'nachname',
