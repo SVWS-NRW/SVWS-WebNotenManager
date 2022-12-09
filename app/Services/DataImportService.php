@@ -29,8 +29,6 @@ class DataImportService
     public function __construct(string | array $json)
     {
         $this->json = is_string($json) ? json_decode($json, true) : $json;
-
-		dd($this->json['lehrer']);
     }
 
     public function import(): void
