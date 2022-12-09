@@ -347,25 +347,25 @@ class DataImportService
 			$data['foerderschwerpunkt1'] = $this->getValueFromArray(
 				data: $data,
 				column: 'foerderschwerpunkt1',
-				collection: $this->foerderschwerpunkte
+				collection: $this->existingFoerderschwerpunkte
 			);
 
 			$data['foerderschwerpunkt2'] = $this->getValueFromArray(
 				data: $data,
 				column: 'foerderschwerpunkt2',
-				collection: $this->foerderschwerpunkte
+				collection: $this->existingFoerderschwerpunkte
 			);
 
 			$data['lernbereich1note'] = $this->getValueFromArray(
 				data: $data,
 				column: 'lernbereich1note',
-				collection: $this->noten
+				collection: $this->existingNoten
 			);
 
 			$data['lernbereich2note'] = $this->getValueFromArray(
 				data: $data,
 				column: 'lernbereich2note',
-				collection: $this->noten
+				collection: $this->existingNoten
 			);
 
 			$data['pruefungsordnung'] = $data['pruefungsordnung'] ?? 'Lorem ipsum'; // TOOD: Check with customer
