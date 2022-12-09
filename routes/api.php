@@ -43,9 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::get('get-fachbezogene-floskeln-filters', 'fachbezogeneFloskeln')->name('get_fachbezogene-floskeln_filters');
 	});
 
-
-
-
     Route::get('get-floskeln', GetFloskeln::class)->name('get_floskeln');
     Route::get('get-schueler', GetSchueler::class)->name('get_schueler');
     Route::post('set-schueler-bemerkung/{schueler}', SchuelerBemerkung::class)->name('set_schueler_bemerkung');
@@ -61,3 +58,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::get('export', [DataExportService::class, 'export']);
+Route::post('import', [DataExportService::class, 'import']);

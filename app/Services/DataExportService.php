@@ -24,6 +24,7 @@ use App\Models\Teilleistungsart;
 use App\Models\User;
 use Debugbar;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Schema;
 
 class DataExportService
 {
@@ -41,5 +42,27 @@ class DataExportService
 			->get();
 
 		return SchuelerResource::collection($schueler);
+	}
+
+	public function import(): void
+	{
+		// Remove the table drop in final
+		Schema::disableForeignKeyConstraints();
+
+		$tableNames = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+
+		foreach ($tableNames as $name) {
+			//if you don't want to truncate migrations
+			if ($name == 'migrations') {
+				continue;
+			}
+			\DB::table($name)->truncate();
+		}
+
+		Schema::enableForeignKeyConstraints();
+
+
+		$service = new DataImportService(request()->all());
+		$service->import();
 	}
 }
