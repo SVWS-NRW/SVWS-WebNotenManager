@@ -30,7 +30,7 @@ class DataImportService
     {
         $this->json = is_string($json) ? json_decode($json, true) : $json;
 
-		dd($this->json);
+		dd($json);
     }
 
     public function import(): void
