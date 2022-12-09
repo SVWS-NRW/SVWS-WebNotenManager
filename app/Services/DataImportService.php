@@ -26,9 +26,9 @@ class DataImportService
 	private array $foerderschwerpunkte;
 	private int $microtime;
 
-    public function __construct(string|array $json)
+    public function __construct(string $json)
     {
-        $this->json = is_string($json) ? json_decode($json, true) : $json;
+        $this->json = json_decode($json, true);
     }
 
     public function import(): void
