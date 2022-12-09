@@ -48,6 +48,7 @@ class DataExportService
 
 	public function import(): void
 	{
+
 		// Remove the table drop in final
 		Schema::disableForeignKeyConstraints();
 
@@ -63,8 +64,18 @@ class DataExportService
 
 		Schema::enableForeignKeyConstraints();
 
-
-		$service = new DataImportService(request()->all());
+		$service = new DataImportService(
+			lehrer: request()->lehrer,
+			foerderschwerpunkte: request()->foerderschwerpunkte,
+			klassen: request()->klassen,
+			noten: request()->noten,
+			jahrgaenge: request()->jahrgaenge,
+			faecher: request()->faecher,
+			floskelgruppen: request()->floskelgruppen,
+			lerngruppen: request()->lerngruppen,
+			teilleistungsarten: request()->teilleistungsarten,
+			schueler: request()->schueler,
+		);
 		$service->import();
 
 		Lehrer::all()->each(fn (Lehrer $lehrer) => $lehrer->update(['password' => Hash::make('password')]));

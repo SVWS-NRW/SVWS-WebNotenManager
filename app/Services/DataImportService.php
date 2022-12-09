@@ -20,18 +20,23 @@ use Illuminate\Support\Str;
 
 class DataImportService
 {
-    private mixed $json;
 
-	private array $noten;
-	private array $foerderschwerpunkte;
+	private array $existingNoten;
+	private array $existingFoerderschwerpunkte;
 	private int $microtime;
 
-    public function __construct(string | array $json)
-    {
-        $this->json = is_string($json) ? json_decode($json, true) : $json;
-
-		dd($json);
-    }
+    public function __construct(
+		private array $lehrer,
+		private array $foerderschwerpunkte,
+		private array $klassen,
+		private array $noten,
+		private array $jahrgaenge,
+		private array $faecher,
+		private array $floskelgruppen,
+		private array $lerngruppen,
+		private array $teilleistungsarten,
+		private array $schueler,
+	) {}
 
     public function import(): void
     {
@@ -65,7 +70,7 @@ class DataImportService
 	{
 		$this->start('Lehrer');
 
-		foreach($this->json['lehrer'] as $row) {
+		foreach($this->lehrer as $row) {
 			$row['email'] = $this->email($row['eMailDienstlich']);
 			$row['geschlecht'] = $this->gender(data: $row, allowed: Lehrer::GENDERS);
 
@@ -95,7 +100,7 @@ class DataImportService
 	{
 		$this->start('Klassen');
 
-		foreach($this->json['klassen'] as $row) {
+		foreach($this->klassen as $row) {
 			$klasse = Klasse::firstOrCreate(['id' => $row['id']], Arr::except($row, ['klassenlehrer']));
 
 			if ($klasse->wasRecentlyCreated === true) {
@@ -118,11 +123,11 @@ class DataImportService
     {
 		$this->start('Noten');
 
-		collect($this->json['noten'])
+		collect($this->noten)
 			->filter(fn (array $row) => $row['id'] >= 0)
 			->each(fn (array $row) => Note::firstOrCreate(['id' => $row['id']], $row));
 
-		$this->noten = Note::query()
+		$this->existingNoten = Note::query()
 			->orderBy('kuerzel')
 			->pluck('id', 'kuerzel')
 			->toArray();
@@ -141,11 +146,11 @@ class DataImportService
 	{
 		$this->start('foerderschwerpunkte');
 
-		foreach($this->json['foerderschwerpunkte'] as $row) {
+		foreach($this->foerderschwerpunkte as $row) {
 			Foerderschwerpunkt::firstOrCreate(['id' => $row['id']], $row);
 		}
 
-		$this->foerderschwerpunkte = Foerderschwerpunkt::query()
+		$this->existingFoerderschwerpunkte = Foerderschwerpunkt::query()
 			->orderBy('kuerzel')
 			->pluck('id', 'kuerzel')
 			->toArray();
@@ -164,7 +169,7 @@ class DataImportService
 	{
 		$this->start('Jahrgaenge');
 
-		foreach($this->json['jahrgaenge'] as $row) {
+		foreach($this->jahrgaenge as $row) {
 			$row['beschreibung'] = $this->trimWhitespaces($row['beschreibung']); // TODO: Check with customer
 			Jahrgang::firstOrCreate(['id' => $row['id']], $row);
 		}
@@ -181,7 +186,7 @@ class DataImportService
 	{
 		$this->start('Faecher');
 
-		foreach($this->json['faecher'] as $row) {
+		foreach($this->faecher as $row) {
 			Fach::firstOrCreate(['id' => $row['id']], $row);
 		}
 
@@ -198,7 +203,7 @@ class DataImportService
 	{
 		$this->start('Floskelgruppen mit Floskeln');
 
-		foreach($this->json['floskelgruppen'] as $row) {
+		foreach($this->floskelgruppen as $row) {
 			$floskelgruppe = Floskelgruppe::firstOrCreate(
 				['kuerzel' => $row['kuerzel']],
 				Arr::except($row, ['floskeln'])
@@ -235,7 +240,7 @@ class DataImportService
 	{
 		$this->start('Lerngruppen');
 
-		foreach ($this->json['lerngruppen'] as $row) {
+		foreach ($this->lerngruppen as $row) {
 			$row['fach_id'] = $row['fachID'];
 
 			if (in_array($row['kursartID'], [null, -1])) { // TODO: Check the `-1`
@@ -261,7 +266,7 @@ class DataImportService
 	{
 		$this->start('Teilleistungsarten');
 
-		foreach ($this->json['teilleistungsarten'] as $row) {
+		foreach ($this->teilleistungsarten as $row) {
 			Teilleistungsart::updateOrCreate(['id' => $row['id']], $row);
 		}
 
@@ -279,7 +284,7 @@ class DataImportService
 	{
 		$this->start('Schueler');
 
-		foreach ($this->json['schueler'] as $row) {
+		foreach ($this->schueler as $row) {
 			$row['jahrgang_id'] = $row['jahrgangID'];
 			$row['klasse_id'] = $row['klasseID'];
 			$row['geschlecht'] = $this->gender(data: $row, allowed: Schueler::GENDERS);
