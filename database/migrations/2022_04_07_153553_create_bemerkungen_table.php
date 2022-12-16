@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Lerngruppe;
-use App\Models\Note;
 use App\Models\Schueler;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,12 +12,16 @@ return new class extends Migration
         Schema::create('bemerkungen', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Schueler::class);
-            $table->text('asv')->nullable();
-            $table->text('aue')->nullable();
-            $table->text('zb')->nullable();
-            $table->string('lels')->nullable();
+            $table->text('ASV')->nullable();
+			$table->timestamp('tsASV', 3)->default(now())->comment('Timestamp');
+            $table->text('AUE')->nullable();
+			$table->timestamp('tsAUE', 3)->default(now())->comment('Timestamp');
+            $table->text('ZB')->nullable();
+			$table->timestamp('tsZB', 3)->default(now())->comment('Timestamp');
+            $table->string('LELS')->nullable();
             $table->string('schulformEmpf')->nullable();
             $table->string('individuelleVersetzungsbemerkungen')->nullable();
+			$table->timestamp('tsIndividuelleVersetzungsbemerkungen', 3)->default(now())->comment('Timestamp');
             $table->string('foerderbemerkungen')->nullable();
             $table->timestamps();
         });

@@ -11,9 +11,15 @@ class LeistungsdatenResource extends JsonResource
         return [
             'id' => $this->id,
             'note' => $this->note?->kuerzel,
-            'istGemahnt' => (bool) $this->istGemahnt,
+            'tsNote' => $this->tsNote,
+            'fehlstundenGesamt' => $this->fehlstundenGesamt,
+            'tsFehlstundenGesamt' => $this->tsFehlstundenGesamt,
+            'fehlstundenUnentschuldigt' => $this->fehlstundenUnentschuldigt,
+            'tsFehlstundenUnentschuldigt' => $this->tsFehlstundenUnentschuldigt,
 			'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
-			'updated_at' => $this->updated_at->format('Y-m-d\TH:i:s'),
+			'tsFachbezogeneBemerkungen' => $this->tsFachbezogeneBemerkungen,
+			'istGemahnt' => (bool) $this->istGemahnt,
+			'tsIstGemahnt' => $this->tsIstGemahnt,
         ];
     }
 }

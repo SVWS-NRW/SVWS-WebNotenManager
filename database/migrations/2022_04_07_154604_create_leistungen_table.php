@@ -16,13 +16,18 @@ return new class extends Migration
             $table->foreignIdFor(Schueler::class);
             $table->foreignIdFor(Lerngruppe::class);
             $table->foreignIdFor(Note::class)->nullable();
+			$table->timestamp('tsNote', 3)->default(now())->comment('Timestamp');
             $table->boolean('istSchriftlich')->default(false);
             $table->string('abiturfach')->nullable();
             $table->integer('fehlstundenGesamt')->nullable();
+			$table->timestamp('tsFehlstundenGesamt', 3)->default(now())->comment('Timestamp');
             $table->integer('fehlstundenUnentschuldigt')->nullable();
+			$table->timestamp('tsFehlstundenUnentschuldigt', 3)->default(now())->comment('Timestamp');
             $table->text('fachbezogeneBemerkungen')->nullable();
+			$table->timestamp('tsFachbezogeneBemerkungen', 3)->default(now())->comment('Timestamp');
             $table->string('neueZuweisungKursart')->nullable();
             $table->boolean('istGemahnt')->default(false);
+			$table->timestamp('tsIstGemahnt', 3)->default(now())->comment('Timestamp');
             $table->timestamp('mahndatum')->nullable();
             $table->timestamps();
         });

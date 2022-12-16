@@ -7,9 +7,6 @@ use App\Models\Note;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Lernabschnitt>
- */
 class LernabschnittFactory extends Factory
 {
     public function definition(): array
@@ -23,4 +20,25 @@ class LernabschnittFactory extends Factory
             'foerderschwerpunkt2' => Foerderschwerpunkt::factory(),
         ];
     }
+
+	public function withFehlstundenGesamt(int|null $amount = null): LernabschnittFactory
+	{
+		return $this->withTimestamp(column: 'fehlstundenGesamt', value: $amount ?? rand(0, 10));
+	}
+
+	public function withFehlstundenUnentschuldigt(int|null $amount = null): LernabschnittFactory
+	{
+		return $this->withTimestamp(column: 'fehlstundenUnentschuldigt', value: $amount ?? rand(0, 10));
+	}
+
+	private function withTimestamp(
+		string $column,
+		string|null $tsColumn = null,
+		string|bool|int|null $value = null
+	): LernabschnittFactory {
+		return $this->state(fn () => [
+			$column => $value ?? $this->faker->paragraph(),
+			$tsColumn ?? "ts{$column}" => now()->format('Y-m-d H:i:s.u'),
+		]);
+	}
 }

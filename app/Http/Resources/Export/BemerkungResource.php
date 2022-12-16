@@ -10,11 +10,17 @@ class BemerkungResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'ASV' => $this->asv ? $this->formatBemerkung($this->schueler, $this->asv) : null,
-            'AUE' => $this->aue ? $this->formatBemerkung($this->schueler, $this->aue) : null,
-            'ZB' => $this->zb ? $this->formatBemerkung($this->schueler, $this->zb) : null,
-            'LELS' => $this->lels ? $this->formatBemerkung($this->schueler, $this->lels) : null,
-			'updated_at' => $this->updated_at->format('Y-m-d\TH:i:s'),
+            'ASV' => $this->ASV ? $this->formatBemerkung($this->schueler, $this->ASV) : null,
+            'tsASV' => $this->tsASV,
+            'AUE' => $this->AUE ? $this->formatBemerkung($this->schueler, $this->AUE) : null,
+            'tsAUE' => $this->tsAUE,
+            'ZB' => $this->ZB ? $this->formatBemerkung($this->schueler, $this->ZB) : null,
+            'tsZB' => $this->tsZB,
+            'LELS' => $this->LELS,
+            'schulformEmpf' => $this->schulformEmpf,
+            'individuelleVersetzungsbemerkungen' => $this->individuelleVersetzungsbemerkungen ? $this->formatBemerkung($this->schueler, $this->individuelleVersetzungsbemerkungen) : null,
+            'tsIndividuelleVersetzungsbemerkungen' => $this->tsIndividuelleVersetzungsbemerkungen,
+            'foerderbemerkungen' => $this->foerderbemerkungen,
         ];
     }
 

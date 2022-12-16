@@ -12,6 +12,10 @@ return new class extends Migration
         Schema::create('lernabschnitte', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Schueler::class);
+			$table->integer('fehlstundenGesamt')->nullable();
+			$table->timestamp('tsFehlstundenGesamt', 3)->default(now())->comment('Timestamp');
+			$table->integer('fehlstundenUnentschuldigt')->nullable();
+			$table->timestamp('tsFehlstundenUnentschuldigt', 3)->default(now())->comment('Timestamp');
             $table->string('pruefungsordnung');
             $table->unsignedBigInteger('lernbereich1note')->nullable();
             $table->unsignedBigInteger('lernbereich2note')->nullable();

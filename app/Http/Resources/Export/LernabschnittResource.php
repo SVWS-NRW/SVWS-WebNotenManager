@@ -10,11 +10,14 @@ class LernabschnittResource extends JsonResource
     {
         return [
             'id' => $this->id,
+			'fehlstundenGesamt' => $this->fehlstundenGesamt,
+			'tsFehlstundenGesamt' => $this->tsFehlstundenGesamt,
+			'fehlstundenUnentschuldigt' => $this->fehlstundenUnentschuldigt,
+			'tsFehlstundenUnentschuldigt' => $this->tsFehlstundenUnentschuldigt,
             'lernbereich1note' => $this->lernbereich1Note?->kuerzel,
             'lernbereich2note' => $this->lernbereich2Note?->kuerzel,
             'foerderschwerpunkt1' => $this->foerderschwerpunkt1Relation?->kuerzel,
             'foerderschwerpunkt2' => $this->foerderschwerpunkt2Relation?->kuerzel,
-			'updated_at' => $this->updated_at->format('Y-m-d\TH:i:s'),
         ];
     }
 }

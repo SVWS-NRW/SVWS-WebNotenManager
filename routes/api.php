@@ -8,10 +8,12 @@ use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\NotenController;
 use App\Http\Controllers\Api\MahnungController;
 use App\Http\Controllers\Api\SchuelerBemerkung;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FachbezogeneBemerkung;
 use App\Http\Controllers\GetFachbezogeneFloskeln;
 use App\Http\Controllers\GetFilters;
-use App\Services\DataExportService;
+use App\Http\Controllers\ImportController;
+use App\Services\DataImportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -50,12 +52,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('set-fachbezogene-bemerkung/{leistungNormalized}', FachbezogeneBemerkung::class)->name('set_fachbezogene_bemerkung');
     Route::get('get-fachbezogene-floskeln', GetFachbezogeneFloskeln::class)->name('get_fachbezogene_floskeln');
 
-
 	Route::get('get-leistungen', GetLeistungen::class)->name('get_leistungen');
 
     Route::post('set-mahnung/{leistung}', MahnungController::class)->name('set_mahnung');
 });
 
-
-Route::get('export', [DataExportService::class, 'export']);
-Route::post('import', [DataExportService::class, 'import']);
+Route::get('export', ExportController::class);
+Route::post('import', ImportController::class);
+Route::get('truncate', [DataImportService::class, 'truncate']);

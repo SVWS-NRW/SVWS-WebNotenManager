@@ -12,7 +12,10 @@ class MahnungController extends Controller
 {
     public function __invoke(Leistung $leistung): JsonResponse
 	{
-		$leistung->update(request()->all());
+		$leistung->update([
+			'istGemahnt' => request()->istGemahnt,
+			'tsIstGemahnt' => now()->format('Y-m-d H:i:s.u'),
+		]);
 
         return response()->json(request()->all(), Response::HTTP_OK);
     }

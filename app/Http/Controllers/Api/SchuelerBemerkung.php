@@ -12,6 +12,11 @@ class SchuelerBemerkung extends Controller
 {
     public function __invoke(SchuelerBemerkungenRequest $request, Schueler $schueler): Model
     {
-		return Bemerkung::updateOrCreate(['schueler_id' => $schueler->id], [$request->key => $request->value]);
+		return Bemerkung::updateOrCreate([
+			'schueler_id' => $schueler->id
+		], [
+			$request->key => $request->value,
+			"ts{$request->key}" => now()->format('Y-m-d H:i:s.u'),
+		]);
     }
 }

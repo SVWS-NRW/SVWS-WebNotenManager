@@ -49,6 +49,10 @@ class Lernabschnitt extends Model
     protected $fillable = [
         'id',
         'schuler_id',
+        'fehlstundenGesamt',
+        'tsFehlstundenGesamt',
+        'fehlstundenUnentschuldigt',
+        'tsFehlstundenUnentschuldigt',
         'pruefungsordnung',
         'lernbereich1note',
         'lernbereich2note',

@@ -64,13 +64,18 @@ class Leistung extends Model
         'schueler_id',
         'lerngruppe_id',
         'note_id',
+		'tsNote',
         'istSchriftlich',
         'abiturfach',
         'fehlstundenGesamt',
+		'tsFehlstundenGesamt',
         'fehlstundenUnentschuldigt',
+		'tsFehlstundenUnentschuldigt',
         'fachbezogeneBemerkungen',
+		'tsFachbezogeneBemerkungen',
         'neueZuweisungKursart',
         'istGemahnt',
+		'tsIstGemahnt',
         'mahndatum',
     ];
 
@@ -98,7 +103,7 @@ class Leistung extends Model
         return $this->hasMany(Teilleistung::class);
     }
 
-    public function leistungNormalized(): HasOne
+    public function leistungNormalized(): HasOne // TODO: To be removed
     {
         return $this->hasOne(LeistungNormalized::class);
     }

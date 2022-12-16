@@ -16,42 +16,53 @@ class BemerkungFactory extends Factory
     public function definition(): array
     {
         return [
-            'shueler_id' => Schueler::factory(),
+            'schueler_id' => Schueler::factory(),
         ];
     }
 
-    public function withAue(): Factory
+    public function withAUE(): BemerkungFactory
     {
-        return $this->state(fn () => ['aue' => $this->faker->unique->word()]);
+		return $this->withTimestamp('AUE');
     }
 
-    public function withAsv(): Factory
+    public function withASV(): BemerkungFactory
     {
-        return $this->state(fn () => ['asv' => $this->faker->unique->word()]);
+		return $this->withTimestamp('ASV');
     }
 
-    public function withZb(): Factory
+    public function withZB(): BemerkungFactory
     {
-        return $this->state(fn () => ['zb' => $this->faker->unique->word()]);
+		return $this->withTimestamp('ZB');
     }
 
-    public function withLels(): Factory
+    public function withLELS(): BemerkungFactory
     {
-        return $this->state(fn () => ['lels' => $this->faker->unique->word()]);
+        return $this->state(fn () => ['LELS' => $this->faker->unique->paragraph()]);
     }
 
-    public function withSchulformEmpf(): Factory
+    public function withSchulformEmpf(): BemerkungFactory
     {
-        return $this->state(fn () => ['schulformEmpf' => $this->faker->unique->word()]);
+        return $this->state(fn () => ['schulformEmpf' => $this->faker->unique->paragraph()]);
     }
 
-    public function withIndividuelleVersetzungsbemerkungen(): Factory
+    public function withIndividuelleVersetzungsbemerkungen(): BemerkungFactory
     {
-        return $this->state(fn () => ['individuelleVersetzungsbemerkungen' => $this->faker->unique->word()]);
+		return $this->withTimestamp('individuelleVersetzungsbemerkungen');
     }
 
-    public function withFoerderbemerkungen(): Factory
+    public function withFoerderbemerkungen(): BemerkungFactory
     {
-        return $this->state(fn () => ['foerderbemerkungen' => $this->faker->unique->word()]);
+        return $this->state(fn () => ['foerderbemerkungen' => $this->faker->unique->paragraph()]);
     }
+
+	private function withTimestamp(
+		string $column,
+		string|null $tsColumn = null,
+		string|bool|int|null $value = null
+	): BemerkungFactory {
+		return $this->state(fn () => [
+			$column => $value ?? $this->faker->paragraph(),
+			$tsColumn ?? "ts{$column}" => now()->format('Y-m-d H:i:s.u'),
+		]);
+	}
 }

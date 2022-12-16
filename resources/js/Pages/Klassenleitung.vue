@@ -32,9 +32,9 @@
         {key: 'klasse', label: 'Klasse', sortable: true},
         {key: 'vorname', label: 'Vorname', sortable: true},
         {key: 'nachname', label: 'Nachname', sortable: true},
-        {key: 'asv', label: 'ASV', sortable: true},
-        {key: 'aue', label: 'AUE', sortable: true},
-        {key: 'zb', label: 'ZB', sortable: true},
+        {key: 'ASV', label: 'ASV', sortable: true},
+        {key: 'AUE', label: 'AUE', sortable: true},
+        {key: 'ZB', label: 'ZB', sortable: true},
         {key: 'gfs', label: 'gFS', sortable: true},
         {key: 'gfsu', label: 'gFSU', sortable: true},
     ]
@@ -107,14 +107,14 @@
                             <h4 class="headline-4">Keine Einträge gefunden!</h4>
                         </div>
                         <SvwsUiNewTable :data="filteredSchueler" :columns="columns" class="relative" v-if="filteredSchueler.length">
-                            <template #cell-asv="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'asv' })" :bemerkung="Boolean(row.asv)"></BemerkungenIndicator>
+                            <template #cell-ASV="{ row }">
+                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'ASV' })" :bemerkung="Boolean(row.ASV)"></BemerkungenIndicator>
                             </template>
-                            <template #cell-aue="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'aue'})" :bemerkung="Boolean(row.aue)"></BemerkungenIndicator>
+                            <template #cell-AUE="{ row }">
+                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'AUE'})" :bemerkung="Boolean(row.AUE)"></BemerkungenIndicator>
                             </template>
-                            <template #cell-zb="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'zb' })" :bemerkung="Boolean(row.zb)"></BemerkungenIndicator>
+                            <template #cell-ZB="{ row }">
+                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'ZB' })" :bemerkung="Boolean(row.ZB)"></BemerkungenIndicator>
                             </template>
                         </SvwsUiNewTable>
                     </div>

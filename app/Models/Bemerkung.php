@@ -44,19 +44,23 @@ class Bemerkung extends Model
     use HasFactory;
 
 	const ALLOWED_BEMERKUNGEN = [
-		'avs', 'aue', 'zb',
+		'ASV', 'AUE', 'ZB',
 	];
 
     protected $table = 'bemerkungen';
 
     protected $fillable = [
         'schueler_id',
-        'asv',
-        'aue',
-        'zb',
-        'lels', // TODO: to be checked for spelling
+        'ASV',
+        'tsASV',
+        'AUE',
+        'tsAUE',
+        'ZB',
+        'tsZB',
+        'LELS',
         'schulformEmpf',
         'individuelleVersetzungsbemerkungen',
+        'tsIndividuelleVersetzungsbemerkungen',
         'foerderbemerkungen',
     ];
 

@@ -21,33 +21,57 @@ class LeistungFactory extends Factory
         return [
             'schueler_id' => Schueler::factory(),
             'lerngruppe_id' => Lerngruppe::factory(),
-            'note_id' => Note::Factory(),
-            'abiturfach' => rand(1, 10),
         ];
     }
 
-    public function withIstSchriftlich(): Factory
+    public function withAbiturfach(int|null $amount = null): LeistungFactory
+    {
+        return $this->state(fn () => ['abiturfach' => $amount ?? rand(0, 10)]);
+    }
+
+    public function withNote(): LeistungFactory
+    {
+		return $this->withTimestamp(column: 'note_id', tsColumn: 'tsNote', value: Note::Factory());
+    }
+
+    public function istSchriftlich(): LeistungFactory
     {
         return $this->state(fn () => ['istSchriftlich' => true]);
     }
 
-    public function withFehlstundenGesamt(): Factory
+    public function withFehlstundenGesamt(int|null $amount = null): LeistungFactory
     {
-        return $this->state(fn () => ['fehlstundenGesamt' => rand(0, 10)]);
+		return $this->withTimestamp(column: 'fehlstundenGesamt', value: $amount ?? rand(0, 10));
     }
 
-    public function withFehlstundenUnentschuldigt(): Factory
+    public function withFehlstundenUnentschuldigt(int|null $amount = null): LeistungFactory
     {
-        return $this->state(fn () => ['fehlstundenUnentschuldigt' => rand(0, 10)]);
+		return $this->withTimestamp(column: 'fehlstundenUnentschuldigt', value: $amount ?? rand(0, 10));
     }
 
-    public function withFachbezogeneBemerkungen(): Factory
+    public function withFachbezogeneBemerkungen(): LeistungFactory
     {
-        return $this->state(fn () => ['fachbezogeneBemerkungen' => true]);
+		return $this->withTimestamp(column: 'fachbezogeneBemerkungen');
     }
 
-    public function withNeueZuweisungKursart(): Factory
-    {
-        return $this->state(fn () => ['neueZuweisungKursart' => $this->faker->word()]);
-    }
+	public function istGemahnt(): LeistungFactory
+	{
+		return $this->withTimestamp(column: 'istGemahnt', value: true);
+	}
+
+	public function withNeueZuweisungKursart(): LeistungFactory
+	{
+		return $this->state(fn () => ['neueZuweisungKursart' => $this->faker->word()]);
+	}
+
+	private function withTimestamp(
+		string $column,
+		string|null $tsColumn = null,
+		string|bool|int|NoteFactory|null $value = null
+	): LeistungFactory {
+		return $this->state(fn () => [
+			$column => $value ?? $this->faker->paragraph(),
+			$tsColumn ?? "ts{$column}" => now()->format('Y-m-d H:i:s.u'),
+		]);
+	}
 }

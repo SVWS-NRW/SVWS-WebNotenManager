@@ -79,7 +79,6 @@
             return;
         })
 
-
     const currentFloskelGruppe = computed((): Floskelgruppe => state.floskelgruppen.find(
         floskelgruppe => floskelgruppe.kuerzel == props.selected.floskelgruppe
     ));
