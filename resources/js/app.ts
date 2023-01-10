@@ -22,6 +22,7 @@ createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({el, app, props, plugin}: { el: Element, app: InertiaApp, props: InertiaAppProps, plugin: Plugin }): void | any {
         return createApp({render: () => h(app, props)})
+
             .use(SvwsUiPlugin)
             .use(plugin)
             .use(createPinia())

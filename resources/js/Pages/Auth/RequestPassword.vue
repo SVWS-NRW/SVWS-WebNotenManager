@@ -1,29 +1,29 @@
 <script setup lang="ts">
-    import { Head, Link } from '@inertiajs/inertia-vue3';
-    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
-    import { Inertia } from '@inertiajs/inertia'
+    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui'
+    import { Head, Link } from '@inertiajs/inertia-vue3'
+    import { Errors, Inertia } from '@inertiajs/inertia'
     import { reactive } from 'vue'
-    import AuthLayout from "../../Layouts/AuthLayout.vue"
+    import AuthLayout from '../../Layouts/AuthLayout.vue'
+    import { PasswordRequestFormData as PasswordRequest } from '../../Interfaces/FormData'
 
-    const initialState = {
-        email: '',
-        kuerzel: '',
-        schulnummer: '',
-    };
-
-    const form = reactive({
-        ...initialState,
-    });
-
-    const state = reactive({
+    let data: PasswordRequest = reactive({
+        form: {
+            email: '',
+            kuerzel: '',
+            schulnummer: '',
+        },
+        processing: false,
+        errors: {},
         successMessage: false,
     })
 
-    const submit = () => Inertia.post(route('request_password'), form, {
-        onSuccess: () => {
-            Object.assign(form, initialState)
-            state.successMessage = true
-        }
+    const getError = (column: string): string => data.errors[column]
+    const hasErrors = (column: string): boolean => column in data.errors
+
+    const submit = (): void => Inertia.post(route('request_password'), data.form, {
+        onSuccess: (): boolean => data.successMessage = true,
+        onError: (error: Errors): Errors => data.errors = error,
+        onFinish: (): boolean => data.processing = false
     })
 </script>
 
@@ -34,65 +34,84 @@
         </Head>
 
         <AuthLayout>
-            <template #sidebar>
-                <div class="space-y-6">
-                    <JetValidationErrors />
-                    <p class="status" v-if="state.successMessage">
+            <template #main>
+                <div class="component">
+                    <p class="status" v-if="data.successMessage">
                         <strong>Hinweis:</strong> <br>
                         Ihre Eingaben wurden empfangen. Wenn wir ein Konto haben, das Ihrer E-Mail-Adresse entspricht, erhalten Sie eine E-Mail mit einem Link, um Ihr Passwort zu setzen.
                     </p>
 
                     <h2 class="headline-4">Passwort anfordern</h2>
 
-                    <SvwsUiTextInput v-model="form.schulnummer" type="text" placeholder="Schulnummer" required :disabled="form.processing" v-on:keyup.enter="submit" />
-                    <SvwsUiTextInput v-model="form.email" type="email" placeholder="E-Mail-Adresse" required :disabled="form.processing" v-on:keyup.enter="submit" />
-                    <SvwsUiTextInput v-model="form.kuerzel" type="text" placeholder="Lehrkraftkürzel" required :disabled="form.processing" v-on:keyup.enter="submit" />
-                    <SvwsUiButton @click="submit()" :disabled="form.processing">Link zusenden</SvwsUiButton>
+                    <div class="form-control">
+                        <SvwsUiTextInput
+                            v-model="data.form.schulnummer"
+                            v-on:keyup.enter="submit"
+                            :valid="!hasErrors('schulnummer')"
+                            :disabled="data.processing"
+                            type="text"
+                            placeholder="Schulnummer"
+                            required
+                        ></SvwsUiTextInput>
+
+                        <span v-if="hasErrors('schulnummer')" class="error">
+                            {{ getError('schulnummer')}}
+                        </span>
+                    </div>
+
+                    <div class="form-control">
+                        <SvwsUiTextInput
+                            v-model="data.form.kuerzel"
+                            v-on:keyup.enter="submit"
+                            :valid="!hasErrors('kuerzel')"
+                            :disabled="data.processing"
+                            type="text"
+                            placeholder="Lehrkraftkürzel"
+                            required
+                        ></SvwsUiTextInput>
+
+                        <span v-if="hasErrors('kuerzel')" class="error">
+                            {{ getError('kuerzel')}}
+                        </span>
+                    </div>
+
+                    <div class="form-control">
+                        <SvwsUiTextInput
+                            v-model="data.form.email"
+                            v-on:keyup.enter="submit"
+                            :valid="!hasErrors('email')"
+                            :disabled="data.processing"
+                            type="text"
+                            placeholder="Lehrkraftkürzel"
+                            required
+                        ></SvwsUiTextInput>
+
+                        <span v-if="hasErrors('email')" class="error">
+                            {{ getError('email')}}
+                        </span>
+                    </div>
+
+                    <SvwsUiButton @click="submit()" :disabled="data.processing" class="self-start">Link zusenden</SvwsUiButton>
                 </div>
-
             </template>
-
-            <template #main></template>
         </AuthLayout>
     </div>
 </template>
 
 <style scoped>
-    /*#login {*/
-    /*    @apply flex h-full w-screen flex-col justify-between px-16 max-w-[581px]*/
-    /*}*/
+    div.component {
+        @apply rounded-lg shadow-lg p-8 flex flex-col gap-6 w-full max-w-lg bg-white
+    }
 
-    /*#login > header {*/
-    /*    @apply space-y-16 pt-16*/
-    /*}*/
+    div.component .status {
+        @apply font-medium text-sm text-green-600
+    }
 
-    /*#login > header > #logo {*/
-    /*    @apply mb-12 flex flex-row items-center gap-4 w-full*/
-    /*}*/
+    div.component > .form-control {
+        @apply flex flex-col gap-0
+    }
 
-    /*#login > header > #logo > .headline {*/
-    /*    @apply flex flex-col*/
-    /*}*/
-
-    /*#login > header > #logo > .headline > h1 {*/
-    /*    @apply text-3xl font-bold*/
-    /*}*/
-
-    /*#login > header > #logo > .headline > span {*/
-    /*    @apply font-medium*/
-    /*}*/
-
-    /*#login > header > #logo > svg {*/
-    /*    @apply h-12 w-12*/
-    /*}*/
-
-    /*#login > header > .form {*/
-    /*    @apply space-y-6*/
-    /*}*/
-
-    /*#login > header > .form > p.status {*/
-    /*    @apply font-medium text-sm text-green-600*/
-    /*}*/
-
-
+    div.component > .form-control > span.error {
+        @apply text-red-500 text-sm mt-2
+    }
 </style>

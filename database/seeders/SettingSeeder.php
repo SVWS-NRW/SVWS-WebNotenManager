@@ -14,6 +14,7 @@ class SettingSeeder extends Seeder
 		['type' => 'school', 'key' => 'school_email', 'value' => '[E-Mail Adresse der Schule]'],
 		['type' => 'school', 'key' => 'school_management_name', 'value' => '[Name Schulleitung]'],
 		['type' => 'school', 'key' => 'school_management_telephone', 'value' => '[Sekretariat]'],
+		['type' => 'school', 'key' => 'school_management_email', 'value' => '[E-Mail Adresse]'],
 		['type' => 'school', 'key' => 'school_board_name', 'value' => '[Name des Schulträgers]'],
 		['type' => 'school', 'key' => 'school_board_address', 'value' => '[Anschrift des Schulträgers]'],
 		['type' => 'school', 'key' => 'school_board_contact', 'value' => '[Kontaktdaten des Schulträgers]'],

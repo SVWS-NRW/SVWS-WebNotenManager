@@ -17,7 +17,7 @@ module.exports = {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
             },
             backgroundImage: {
-                'class': "url('@/Images/placeholder-background.jpg')",
+                'chalk': "url('@/Images/chalk.jpg')",
             },
         },
     },
