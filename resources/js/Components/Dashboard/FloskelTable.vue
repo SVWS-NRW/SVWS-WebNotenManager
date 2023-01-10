@@ -4,8 +4,8 @@
 
     const emit = defineEmits(['added'])
 
-    import { Column } from 'resources/js/Interfaces/Column'
-    import { Floskel } from 'resources/js/Interfaces/Floskel'
+    import { Column } from '../../Interfaces/Column'
+    import { Floskel } from '../../Interfaces/Floskel'
 
     type Selected = {text: string, selected: boolean}
 

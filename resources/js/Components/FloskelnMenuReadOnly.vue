@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Schueler } from 'resources/js/Interfaces/Schueler'
+    import { Schueler } from '../Interfaces/Schueler'
 
     let props = defineProps<{
         schueler?: Schueler | null

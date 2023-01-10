@@ -3,11 +3,11 @@
 
     import axios, { AxiosPromise, AxiosResponse } from "axios";
 
-    import { Column } from 'resources/js/Interfaces/Column'
-    import { Schueler } from 'resources/js/Interfaces/Schueler'
-    import { Floskelgruppe } from 'resources/js/Interfaces/Floskelgruppe'
-    import { Occurrence } from 'resources/js/Interfaces/Occurrence'
-    import { Pronoun } from 'resources/js/Interfaces/Pronoun'
+    import { Column } from '../../Interfaces/Column'
+    import { Schueler } from '../../Interfaces/Schueler'
+    import { Floskelgruppe } from '../../Interfaces/Floskelgruppe'
+    import { Occurrence } from '../../Interfaces/Occurrence'
+    import { Pronoun } from '../../Interfaces/Pronoun'
 
     type Selected = { floskelgruppe: string, schueler: Schueler }
 

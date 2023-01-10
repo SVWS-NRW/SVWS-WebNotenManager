@@ -2,11 +2,11 @@
     import { computed, onMounted, reactive, watch } from 'vue'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
 
-    import { Leistung } from 'resources/js/Interfaces/Leistung'
-    import { Floskel } from 'resources/js/Interfaces/Floskel'
-    import { Column } from 'resources/js/Interfaces/Column'
-    import { Occurrence } from 'resources/js/Interfaces/Occurrence'
-    import { Pronoun } from 'resources/js/Interfaces/Pronoun'
+    import { Leistung } from '../../Interfaces/Leistung'
+    import { Floskel } from '../../Interfaces/Floskel'
+    import { Column } from '../../Interfaces/Column'
+    import { Occurrence } from '../../Interfaces/Occurrence'
+    import { Pronoun } from '../../Interfaces/Pronoun'
 
     import FloskelTable from "../Dashboard/FloskelTable.vue"
 

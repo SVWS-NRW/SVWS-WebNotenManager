@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import {computed, reactive} from 'vue'
 
-    import { Floskel } from 'resources/js/Interfaces/Floskel'
-    import { Floskelgruppe } from 'resources/js/Interfaces/Floskelgruppe'
-    import { Column } from 'resources/js/Interfaces/Column'
+    import { Floskel } from '../../Interfaces/Floskel'
+    import { Floskelgruppe } from '../../Interfaces/Floskelgruppe'
+    import { Column } from '../../Interfaces/Column'
 
     const emit = defineEmits(['added'])
 
