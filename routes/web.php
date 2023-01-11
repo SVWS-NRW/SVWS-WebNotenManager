@@ -2,14 +2,13 @@
 
 use App\Http\Controllers\Auth\RequestPasswordController;
 use App\Http\Controllers\KlassenleitungController;
-use App\Http\Controllers\LeistungsController;
+
 use App\Http\Controllers\LeistungsUebersichtController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('test', 'Test')->name('test');
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-	Route::get('/', LeistungsController::class)->name('dashboard');
+	Route::inertia('/', 'MeinUnterricht')->name('mein_unterricht');
 
 	Route::get('leistungsdatenuebersicht', LeistungsUebersichtController::class)
 		->name('leistungsdatenuebersicht');

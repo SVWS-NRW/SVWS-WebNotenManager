@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import {SvwsUiAppLayout} from '@svws-nrw/svws-ui'
+    import { SvwsUiAppLayout } from '@svws-nrw/svws-ui'
 </script>
 
 <template>

@@ -1,9 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
-import Icons from "unplugin-icons/vite";
-import IconsResolver from "unplugin-icons/resolver";
-import Components from "unplugin-vue-components/vite";
 import * as os from "os";
 
 export default defineConfig({
@@ -27,11 +24,6 @@ export default defineConfig({
                 },
             },
         }),
-        Components({
-            resolvers: [IconsResolver()]
-        }),
-        Icons()
-
     ],
 
     resolve: {
