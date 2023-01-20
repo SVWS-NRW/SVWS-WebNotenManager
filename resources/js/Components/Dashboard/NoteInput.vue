@@ -1,19 +1,22 @@
 <script setup lang="ts">
     import { watch, computed, reactive } from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import { useStore } from '../../store'
-    import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios'
+    import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios'
+    import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
+    import { Leistung } from '../../Interfaces/Leistung'
 
-    const store = useStore()
-    const props = defineProps(['leistung'])
+    const props = defineProps(['leistung', 'disabled'])
 
-    let leistung = reactive(props.leistung)
-    let lowScoreArray: Array<string> = ['6', '5-', '5', '5+', '4-']
+    let leistung = reactive<Leistung>(props.leistung)
     let timeout: ReturnType<typeof setTimeout>
 
-    watch((): void => leistung.note, (): void => {
+    let lowScoreArray: Array<string> = [
+        '6', '5-', '5', '5+', '4-',
+    ]
+
+    watch((): string => leistung.note, (): void => {
         clearTimeout(timeout)
-        timeout = setTimeout(() => saveNote(), 500)
+        timeout = setTimeout((): AxiosPromise => saveNote(), 500)
     })
 
     const saveNote = (): AxiosPromise => axios
@@ -22,17 +25,16 @@
         .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))
+    const isDisabled = (): boolean => usePage().props.value.note_entry_disabled || props.disabled
 </script>
 
 <template>
-    <span :class="{ 'bg-red-500' : lowScore }">
-        <span v-if="usePage().props.value.note_entry_disabled">{{ leistung.note }}</span>
-        <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore"></SvwsUiTextInput>
-    </span>
+    <span v-if="isDisabled()" :class="{ 'low-score' : lowScore }">{{ leistung.note }}</span>
+    <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore"></SvwsUiTextInput>
 </template>
 
 <style scoped>
-    .text-input-component {
-        max-width: 48px !important;
+    .low-score {
+        @apply text-red-500 font-bold
     }
 </style>

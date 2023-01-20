@@ -36,6 +36,7 @@
       "resources/js/shims-window.d.ts",
       "resources/js/Jetstream/**/*.vue",
       "resources/js/Pages/**/*.vue",
+      "resources/js/Components/**/*.vue",
       "resources/js/**/*",
       "resources/js/**/*.ts"
   ],

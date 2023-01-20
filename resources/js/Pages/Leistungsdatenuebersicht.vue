@@ -1,97 +1,67 @@
 <script setup lang="ts">
-    import { ref, computed, reactive, onMounted, watch } from 'vue'
-    import { useStore } from '../store'
-    import axios, { AxiosPromise, AxiosResponse } from 'axios'
+    import AppLayout from '../Layouts/AppLayout.vue'
+    import {computed, onMounted, reactive, ref, watch} from 'vue'
 
-    import { Leistung } from '../Interfaces/Leistung'
-    import { Column } from '../Interfaces/Column'
-    import { Filter } from '../Interfaces/Filter'
+    import { Head } from '@inertiajs/inertia-vue3'
 
-    import TopMenu from '../Components/TopMenu.vue'
-    import Menubar from '../Components/Menubar.vue'
-    import BemerkungenIndicator from '../Components/Klassenleitung/BemerkungenIndicator.vue'
-    import BottomMenu from '../Components/BottomMenu.vue'
-    import FloskelnMenuReadOnly from '../Components/FloskelnMenuReadOnly.vue'
+    import {
+        SvwsUiCheckbox,
+        SvwsUiTextInput,
+        SvwsUiSelectInput,
+        SvwsUiTable,
+        SvwsUiIcon,
+    } from '@svws-nrw/svws-ui'
 
-    const store = useStore()
+    import {Column} from '../Interfaces/Column'
+    import axios, {AxiosPromise, AxiosResponse} from 'axios'
+    import {Leistung} from '../Interfaces/Leistung'
+    import {LeistungsDatenFilterValues} from '../Interfaces/Filter'
 
-    let props = defineProps({
-        auth: Object,
+    import NoteInput from '../Components/Dashboard/NoteInput.vue'
+    import MahnungIndicator from '../Components/MahnungIndicator.vue'
+    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
+
+    const title = 'Notenmanager - Leistungsdatenübersicht'
+
+    let toggles = <{
+        fachlehrer: boolean,
+        bemerkungen: boolean,
+        mahnungen: boolean,
+    }>reactive({
+        fachlehrer: false,
+        bemerkungen: true,
+        mahnungen: false,
     })
 
     let state = reactive({
-        selected: <Leistung | null> null,
         leistungen: <Leistung[]> [],
-        filterValues: <{
-            jahrgaenge: Array<Filter>,
-            noten: Array<Filter>,
-            klassen: Array<Filter>,
-            kurse: Array<Filter>,
-            faecher: Array<Filter>
-        }> {
-            'jahrgaenge': [],
-            'klassen': [],
-            'kurse': [],
-            'noten': [],
-        },
     })
 
-    const filters = reactive({
-        search: <string> '',
-        klasse: <Number | string> 0,
-        jahrgang: <Number | string> 0,
-        kurs: <Number | string> 0,
-        fach: <Number | string> '0',
-        note: <Number | string> 0,
+    let filterOptions = <LeistungsDatenFilterValues>reactive({
+        'jahrgaenge': [],
+        'klassen': [],
+        'kurse': [],
+        'noten': [],
+        'faecher': [],
     })
 
-    onMounted((): void => {
-        getFilters()
-        getLeistungen()
+    let filters = <{
+        search: string,
+        klasse: Number | string,
+        jahrgang: Number | string,
+        kurs: Number | string,
+        fach: Number | string,
+        note: Number | string,
+    }>reactive({
+        search: '',
+        klasse: 0,
+        jahrgang: 0,
+        kurs: 0,
+        fach: '0',
+        note: 0,
     })
 
-    const getFilters = (): AxiosPromise => axios
-        .get(route('get_filters'))
-        .then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
-
-    const getLeistungen = (): AxiosPromise => axios
-        .get(route('get_leistungen'))
-        .then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
-
-    const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
-        .map((leistung: Leistung): Leistung => {
-            leistung.name = [leistung.nachname, leistung.vorname].join(', ')
-            return leistung
-        })
-        .filter((leistung: Leistung): boolean =>
-            searchFilter(leistung)
-            && tableFilter(leistung, 'klasse', true)
-            && tableFilter(leistung, 'kurs', true)
-            && tableFilter(leistung, 'jahrgang')
-            && tableFilter(leistung, 'note', true)
-            && tableFilter(leistung, 'fach')
-        )
-    )
-
-    const searchFilter = (leistung: Leistung): boolean => {
-        if (filters.search === '') return true
-        const search = (search: string): boolean => search.toLowerCase().includes(filters.search.toLowerCase())
-        return search(leistung.vorname) || search(leistung.nachname)
-    }
-
-    const tableFilter = (leistung: Leistung, column: string, withOnlyEmptyOption: boolean = false): boolean => {
-        if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] == null
-        if (filters[column] == 0) return true
-        return leistung[column] == filters[column]
-    }
-
-    let fachlehrer = ref(false)
-    let fachbezogeneBemerkungen = ref(true)
-    let mahnungen = ref(false)
-
-    watch([fachlehrer, fachbezogeneBemerkungen, mahnungen], (): void => drawTable())
-
-    let columns = ref( [])
+    const columns = ref<Column[]>([]);
 
     const baseColumns: Array<Column> = [
         { key: 'klasse', label: 'Klasse', sortable: true },
@@ -114,80 +84,121 @@
     ]
 
     const drawTable = (): void => {
+        const pushTable = (pushable: boolean, array: Array<Column>): void => {
+            if (pushable) array.forEach((column: Column): number => columns.value.push(column))
+        }
+
         columns.value.length = 0
-        pushTable(false, baseColumns, true)
-        pushTable(fachlehrer.value, fachlehrerColumns)
-        pushTable(mahnungen.value, mahnungenColumns)
-        pushTable(fachbezogeneBemerkungen.value, fachbezogeneBemerkungenColumns)
+        pushTable(true, baseColumns)
+        pushTable(toggles.fachlehrer, fachlehrerColumns)
+        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+        pushTable(toggles.mahnungen, mahnungenColumns)
     }
 
-    const pushTable = (model: boolean, array: Array<Column>, always: boolean = false): void => {
-        if (model || always) array.forEach((column: Column) => columns.value.push(column))
+    watch(toggles, (): void => drawTable())
+
+    onMounted((): void => {
+        getFilters()
+        getLeistungen()
+        drawTable()
+    })
+
+    const getFilters = (): AxiosPromise => axios
+        .get(route('get_filters'))
+        .then((response: AxiosResponse): AxiosResponse => filterOptions = response.data)
+
+    const getLeistungen = (): AxiosPromise => axios
+        .get(route('get_leistungen'))
+        .then((response: AxiosResponse): AxiosResponse => state.leistungen = mapLeistungen(response.data))
+
+    const mapLeistungen = (data) => data.map((leistung: Leistung): Leistung => {
+        leistung.name = `${leistung.nachname}, ${leistung.vorname}`
+        return leistung
+    })
+
+    const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
+        .filter((leistung: Leistung): boolean =>
+            searchFilter(leistung)
+            && tableFilter(leistung, 'klasse', true)
+            && tableFilter(leistung, 'kurs', true)
+            && tableFilter(leistung, 'jahrgang')
+            && tableFilter(leistung, 'note', true)
+            && tableFilter(leistung, 'fach')
+        )
+    )
+
+    const searchFilter = (leistung: Leistung): boolean => {
+        if (filters.search === '') return true
+        const search = (search: string) => search.toLowerCase().includes(filters.search.toLowerCase())
+        return search(leistung.vorname) || search(leistung.nachname)
     }
 
-    const openFloskelMenu = (selected: Leistung): Leistung => state.selected = selected
-    const closeFloskelMenu = (): Leistung|null => state.selected = null
-
-    drawTable()
+    const tableFilter = (leistung: Leistung, column: string, containsOnlyEmptyOption: boolean = false): boolean => {
+        if (containsOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] == null
+        if (filters[column] == 0) return true
+        return leistung[column] == filters[column]
+    }
 </script>
 
 <template>
-    <div>
-        <SvwsUiAppLayout :collapsed="store.sidebarCollapsed">
-            <template #sidebar>
-                <Menubar :auth="props.auth" />
-            </template>
+    <Head>
+        <title>{{ title }}</title>
+    </Head>
 
-            <template #main>
-                <div class="relative flex flex-col w-full h-screen overflow-hidden bg-white">
-                    <TopMenu headline="Leistungsdatenübersicht" :vertical="true">
-                        <span class="flex gap-3">
-                            <SvwsUiCheckbox v-model="fachlehrer">Fachlehrer</SvwsUiCheckbox>
-                            <SvwsUiCheckbox v-model="fachbezogeneBemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                            <SvwsUiCheckbox v-model="mahnungen">Mahnungen</SvwsUiCheckbox>
-                        </span>
-                    </TopMenu>
-                    <div id="filterMenu" class="flex gap-6 px-6 relative pt-1.5 mb-6">
-                        <SvwsUiTextInput type="search" v-model="filters.search" placeholder="Suche"></SvwsUiTextInput>
-                        <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" @update:value="(klasse: Number) => filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>
-                        <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang" @update:value="(jahrgang: Number) => filters.jahrgang = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput>
-                        <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" @update:value="(kurs: Number) => filters.fach = kurs" :options="state.filterValues.faecher"></SvwsUiSelectInput>
-                        <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" @update:value="(kurs: Number) => filters.kurs = kurs" :options="state.filterValues.kurse"></SvwsUiSelectInput>
-                        <SvwsUiSelectInput placeholder="Note" v-model="filters.note" @update:value="(note: Number) => filters.note = note" :options="state.filterValues.noten"></SvwsUiSelectInput>
-                    </div>
-
-                    <div class="flex-1 flex flex-row overflow-y-auto">
-                        <div v-if="filteredLeistungen.length === 0" class="px-6">
-                            <h4 class="headline-4">Keine Einträge gefunden!</h4>
-                        </div>
-                        <SvwsUiNewTable :data="filteredLeistungen" :columns="columns" v-if="filteredLeistungen.length">
-                            <template #cell-mahnung="{ row }">
-                                <SvwsUiIcon v-if="row.mahnung">
-                                    <i-ri-checkbox-line aria-hidden="true"></i-ri-checkbox-line>
-                                </SvwsUiIcon>
-                                <SvwsUiIcon v-else>
-                                    <i-ri-checkbox-blank-line aria-hidden="true"></i-ri-checkbox-blank-line>
-                                </SvwsUiIcon>
-                            </template>
-                            <template #cell-fachbezogeneBemerkungen="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu(row)" :bemerkung="Boolean(row.fachbezogeneBemerkungen)"></BemerkungenIndicator>
-                            </template>
-                        </SvwsUiNewTable>
-                        <div class="block w-1/3"></div>
-                    </div>
-                    <BottomMenu></BottomMenu>
+    <AppLayout>
+        <template #main>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">{{ title }}</h2>
                 </div>
-            </template>
-            <template #contentSidebar>
-                <FloskelnMenuReadOnly :schueler="state.selected" @close="closeFloskelMenu"></FloskelnMenuReadOnly>
-            </template>
-        </SvwsUiAppLayout>
-    </div>
+                <div id="toggles">
+                    <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
+                </div>
+                <div id="filters">
+                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
+                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>
+                    <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>
+                    <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" :options="filterOptions.faecher"></SvwsUiSelectInput>
+                    <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" :options="filterOptions.kurse"></SvwsUiSelectInput>
+                    <SvwsUiSelectInput placeholder="Note" v-model="filters.note" :options="filterOptions.noten"></SvwsUiSelectInput>
+                </div>
+            </header>
+
+            <h3 class="text-headline-sm mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
+
+            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns">
+                <template #cell-note="{ row }">
+                    <NoteInput :leistung="row" :disabled="true"></NoteInput>
+                </template>
+
+                <template #cell-mahnung="{ row }">
+                    <MahnungIndicator :leistung="row" :disabled="true"></MahnungIndicator>
+                </template>
+
+                <template #cell-fachbezogeneBemerkungen="{ row }">
+                    <FachbezogeneBemerkungenIndicator :leistung="row"></FachbezogeneBemerkungenIndicator>
+                </template>
+            </SvwsUiTable>
+        </template>
+    </AppLayout>
 </template>
 
 <style scoped>
-    #filterMenu .text-input,
-    #filterMenu .select-input {
-        @apply max-w-xs w-full
-    }
+header {
+    @apply flex flex-col gap-4 p-6
+}
+
+header #toggles {
+    @apply flex items-center justify-start gap-3 flex-wrap
+}
+
+header #headline {
+    @apply flex items-center justify-start gap-6
+}
+
+header #filters {
+    @apply grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6
+}
 </style>

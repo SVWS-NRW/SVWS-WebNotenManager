@@ -24,6 +24,5 @@
 <style scoped>
     .icon > svg {
         @apply w-6 h-6
-
     }
 </style>

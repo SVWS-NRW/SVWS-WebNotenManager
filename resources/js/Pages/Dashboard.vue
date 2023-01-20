@@ -7,7 +7,7 @@
     import { Column } from '../Interfaces/Column'
     import { Filter } from '../Interfaces/Filter'
 
-    import MahnungIndicator from '../Components/Dashboard/MahnungIndicator.vue'
+    import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FloskelnMenu from '../Components/Dashboard/FloskelnMenu.vue'
     import NoteInput from '../Components/Dashboard/NoteInput.vue'
     import TopMenu from '../Components/TopMenu.vue'

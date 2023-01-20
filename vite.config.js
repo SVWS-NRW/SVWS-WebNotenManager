@@ -1,7 +1,11 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue';
-import * as os from "os";
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+import vue from '@vitejs/plugin-vue'
+import * as os from 'os'
+
+import Icons from "unplugin-icons/vite"
+import IconsResolver from 'unplugin-icons/resolver'
+import Components from 'unplugin-vue-components/vite'
 
 export default defineConfig({
     server: {
@@ -24,13 +28,27 @@ export default defineConfig({
                 },
             },
         }),
+		Components({
+			globs: ["src/components/**/!(*story.vue)*.vue"],
+			dirs: ['src/components'],
+
+			resolvers: [
+				IconsResolver({
+					prefix: false,
+					enabledCollections: ['mdi'],
+
+				})
+			],
+		}),
+		Icons({
+			autoInstall: true,
+		})
     ],
 
     resolve: {
         dedupe: ["vue"],
         alias: {
             '@': '/resources/js',
-            // "@svws-nrw/svws-ui": "@/ui-components",
         }
     }
 });

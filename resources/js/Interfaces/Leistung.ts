@@ -1,3 +1,5 @@
+import { Schueler } from './Schueler'
+
 export interface Leistung {
 	id: number,
 	klasse: string|Number|null,
@@ -14,5 +16,6 @@ export interface Leistung {
 	fs: number,
 	ufs: number,
 	istGemahnt: boolean,
-	mahndatum: boolean
+	mahndatum: string,
+	schueler: Schueler
 }

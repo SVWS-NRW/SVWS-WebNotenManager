@@ -10,3 +10,7 @@ export interface LeistungsDatenFilterValues {
 	kurse: Array<Filter>,
 	faecher: Array<Filter>,
 }
+
+export interface SchuelerFilterValues {
+	klassen: Array<Filter>,
+}

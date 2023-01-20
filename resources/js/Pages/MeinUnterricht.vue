@@ -1,20 +1,26 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, ref} from 'vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import {onMounted, reactive} from 'vue'
+    import { onMounted, reactive, computed, ref, watch } from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
-    import { Filter, LeistungsDatenFilterValues } from '../Interfaces/Filter'
-    import axios, {AxiosPromise, AxiosResponse} from 'axios'
-    import {SvwsUiTable} from '@svws-nrw/svws-ui'
-
-    import { SvwsUiTextInput, SvwsUiSelectInput, SvwsUiCheckbox } from '@svws-nrw/svws-ui'
     import { Column } from '../Interfaces/Column'
+    import { LeistungsDatenFilterValues } from '../Interfaces/Filter'
+    import axios, {AxiosPromise, AxiosResponse} from 'axios'
+    import MahnungIndicator from '../Components/MahnungIndicator.vue'
 
-    let title = 'Notenmanager - Mein Unterricht'
+    import NoteInput from '../Components/Dashboard/NoteInput.vue'
+
+    import {
+        SvwsUiCheckbox,
+        SvwsUiSelectInput,
+        SvwsUiTable,
+        SvwsUiTextInput,
+        SvwsUiIcon,
+    } from '@svws-nrw/svws-ui'
+
+    const title = 'Notenmanager - Mein Unterricht'
 
     let state = reactive({
-        // selected: <Leistung | null> null,
         leistungen: <Leistung[]> [],
     })
 
@@ -24,36 +30,81 @@
         'kurse': [],
         'noten': [],
         'faecher': [],
-    },)
+    })
 
-    let toggles = reactive({
+    let toggles = <{
+        teilleistungen: boolean,
+        mahnungen: boolean,
+        bemerkungen: boolean,
+        fehlstunden: boolean
+    }>reactive({
         teilleistungen: false,
         mahnungen: true,
         bemerkungen: true,
         fehlstunden: false,
     })
 
-    const filters = reactive({
-        search: <string> '',
-        klasse: <Number | string> 0,
-        jahrgang: <Number | string> 0,
-        kurs: <Number | string> 0,
-        fach: <Number | string> '0',
-        note: <Number | string> 0,
+    watch(toggles, (): void => drawTable());
+
+    let filters = <{
+        search: string,
+        klasse: Number | string,
+        jahrgang: Number | string,
+        kurs: Number | string,
+        fach: Number | string,
+        note: Number | string,
+    }>reactive({
+        search: '',
+        klasse: 0,
+        jahrgang: 0,
+        kurs: 0,
+        fach: '0',
+        note: 0,
     })
 
-    const columns = ref<Column[]>([
+    const columns = ref<Column[]>([]);
+
+    const baseColumns: Array<Column> = [
         { key: 'klasse', label: 'Klasse', sortable: true },
         { key: 'name', label: 'Name', sortable: true },
         { key: 'fach', label: 'Fach', sortable: true },
         { key: 'lehrer', label: 'Lehrer', sortable: true },
         { key: 'kurs', label: 'Kurs', sortable: true },
         { key: 'note', label: 'Note', sortable: false },
-    ]);
+    ]
+
+    const teilleistungenColumns: Array<Column> = []
+
+    const fachbezogeneBemerkungenColumns: Array<Column> = [
+        { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: false },
+    ]
+
+    const mahnungenColumns: Array<Column> = [
+        { key: 'mahnung', label: 'M', sortable: false },
+    ]
+
+    const fehlstundenColumns: Array<Column> = [
+        { key: 'fs', label: 'FS', sortable: true },
+        { key: 'ufs', label: 'FSU', sortable: true },
+    ]
+
+    const drawTable = (): void => {
+        const pushTable = (pushable: boolean, array: Array<Column>): void => {
+            if (pushable) array.forEach((column: Column): number => columns.value.push(column))
+        }
+
+        columns.value.length = 0
+        pushTable(true, baseColumns)
+        pushTable(toggles.teilleistungen, teilleistungenColumns)
+        pushTable(toggles.mahnungen, mahnungenColumns)
+        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+        pushTable(toggles.fehlstunden, fehlstundenColumns)
+    }
 
     onMounted((): void => {
         getFilters()
         getLeistungen()
+        drawTable()
     })
 
     const getFilters = (): AxiosPromise => axios
@@ -78,7 +129,7 @@
             && tableFilter(leistung, 'note', true)
             && tableFilter(leistung, 'fach')
         )
-    );
+    )
 
     const searchFilter = (leistung: Leistung): boolean => {
         if (filters.search === '') return true
@@ -102,7 +153,7 @@
         <template #main>
             <header>
                 <div id="headline">
-                    <h2 class="headline-2">{{ title }}</h2>
+                    <h2 class="text-headline">{{ title }}</h2>
                 </div>
                 <div id="toggles">
                     <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
@@ -119,9 +170,15 @@
                     <SvwsUiSelectInput placeholder="Note" v-model="filters.note" :options="filterOptions.noten"></SvwsUiSelectInput>
                 </div>
             </header>
-            <SvwsUiTable :data="filteredLeistungen" :columns="columns">
-                <template #cell-name="{ row }">
-<!--                    {{ row.nachname }}, {{ row.vorname }}-->
+
+            <h3 class="text-headline-sm mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
+
+            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns">
+                <template #cell-note="{ row }">
+                    <NoteInput :leistung="row"></NoteInput>
+                </template>
+                <template #cell-mahnung="{ row }">
+                    <MahnungIndicator :leistung="row" :key="row.id"></MahnungIndicator>
                 </template>
             </SvwsUiTable>
         </template>

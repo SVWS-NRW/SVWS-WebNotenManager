@@ -18,6 +18,7 @@ class KlassenleitungResource extends JsonResource
 			'id' => $this->id,
 			'vorname' => $this->vorname,
 			'nachname' => $this->nachname,
+			'geschlecht' => $this->geschlecht,
 			'klasse' => $this->klasse->kuerzel,
 			'ASV' => $this->bemerkung?->ASV,
 			'AUE' => $this->bemerkung?->AUE,

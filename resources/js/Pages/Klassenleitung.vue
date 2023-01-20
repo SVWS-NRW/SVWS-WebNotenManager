@@ -1,58 +1,58 @@
 <script setup lang="ts">
-    import { computed, onMounted, reactive } from 'vue'
-    import axios, {AxiosPromise, AxiosResponse} from 'axios'
-    import { useStore } from '../store'
-
-    import { Filter } from '../Interfaces/Filter'
-    import { Schueler } from '../Interfaces/Schueler'
+    import AppLayout from '../Layouts/AppLayout.vue'
+    import { Head } from '@inertiajs/inertia-vue3'
+    import { computed, onMounted, reactive, ref } from 'vue'
+    import { SchuelerFilterValues } from '../Interfaces/Filter'
     import { Column } from '../Interfaces/Column'
-    import { Floskelgruppe } from '../Interfaces/Floskelgruppe'
+    import axios, { AxiosPromise, AxiosResponse } from 'axios'
+    import { Schueler } from '../Interfaces/Schueler'
+    import BemerkungenIndicator from '../Components/BemerkungenIndicator.vue'
 
-    import Menubar from '../Components/Menubar.vue'
-    import TopMenu from "../Components/TopMenu.vue"
-    import BemerkungenIndicator from "../Components/Klassenleitung/BemerkungenIndicator.vue"
-    import FloskelnMenu from "../Components/Klassenleitung/FloskelnMenu.vue"
 
-    type Selected = { schueler: Schueler, floskelgruppe: String } | null
+    import {
+        SvwsUiCheckbox,
+        SvwsUiSelectInput,
+        SvwsUiTable,
+        SvwsUiTextInput,
+        SvwsUiIcon,
+        SvwsUiContentCard
+    } from '@svws-nrw/svws-ui'
 
-    const store = useStore()
-
-    let props = defineProps({
-        auth: Object,
-    })
+    const title = 'Notenmanager - Klassenleitung'
 
     let state = reactive({
-        floskelgruppen: <Floskelgruppe[]> [],
         schueler: <Schueler[]> [],
-        selected: <Selected | null> null,
-        filterValues: <{ klassen: Array<Filter>}> {'klassen': []},
     })
 
-    const columns = <Column[]>[
-        {key: 'klasse', label: 'Klasse', sortable: true},
-        {key: 'vorname', label: 'Vorname', sortable: true},
-        {key: 'nachname', label: 'Nachname', sortable: true},
-        {key: 'ASV', label: 'ASV', sortable: true},
-        {key: 'AUE', label: 'AUE', sortable: true},
-        {key: 'ZB', label: 'ZB', sortable: true},
-        {key: 'gfs', label: 'gFS', sortable: true},
-        {key: 'gfsu', label: 'gFSU', sortable: true},
-    ]
-
-    const filters = reactive({
-        search: <string> '',
-        klasse: <Number | string> 0,
+    let filterOptions = <SchuelerFilterValues>reactive({
+        'klassen': [],
     })
+
+    let filters = <{ search: string, klasse: Number | string }>reactive({
+        search: '',
+        klasse: 0,
+    })
+
+    const columns = ref<Column[]>( [
+        { key: 'klasse', label: 'Klasse', sortable: true },
+        { key: 'vorname', label: 'Vorname', sortable: true },
+        { key: 'nachname', label: 'Nachname', sortable: true },
+        { key: 'ASV', label: 'ASV', sortable: true },
+        { key: 'AUE', label: 'AUE', sortable: true },
+        { key: 'ZB', label: 'ZB', sortable: true },
+        { key: 'gfs', label: 'gFS', sortable: true },
+        { key: 'gfsu', label: 'gFSU', sortable: true },
+    ])
 
     onMounted((): void => {
         fetchSchueler()
-        fetchFloskelGruppen()
         fetchFilters()
+        // fetchFloskelGruppen()
     })
 
     const fetchFilters = (): AxiosPromise => axios
         .get(route('get_filters.klassenleitung'))
-        .then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
+        .then((response: AxiosResponse): AxiosResponse => filterOptions = response.data)
 
     const filteredSchueler = computed((): Array<Schueler> =>
         state.schueler.filter((schueler: Schueler): boolean =>
@@ -74,56 +74,53 @@
 
     const fetchSchueler = (): AxiosPromise => axios
         .get(route('get_schueler'))
-        .then((res: AxiosResponse): AxiosResponse => state.schueler = res.data)
-
-    const fetchFloskelGruppen = (): AxiosPromise => axios
-        .get(route('get_floskeln'))
-        .then((res: AxiosResponse): AxiosResponse => state.floskelgruppen = res.data)
-
-    const openFloskelMenu = (selected: Selected): Selected => state.selected = selected
-    const closeFloskelMenu = (): null => state.selected = null
+        .then((response: AxiosResponse): AxiosResponse => state.schueler = response.data)
 </script>
 
 <template>
-    <div>
-        <SvwsUiAppLayout :collapsed="store.sidebarCollapsed">
-            <template #sidebar>
-                <Menubar :auth="props.auth" />
-            </template>
+    <Head>
+        <title>{{ title }}</title>
+    </Head>
 
-            <template #main>
-                <div class="relative flex flex-col w-full h-screen">
-                    <TopMenu headline="Klassenleitung"></TopMenu>
-                    <div class="flex gap-6 px-6 relative pt-1.5 mb-6">
-                        <div class="max-w-xs">
-                            <SvwsUiTextInput type="search" v-model="filters.search" placeholder="Suche"></SvwsUiTextInput>
-                        </div>
-                        <div class="max-w-xs w-full">
-                            <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" @update:value="(klasse: Number) => filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>
-                        </div>
-                    </div>
-                    <div class="h-full flex-1 overflow-auto">
-                        <div v-if="filteredSchueler.length === 0" class="px-6">
-                            <h4 class="headline-4">Keine Einträge gefunden!</h4>
-                        </div>
-                        <SvwsUiNewTable :data="filteredSchueler" :columns="columns" class="relative" v-if="filteredSchueler.length">
-                            <template #cell-ASV="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'ASV' })" :bemerkung="Boolean(row.ASV)"></BemerkungenIndicator>
-                            </template>
-                            <template #cell-AUE="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'AUE'})" :bemerkung="Boolean(row.AUE)"></BemerkungenIndicator>
-                            </template>
-                            <template #cell-ZB="{ row }">
-                                <BemerkungenIndicator @open="openFloskelMenu({ schueler: row, floskelgruppe: 'ZB' })" :bemerkung="Boolean(row.ZB)"></BemerkungenIndicator>
-                            </template>
-                        </SvwsUiNewTable>
-                    </div>
+    <AppLayout>
+        <template #main>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">{{ title }}</h2>
                 </div>
-            </template>
+                <div id="filters">
+                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
+                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>
+                </div>
+            </header>
 
-            <template #contentSidebar>
-                <FloskelnMenu :selected="state.selected" :floskelgruppen="state.floskelgruppen" @close="closeFloskelMenu" @updated="fetchSchueler"></FloskelnMenu>
-            </template>
-        </SvwsUiAppLayout>
-    </div>
+            <SvwsUiTable v-if="filteredSchueler.length" :data="filteredSchueler" :columns="columns">
+                <template #cell-ASV="{ row }">
+                    <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
+                </template>
+                <template #cell-AUE="{ row }">
+                    <BemerkungenIndicator :leistung="row" floskelgruppe="AUE"></BemerkungenIndicator>
+                </template>
+                <template #cell-ZB="{ row }">
+                    <BemerkungenIndicator :leistung="row" floskelgruppe="ZB"></BemerkungenIndicator>
+                </template>
+            </SvwsUiTable>
+
+            <h3 class="text-headline-sm mx-6" v-else>Keine Einträge gefunden!</h3>
+        </template>
+    </AppLayout>
 </template>
+
+<style>
+    header {
+        @apply flex flex-col gap-4 p-6
+    }
+
+    header #headline {
+        @apply flex items-center justify-start gap-6
+    }
+
+    header #filters {
+        @apply grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6
+    }
+</style>

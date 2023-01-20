@@ -5,7 +5,7 @@
     import { ref, watch, computed, reactive, onMounted } from 'vue';
     import { useStore } from '../store'
     import axios from 'axios';
-    import MahnungIndicator from "./Dashboard/MahnungIndicator.vue";
+    import MahnungIndicator from "./MahnungIndicator.vue";
     import TopMenu from "../Components/TopMenu.vue"
 
 

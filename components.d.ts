@@ -3,8 +3,16 @@
 // Read more: https://github.com/vuejs/core/pull/3399
 import '@vue/runtime-core'
 
+export {}
+
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    ICarbonFaceCool: typeof import('~icons/carbon/face-cool')['default']
+    IconAccount: typeof import('~icons/ic/on-account')['default']
+    IconMdiAccount: typeof import('~icons/ic/on-mdi-account')['default']
+    IconMdiHome: typeof import('~icons/mdi/home')['default']
+    IconMdiHomeLine: typeof import('~icons/mdi/home-line')['default']
+    IIconMdiHome: typeof import('~icons/ic/on-mdi-home')['default']
     IRiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
     IRiCheckboxBlankLine: typeof import('~icons/ri/checkbox-blank-line')['default']
     IRiCheckboxLine: typeof import('~icons/ri/checkbox-line')['default']
@@ -20,7 +28,20 @@ declare module '@vue/runtime-core' {
     IRiSunLine: typeof import('~icons/ri/sun-line')['default']
     IRiTeamLine: typeof import('~icons/ri/team-line')['default']
     IRiUser2Line: typeof import('~icons/ri/user2-line')['default']
+    MdiBook: typeof import('~icons/mdi/book')['default']
+    MdiBookOpenOutline: typeof import('~icons/mdi/book-open-outline')['default']
+    MdiBookOpenVariant: typeof import('~icons/mdi/book-open-variant')['default']
+    MdiBookRead: typeof import('~icons/mdi/book-read')['default']
+    MdiCheckboxBlankOutline: typeof import('~icons/mdi/checkbox-blank-outline')['default']
+    MdiCheckboxMarkedOutline: typeof import('~icons/mdi/checkbox-marked-outline')['default']
+    MdiCheckboxOutline: typeof import('~icons/mdi/checkbox-outline')['default']
+    MdiClose: typeof import('~icons/mdi/close')['default']
+    MdiCloseOutline: typeof import('~icons/mdi/close-outline')['default']
+    MdiHome: typeof import('~icons/mdi/home')['default']
+    MdiHomeOutline: typeof import('~icons/mdi/home-outline')['default']
+    MdiLogout: typeof import('~icons/mdi/logout')['default']
+    MdiUser: typeof import('~icons/mdi/user')['default']
+    MdiUser2: typeof import('~icons/mdi/user2')['default']
+    MdiUserOutline: typeof import('~icons/mdi/user-outline')['default']
   }
 }
-
-export {}

@@ -8,6 +8,7 @@
         SvwsUiSidebarMenu,
         SvwsUiSidebarMenuHeader,
         SvwsUiSidebarMenuItem,
+        SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
 
     let props = defineProps({
@@ -16,10 +17,10 @@
 
     const isCollapsed = ref(false)
 
-    let links: { label: string, route: string, icon: string }[] = [ // TODO: Icons not working
-        { label: 'Notenmanager', route: 'mein_unterricht', icon: 'team' },
-        { label: 'Leistungsdatenübersicht', route: 'leistungsdatenuebersicht', icon: 'book-read' },
-        { label: 'Klassenleitung', route: 'klassenleitung', icon: 'user2' },
+    let links: { label: string, route: string, icon: string }[] = [
+        { label: 'Notenmanager', route: 'mein_unterricht', icon: 'home' },
+        { label: 'Leistungsdatenübersicht', route: 'leistungsdatenuebersicht', icon: 'book-open' },
+        { label: 'Klassenleitung', route: 'klassenleitung', icon: 'user' },
     ]
 
     const activePage = (routeName: string): boolean => route().current(routeName)
@@ -55,6 +56,13 @@
                         <template #label>
                             {{ link.label }}
                         </template>
+                        <template #icon>
+                            <SvwsUiIcon>
+                                <mdi-home-outline v-if="link.icon === 'home'"></mdi-home-outline>
+                                <mdi-book-open-outline v-if="link.icon === 'book-open'"></mdi-book-open-outline>
+                                <mdi-user-outline v-if="link.icon === 'user'"></mdi-user-outline>
+                            </SvwsUiIcon>
+                        </template>
                     </SvwsUiSidebarMenuItem>
                 </template>
                 <template #footer>
@@ -65,6 +73,9 @@
                     >
                         <template #label>
                             Abmelden
+                        </template>
+                        <template #icon>
+                            <mdi-logout></mdi-logout>
                         </template>
                     </SvwsUiSidebarMenuItem>
                 </template>

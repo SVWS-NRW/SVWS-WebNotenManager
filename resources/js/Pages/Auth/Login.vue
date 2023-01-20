@@ -33,7 +33,7 @@
     const submit = (): void => {
         data.processing = true
         axios.post(route('login'), data.form)
-            .then((): void => Inertia.get(route('dashboard')))
+            .then((): void => Inertia.get(route('mein_unterricht')))
             .catch((error: any): AxiosError => data.errors = error.response.data.errors)
             .finally((): boolean => data.processing = false)
     }

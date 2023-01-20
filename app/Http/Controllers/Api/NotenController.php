@@ -15,7 +15,9 @@ class NotenController extends Controller
 {
 	public function get(): AnonymousResourceCollection
 	{
-		return NoteResource::collection(Note::all());
+		return NoteResource::collection(
+			Note::all()
+		);
 	}
 
 	public function set(Leistung $leistung): JsonResponse
@@ -24,18 +26,18 @@ class NotenController extends Controller
 			$note = Note::query()
 				->where(['kuerzel' => (string) request()->note])
 				->firstOrFail();
-
-			$leistung->update([
-				'note_id' => $note->id,
-				'tsNote' => now()->format('Y-m-d H:i:s.u'),
-			]);
-
-			return response()->json(['note' => $note->kuerzel], Response::HTTP_OK);
 		} catch (ModelNotFoundException $e) {
 			return response()->json([
 				'message' => $e->getMessage(),
-				'note' => $leistung->note
+				'note' => $leistung->note?->kuerzel
 			], Response::HTTP_UNPROCESSABLE_ENTITY);
 		}
+
+		$leistung->update([
+			'note_id' => $note->id,
+			'tsNote' => now()->format('Y-m-d H:i:s.u'),
+		]);
+
+		return response()->json(['note' => $note->kuerzel], Response::HTTP_OK);
     }
 }
