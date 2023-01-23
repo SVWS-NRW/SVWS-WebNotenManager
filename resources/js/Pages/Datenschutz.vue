@@ -88,26 +88,26 @@
 
 <style scoped>
     div.component {
-        @apply flex mx-auto w-full max-w-6xl bg-white rounded-lg shadow-lg p-8
+        @apply ui-flex ui-mx-auto ui-w-full ui-max-w-6xl ui-bg-white ui-rounded-lg ui-shadow-lg ui-p-8
     }
 
     div.component div {
-        @apply flex flex-col gap-6 overflow-y-auto pr-8
+        @apply ui-flex ui-flex-col ui-gap-6 ui-overflow-y-auto ui-pr-8
     }
 
     h1 {
-        @apply uppercase
+        @apply ui-uppercase
     }
 
     h1, h2 {
-        @apply border-b border-gray-300 pb-2 leading-relaxed
+        @apply ui-border-b ui-border-gray-300 ui-pb-2 ui-leading-relaxed
     }
 
     p {
-        @apply text-lg leading-7
+        @apply ui-text-lg ui-leading-7
     }
 
     ul {
-        @apply list-disc list-outside ml-6 text-lg
+        @apply ui-list-disc ui-list-outside ui-ml-6 ui-text-lg
     }
 </style>

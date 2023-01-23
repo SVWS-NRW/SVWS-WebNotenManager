@@ -33,42 +33,42 @@
 
 <style scoped>
     div.component {
-        @apply bg-chalk bg-cover w-full h-full flex flex-col justify-between
+        @apply ui-bg-chalk ui-bg-cover ui-w-full ui-h-full ui-flex ui-flex-col ui-justify-between
     }
 
     main {
-        @apply grow flex justify-center items-center
+        @apply ui-grow ui-flex ui-justify-center ui-items-center
     }
 
     footer {
-        @apply bg-white p-8 flex flex-col-reverse md:flex-row gap-8 text-lg items-center
+        @apply ui-bg-white ui-p-8 ui-flex ui-flex-col-reverse md:ui-flex-row ui-gap-8 ui-text-lg ui-items-center
     }
 
     footer .disclaimer {
-        @apply flex flex-col gap-2 grow text-center md:text-left text-sm
+        @apply ui-flex ui-flex-col ui-gap-2 ui-grow ui-text-center md:ui-text-left ui-text-sm
     }
 
     footer .disclaimer h3 {
-        @apply text-black/75
+        @apply ui-text-black/75
     }
 
     footer .disclaimer p {
-        @apply text-black/30 max-w-5xl
+        @apply ui-text-black/30 ui-max-w-5xl
     }
 
     footer .disclaimer nav {
-        @apply flex flex-row items-center gap-3 justify-center md:justify-start
+        @apply ui-flex ui-flex-row ui-items-center ui-gap-3 ui-justify-center md:ui-justify-start
     }
 
     footer .disclaimer nav a {
         @apply
-        text-black/30 hover:text-black/75
-        focus-visible:outline focus-visible:text-black/75 outline-offset-2 outline-2 outline-black
-        underline
-        rounded-sm
+        ui-text-black/30 hover:ui-text-black/75
+        focus-visible:ui-outline focus-visible:ui-text-black/75 ui-outline-offset-2 ui-outline-2 ui-outline-black
+        ui-underline
+        ui-rounded-sm
     }
 
     footer img {
-        @apply h-20 w-auto
+        @apply ui-h-20 ui-w-auto
     }
 </style>

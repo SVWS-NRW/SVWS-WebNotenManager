@@ -106,21 +106,21 @@
                 </template>
             </SvwsUiTable>
 
-            <h3 class="text-headline-sm mx-6" v-else>Keine Einträge gefunden!</h3>
+            <h3 class="text-headline-sm ui-mx-6" v-else>Keine Einträge gefunden!</h3>
         </template>
     </AppLayout>
 </template>
 
 <style>
     header {
-        @apply flex flex-col gap-4 p-6
+        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
 
     header #headline {
-        @apply flex items-center justify-start gap-6
+        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
     }
 
     header #filters {
-        @apply grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6
+        @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6
     }
 </style>

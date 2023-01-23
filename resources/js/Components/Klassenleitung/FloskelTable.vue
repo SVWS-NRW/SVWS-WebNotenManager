@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts">// TODO: TBR
     import {computed, reactive} from 'vue'
 
     import { Floskel } from '../../Interfaces/Floskel'

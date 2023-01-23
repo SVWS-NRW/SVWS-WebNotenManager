@@ -45,14 +45,19 @@
 
 <style scoped>
     div.component {
-        @apply bg-white rounded-lg shadow-lg p-8 flex flex-col gap-6 w-full max-w-6xl
+        @apply
+        ui-bg-white
+        ui-rounded-lg ui-shadow-lg
+        ui-p-8
+        ui-flex ui-flex-col ui-gap-6
+        ui-w-full ui-max-w-6xl
     }
 
     h1, h2 {
-        @apply border-b border-gray-300 pb-2 leading-relaxed
+        @apply ui-border-b ui-border-gray-300 ui-pb-2 ui-leading-relaxed
     }
 
     main p {
-        @apply text-lg leading-7
+        @apply ui-text-lg ui-leading-7
     }
 </style>

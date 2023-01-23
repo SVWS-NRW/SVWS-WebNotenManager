@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { useStore } from '../../store'
-    import Menubar from '../../Components/Menubar.vue'
-    import TopMenu from "../../Components/TopMenu.vue"
+    // import Menubar from '../../Components/Menubar.vue'
+    // import TopMenu from "../../Components/TopMenu.vue"
     import {Inertia} from "@inertiajs/inertia";
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
 
@@ -16,7 +16,7 @@
     <div>
         <SvwsUiAppLayout :collapsed="store.sidebarCollapsed">
             <template #sidebar>
-                <Menubar :auth="props.auth" />
+<!--                <Menubar :auth="props.auth" />-->
             </template>
             <template #secondaryMenu>
                 <SvwsUiSecondaryMenu>
@@ -33,8 +33,8 @@
             </template>
 
             <template #main>
-                <div class="relative flex flex-col w-full h-screen">
-                    <TopMenu headline="Einstellungen"></TopMenu>
+                <div class="ui-relative ui-flex ui-flex-col ui-w-full ui-h-screen">
+<!--                    <TopMenu headline="Einstellungen"></TopMenu>-->
                 </div>
             </template>
 

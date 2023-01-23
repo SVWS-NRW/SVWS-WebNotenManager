@@ -26,10 +26,10 @@
     const activePage = (routeName: string): boolean => route().current(routeName)
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
     const logout = (): void => Inertia.post(route('logout'))
-    const toggleCollapse = (event: Event): boolean => isCollapsed.value = !isCollapsed.value
+    const toggleCollapse = (): boolean => isCollapsed.value = !isCollapsed.value
 
     const username = (): string => {
-        let user = usePage().props.value.auth.user
+        let user: { vorname: string, nachname: string } = usePage().props.value.auth.user
 
         return `${user.vorname} ${user.nachname}`
     }
@@ -89,17 +89,7 @@
             </SvwsUiSidebarMenu>
         </template>
         <template #main>
-            <div class="component">
-                <main>
-                    <slot name="main" />
-                </main>
-            </div>
+            <slot name="main" />
         </template>
-<!--        <template #secondaryMenu>-->
-<!--            <div class="component">-->
-<!--                <main>-->
-<!--                </main>-->
-<!--            </div>-->
-<!--        </template>-->
     </SvwsUiAppLayout>
 </template>

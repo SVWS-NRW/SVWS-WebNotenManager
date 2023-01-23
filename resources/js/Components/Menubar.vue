@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// TODO: TBR
     import { useStore } from '../store.js'
     import { Inertia } from '@inertiajs/inertia'
 
@@ -25,7 +26,6 @@
             <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click="navigate('dashboard')" :active="route().current('dashboard')">
                 <template #label>Notenmanager</template>
                 <template #icon>
-                    qwe
                      <SvwsUiIcon>
                         <i-ri-team-line aria-hidden="true"></i-ri-team-line>
                     </SvwsUiIcon>
@@ -34,7 +34,6 @@
             <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click="navigate('leistungsdatenuebersicht')" :active="route().current('leistungsdatenuebersicht')">
                 <template #label>Leistungsdatenübersicht</template>
                 <template #icon>
-                    test
                      <SvwsUiIcon>
                         <i-ri-book-read-line aria-hidden="true"></i-ri-book-read-line>
                     </SvwsUiIcon>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts">// TODO: TBR
     const emit = defineEmits(['open'])
     const open = (): void => emit('open')
 

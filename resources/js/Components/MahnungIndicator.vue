@@ -66,14 +66,14 @@
 
 <style scoped>
     .red {
-        @apply text-red-500
+        @apply ui-text-red-500
     }
 
     .green {
-        @apply text-green-500
+        @apply ui-text-green-500
     }
 
     button.modal-button {
-        @apply flex items-center justify-center
+        @apply ui-flex ui-items-center ui-justify-center
     }
 </style>

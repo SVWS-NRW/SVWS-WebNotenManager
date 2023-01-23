@@ -108,8 +108,8 @@
 </script>
 
 <template>
-    <div class="content-card--blockungsuebersicht flex h-full content-start">
-        <SvwsUiIcon @click="open()" class="flex items-center">
+    <div class="content-card--blockungsuebersicht ui-flex ui-h-full ui-content-start">
+        <SvwsUiIcon @click="open()" class="ui-flex ui-items-center">
             <mdi-checkbox-marked-outline v-if="state.bemerkung"></mdi-checkbox-marked-outline>
             <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
         </SvwsUiIcon>
@@ -118,7 +118,7 @@
             <div class="app-layout--main-sidebar--container" v-if="!collapsed">
                 <div class="app-layout--main-sidebar--trigger" @click="close">
                     <div class="sidebar-trigger--text">
-                        <SvwsUiButton type="icon" class="mr-2 p-[0.1em]" v-if="!collapsed">
+                        <SvwsUiButton type="icon" class="close-button" v-if="!collapsed">
                             <SvwsUiIcon>
                                 <mdi-close></mdi-close>
                             </SvwsUiIcon>
@@ -129,17 +129,18 @@
                     </div>
                 </div>
                 <div class="app-layout--main-sidebar--content">
-                    <div class="flex flex-col gap-6">
+                    <div id="component">
                         <SvwsUiTextareaInput :modelValue="computedBemerkung" @update:modelValue="updateBemerkung"></SvwsUiTextareaInput>
-                        <div class="flex gap-3 self-end">
+                        <div id="buttons">
                             <SvwsUiButton @click="setBemerkungen" :type="state.isDirty ? 'primary' : 'secondary'">Speichern</SvwsUiButton>
                             <SvwsUiButton @click="close" v-show="state.isDirty" type="secondary">Verwerfen</SvwsUiButton>
                         </div>
 
-                        <div class="flex flex-col gap-6" v-if="floskeln.length">
-                            <hr class="opacity-25">
+                        <div id="floskel-container" v-if="floskeln.length">
+                            <hr>
                             <h3 class="headline-3">Floskeln</h3>
-                            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
+
+                            <SvwsUiTextInput type="search" v-model="state.search"  placeholder="Suche"></SvwsUiTextInput>
 
                             <SvwsUiTable v-if="computedFloskeln.length" :data="computedFloskeln" :columns="columns" v-model:selection="selectedRows" :footer="true" is-multi-select>
                                 <template #footer>
@@ -154,3 +155,21 @@
         </div>
     </div>
 </template>
+
+<style scoped>
+    .close-button {
+        @apply ui-mr-2 ui-p-[0.1em]
+    }
+
+    #buttons {
+        @apply ui-flex ui-gap-3 ui-self-end
+    }
+
+    #component {
+        @apply ui-flex ui-flex-col ui-gap-6
+    }
+
+    #floskel-container {
+        @apply ui-flex ui-flex-col ui-gap-6
+    }
+</style>

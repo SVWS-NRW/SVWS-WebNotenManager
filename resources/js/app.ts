@@ -8,10 +8,6 @@ import { createInertiaApp, InertiaApp, InertiaAppProps } from '@inertiajs/inerti
 import { createPinia } from 'pinia'
 import { SvwsUiPlugin } from '@svws-nrw/svws-ui'
 
-
-
-
-
 const pinia = createPinia()
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel'
 

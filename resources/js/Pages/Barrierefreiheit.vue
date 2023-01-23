@@ -50,39 +50,39 @@
 
 <style scoped>
     div.component {
-        @apply bg-white rounded-lg shadow-lg p-8 flex flex-col gap-6 w-full max-w-6xl
+        @apply ui-bg-white ui-rounded-lg ui-shadow-lg ui-p-8 ui-flex ui-flex-col ui-gap-6 ui-w-full ui-max-w-6xl
     }
 
     h1 {
-        @apply uppercase
+        @apply ui-uppercase
     }
 
     h1, h2 {
-        @apply border-b border-gray-300 pb-2 leading-relaxed
+        @apply ui-border-b ui-border-gray-300 ui-pb-2 ui-leading-relaxed
     }
 
     p {
-        @apply text-lg leading-7
+        @apply ui-text-lg ui-leading-7
     }
 
     ul {
-        @apply list-disc list-outside ml-6 text-lg
+        @apply ui-list-disc ui-list-outside ui-ml-6 ui-text-lg
     }
 
     ol {
-        @apply list-decimal list-outside ml-6 text-lg flex flex-col gap-3
+        @apply ui-list-decimal ui-list-outside ui-ml-6 ui-text-lg ui-flex ui-flex-col ui-gap-3
     }
 
     ol li {
-        @apply pl-2
+        @apply ui-pl-2
     }
 
     a {
         @apply
-        decoration-black/50 hover:decoration-black
-        focus-visible:outline focus-visible:text-black/75 outline-offset-2 outline-2 outline-black
-        underline
-        rounded-sm
-        break-all
+        ui-decoration-black/50 hover:ui-decoration-black
+        focus-visible:ui-outline focus-visible:ui-text-black/75 ui-outline-offset-2 ui-outline-2 ui-outline-black
+        ui-underline
+        ui-rounded-sm
+        ui-break-all
     }
 </style>
