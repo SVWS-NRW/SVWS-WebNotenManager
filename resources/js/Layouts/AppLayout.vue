@@ -79,6 +79,13 @@
                         </template>
                     </SvwsUiSidebarMenuItem>
                 </template>
+                <template #version>
+                    {{ usePage().props.value.version }}
+                </template>
+                <template #metaNavigation>
+                    <a :href="route('impressum')" target="_blank">Impressum</a>
+                    <a :href="route('datenschutz')" target="_blank">Datenschutz</a>
+                </template>
             </SvwsUiSidebarMenu>
         </template>
         <template #main>

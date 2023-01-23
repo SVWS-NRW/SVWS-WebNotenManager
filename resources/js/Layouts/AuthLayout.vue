@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { SvwsUiAppLayout } from '@svws-nrw/svws-ui'
+    import { usePage } from '@inertiajs/inertia-vue3'
 </script>
 
 <template>
@@ -11,7 +12,7 @@
                 </main>
                 <footer>
                     <div class="disclaimer">
-                        <h3>Powered by SVWS-NRW, Version x.x.x</h3>
+                        <h3>Powered by SVWS-NRW, Version {{ usePage().props.value.version }}</h3>
                         <p>Um eine gute Lesbarkeit zu erzeugen, wird bei SVWS-NRW möglichst auf geschlechtsneutrale Begriffe wie Lehrkräfte, Klassenleitung, Erzieher usw. zurückgegriffen. An Stellen, wo das nicht möglich ist, wird versucht alle Geschlechter gleichermaßen zu verwenden.</p>
                         <nav>
                             <a :href="route('impressum')">Impressum</a>

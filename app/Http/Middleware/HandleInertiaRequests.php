@@ -24,6 +24,7 @@ class HandleInertiaRequests extends Middleware
 			'settings' => Setting::all()->pluck('value','key'),
 			'note_entry_disabled' => Setting::entryDisabled('note_entry_until'),
 			'warning_entry_disabled' => Setting::entryDisabled('warning_entry_until'),
+			'version' => config('wenom.version'),
         ]);
     }
 }
