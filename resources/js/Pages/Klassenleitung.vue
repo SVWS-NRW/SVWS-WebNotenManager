@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import {computed, onMounted, PropType, reactive, ref} from 'vue'
+    import {computed, onMounted, PropType, reactive, Ref, ref} from 'vue'
     import { SchuelerFilterValues } from '../Interfaces/Filter'
     import { Column } from '../Interfaces/Column'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
@@ -30,6 +30,8 @@
     let state = reactive({
         schueler: <Schueler[]> [],
     })
+
+    const clickedRow: Ref<Schueler|null> = ref()
 
     let filterOptions = <SchuelerFilterValues>reactive({
         'klassen': [],
@@ -88,6 +90,7 @@
     const fetchSchueler = (): AxiosPromise => axios
         .get(route('get_schueler'))
         .then((response: AxiosResponse): AxiosResponse => state.schueler = response.data)
+
 </script>
 
 <template>
@@ -107,7 +110,7 @@
                 </div>
             </header>
 
-            <SvwsUiTable v-if="filteredSchueler.length" :data="filteredSchueler" :columns="columns">
+            <SvwsUiTable v-if="filteredSchueler.length" :data="filteredSchueler" v-model="clickedRow" :columns="columns">
                 <template #cell-ASV="{ row }">
                     <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
                 </template>

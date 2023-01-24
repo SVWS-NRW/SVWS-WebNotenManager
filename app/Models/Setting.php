@@ -43,12 +43,12 @@ class Setting extends Model
 	{
 		try {
 			$setting = Setting::query()
-				->where(['key' => $entry])
+				->where(column: 'key', operator: '=', value: $entry)
 				->firstOrFail()
 				->value;
 
 			if ($setting) {
-				return Carbon::parse($setting)->lte(now()->startOfDay());
+				return Carbon::parse(time: $setting)->lte(date: now()->startOfDay());
 			}
 
 			return false;
