@@ -15,10 +15,17 @@ class GetSchueler extends Controller
 	{
 		abort_unless(auth()->user() instanceof Lehrer, Response::HTTP_FORBIDDEN);
 
+		$sorter = fn (Schueler $schueler): array => [
+			$schueler->klasse->kuerzel,
+			$schueler->nachname,
+			$schueler->vorname,
+		];
+
 		$schueler = Schueler::query()
 			->with(['klasse', 'leistungen', 'bemerkung'])
 			->whereIn('klasse_id', auth()->user()->klassen()->pluck('id'))
-			->get();
+			->get()
+			->sortBy($sorter);
 
 		return KlassenleitungResource::collection($schueler);
 	}
