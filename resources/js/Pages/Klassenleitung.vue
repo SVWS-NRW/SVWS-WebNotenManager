@@ -50,8 +50,10 @@
         { key: 'ZB', label: 'ZB', sortable: true },
     ])
 
+    const fehlstundenVisible = (): boolean => props.settings.klassenleitung_fehlstunden_visible == 1  // TODO: Move settings to json fields
+
     const setupColumns = (): void => {
-        if (props.settings.klassenleitung_fehlstunden_visible == 1) { // TODO: Move settings to json fields
+        if (fehlstundenVisible()) {
             columns.value.push(
                 { key: 'gfs', label: 'gFS', sortable: true },
                 { key: 'gfsu', label: 'gFSU', sortable: true },
@@ -90,7 +92,6 @@
     const fetchSchueler = (): AxiosPromise => axios
         .get(route('get_schueler'))
         .then((response: AxiosResponse): AxiosResponse => state.schueler = response.data)
-
 </script>
 
 <template>
@@ -111,14 +112,22 @@
             </header>
 
             <SvwsUiTable v-if="filteredSchueler.length" :data="filteredSchueler" v-model="clickedRow" :columns="columns">
-                <template #cell-ASV="{ row }">
-                    <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
-                </template>
-                <template #cell-AUE="{ row }">
-                    <BemerkungenIndicator :leistung="row" floskelgruppe="AUE"></BemerkungenIndicator>
-                </template>
-                <template #cell-ZB="{ row }">
-                    <BemerkungenIndicator :leistung="row" floskelgruppe="ZB"></BemerkungenIndicator>
+                <template #body="{rows}">
+                    <tr v-for="(row, index) in rows" :key="index">
+                        <td>{{ row.klasse }}</td>
+                        <td>{{ row.nachname }}, {{ row.vorname }}</td>
+                        <td class="highlight">
+                            <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
+                        </td>
+                        <td class="highlight">
+                            <BemerkungenIndicator :leistung="row" floskelgruppe="AUE"></BemerkungenIndicator>
+                        </td>
+                        <td class="highlight">
+                            <BemerkungenIndicator :leistung="row" floskelgruppe="ZB"></BemerkungenIndicator>
+                        </td>
+                        <td v-if="fehlstundenVisible()">{{ row.gfs }}</td>
+                        <td v-if="fehlstundenVisible()">{{ row.gfsu }}</td>
+                    </tr>
                 </template>
             </SvwsUiTable>
 
@@ -128,6 +137,10 @@
 </template>
 
 <style>
+    .highlight {
+        @apply ui-bg-black/5
+    }
+
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }

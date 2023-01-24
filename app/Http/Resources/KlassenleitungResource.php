@@ -6,24 +6,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class KlassenleitungResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
 			'id' => $this->id,
-			'name' => "{$this->nachname}, {$this->vorname}",
+			'nachname' => $this->nachname,
+			'vorname' => $this->vorname,
 			'geschlecht' => $this->geschlecht,
 			'klasse' => $this->klasse->kuerzel,
 			'ASV' => $this->bemerkung?->ASV,
 			'AUE' => $this->bemerkung?->AUE,
 			'ZB' => $this->bemerkung?->ZB,
-			'gfs' => $this->leistungen->sum('fehlstundenGesamt'),
-			'gfsu' => $this->leistungen->sum('fehlstundenUnentschuldigt'),
+			'gfs' => $this->leistungen->sum(callback: 'fehlstundenGesamt'),
+			'gfsu' => $this->leistungen->sum(callback: 'fehlstundenUnentschuldigt'),
 		];
     }
 }

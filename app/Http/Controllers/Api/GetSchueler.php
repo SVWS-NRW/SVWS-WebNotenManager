@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KlassenleitungResource;
+use App\Models\Klasse;
 use App\Models\Lehrer;
 use App\Models\Schueler;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -13,7 +14,12 @@ class GetSchueler extends Controller
 {
 	public function __invoke(): AnonymousResourceCollection
 	{
-		abort_unless(auth()->user() instanceof Lehrer, Response::HTTP_FORBIDDEN);
+		abort_unless(
+			boolean: auth()->user() instanceof Lehrer,
+			code: Response::HTTP_FORBIDDEN
+		);
+
+		$klassen = auth()->user()->klassen()->pluck(column: 'id');
 
 		$sorter = fn (Schueler $schueler): array => [
 			$schueler->klasse->kuerzel,
@@ -21,11 +27,11 @@ class GetSchueler extends Controller
 		];
 
 		$schueler = Schueler::query()
-			->with(['klasse', 'leistungen', 'bemerkung'])
-			->whereIn('klasse_id', auth()->user()->klassen()->pluck('id'))
+			->with(relations: ['klasse', 'leistungen', 'bemerkung'])
+			->whereIn(column: 'klasse_id', values: $klassen)
 			->get()
-			->sortBy($sorter);
+			->sortBy(callback: $sorter);
 
-		return KlassenleitungResource::collection($schueler);
+		return KlassenleitungResource::collection(resource: $schueler);
 	}
 }
