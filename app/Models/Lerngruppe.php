@@ -56,6 +56,7 @@ class Lerngruppe extends Model
         'klasse_id',
         'fach_id',
 		'kID',
+		'kursartID',
         'bezeichnung',
         'kursartKuerzel',
         'bilingualeSprache',

@@ -310,9 +310,10 @@ class DataImportService
 
 			if (in_array($row['kursartID'], [null, -1])) { // TODO: Check the `-1`
 				$row['klasse_id'] = $row['kID'];
+				unset($row['kursartID']);
 			}
 
-			unset($row['kursartID'], $row['fachID']);
+			unset($row['fachID']);
 
 			$lerngruppe = Lerngruppe::firstOrCreate(
 				['id' => $row['id']],

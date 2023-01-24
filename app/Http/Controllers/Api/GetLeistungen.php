@@ -29,7 +29,7 @@ class GetLeistungen extends Controller
 				'lerngruppe' => ['lehrer', 'fach'],
 				'note',
 			])
-			->when(auth()->user() instanceof Lehrer, fn (Builder $query)
+			->when(auth()->user() instanceof Lehrer, fn (Builder $query): Builder
 				=> $query->whereHas('schueler', fn (Builder $query): Builder
 					=> $query->whereIn('klasse_id', $klassen)
 				)

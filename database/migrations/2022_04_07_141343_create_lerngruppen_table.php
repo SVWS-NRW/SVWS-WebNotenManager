@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Klasse::class)->nullable();
             $table->foreignIdFor(Fach::class);
             $table->string('kID');
+            $table->integer('kursartID')->nullable();
             $table->string('bezeichnung');
             $table->string('kursartKuerzel')->nullable();
             $table->string('bilingualeSprache')->nullable();

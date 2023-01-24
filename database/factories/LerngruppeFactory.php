@@ -22,6 +22,7 @@ class LerngruppeFactory extends Factory
             'fach_id' => Fach::factory(),
             'klasse_id' => Klasse::factory(),
 			'kID' => $this->faker->numberBetween(1, 1_000_000),
+            'kursartID' => $this->faker->numberBetween(1, 1_000_000),
             'bezeichnung' => $this->faker->unique->word(),
             'kursartKuerzel' => $this->faker->unique->word(),
 			'bilingualeSprache' => $this->faker->unique->word(),
