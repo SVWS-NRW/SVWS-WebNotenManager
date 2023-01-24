@@ -35,8 +35,7 @@
 
     const columns = ref<Column[]>( [
         { key: 'klasse', label: 'Klasse', sortable: true },
-        { key: 'vorname', label: 'Vorname', sortable: true },
-        { key: 'nachname', label: 'Nachname', sortable: true },
+        { key: 'name', label: 'Name', sortable: true },
         { key: 'ASV', label: 'ASV', sortable: true },
         { key: 'AUE', label: 'AUE', sortable: true },
         { key: 'ZB', label: 'ZB', sortable: true },

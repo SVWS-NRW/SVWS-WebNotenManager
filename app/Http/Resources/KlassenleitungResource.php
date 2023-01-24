@@ -16,8 +16,7 @@ class KlassenleitungResource extends JsonResource
     {
         return [
 			'id' => $this->id,
-			'vorname' => $this->vorname,
-			'nachname' => $this->nachname,
+			'name' => "{$this->nachname}, {$this->vorname}",
 			'geschlecht' => $this->geschlecht,
 			'klasse' => $this->klasse->kuerzel,
 			'ASV' => $this->bemerkung?->ASV,

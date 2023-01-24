@@ -18,7 +18,6 @@ class GetSchueler extends Controller
 		$sorter = fn (Schueler $schueler): array => [
 			$schueler->klasse->kuerzel,
 			$schueler->nachname,
-			$schueler->vorname,
 		];
 
 		$schueler = Schueler::query()
