@@ -40,19 +40,16 @@
         klasse: 0,
     })
 
-    const columns = ref<Column[]>()
+    const columns = ref<Column[]>([
+        { key: 'klasse', label: 'Klasse', sortable: true },
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'ASV', label: 'ASV', sortable: true },
+        { key: 'AUE', label: 'AUE', sortable: true },
+        { key: 'ZB', label: 'ZB', sortable: true },
+    ])
 
     const setupColumns = (): void => {
-        columns.value = [
-            { key: 'klasse', label: 'Klasse', sortable: true },
-            { key: 'name', label: 'Name', sortable: true },
-            { key: 'ASV', label: 'ASV', sortable: true },
-            { key: 'AUE', label: 'AUE', sortable: true },
-            { key: 'ZB', label: 'ZB', sortable: true },
-        ]
-
-
-        if (props.settings.klassenleitung_fehlstunden_visible == 1) {
+        if (props.settings.klassenleitung_fehlstunden_visible == 1) { // TODO: Move settings to json fields
             columns.value.push(
                 { key: 'gfs', label: 'gFS', sortable: true },
                 { key: 'gfsu', label: 'gFSU', sortable: true },
@@ -60,13 +57,10 @@
         }
     }
 
-
-
     onMounted((): void => {
+        setupColumns()
         fetchSchueler()
         fetchFilters()
-        setupColumns()
-        // fetchFloskelGruppen()
     })
 
     const fetchFilters = (): AxiosPromise => axios
