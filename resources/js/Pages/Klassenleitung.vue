@@ -1,13 +1,13 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import { computed, onMounted, reactive, ref } from 'vue'
+    import {computed, onMounted, PropType, reactive, ref} from 'vue'
     import { SchuelerFilterValues } from '../Interfaces/Filter'
     import { Column } from '../Interfaces/Column'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import { Schueler } from '../Interfaces/Schueler'
+    import { Settings } from '../Interfaces/Settings'
     import BemerkungenIndicator from '../Components/BemerkungenIndicator.vue'
-
 
     import {
         SvwsUiCheckbox,
@@ -17,6 +17,13 @@
         SvwsUiIcon,
         SvwsUiContentCard
     } from '@svws-nrw/svws-ui'
+
+    let props = defineProps({
+        settings: {
+            type: Object as PropType<Settings>,
+            required: true,
+        }
+    })
 
     const title = 'Notenmanager - Klassenleitung'
 
@@ -33,19 +40,32 @@
         klasse: 0,
     })
 
-    const columns = ref<Column[]>( [
-        { key: 'klasse', label: 'Klasse', sortable: true },
-        { key: 'name', label: 'Name', sortable: true },
-        { key: 'ASV', label: 'ASV', sortable: true },
-        { key: 'AUE', label: 'AUE', sortable: true },
-        { key: 'ZB', label: 'ZB', sortable: true },
-        { key: 'gfs', label: 'gFS', sortable: true },
-        { key: 'gfsu', label: 'gFSU', sortable: true },
-    ])
+    const columns = ref<Column[]>()
+
+    const setupColumns = (): void => {
+        columns.value = [
+            { key: 'klasse', label: 'Klasse', sortable: true },
+            { key: 'name', label: 'Name', sortable: true },
+            { key: 'ASV', label: 'ASV', sortable: true },
+            { key: 'AUE', label: 'AUE', sortable: true },
+            { key: 'ZB', label: 'ZB', sortable: true },
+        ]
+
+
+        if (props.settings.klassenleitung_fehlstunden_visible == 1) {
+            columns.value.push(
+                { key: 'gfs', label: 'gFS', sortable: true },
+                { key: 'gfsu', label: 'gFSU', sortable: true },
+            )
+        }
+    }
+
+
 
     onMounted((): void => {
         fetchSchueler()
         fetchFilters()
+        setupColumns()
         // fetchFloskelGruppen()
     })
 

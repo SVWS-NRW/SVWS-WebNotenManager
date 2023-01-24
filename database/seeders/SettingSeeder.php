@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
@@ -25,10 +24,14 @@ class SettingSeeder extends Seeder
 
 		['type' => 'school', 'key' => 'warning_entry_until', 'value' => null],
 		['type' => 'school', 'key' => 'note_entry_until', 'value' => null],
+
+		['type' => 'school', 'key' => 'klassenleitung_fehlstunden_visible', 'value' => true],
 	];
 
     public function run(): void
     {
-        collect($this->settings)->each(fn (array $setting) => Setting::create($setting));
+        collect(value: $this->settings)->each(
+			callback: fn (array $setting): Setting => Setting::create(attributes: $setting)
+		);
     }
 }

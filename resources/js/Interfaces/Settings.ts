@@ -14,4 +14,5 @@ export interface Settings {
 	school_management_telephone: string,
 	school_name: string,
 	warning_entry_until: null | string,
+	klassenleitung_fehlstunden_visible: number,
 }
