@@ -1,6 +1,6 @@
 <script setup lang="ts">
-    import { reactive, ref, watch } from 'vue'
-    import axios, { AxiosPromise } from 'axios'
+    import { computed, reactive, ref } from 'vue'
+    import axios from 'axios'
     import moment from 'moment'
     import { usePage } from '@inertiajs/inertia-vue3'
     import { Leistung } from '../Interfaces/Leistung'
@@ -22,12 +22,13 @@
 
     let leistung = reactive<Leistung>(props.leistung)
 
-    const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
-
-    watch((): boolean => leistung.istGemahnt, (): AxiosPromise =>
+    const updateIstGemahnt = (value: boolean): void => {
+        leistung.istGemahnt = value
         axios.post(route('set_mahnung', leistung.id), leistung)
-    )
+    }
 
+    const istGemahnt = computed((): boolean => Boolean(leistung.istGemahnt))
+    const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
     const isDisabled = (): boolean => !!usePage().props.value.warning_entry_disabled || props.disabled
 </script>
 
@@ -40,9 +41,9 @@
         </button>
         <div v-else>
             <span v-if="isDisabled()">
-                <mdi-checkbox-marked-outline v-if="leistung.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
+                <mdi-checkbox-marked-outline v-if="istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
             </span>
-            <SvwsUiCheckbox v-else v-model="leistung.istGemahnt" :value="true"></SvwsUiCheckbox>
+            <SvwsUiCheckbox v-else :modelValue="istGemahnt" :value="true" @update:modelValue="updateIstGemahnt($event)"></SvwsUiCheckbox>
         </div>
     </div>
 

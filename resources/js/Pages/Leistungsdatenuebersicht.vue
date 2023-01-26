@@ -4,6 +4,17 @@
 
     import { Head } from '@inertiajs/inertia-vue3'
 
+
+
+    import {
+        baseColumns,
+        fachbezogeneBemerkungenColumns,
+        mahnungenColumns,
+        fehlstundenColumns,
+        fachlehrerColumns,
+        notenColumns,
+    } from '../Helpers/columns.helper'
+
     import {
         SvwsUiCheckbox,
         SvwsUiTextInput,
@@ -64,43 +75,22 @@
         note: 0,
     })
 
-    const columns = ref<Column[]>([]);
-
-    const baseColumns: Array<Column> = [
-        { key: 'klasse', label: 'Klasse', sortable: true },
-        { key: 'name', label: 'Name', sortable: true },
-        { key: 'fach', label: 'Fach', sortable: true },
-        { key: 'kurs', label: 'Kurs', sortable: true },
-        { key: 'note', label: 'Note', sortable: false },
-    ]
-
-    const fachlehrerColumns: Array<Column> = [
-        { key: 'lehrer', label: 'Lehrer', sortable: true },
-    ]
-
-    const fachbezogeneBemerkungenColumns: Array<Column> = [
-        { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: false },
-    ]
-
-    const mahnungenColumns: Array<Column> = [
-        { key: 'mahnung', label: 'M', sortable: false },
-    ]
-
-    const spanColumns: Array<Column> = [
-        { key: 'span', label: ' ', sortable: false },
-    ]
+    const columns = ref<Column[]>([])
 
     const drawTable = (): void => {
         const pushTable = (pushable: boolean, array: Array<Column>): void => {
-            if (pushable) array.forEach((column: Column): number => columns.value.push(column))
+            if (pushable) {
+                array.forEach((column: Column): number => columns.value.push(column))
+            }
         }
 
         columns.value.length = 0
         pushTable(true, baseColumns)
         pushTable(toggles.fachlehrer, fachlehrerColumns)
-        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+        pushTable(true, notenColumns)
         pushTable(toggles.mahnungen, mahnungenColumns)
-        pushTable(true, spanColumns)
+        pushTable(true, fehlstundenColumns)
+        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
     watch(toggles, (): void => drawTable())
@@ -161,8 +151,8 @@
                 </div>
                 <div id="toggles">
                     <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
@@ -191,11 +181,6 @@
 
                 <template #cell-fachbezogeneBemerkungen="{ row }">
                     <FachbezogeneBemerkungenIndicator :leistung="row"></FachbezogeneBemerkungenIndicator>
-                </template>
-
-                <template #cell-span="{ row }">
-<!--TODO: Span https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/90-->
-
                 </template>
             </SvwsUiTable>
         </template>

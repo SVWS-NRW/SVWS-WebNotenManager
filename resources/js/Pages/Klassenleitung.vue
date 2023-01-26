@@ -37,28 +37,36 @@
         'klassen': [],
     })
 
-    let filters = <{ search: string, klasse: Number | string }>reactive({
+    let filters = <{
+        search: string,
+        klasse: Number | string
+    }>reactive({
         search: '',
         klasse: 0,
     })
 
-    const columns = ref<Column[]>([
-        { key: 'klasse', label: 'Klasse', sortable: true },
-        { key: 'name', label: 'Name', sortable: true },
-        { key: 'ASV', label: 'ASV', sortable: true },
-        { key: 'AUE', label: 'AUE', sortable: true },
-        { key: 'ZB', label: 'ZB', sortable: true },
-    ])
+    const columns = ref<Column[]>([])
 
     const fehlstundenVisible = (): boolean => props.settings.klassenleitung_fehlstunden_visible == 1  // TODO: Move settings to json fields
 
     const setupColumns = (): void => {
+        columns.value.push(
+            { key: 'klasse', label: 'Klasse', sortable: true },
+            { key: 'name', label: 'Name, Vorname', sortable: true },
+        )
+
         if (fehlstundenVisible()) {
             columns.value.push(
                 { key: 'gfs', label: 'gFS', sortable: true },
                 { key: 'gfsu', label: 'gFSU', sortable: true },
             )
         }
+
+        columns.value.push(
+            { key: 'ASV', label: 'ASV', sortable: true },
+            { key: 'AUE', label: 'AUE', sortable: true },
+            { key: 'ZB', label: 'ZB', sortable: true },
+        )
     }
 
     onMounted((): void => {
@@ -116,6 +124,8 @@
                     <tr v-for="(row, index) in rows" :key="index">
                         <td>{{ row.klasse }}</td>
                         <td>{{ row.nachname }}, {{ row.vorname }}</td>
+                        <td v-if="fehlstundenVisible()">{{ row.gfs }}</td>
+                        <td v-if="fehlstundenVisible()">{{ row.gfsu }}</td>
                         <td class="highlight">
                             <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
                         </td>
@@ -125,8 +135,6 @@
                         <td class="highlight">
                             <BemerkungenIndicator :leistung="row" floskelgruppe="ZB"></BemerkungenIndicator>
                         </td>
-                        <td v-if="fehlstundenVisible()">{{ row.gfs }}</td>
-                        <td v-if="fehlstundenVisible()">{{ row.gfsu }}</td>
                     </tr>
                 </template>
             </SvwsUiTable>

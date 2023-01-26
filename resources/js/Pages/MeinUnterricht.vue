@@ -7,8 +7,15 @@
     import { LeistungsDatenFilterValues } from '../Interfaces/Filter'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
-
     import NoteInput from '../Components/Dashboard/NoteInput.vue'
+
+    import {
+        baseColumns,
+        fachbezogeneBemerkungenColumns,
+        notenColumns,
+        mahnungenColumns,
+        fehlstundenColumns
+    } from '../Helpers/columns.helper'
 
     import {
         SvwsUiCheckbox,
@@ -62,31 +69,7 @@
         note: 0,
     })
 
-    const columns = ref<Column[]>([]);
-
-    const baseColumns: Array<Column> = [
-        { key: 'klasse', label: 'Klasse', sortable: true },
-        { key: 'name', label: 'Name', sortable: true },
-        { key: 'fach', label: 'Fach', sortable: true },
-        { key: 'lehrer', label: 'Lehrer', sortable: true },
-        { key: 'kurs', label: 'Kurs', sortable: true },
-        { key: 'note', label: 'Note', sortable: false },
-    ]
-
-    const teilleistungenColumns: Array<Column> = []
-
-    const fachbezogeneBemerkungenColumns: Array<Column> = [
-        { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: false },
-    ]
-
-    const mahnungenColumns: Array<Column> = [
-        { key: 'mahnung', label: 'M', sortable: false },
-    ]
-
-    const fehlstundenColumns: Array<Column> = [
-        { key: 'fs', label: 'FS', sortable: true },
-        { key: 'ufs', label: 'FSU', sortable: true },
-    ]
+    const columns = ref<Column[]>([])
 
     const drawTable = (): void => {
         const pushTable = (pushable: boolean, array: Array<Column>): void => {
@@ -95,10 +78,10 @@
 
         columns.value.length = 0
         pushTable(true, baseColumns)
-        pushTable(toggles.teilleistungen, teilleistungenColumns)
+        pushTable(true, notenColumns)
         pushTable(toggles.mahnungen, mahnungenColumns)
-        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
         pushTable(toggles.fehlstunden, fehlstundenColumns)
+        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
     onMounted((): void => {
@@ -158,8 +141,8 @@
                 <div id="toggles">
                     <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
@@ -178,7 +161,7 @@
                     <NoteInput :leistung="row"></NoteInput>
                 </template>
                 <template #cell-mahnung="{ row }">
-                    <MahnungIndicator :leistung="row" :key="row.id"></MahnungIndicator>
+                    <MahnungIndicator :leistung="row" :key="row.id" :disabled="false"></MahnungIndicator>
                 </template>
                 <template #cell-fachbezogeneBemerkungen="{ row }">
                     {{ row.fachbezogeneBemerkungen ? '[V]' : '[  ]' }}
