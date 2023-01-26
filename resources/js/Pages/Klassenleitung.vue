@@ -119,23 +119,15 @@
                 </div>
             </header>
 
-            <SvwsUiTable v-if="filteredSchueler.length" :data="filteredSchueler" v-model="clickedRow" :columns="columns">
-                <template #body="{rows}">
-                    <tr v-for="(row, index) in rows" :key="index">
-                        <td>{{ row.klasse }}</td>
-                        <td>{{ row.nachname }}, {{ row.vorname }}</td>
-                        <td v-if="fehlstundenVisible()">{{ row.gfs }}</td>
-                        <td v-if="fehlstundenVisible()">{{ row.gfsu }}</td>
-                        <td class="highlight">
-                            <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
-                        </td>
-                        <td class="highlight">
-                            <BemerkungenIndicator :leistung="row" floskelgruppe="AUE"></BemerkungenIndicator>
-                        </td>
-                        <td class="highlight">
-                            <BemerkungenIndicator :leistung="row" floskelgruppe="ZB"></BemerkungenIndicator>
-                        </td>
-                    </tr>
+            <SvwsUiTable v-if="filteredSchueler.length" :data="filteredSchueler" :columns="columns"  v-model="clickedRow">
+                <template #cell-ASV="{ row }">
+                    <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
+                </template>
+                <template #cell-AUE="{ row }">
+                    <BemerkungenIndicator :leistung="row" floskelgruppe="AUE"></BemerkungenIndicator>
+                </template>
+                <template #cell-ZB="{ row }">
+                    <BemerkungenIndicator :leistung="row" floskelgruppe="ZB"></BemerkungenIndicator>
                 </template>
             </SvwsUiTable>
 
@@ -145,10 +137,6 @@
 </template>
 
 <style>
-    .highlight {
-        @apply ui-bg-black/5
-    }
-
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
