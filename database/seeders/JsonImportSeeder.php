@@ -12,19 +12,10 @@ class JsonImportSeeder extends Seeder
 
 	public function run(): void
 	{
-		$json = json_decode(File::get("{$this->path}/gesamt-01.json"), true);
+		$json = File::get(path: "{$this->path}/gesamt-01.json");
 
 		$service = new DataImportService(
-			lehrer: $json['lehrer'],
-			foerderschwerpunkte: $json['foerderschwerpunkte'],
-			klassen: $json['klassen'],
-			noten: $json['noten'],
-			jahrgaenge: $json['jahrgaenge'],
-			faecher: $json['faecher'],
-			floskelgruppen: $json['floskelgruppen'],
-			lerngruppen: $json['lerngruppen'],
-			teilleistungsarten: $json['teilleistungsarten'],
-			schueler: $json['schueler'],
+			data: json_decode(json: $json, associative: true)
 		);
 
 		$service->import();
