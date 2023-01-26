@@ -18,7 +18,7 @@ class LeistungResource extends JsonResource
 			'geschlecht' => $this->schueler->geschlecht,
 			'fach' => $this->lerngruppe->fach->kuerzelAnzeige,
 			'jahrgang' => $this->schueler->jahrgang->kuerzel,
-			'lehrer' => $this->lerngruppe->lehrer->pluck('nachname')->implode(', '),
+			'lehrer' => $this->lerngruppe->lehrer->pluck('kuerzel')->implode(', '),
 			'kurs' => $this->getKurs(),
 			'note' => $this->note?->kuerzel,
 			'istGemahnt' => $this->istGemahnt,

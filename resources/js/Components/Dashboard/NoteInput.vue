@@ -29,7 +29,7 @@
 </script>
 
 <template>
-    <span v-if="isDisabled()" :class="{ 'low-score' : lowScore }">{{ leistung.note }}</span>
+    <strong v-if="isDisabled()" :class="{ 'low-score' : lowScore }">{{ leistung.note }}</strong>
     <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore"></SvwsUiTextInput>
 </template>
 

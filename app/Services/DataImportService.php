@@ -31,17 +31,29 @@ class DataImportService
 	private int $microtime;
 
     public function __construct(
-		private array|null $lehrer,
-		private array|null $foerderschwerpunkte,
-		private array|null $klassen,
-		private array|null $noten,
-		private array|null $jahrgaenge,
-		private array|null $faecher,
-		private array|null $floskelgruppen,
-		private array|null $lerngruppen,
-		private array|null $teilleistungsarten,
-		private array|null $schueler,
-	) {}
+		array $data = [],
+		private array $lehrer = [],
+		private array $foerderschwerpunkte = [],
+		private array $klassen = [],
+		private array $noten = [],
+		private array $jahrgaenge = [],
+		private array $faecher = [],
+		private array $floskelgruppen = [],
+		private array $lerngruppen = [],
+		private array $teilleistungsarten = [],
+		private array $schueler = [],
+	) {
+		$this->lehrer = $data['lehrer'] ?? [];
+		$this->foerderschwerpunkte = $data['foerderschwerpunkte'] ?? [];
+		$this->klassen = $data['klassen'] ?? [];
+		$this->noten = $data['noten'] ?? [];
+		$this->jahrgaenge = $data['jahrgaenge'] ?? [];
+		$this->faecher = $data['faecher'] ?? [];
+		$this->floskelgruppen = $data['floskelgruppen'] ?? [];
+		$this->lerngruppen = $data['lerngruppen'] ?? [];
+		$this->teilleistungsarten = $data['teilleistungsarten'] ?? [];
+		$this->schueler = $data['schueler'] ?? [];
+	}
 
 	public function truncate(): void
 	{

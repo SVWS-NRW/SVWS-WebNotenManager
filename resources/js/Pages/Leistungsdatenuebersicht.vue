@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, reactive, ref, watch} from 'vue'
+    import {computed, onMounted, reactive, Ref, ref, watch} from 'vue'
 
     import { Head } from '@inertiajs/inertia-vue3'
 
@@ -20,6 +20,7 @@
     import NoteInput from '../Components/Dashboard/NoteInput.vue'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
+    import {Schueler} from '../Interfaces/Schueler'
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
@@ -32,6 +33,8 @@
         bemerkungen: true,
         mahnungen: false,
     })
+
+    const clickedRow: Ref<Leistung|null> = ref()
 
     let state = reactive({
         leistungen: <Leistung[]> [],
@@ -83,6 +86,10 @@
         { key: 'mahnung', label: 'M', sortable: false },
     ]
 
+    const spanColumns: Array<Column> = [
+        { key: 'span', label: ' ', sortable: false },
+    ]
+
     const drawTable = (): void => {
         const pushTable = (pushable: boolean, array: Array<Column>): void => {
             if (pushable) array.forEach((column: Column): number => columns.value.push(column))
@@ -93,6 +100,7 @@
         pushTable(toggles.fachlehrer, fachlehrerColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
         pushTable(toggles.mahnungen, mahnungenColumns)
+        pushTable(true, spanColumns)
     }
 
     watch(toggles, (): void => drawTable())
@@ -168,9 +176,13 @@
 
             <h3 class="text-headline-sm mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
-            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns">
+            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns" v-model="clickedRow">
                 <template #cell-note="{ row }">
                     <NoteInput :leistung="row" :disabled="true"></NoteInput>
+                </template>
+
+                <template #cell-fach="{ row }">
+                    <strong>{{ row.fach }}</strong>
                 </template>
 
                 <template #cell-mahnung="{ row }">
@@ -180,12 +192,20 @@
                 <template #cell-fachbezogeneBemerkungen="{ row }">
                     <FachbezogeneBemerkungenIndicator :leistung="row"></FachbezogeneBemerkungenIndicator>
                 </template>
+
+                <template #cell-span="{ row }">
+<!--TODO: Span https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/90-->
+
+                </template>
             </SvwsUiTable>
         </template>
     </AppLayout>
 </template>
 
 <style scoped>
+.span {
+    @apply ui-w-screen
+}
 header {
     @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
 }

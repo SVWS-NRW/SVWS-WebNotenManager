@@ -9,29 +9,26 @@ use Illuminate\Support\Facades\Hash;
 
 class ImportController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function __invoke(Request $request): void
     {
-		$service = new DataImportService(
-			lehrer: request()->lehrer,
-			foerderschwerpunkte: request()->foerderschwerpunkte,
-			klassen: request()->klassen,
-			noten: request()->noten,
-			jahrgaenge: request()->jahrgaenge,
-			faecher: request()->faecher,
-			floskelgruppen: request()->floskelgruppen,
-			lerngruppen: request()->lerngruppen,
-			teilleistungsarten: request()->teilleistungsarten,
-			schueler: request()->schueler,
-		);
+		$keys = [
+			'lehrer',
+			'foerderschwerpunkte',
+			'klassen',
+			'noten',
+			'jahrgaenge',
+			'faecher',
+			'floskelgruppen',
+			'lerngruppen',
+			'teilleistungsarten',
+			'schueler'
+		];
 
+		$service = new DataImportService(data: request()->only(keys: $keys));
 		$service->import();
 
-		Lehrer::all()->each(fn (Lehrer $lehrer) => $lehrer->update(['password' => Hash::make('password')]));
+		Lehrer::all()->each(callback: fn (Lehrer $lehrer) => $lehrer->update(
+			attributes: ['password' => Hash::make(value: 'password')])
+		);
     }
 }
