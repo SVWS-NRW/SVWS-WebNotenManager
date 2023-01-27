@@ -21,7 +21,9 @@ use DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Boolean;
 use Schema;
 
 class DataImportService
@@ -103,26 +105,31 @@ class DataImportService
 	 */
 	public function importLehrer(): void
 	{
-		if (is_null($this->lehrer)) {
+		if (is_null(value: $this->lehrer)) {
 			return;
 		}
 
-		$this->start('Lehrer');
+		$this->start(text: 'Lehrer');
 
-		foreach($this->lehrer as $row) {
-			$row['email'] = $this->email($row['eMailDienstlich']);
+		foreach ($this->lehrer as $row) {
+			$row['email'] = $this->formatEmail(email: $row['eMailDienstlich']);
 			$row['geschlecht'] = $this->gender(data: $row, allowed: Lehrer::GENDERS);
 
 			unset($row['eMailDienstlich']);
 
 			try {
-				Lehrer::findOrFail($row['id']);
+				Lehrer::findOrFail(id: $row['id']);
 			} catch (ModelNotFoundException $e) {
-				$row['password'] = app()->environment('production') ? Str::random() : Hash::make('password');
+				$row['password'] = app()->environment('production')
+					? Str::random()
+					: Hash::make(value: 'password');
 				report($e);
 			}
 
-			Lehrer::updateOrCreate(['id' => $row['id']], $row);
+			Lehrer::updateOrCreate(
+				attributes: ['id' => $row['id']],
+				values: $row
+			);
 		}
 
 		$this->stop();
@@ -305,22 +312,20 @@ class DataImportService
 	 *
 	 * A lerngruppe either belongs to a Klasse model or is a Kurs. Depending on the presence of kursartID.
 	 *
-	 * TODO: A question to the Customer was sent regarding the newly introduced `-1` value for kursartID
-	 *
 	 * @return void
 	 */
 	public function importLerngruppen(): void
 	{
-		if (is_null($this->lerngruppen)) {
+		if (is_null(value: $this->lerngruppen)) {
 			return;
 		}
 
-		$this->start('Lerngruppen');
+		$this->start(text: 'Lerngruppen');
 
 		foreach ($this->lerngruppen as $row) {
 			$row['fach_id'] = $row['fachID'];
 
-			if (in_array($row['kursartID'], [null, -1])) { // TODO: Check the `-1`
+			if (is_null(value: $row['kursartID'])) {
 				$row['klasse_id'] = $row['kID'];
 				unset($row['kursartID']);
 			}
@@ -328,12 +333,12 @@ class DataImportService
 			unset($row['fachID']);
 
 			$lerngruppe = Lerngruppe::firstOrCreate(
-				['id' => $row['id']],
-				Arr::except($row, ['lehrerID'])
+				attributes: ['id' => $row['id']],
+				values: Arr::except(array: $row, keys: ['lehrerID'])
 			);
 
 			if ($lerngruppe->wasRecentlyCreated === true) {
-				$lerngruppe->lehrer()->attach($row['lehrerID']);
+				$lerngruppe->lehrer()->attach(id: $row['lehrerID']);
 			}
 		}
 
@@ -575,13 +580,20 @@ class DataImportService
 		return 'x';
 	}
 
-	private function email(string|null $email): string
+	private function formatEmail(string|null $email): string
 	{
-		if ($email !== null && $email !== '') {
-			return $email;
+		$validator = Validator::make(
+			data: ['email' => $email],
+			rules: [
+				'email' => ['required', 'email:rfc,dns']
+			]
+		);
+
+		if ($validator->valid()) {
+			return strtolower(string: $email);
 		}
 
-		return sprintf('%s@%s', Str::random(32), Str::random(32));
+		return sprintf('%s@%s', Str::random(length: 32), Str::random(length: 32));
 	}
 
 

@@ -25,7 +25,7 @@
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
 
-    const title = 'Notenmanager - Mein Unterricht'
+    const title = 'Notenmanager - mein Unterricht'
 
     let state = reactive({
         leistungen: <Leistung[]> [],
