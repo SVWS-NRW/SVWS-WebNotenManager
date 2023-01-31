@@ -13,7 +13,7 @@ class RedirectIfKlassenleitung
     public function handle(Request $request, Closure $next): RedirectResponse|JsonResponse|Response
     {
 		if (auth()->user()->klassen->count() == 0) {
-			return redirect()->route('dashboard');
+			return redirect()->route(route: 'mein_unterricht');
 		}
 
         return $next($request);
