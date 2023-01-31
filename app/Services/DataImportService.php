@@ -434,9 +434,12 @@ class DataImportService
 	 */
 	private function importLernabschnitte(Schueler $schueler, array $data): void
 	{
+
 		if ($data) { // TODO: To be updated if noteID is available // TODO: Idea to put into schueler
 
-			$lernabschnitt = Lernabschnitt::firstOrNew(['id' => $data['id']], ['schueler_id' => $schueler->id]);
+			$lernabschnitt = Lernabschnitt::firstOrNew(['id' => $data['id']]);
+
+			$lernabschnitt->schueler_id = $schueler->id;
 
 			$this->updateByTimestamp($data, $lernabschnitt, 'fehlstundenGesamt', 'tsFehlstundenGesamt');
 			$this->updateByTimestamp($data, $lernabschnitt, 'fehlstundenUnentschuldigt', 'tsFehlstundenUnentschuldigt');
