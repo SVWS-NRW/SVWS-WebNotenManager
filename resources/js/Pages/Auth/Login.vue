@@ -8,6 +8,7 @@ import JetCheckbox from '@/Jetstream/Checkbox.vue';
 import JetLabel from '@/Jetstream/Label.vue';
 import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
 import {reactive} from "vue";
+import {Inertia} from "@inertiajs/inertia";
 
 
 
@@ -17,7 +18,7 @@ const form = reactive({
 });
 
 const submit = () => {
-    axios.post(route('login'), form).then((res) => console.log(res))
+    axios.post(route('login'), form).then((res) => Inertia.get(route('mein_unterricht')))
     // form.transform(data => ({
     //     ...data,
     //     remember: form.remember ? 'on' : '',
