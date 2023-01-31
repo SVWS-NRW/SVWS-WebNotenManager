@@ -1,6 +1,8 @@
 <script setup lang="ts">
     import AuthLayout from '../../Layouts/AuthLayout.vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
+    import { router } from '@inertiajs/vue3'
+
     import { Inertia } from '@inertiajs/inertia'
     import { PropType, reactive } from 'vue'
     import { Settings } from '../../Interfaces/Settings'
@@ -32,7 +34,7 @@
 
     const submit = (): void => {
         data.processing = true
-        axios.post(route('login'), data.form)
+        router.post(route('login'), data.form)
             .then((): void => Inertia.get(route('mein_unterricht')))
             .catch((error: any): AxiosError => data.errors = error.response.data.errors)
             .finally((): boolean => data.processing = false)
