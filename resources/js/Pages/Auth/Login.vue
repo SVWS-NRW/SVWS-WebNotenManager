@@ -7,35 +7,27 @@ import JetInput from '@/Jetstream/Input.vue';
 import JetCheckbox from '@/Jetstream/Checkbox.vue';
 import JetLabel from '@/Jetstream/Label.vue';
 import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
+import {reactive} from "vue";
 
 
 
-const form = useForm({
+const form = reactive({
     email: '',
     password: '',
-    remember: false,
 });
 
 const submit = () => {
-    form.transform(data => ({
-        ...data,
-        remember: form.remember ? 'on' : '',
-    })).post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+    axios.post(route('login'), form).then((res) => console.log(res))
+    // form.transform(data => ({
+    //     ...data,
+    //     remember: form.remember ? 'on' : '',
+    // })).post(route('login'), {
+    //     onFinish: () => form.reset('password'),
+    // });
 };
 </script>
 
 <template>
-    <Head title="Log in" />
-
-    <JetAuthenticationCard>
-        <template #logo>
-            <JetAuthenticationCardLogo />
-        </template>
-
-        <JetValidationErrors class="mb-4" />
-
 
 
         <form @submit.prevent="submit">
@@ -63,12 +55,6 @@ const submit = () => {
                 />
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <JetCheckbox v-model:checked="form.remember" name="remember" />
-                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
 
             <div class="flex items-center justify-end mt-4">
 
@@ -78,5 +64,4 @@ const submit = () => {
                 </JetButton>
             </div>
         </form>
-    </JetAuthenticationCard>
 </template>
