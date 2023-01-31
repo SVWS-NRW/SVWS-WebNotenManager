@@ -18,13 +18,13 @@ const form = reactive({
 });
 
 const submit = () => {
-    axios.post(route('login'), form).then((res) => Inertia.get(route('mein_unterricht')))
-    // form.transform(data => ({
-    //     ...data,
-    //     remember: form.remember ? 'on' : '',
-    // })).post(route('login'), {
-    //     onFinish: () => form.reset('password'),
-    // });
+    // axios.post(route('login'), form).then((res) => Inertia.get(route('mein_unterricht')))
+    form.transform(data => ({
+        ...data,
+        remember: form.remember ? 'on' : '',
+    })).post(route('login'), {
+        onFinish: () => Inertia.get(route('mein_unterricht')),
+    });
 };
 </script>
 
