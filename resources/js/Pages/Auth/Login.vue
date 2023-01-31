@@ -5,7 +5,7 @@
     import { PropType, reactive } from 'vue'
     import { Settings } from '../../Interfaces/Settings'
     import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui'
-    import { Head } from '@inertiajs/inertia-vue3'
+    import {Head, useForm} from '@inertiajs/inertia-vue3'
     import { LoginFormData as Login } from '../../Interfaces/FormData'
 
     let props = defineProps({
@@ -24,19 +24,38 @@
         processing: false,
         errors: [],
     })
+    const form = useForm({
+        email: '',
+        password: '',
+        remember: false,
+    });
 
-    const getError = (column: string): string => data.errors[column][0]
+
+    const getError = (column: string): string => data.errors[column]
     const hasErrors = (column: string): boolean => column in data.errors
 
     const requestPassword = (): void => Inertia.get(route('request_password'))
 
-    const submit = (): void => {
-        data.processing = true
-        axios.post(route('login'), data.form)
-            .then((): void => Inertia.get(route('mein_unterricht')))
-            .catch((error: any): AxiosError => data.errors = error.response.data.errors)
-            .finally((): boolean => data.processing = false)
-    }
+    const submit = () => {
+        form.transform(data => ({
+            ...data,
+            remember: form.remember ? 'on' : '',
+        })).post(route('login'), {
+            onFinish: (): void => {
+                form.reset('password')
+                data.processing = false
+            },
+            onError: (error: any): void => data.errors = error,
+        });
+    };
+
+    // const submit = (): void => {
+    //     data.processing = true
+    //     axios.post(route('login'), data.form)
+    //         .then((): void => Inertia.get(route('mein_unterricht')))
+    //         .catch((error: any): AxiosError => data.errors = error.response.data.errors)
+    //         .finally((): boolean => data.processing = false)
+    // }
 </script>
 
 <template>
@@ -62,7 +81,7 @@
 
                     <div class="form-control">
                         <SvwsUiTextInput
-                            v-model="data.form.email"
+                            v-model="form.email"
                             v-on:keyup.enter="submit"
                             :valid="!hasErrors('email')"
                             :disabled="data.processing"
@@ -79,7 +98,7 @@
 
                     <div class="form-control">
                         <SvwsUiTextInput
-                            v-model="data.form.password"
+                            v-model="form.password"
                             v-on:keyup.enter="submit"
                             :valid="!hasErrors('password')"
                             :disabled="data.processing"
@@ -93,7 +112,7 @@
                         </span>
                     </div>
 
-                    <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing">
+                    <SvwsUiCheckbox v-model="form.remember" :disabled="data.processing">
                         Angemeldet bleiben
                     </SvwsUiCheckbox>
 
