@@ -2,7 +2,7 @@
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
 
-
+import {SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox} from "@svws-nrw/svws-ui";
 
 const form = useForm({
     email: '',
@@ -29,9 +29,6 @@ const submit = () => {
                 <div class="flex flex-col gap-6">
                     <h1 class="svws-ui-headline-3">Login</h1>
 
-
-
-                    <JetValidationErrors />
 
                     <SvwsUiTextInput v-model="form.email" type="email" required placeholder="E-Mail-Adresse" autocomplete="email" autofocus />
                     <SvwsUiTextInput v-model="form.password" type="password" required placeholder="Passwort" autocomplete="current-password" />
