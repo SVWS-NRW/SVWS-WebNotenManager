@@ -14,8 +14,7 @@
         fachbezogeneBemerkungenColumns,
         notenColumns,
         mahnungenColumns,
-        fehlstundenColumns,
-        spanColumn,
+        fehlstundenColumns
     } from '../Helpers/columns.helper'
 
     import {
@@ -83,7 +82,6 @@
         pushTable(toggles.mahnungen, mahnungenColumns)
         pushTable(toggles.fehlstunden, fehlstundenColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
-        pushTable(true, spanColumn)
     }
 
     onMounted((): void => {

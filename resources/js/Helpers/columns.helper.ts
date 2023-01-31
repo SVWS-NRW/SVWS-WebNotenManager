@@ -1,4 +1,4 @@
-import { Column } from '../Interfaces/Column'
+import {Column} from '../Interfaces/Column'
 
 const baseColumns: Array<Column> = [
 	{ key: 'klasse', label: 'Klasse', sortable: true },
@@ -31,10 +31,6 @@ const notenColumns: Array<Column> = [
 	{ key: 'note', label: 'Note', sortable: true },
 ]
 
-const spanColumn: Array<Column> = [
-	{ key: 'span', label: ' ', sortable: false },
-]
-
 export {
 	baseColumns,
 	fachbezogeneBemerkungenColumns,
@@ -43,5 +39,4 @@ export {
 	teilleistungenColumns,
 	fachlehrerColumns,
 	notenColumns,
-	spanColumn
 }
