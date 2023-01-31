@@ -20,9 +20,10 @@ class LehrerRedirectIfAuthenticated
 	{
 
 		$guards = empty($guards) ? [null] : $guards;
+
 		foreach ($guards as $guard) {
 			if (Auth::guard($guard)->check()) {
-				return redirect($guard.'/dashboard');
+				return redirect(route('mein_unterricht'));
 			}
 		}
 

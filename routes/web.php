@@ -4,11 +4,12 @@ use App\Http\Controllers\Auth\RequestPasswordController;
 use App\Http\Controllers\KlassenleitungController;
 
 use App\Http\Controllers\LeistungsUebersichtController;
+use App\Http\Controllers\MeinUnterricht;
 use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-	Route::inertia('/', 'MeinUnterricht')->name('mein_unterricht');
+	Route::get('/', MeinUnterricht::class)->name('mein_unterricht');
 
 	Route::get('leistungsdatenuebersicht', LeistungsUebersichtController::class)
 		->name('leistungsdatenuebersicht');

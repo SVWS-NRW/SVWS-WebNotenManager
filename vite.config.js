@@ -8,6 +8,11 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 
 export default defineConfig({
+
+	esbuild: {
+		minify: false,
+		minifySyntax: false
+	},
     server: {
         https: false,
         // host: true,
