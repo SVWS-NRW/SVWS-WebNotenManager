@@ -1,4 +1,4 @@
-import {Column} from '../Interfaces/Column'
+import { Column } from '../Interfaces/Column'
 
 const baseColumns: Array<Column> = [
 	{ key: 'klasse', label: 'Klasse', sortable: true },

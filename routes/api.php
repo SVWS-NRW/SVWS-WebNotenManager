@@ -58,5 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('export', ExportController::class);
-Route::post('import', ImportController::class);
+Route::post('import', [ImportController::class, 'request']);
+Route::get('import', [ImportController::class, 'curl']);
 Route::get('truncate', [DataImportService::class, 'truncate']);
