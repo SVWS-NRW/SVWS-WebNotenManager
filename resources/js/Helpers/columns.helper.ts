@@ -20,14 +20,15 @@ const fehlstundenColumns: Array<Column> = [
 	{ key: 'ufs', label: 'FSU', sortable: true },
 ]
 
-const teilleistungenColumns: Array<Column> = []
-
 const fachlehrerColumns: Array<Column> = [
 	{ key: 'lehrer', label: 'Lehrer', sortable: false },
 ]
 
-const notenColumns: Array<Column> = [
+const teilleistungenColumns: Array<Column> = [
 	{ key: 'teilnoten', label: 'Teilnoten', sortable: true },
+]
+
+const notenColumns: Array<Column> = [
 	{ key: 'note', label: 'Note', sortable: true },
 ]
 
@@ -36,7 +37,7 @@ export {
 	fachbezogeneBemerkungenColumns,
 	mahnungenColumns,
 	fehlstundenColumns,
-	teilleistungenColumns,
 	fachlehrerColumns,
 	notenColumns,
+	teilleistungenColumns,
 }

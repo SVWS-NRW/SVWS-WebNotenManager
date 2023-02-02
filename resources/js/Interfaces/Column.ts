@@ -1,5 +1,6 @@
 export interface Column {
 	key: string,
 	label: string,
-	sortable: boolean
+	sortable: boolean,
+	span?: string|Number,
 }

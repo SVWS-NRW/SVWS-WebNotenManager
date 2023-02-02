@@ -30,7 +30,7 @@
 
 <template>
     <strong v-if="isDisabled()" :class="{ 'low-score' : lowScore }">{{ leistung.note }}</strong>
-    <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore"></SvwsUiTextInput>
+    <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore" :headless="true"></SvwsUiTextInput>
 </template>
 
 <style scoped>

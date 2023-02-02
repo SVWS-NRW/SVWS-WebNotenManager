@@ -13,6 +13,7 @@
         fehlstundenColumns,
         fachlehrerColumns,
         notenColumns,
+        teilleistungenColumns,
     } from '../Helpers/columns.helper'
 
     import {
@@ -39,10 +40,12 @@
         fachlehrer: boolean,
         bemerkungen: boolean,
         mahnungen: boolean,
+        teilleistungen: boolean,
     }>reactive({
         fachlehrer: false,
         bemerkungen: true,
         mahnungen: false,
+        teilleistungen: false,
     })
 
     const clickedRow: Ref<Leistung|null> = ref()
@@ -87,6 +90,7 @@
         columns.value.length = 0
         pushTable(true, baseColumns)
         pushTable(toggles.fachlehrer, fachlehrerColumns)
+        pushTable(toggles.teilleistungen, teilleistungenColumns)
         pushTable(true, notenColumns)
         pushTable(toggles.mahnungen, mahnungenColumns)
         pushTable(true, fehlstundenColumns)
@@ -150,6 +154,7 @@
                     <h2 class="text-headline">{{ title }}</h2>
                 </div>
                 <div id="toggles">
+                    <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>

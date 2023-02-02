@@ -47,7 +47,7 @@
 
     const columns = ref<Column[]>([])
 
-    const fehlstundenVisible = (): boolean => props.settings.klassenleitung_fehlstunden_visible == 1  // TODO: Move settings to json fields
+    const fehlstundenVisible = () => props.settings.klassenleitung_fehlstunden_visible == 1  // TODO: Move settings to json fields
 
     const setupColumns = (): void => {
         columns.value.push(

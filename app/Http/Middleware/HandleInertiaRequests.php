@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -12,19 +13,21 @@ class HandleInertiaRequests extends Middleware
 
     public function version(Request $request): ?string
     {
-        return parent::version($request);
+        return parent::version(request: $request);
     }
 
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'auth.user' => fn () => $request->user() ? $request->user()->only('id', 'vorname', 'nachname', 'email', 'klassen') : null,
-			'auth.administrator' => auth()->guard('admin')->check(),
-			'schoolName' => config('app.school_name'),
-			'settings' => Setting::all()->pluck('value','key'),
-			'note_entry_disabled' => Setting::entryDisabled('note_entry_until'),
-			'warning_entry_disabled' => Setting::entryDisabled('warning_entry_until'),
-			'version' => config('wenom.version'),
+            'auth.user' => fn (): array|null => $request->user()
+				? $request->user()->only('id', 'vorname', 'nachname', 'email', 'klassen')
+				: null,
+			'auth.administrator' => auth()->guard(name: 'admin')->check(),
+			'schoolName' => config(key:'app.school_name'),
+			'settings' => Setting::all()->pluck(value: 'value', key: 'key'),
+			'note_entry_disabled' => Setting::entryDisabled(entry: 'note_entry_until'),
+			'warning_entry_disabled' => Setting::entryDisabled(entry: 'warning_entry_until'),
+			'version' => config(key: 'wenom.version'),
         ]);
     }
 }

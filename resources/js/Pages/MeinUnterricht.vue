@@ -1,11 +1,11 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import { onMounted, reactive, computed, ref, watch } from 'vue'
+    import { onMounted, reactive, computed, ref, watch, Ref } from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
     import { Column } from '../Interfaces/Column'
     import { LeistungsDatenFilterValues } from '../Interfaces/Filter'
-    import axios, {AxiosPromise, AxiosResponse} from 'axios'
+    import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import NoteInput from '../Components/Dashboard/NoteInput.vue'
 
@@ -13,8 +13,9 @@
         baseColumns,
         fachbezogeneBemerkungenColumns,
         notenColumns,
+        teilleistungenColumns,
         mahnungenColumns,
-        fehlstundenColumns
+        fehlstundenColumns,
     } from '../Helpers/columns.helper'
 
     import {
@@ -51,7 +52,9 @@
         fehlstunden: false,
     })
 
-    watch(toggles, (): void => drawTable());
+    watch(toggles, (): void => drawTable())
+
+    const clickedRow: Ref<Leistung|null> = ref()
 
     let filters = <{
         search: string,
@@ -79,6 +82,7 @@
         columns.value.length = 0
         pushTable(true, baseColumns)
         pushTable(true, notenColumns)
+        pushTable(toggles.teilleistungen, teilleistungenColumns)
         pushTable(toggles.mahnungen, mahnungenColumns)
         pushTable(toggles.fehlstunden, fehlstundenColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
@@ -156,9 +160,14 @@
 
             <h3 class="text-headline-sm ui-mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
-            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns">
+            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns" v-model="clickedRow">
                 <template #cell-note="{ row }">
                     <NoteInput :leistung="row"></NoteInput>
+                </template>
+                <template #cell-fach="{ row }">
+                    <strong>
+                        {{ row.fach }}
+                    </strong>
                 </template>
                 <template #cell-mahnung="{ row }">
                     <MahnungIndicator :leistung="row" :key="row.id" :disabled="false"></MahnungIndicator>

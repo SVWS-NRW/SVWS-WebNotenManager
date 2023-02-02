@@ -21,26 +21,32 @@ class GetLeistungen extends Controller
 	 */
 	public function __invoke(): AnonymousResourceCollection
 	{
-		$klassen = auth()->user()->klassen()->select('id');
+		$klassen = auth()->user()->klassen()->select(columns: 'id');
+
+		$eagerLoadedColumns = [
+			'schueler' => ['klasse', 'jahrgang'],
+			'lerngruppe' => ['lehrer', 'fach'],
+			'note',
+		];
+
+		$sortByColumns = [
+			'schueler.klasse.kuerzel',
+			'schueler.nachname',
+			'lerngruppe.fach.kuerzelAnzeige',
+		];
 
 		$leistungen = Leistung::query()
-			->with([
-				'schueler' => ['klasse', 'jahrgang'],
-				'lerngruppe' => ['lehrer', 'fach'],
-				'note',
-			])
-			->when(auth()->user() instanceof Lehrer, fn (Builder $query): Builder
-				=> $query->whereHas('schueler', fn (Builder $query): Builder
-					=> $query->whereIn('klasse_id', $klassen)
+			->with(relations: $eagerLoadedColumns)
+			->when(
+				value: auth()->user() instanceof Lehrer,
+				callback: fn (Builder $query): Builder => $query->whereHas(
+					relation: 'schueler',
+					callback: fn (Builder $query): Builder => $query->whereIn(column: 'klasse_id', values: $klassen)
 				)
 			)
 			->get()
-			->sortBy([
-				'schueler.klasse.kuerzel',
-				'schueler.nachname',
-				'lerngruppe.fach.kuerzelAnzeige',
-			]);
+			->sortBy(callback: $sortByColumns);
 
-        return LeistungResource::collection($leistungen);
+        return LeistungResource::collection(resource: $leistungen);
     }
 }
