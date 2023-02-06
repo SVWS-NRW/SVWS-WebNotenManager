@@ -5,13 +5,13 @@ use App\Http\Controllers\Api\GetBemerkungen;
 use App\Http\Controllers\Api\GetFloskeln;
 use App\Http\Controllers\Api\GetLeistungen;
 use App\Http\Controllers\Api\GetSchueler;
+use App\Http\Controllers\Api\MeinUnterricht;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\NotenController;
 use App\Http\Controllers\Api\MahnungController;
 use App\Http\Controllers\Api\SchuelerBemerkung;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FachbezogeneBemerkung;
-use App\Http\Controllers\GetFachbezogeneFloskeln;
 use App\Http\Controllers\GetFilters;
 use App\Http\Controllers\ImportController;
 use App\Services\DataImportService;
@@ -19,8 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
-
-
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(GetBemerkungen::class)->group(function () {
@@ -56,7 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::get('get-leistungen', GetLeistungen::class)->name('get_leistungen');
 
     Route::post('set-mahnung/{leistung}', MahnungController::class)->name('set_mahnung');
+
+	Route::get('mein-unterricht', MeinUnterricht::class)->name('api.mein_unterricht');
 });
+
+
 
 Route::get('export', ExportController::class);
 Route::post('import', [ImportController::class, 'request']);

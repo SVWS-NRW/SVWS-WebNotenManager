@@ -13,6 +13,7 @@ class LeistungResource extends JsonResource
         return [
 			'id' => $this->id,
 			'klasse' => $this->schueler->klasse->kuerzel,
+			'name' => "{$this->schueler->nachname}, {$this->schueler->vorname}",
 			'vorname' => $this->schueler->vorname,
 			'nachname' => $this->schueler->nachname,
 			'geschlecht' => $this->schueler->geschlecht,

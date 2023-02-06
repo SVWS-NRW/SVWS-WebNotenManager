@@ -42,7 +42,7 @@
         mahnungen: boolean,
         teilleistungen: boolean,
     }>reactive({
-        fachlehrer: false,
+        fachlehrer: true,
         bemerkungen: true,
         mahnungen: false,
         teilleistungen: false,

@@ -8,6 +8,7 @@
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import NoteInput from '../Components/Dashboard/NoteInput.vue'
+    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
 
     import {
         baseColumns,
@@ -25,7 +26,6 @@
         SvwsUiTextInput,
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
-    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -33,7 +33,7 @@
         leistungen: <Leistung[]> [],
     })
 
-    let filterOptions = <LeistungsDatenFilterValues>reactive({
+    let filterOptions = <any>reactive({
         'jahrgaenge': [],
         'klassen': [],
         'kurse': [],
@@ -90,32 +90,47 @@
     }
 
     onMounted((): void => {
-        getFilters()
+
         getLeistungen()
         drawTable()
     })
 
-    const getFilters = (): AxiosPromise => axios
-        .get(route('get_filters'))
-        .then((response: AxiosResponse): AxiosResponse => filterOptions = response.data)
+    const getFilters = (): void => {
+        filterOptions.kurse = setFilters(state.leistungen, 'kurs')
+        filterOptions.noten = setFilters(state.leistungen, 'note')
+        filterOptions.jahrgaenge = setFilters(state.leistungen, 'jahrgang')
+        filterOptions.klassen = setFilters(state.leistungen, 'klasse')
+        filterOptions.faecher = setFilters(state.leistungen, 'fach')
+    }
+    const getLeistungen = (): Promise<any> => axios
+        .get(route('api.mein_unterricht'))
+        .then((response: AxiosResponse): void => {
+            state.leistungen = response.data
 
-    const getLeistungen = (): AxiosPromise => axios
-        .get(route('get_leistungen'))
-        .then((response: AxiosResponse): AxiosResponse => state.leistungen = mapLeistungen(response.data))
+        }).finally(() => getFilters())
 
-    const mapLeistungen = (data) => data.map((leistung: Leistung): Leistung => {
-        leistung.name = `${leistung.nachname}, ${leistung.vorname}`
-        return leistung
-    })
+    const setFilters = (data, column: string): { label: string, index: string | null | number }[] => {
+        let set = [
+            ...new Set(data.map((item: any): string => item[column]))
+        ].map((item: string): {
+            label: string, index: string | null | number
+        } => {
+            return { label: item ?? 'Leer', index: item }
+        })
+
+        set.unshift({ label: 'Alle', index: '0' })
+
+        return set
+    }
 
     const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
         .filter((leistung: Leistung): boolean =>
             searchFilter(leistung)
-            && tableFilter(leistung, 'klasse', true)
+            // && tableFilter(leistung, 'klasse', true)
             && tableFilter(leistung, 'kurs', true)
-            && tableFilter(leistung, 'jahrgang')
+            // && tableFilter(leistung, 'jahrgang')
             && tableFilter(leistung, 'note', true)
-            && tableFilter(leistung, 'fach')
+            // && tableFilter(leistung, 'fach')
         )
     )
 
@@ -126,9 +141,9 @@
     }
 
     const tableFilter = (leistung: Leistung, column: string, containsOnlyEmptyOption: boolean = false): boolean => {
-        if (containsOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] == null
-        if (filters[column] == 0) return true
-        return leistung[column] == filters[column]
+        if (filters[column] == '0') return true
+        if (containsOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] === null
+        return leistung[column] === filters[column]
     }
 </script>
 
