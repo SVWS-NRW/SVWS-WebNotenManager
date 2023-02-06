@@ -39,14 +39,7 @@ class ImportController extends Controller
 			'schueler'
 		];
 
-		$service = new DataImportService(data: request()->only(keys: $keys));
-		$service->import();
-
-		Lehrer::all()->each(callback: fn (Lehrer $lehrer) => $lehrer->update(
-			attributes: ['password' => Hash::make(value: 'password')])
-		);
-
-		$this->import(request()->only(keys: $keys));
+		$this->import(data: request()->only(keys: $keys));
     }
 
 	private function import(array $data): void
