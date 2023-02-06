@@ -8,6 +8,7 @@ export interface Leistung {
 	nachname: string,
 	geschlecht: string,
 	fach: string|null,
+	fach_id: number|null,
 	lehrer: string,
 	jahrgang: string,
 	kurs: string|null,

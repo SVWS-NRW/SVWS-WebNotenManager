@@ -25,6 +25,7 @@
         SvwsUiTextInput,
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
+    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -173,7 +174,7 @@
                     <MahnungIndicator :leistung="row" :key="row.id" :disabled="false"></MahnungIndicator>
                 </template>
                 <template #cell-fachbezogeneBemerkungen="{ row }">
-                    {{ row.fachbezogeneBemerkungen ? '[V]' : '[  ]' }}
+                    <FachbezogeneBemerkungenIndicator :leistung="row"></FachbezogeneBemerkungenIndicator>
                 </template>
             </SvwsUiTable>
         </template>

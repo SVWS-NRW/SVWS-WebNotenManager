@@ -11,6 +11,11 @@ export interface LeistungsDatenFilterValues {
 	faecher: Array<Filter>,
 }
 
+export interface FachbezogeneFloskelnFilterValues {
+	jahrgaenge: Array<Filter>,
+	niveau: Array<Filter>,
+}
+
 export interface SchuelerFilterValues {
 	klassen: Array<Filter>,
 }

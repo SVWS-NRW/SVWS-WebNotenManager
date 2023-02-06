@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\Fach
@@ -45,4 +46,9 @@ class Fach extends Model
     ];
 
 	public $timestamps = false;
+
+	public function floskeln(): HasMany
+	{
+		return $this->hasMany(related: Floskel::class);
+	}
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\FloskelController;
 use App\Http\Controllers\Api\GetBemerkungen;
 use App\Http\Controllers\Api\GetFloskeln;
 use App\Http\Controllers\Api\GetLeistungen;
@@ -45,12 +46,12 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::get('get-fachbezogene-floskeln-filters', 'fachbezogeneFloskeln')->name('get_fachbezogene-floskeln_filters');
 	});
 
-    Route::get('get-floskeln/{floskelgruppe}', GetFloskeln::class)->name('get_floskeln');
+    Route::get('get-floskeln/{floskelgruppe}', [FloskelController::class, 'getFloskelnByFloskelGruppe'])->name('get_floskeln');
     Route::get('get-schueler', GetSchueler::class)->name('get_schueler');
     Route::post('set-schueler-bemerkung/{schueler}', SchuelerBemerkung::class)->name('set_schueler_bemerkung');
 
-    Route::post('set-fachbezogene-bemerkung/{leistungNormalized}', FachbezogeneBemerkung::class)->name('set_fachbezogene_bemerkung');
-    Route::get('get-fachbezogene-floskeln', GetFachbezogeneFloskeln::class)->name('get_fachbezogene_floskeln');
+    Route::post('set-fachbezogene-bemerkung/{leistung}', FachbezogeneBemerkung::class)->name('set_fachbezogene_bemerkung');
+    Route::get('get-fachbezogene-floskeln/{fach}', [FloskelController::class, 'getFachbezogeneFloskeln'])->name('get_fachbezogene_floskeln');
 
 	Route::get('get-leistungen', GetLeistungen::class)->name('get_leistungen');
 

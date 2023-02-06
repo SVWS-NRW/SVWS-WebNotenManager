@@ -11,19 +11,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('floskeln', function (Blueprint $table) {
+        Schema::create(table: 'floskeln', callback: function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(Floskelgruppe::class);
-            $table->string('kuerzel');
-            $table->text('text');
-            $table->foreignIdFor(Fach::class)->nullable();
-            $table->foreignIdFor(Jahrgang::class)->nullable();
-            $table->integer('niveau')->nullable();
+            $table->foreignIdFor(model: Floskelgruppe::class);
+            $table->string(column: 'kuerzel');
+            $table->text(column: 'text');
+            $table->foreignIdFor(model: Fach::class)->nullable();
+            $table->foreignIdFor(model: Jahrgang::class)->nullable();
+            $table->integer(column: 'niveau')->nullable();
         });
     }
     
     public function down(): void
     {
-        Schema::dropIfExists('floskeln');
+        Schema::dropIfExists(table: 'floskeln');
     }
 };
