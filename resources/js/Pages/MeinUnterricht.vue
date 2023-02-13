@@ -83,10 +83,18 @@
         columns.value.length = 0
         pushTable(true, baseColumns)
         pushTable(true, notenColumns)
-        pushTable(toggles.teilleistungen, teilleistungenColumns)
-        pushTable(toggles.mahnungen, mahnungenColumns)
-        pushTable(toggles.fehlstunden, fehlstundenColumns)
-        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+        pushTable(true, teilleistungenColumns)
+        pushTable(true, mahnungenColumns)
+        pushTable(true, fehlstundenColumns)
+        pushTable(true, fachbezogeneBemerkungenColumns)
+
+        // Temporary switched off https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/101
+        // pushTable(true, baseColumns)
+        // pushTable(true, notenColumns)
+        // pushTable(toggles.teilleistungen, teilleistungenColumns)
+        // pushTable(toggles.mahnungen, mahnungenColumns)
+        // pushTable(toggles.fehlstunden, fehlstundenColumns)
+        // pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
     onMounted((): void => {

@@ -89,12 +89,21 @@
 
         columns.value.length = 0
         pushTable(true, baseColumns)
-        pushTable(toggles.fachlehrer, fachlehrerColumns)
-        pushTable(toggles.teilleistungen, teilleistungenColumns)
+        pushTable(true, fachlehrerColumns)
+        pushTable(true, teilleistungenColumns)
         pushTable(true, notenColumns)
-        pushTable(toggles.mahnungen, mahnungenColumns)
+        pushTable(true, mahnungenColumns)
         pushTable(true, fehlstundenColumns)
-        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+        pushTable(true, fachbezogeneBemerkungenColumns)
+
+        // Temporary switched off https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/101
+        // pushTable(true, baseColumns)
+        // pushTable(toggles.fachlehrer, fachlehrerColumns)
+        // pushTable(toggles.teilleistungen, teilleistungenColumns)
+        // pushTable(true, notenColumns)
+        // pushTable(toggles.mahnungen, mahnungenColumns)
+        // pushTable(true, fehlstundenColumns)
+        // pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
     watch(toggles, (): void => drawTable())
