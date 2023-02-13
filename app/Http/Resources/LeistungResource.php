@@ -21,7 +21,7 @@ class LeistungResource extends JsonResource
 			'fach_id' => $this->lerngruppe->fach->id,
 			'jahrgang' => $this->schueler->jahrgang->kuerzel,
 			'lehrer' => $this->lerngruppe->lehrer->pluck(value: 'kuerzel')->implode(', '),
-			'kurs' => $this->getKurs(),
+			'kurs' => $this->lerngruppe->kursartID !== null ? $this->lerngruppe->bezeichnung : '',
 			'note' => $this->note?->kuerzel,
 			'istGemahnt' => $this->istGemahnt,
 			'mahndatum' => $this->mahndatum,
@@ -30,13 +30,4 @@ class LeistungResource extends JsonResource
 			'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
         ];
     }
-
-	private function getKurs(): string|null
-	{
-		if ($this->lerngruppe->kursartID) {
-			return $this->lerngruppe->bezeichnung;
-		}
-
-		return null;
-	}
 }
