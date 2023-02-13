@@ -6,9 +6,6 @@ use App\Models\Bemerkung;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Bemerkung>
- */
 class BemerkungFactory extends Factory
 {
     protected $model = Bemerkung::class;
@@ -22,37 +19,43 @@ class BemerkungFactory extends Factory
 
     public function withAUE(): BemerkungFactory
     {
-		return $this->withTimestamp('AUE');
+		return $this->withTimestamp(column: 'AUE');
     }
 
     public function withASV(): BemerkungFactory
     {
-		return $this->withTimestamp('ASV');
+		return $this->withTimestamp(column: 'ASV');
     }
 
     public function withZB(): BemerkungFactory
     {
-		return $this->withTimestamp('ZB');
+		return $this->withTimestamp(column: 'ZB');
     }
 
     public function withLELS(): BemerkungFactory
     {
-        return $this->state(fn () => ['LELS' => $this->faker->unique->paragraph()]);
+        return $this->state(fn (): array => [
+			'LELS' => $this->faker->unique->paragraph()
+		]);
     }
 
     public function withSchulformEmpf(): BemerkungFactory
     {
-        return $this->state(fn () => ['schulformEmpf' => $this->faker->unique->paragraph()]);
+        return $this->state(fn (): array => [
+			'schulformEmpf' => $this->faker->unique->paragraph(),
+		]);
     }
 
     public function withIndividuelleVersetzungsbemerkungen(): BemerkungFactory
     {
-		return $this->withTimestamp('individuelleVersetzungsbemerkungen');
+		return $this->withTimestamp(column: 'individuelleVersetzungsbemerkungen');
     }
 
     public function withFoerderbemerkungen(): BemerkungFactory
     {
-        return $this->state(fn () => ['foerderbemerkungen' => $this->faker->unique->paragraph()]);
+        return $this->state(fn (): array => [
+			'foerderbemerkungen' => $this->faker->unique->paragraph(),
+		]);
     }
 
 	private function withTimestamp(
@@ -62,7 +65,7 @@ class BemerkungFactory extends Factory
 	): BemerkungFactory {
 		return $this->state(fn () => [
 			$column => $value ?? $this->faker->paragraph(),
-			$tsColumn ?? "ts{$column}" => now()->format('Y-m-d H:i:s.u'),
+			$tsColumn ?? "ts{$column}" => now()->format(format: 'Y-m-d H:i:s.u'),
 		]);
 	}
 }

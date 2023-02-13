@@ -11,10 +11,10 @@ class RedirectIfAdministrator
 {
     public function handle(Request $request, Closure $next): JsonResponse|RedirectResponse
 	{
-		if (auth()->guard('administrator')->check()) {
+		if (auth()->guard(name: 'administrator')->check()) {
 			return $next($request);
 		}
 
-		return redirect()->route('dashboard');
+		return redirect()->route(route: 'dashboard');
     }
 }

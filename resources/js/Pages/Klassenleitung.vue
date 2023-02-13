@@ -17,6 +17,7 @@
         SvwsUiIcon,
         SvwsUiContentCard
     } from '@svws-nrw/svws-ui'
+    import {Leistung} from '../Interfaces/Leistung'
 
     let props = defineProps({
         settings: {
@@ -33,7 +34,7 @@
 
     const clickedRow: Ref<Schueler|null> = ref()
 
-    let filterOptions = <SchuelerFilterValues>reactive({
+    let filterOptions = <any>reactive({
         'klassen': [],
     })
 
@@ -72,12 +73,25 @@
     onMounted((): void => {
         setupColumns()
         fetchSchueler()
-        fetchFilters()
     })
 
-    const fetchFilters = (): AxiosPromise => axios
-        .get(route('get_filters.klassenleitung'))
-        .then((response: AxiosResponse): AxiosResponse => filterOptions = response.data)
+    const getFilters = (): void => {
+        filterOptions.klassen = setFilters(state.schueler, 'klasse')
+    }
+
+    const setFilters = (data, column: string): { label: string, index: string | null | number }[] => {
+        let set = [
+            ...new Set(data.map((item: any): string => item[column]))
+        ].map((item: string): {
+            label: string, index: string | null | number
+        } => {
+            return { label: item ?? 'Leer', index: item }
+        })
+
+        set.unshift({ label: 'Alle', index: '0' })
+
+        return set
+    }
 
     const filteredSchueler = computed((): Array<Schueler> =>
         state.schueler.filter((schueler: Schueler): boolean =>
@@ -98,8 +112,9 @@
     }
 
     const fetchSchueler = (): AxiosPromise => axios
-        .get(route('get_schueler'))
+        .get(route('api.klassenleitung'))
         .then((response: AxiosResponse): AxiosResponse => state.schueler = response.data)
+        .finally((): void => getFilters())
 </script>
 
 <template>

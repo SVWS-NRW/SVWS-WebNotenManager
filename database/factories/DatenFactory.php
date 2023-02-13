@@ -6,9 +6,6 @@ use App\Models\Daten;
 use App\Models\Lehrer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Data>
- */
 class DatenFactory extends Factory
 {
     protected $model = Daten::class;
@@ -16,42 +13,54 @@ class DatenFactory extends Factory
     public function definition(): array
     {
         return [
-            'enmRevision' => rand(1, 10),
-            'schuljahr' => rand(2000, 2022),
-            'anzahlAbschnitte' => rand(1, 4),
-            'aktuellerAbschnitt' => rand(1, 4),  
-            'lehrerID' => $this->faker->unique()->numberBetween(1, 1_000_000),
+            'enmRevision' => rand(min: 1, max: 10),
+            'schuljahr' => rand(min: 2000, max: 2022),
+            'anzahlAbschnitte' => rand(min: 1, max: 4),
+            'aktuellerAbschnitt' => rand(min: 1, max: 4),
+            'lehrerID' => $this->faker->unique()->numberBetween(int1: 1, int2: 1_000_000),
             'lehrer_id' => Lehrer::factory(),
         ];
     }
 
     public function withPublicKey(): Factory
     {
-        return $this->state(fn () => ['publicKey' => $this->faker->word]);
+        return $this->state(fn (): array  => [
+			'publicKey' => $this->faker->word,
+		]);
     }
 
     public function withFehlstundenEingabe(): Factory
     {
-        return $this->state(fn () => ['fehlstundenEingabe' => true]);
+        return $this->state(fn (): array  => [
+			'fehlstundenEingabe' => true,
+		]);
     }
 
     public function withFehlstundenSIFachbezogen(): Factory
     {
-        return $this->state(fn () => ['fehlstundenSIFachbezogen' => true]);
+        return $this->state(fn (): array  => [
+			'fehlstundenSIFachbezogen' => true,
+		]);
     }
 
     public function withFehlstundenSIIFachbezogen(): Factory
     {
-        return $this->state(fn () => ['fehlstundenSIIFachbezogen' => true]);
+        return $this->state(fn (): array  => [
+			'fehlstundenSIIFachbezogen' => true,
+		]);
     }
 
     public function withSchulform(): Factory
     {
-        return $this->state(fn () => ['schulform' => $this->faker->word()]);
+        return $this->state(fn (): array  => [
+			'schulform' => $this->faker->word(),
+		]);
     }
 
     public function withMailadresse(): Factory
     {
-        return $this->state(fn () => ['mailadresse' => $this->faker->safeEmail()]);
+        return $this->state(fn (): array  => [
+			'mailadresse' => $this->faker->safeEmail(),
+		]);
     }
 }

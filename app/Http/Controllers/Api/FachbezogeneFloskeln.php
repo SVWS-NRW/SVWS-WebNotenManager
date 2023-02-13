@@ -9,32 +9,17 @@ use App\Models\Floskel;
 use App\Models\Floskelgruppe;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class FloskelController extends Controller
+class FachbezogeneFloskeln extends Controller
 {
-    public function getFloskelnByFloskelGruppe(string $floskelgruppe)
-	{
-		try {
-			$gruppe = Floskelgruppe::where('kuerzel', '=', $floskelgruppe)->firstOrFail();
-		} catch (NotFoundHttpException $e) {
-			return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
-		}
-
-		return Floskel::query()
-			->whereBelongsTo($gruppe)
-			->get();
-	}
-
-	public function getFachbezogeneFloskeln(Fach $fach): AnonymousResourceCollection
+	public function __invoke(Fach $fach): AnonymousResourceCollection
 	{
 		try {
 			$floskelgruppe = Floskelgruppe::query()
 				->where(column: 'kuerzel', operator: '=', value: 'FACH')
 				->firstOrFail();
 		} catch (ModelNotFoundException $e) {
-			return FachBezogeneFloskelResource::collection([]);
+			return FachBezogeneFloskelResource::collection(resource: []);
 		}
 
 		$floskeln = Floskel::query()

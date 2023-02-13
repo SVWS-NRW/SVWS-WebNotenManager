@@ -1,22 +1,18 @@
 <?php
 
 use App\Http\Controllers\Auth\RequestPasswordController;
-use App\Http\Controllers\KlassenleitungController;
-
-use App\Http\Controllers\LeistungsUebersichtController;
-use App\Http\Controllers\MeinUnterricht;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-	Route::get('/', MeinUnterricht::class)->name('mein_unterricht');
+	Route::inertia(uri: '/', component: 'MeinUnterricht')
+		->name(name: 'mein_unterricht');
 
-	Route::get('leistungsdatenuebersicht', LeistungsUebersichtController::class)
-		->name('leistungsdatenuebersicht');
+	Route::inertia(uri: 'leistungsdatenuebersicht', component: 'Leistungsdatenuebersicht')
+		->name(name: 'leistungsdatenuebersicht');
 
-	Route::get('klassenleitung', KlassenleitungController::class)
-		->name('klassenleitung')
-		->middleware('klassenleitung');
+	Route::inertia(uri: 'klassenleitung', component: 'Klassenleitung')
+		->name(name: 'klassenleitung')
+		->middleware(middleware: 'klassenleitung');
 
 	Route::middleware('admin')
 		->prefix('einstellungen')
@@ -27,16 +23,21 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 		});
 });
 
-Route::inertia('impressum', 'Impressum')->name('impressum');
-Route::inertia('datenschutz', 'Datenschutz')->name('datenschutz');
-Route::inertia('barrierefreiheit', 'Barrierefreiheit')->name('barrierefreiheit');
+Route::inertia(uri: 'impressum', component: 'Impressum')
+	->name(name: 'impressum');
+
+Route::inertia(uri: 'datenschutz', component: 'Datenschutz')
+	->name(name: 'datenschutz');
+
+Route::inertia(uri: 'barrierefreiheit', component: 'Barrierefreiheit')
+	->name(name: 'barrierefreiheit');
 
 Route::controller(RequestPasswordController::class)
 	->middleware('guest')
 	->name('request_password')
 	->group(function () {
-		Route::get('passwort-anfordern', 'index');
-		Route::post('passwort-anfordern', 'store');
+		Route::inertia(uri: 'passwort-anfordern', component:'Auth/RequestPassword');
+		Route::post(uri:'passwort-anfordern', action: 'store');
 	});
 
 

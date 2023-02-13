@@ -7,9 +7,6 @@ use App\Models\Note;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\BKAbschluss>
- */
 class BKAbschlussFactory extends Factory
 {
     protected $model = BKAbschluss::class;
@@ -27,41 +24,57 @@ class BKAbschlussFactory extends Factory
 
     public function withHatZulassung(): Factory
     {
-        return $this->state(fn () => ['hatZulassung' => true]);
+        return $this->state(fn (): array => [
+			'hatZulassung' => true,
+		]);
     }
 
     public function withHatBestanden(): Factory
     {
-        return $this->state(fn () => ['hatBestanden' => true]);
+        return $this->state(fn (): array => [
+			'hatBestanden' => true,
+		]);
     }
 
     public function withHatZulassungErweiterteBeruflicheKenntnisse(): Factory
     {
-        return $this->state(fn () => ['hatZulassungErweiterteBeruflicheKenntnisse' => true]);
+        return $this->state(fn (): array => [
+			'hatZulassungErweiterteBeruflicheKenntnisse' => true,
+		]);
     }
 
     public function withHatErworbenErweiterteBeruflicheKenntnisse(): Factory
     {
-        return $this->state(fn () => ['hatErworbenErweiterteBeruflicheKenntnisse' => true]);
+        return $this->state(fn (): array => [
+			'hatErworbenErweiterteBeruflicheKenntnisse' => true,
+		]);
     }
 
     public function withHatZulassungBerufsabschlusspruefung(): Factory
     {
-        return $this->state(fn () => ['hatZulassungBerufsabschlusspruefung' => true]);
+        return $this->state(fn (): array => [
+			'hatZulassungBerufsabschlusspruefung' => true,
+		]);
     }
 
     public function withHatBestandenBerufsabschlusspruefung(): Factory
     {
-        return $this->state(fn () => ['hatBestandenBerufsabschlusspruefung' => true]);
+        return $this->state(fn (): array => [
+			'hatBestandenBerufsabschlusspruefung' => true,
+		]);
     }
 
     public function withIstVorhandenBerufsabschlusspruefung(): Factory
     {
-        return $this->state(fn () => ['istVorhandenBerufsabschlusspruefung' => true]);
+        return $this->state(fn (): array => [
+			'istVorhandenBerufsabschlusspruefung' => true,
+		]);
     }
 
     public function withIstFachpraktischerTeilAusreichend(): Factory
     {
-        return $this->state(fn () => ['istFachpraktischerTeilAusreichend' => true]);
+        return $this->state(fn (): array => [
+			'istFachpraktischerTeilAusreichend' => true,
+		]);
     }
 }

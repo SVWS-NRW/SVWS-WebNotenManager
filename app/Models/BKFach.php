@@ -72,41 +72,41 @@ class BKFach extends Model
 
     public function abschlussnote(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }    
 
     public function bkabschluss(): BelongsTo
     {
-        return $this->belongsTo(BKAbschluss::class);
+        return $this->belongsTo(related: BKAbschluss::class);
     }    
 
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(Fach::class);
+        return $this->belongsTo(related: Fach::class);
     }
 
     public function lehrer(): BelongsTo
     {
-        return $this->belongsTo(Lehrer::class);
+        return $this->belongsTo(related: Lehrer::class);
     }
 
     public function noteBerufsabschluss(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function noteMuendlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function noteSchriftlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function vornote(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 }

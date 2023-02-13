@@ -16,8 +16,8 @@ class DatenCollection extends ResourceCollection
 
     public function toArray($request): array
     {
-        return $this->collection->map(fn (DatenResource $resource) =>
-            $resource->attributes($this->attributes)->toArray($request)
+        return $this->collection->map(callback: fn (DatenResource $resource): array =>
+            $resource->attributes(attributes: $this->attributes)->toArray($request)
         )->all();
     }
 }

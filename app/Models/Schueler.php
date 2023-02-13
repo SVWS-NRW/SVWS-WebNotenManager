@@ -92,46 +92,46 @@ class Schueler extends Model
 
     public function bilingualeSprache(): BelongsTo // TODO: not in json
     {
-        return $this->belongsTo(Fach::class);
+        return $this->belongsTo(related: Fach::class);
     }
 
     public function bemerkung(): HasOne // TODO: not in json
     {
-        return $this->hasOne(Bemerkung::class);
+        return $this->hasOne(related: Bemerkung::class);
     }
 
     public function bkabschluss(): HasOne // TODO: redo import from hasmany to has one, // TODO: not in json
     {
-        return $this->hasOne(BKAbschluss::class);
+        return $this->hasOne(related: BKAbschluss::class);
     }
 
     public function jahrgang(): BelongsTo
     {
-        return $this->belongsTo(Jahrgang::class);
+        return $this->belongsTo(related: Jahrgang::class);
     }
 
     public function klasse(): BelongsTo
     {
-        return $this->belongsTo(Klasse::class);
+        return $this->belongsTo(related: Klasse::class);
     }
 
     public function leistungen(): HasMany
     {
-        return $this->hasMany(Leistung::class);
+        return $this->hasMany(related: Leistung::class);
     }
 
     public function sprachenfolgen(): HasMany // TODO: not in json
     {
-        return $this->hasMany(Sprachenfolge::class);
+        return $this->hasMany(related: Sprachenfolge::class);
     }
 
     public function lernabschnitt(): HasOne
     {
-        return $this->hasOne(Lernabschnitt::class);
+        return $this->hasOne(related: Lernabschnitt::class);
     }
 
     public function zp10(): HasOne // TODO: check imnport after changing hasmany to hasone // TODO: not in json
     {
-        return $this->hasOne(Zp10::class);
+        return $this->hasOne(related: Zp10::class);
     }
 }

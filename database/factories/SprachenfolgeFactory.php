@@ -7,9 +7,6 @@ use App\Models\Schueler;
 use App\Models\Sprachenfolge;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Sprachenfolge>
- */
 class SprachenfolgeFactory extends Factory
 {
     protected $model = Sprachenfolge::class;
@@ -20,37 +17,49 @@ class SprachenfolgeFactory extends Factory
             'schueler_id' => Schueler::factory(),
             'sprache' => $this->faker->unique->word(), 
             'fach_id' => Fach::factory(),
-            'reihenfolge' => rand(1, 10),
+            'reihenfolge' => rand(min: 1, max: 10),
         ];
     }
 
     public function withBelegungVonJahrgang(): Factory
     {
-        return $this->state(fn () => ['belegungVonJahrgang' => rand(1, 10)]);
+        return $this->state(fn (): array  => [
+			'belegungVonJahrgang' => rand(min: 1, max: 10),
+		]);
     }
 
     public function withBelegungVonAbschnitt(): Factory
     {
-        return $this->state(fn () => ['belegungVonAbschnitt' => rand(1, 10)]);
+        return $this->state(fn (): array  => [
+			'belegungVonAbschnitt' => rand(min: 1, max: 10),
+		]);
     }
 
     public function withBelegungBisJahrgang(): Factory
     {
-        return $this->state(fn () => ['belegungBisJahrgang' => rand(1, 10)]);
+        return $this->state(fn (): array  => [
+			'belegungBisJahrgang' => rand(min: 1, max: 10),
+		]);
     }
 
     public function withBelegungBisAbschnitt(): Factory
     {
-        return $this->state(fn () => ['belegungBisAbschnitt' => rand(1, 10)]);
+        return $this->state(fn (): array  => [
+			'belegungBisAbschnitt' => rand(min: 1, max: 10),
+		]);
     }
 
     public function withReferenzniveau(): Factory
     {
-        return $this->state(fn () => ['referenzniveau' => $this->faker->unique->word()]);
+        return $this->state(fn (): array  => [
+			'referenzniveau' => $this->faker->unique->word()
+		]);
     }
 
     public function withBelegungSekI(): Factory
     {
-        return $this->state(fn () => ['belegungSekI' => rand(0, 3) * 2]);
+        return $this->state(fn (): array  => [
+			'belegungSekI' => rand(max: 3) * 2,
+		]);
     }
 }

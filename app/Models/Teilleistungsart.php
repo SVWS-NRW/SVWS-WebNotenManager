@@ -45,6 +45,6 @@ class Teilleistungsart extends Model
 
     public function teilleistungen(): HasMany
     {
-        return $this->hasMany(Teilleistung::class);
+        return $this->hasMany(related: Teilleistung::class);
     }
 }

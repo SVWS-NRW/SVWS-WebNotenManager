@@ -15,18 +15,19 @@ class SchuelerBemerkungenRequest extends FormRequest
 			return false;
 		}
 
-		if (in_array($this->schueler->klasse_id, auth()->user()->klassen()->pluck('id')->toArray())) {
-			return true;
-		}
-
-        return false;
+		return in_array(
+			needle: $this->schueler->klasse_id,
+			haystack: auth()->user()->klassen()->pluck(column: 'id')->toArray()
+		);
     }
 
     public function rules(): array
     {
         return [
-            'key' => Rule::in(Bemerkung::ALLOWED_BEMERKUNGEN),
-			'value' => ['nullable', 'string'],
+            'key' => Rule::in(values: Bemerkung::ALLOWED_BEMERKUNGEN),
+			'value' => [
+				'nullable', 'string'
+			],
         ];
     }
 }

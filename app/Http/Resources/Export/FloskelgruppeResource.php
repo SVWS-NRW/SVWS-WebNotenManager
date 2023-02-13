@@ -12,7 +12,7 @@ class FloskelgruppeResource extends JsonResource
             'kuerzel' => $this->kuerzel,
             'bezeichnung' => $this->bezeichnung,
             'hauptgruppe' => $this->hauptgruppe,
-            'floskeln' => FloskelResource::collection($this->floskeln),
+            'floskeln' => FloskelResource::collection(resource: $this->floskeln),
         ];
     }
 }

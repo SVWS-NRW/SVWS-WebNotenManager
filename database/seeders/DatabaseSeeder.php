@@ -11,9 +11,11 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->create(['email' => 'user@user.com']);
+        User::factory()->create(attributes: [
+			'email' => 'user@user.com'],
+		);
 
-        $this->call([
+        $this->call(class: [
             JsonImportSeeder::class,
             SettingSeeder::class,
         ]);

@@ -12,9 +12,12 @@ class DatenResource extends JsonResource
     public function toArray($request): array
     {
 		$schueler = Schueler::query()
-			->with('leistungen', 'bemerkung')
-			->whereHas('leistungen', fn (Builder $leistung) =>
-				$leistung->whereIn('lerngruppe_id', $this->lehrer->lerngruppen->pluck('id')->toArray())
+			->with(relations: ['leistungen', 'bemerkung'])
+			->whereHas(relation: 'leistungen', callback: fn (Builder $leistung): Builder =>
+				$leistung->whereIn(
+					column:'lerngruppe_id',
+					values: $this->lehrer->lerngruppen->pluck(key: 'id')->toArray()
+				)
 			)
 			->get();
 
@@ -25,25 +28,7 @@ class DatenResource extends JsonResource
             'aktuellerAbschnitt' => $this->aktuellerAbschnitt,
 			'schulform' => $this->schulform,
 			'lehrerID' => $this->lehrer->ext_id,
-            'schueler' => SchuelerResource::collection($schueler),
-
-
-//            'noten' => $this->attributes['noten'],
-//            'foerderschwerpunkte' => $this->attributes['foerderschwerpunkte'],
-//            'faecher' => $this->attributes['faecher'],
-//            'jahrgaenge' => $this->attributes['jahrgaenge'],
-//
-////            'jahrgaenge' => JahrgangResource::collection(Jahrgang::all()),
-////            'klassen' => FloskelgruppeResource::collection(Klasse::all()),
-//
-//            'floskelgruppen' => $this->attributes['floskelgruppen'],
-////            'lehrer' => LehrerResource::collection(Lehrer::all()),
-////            'faecher' => FachResource::collection(Fach::all()),
-//
-//            'teilleistungsarten' => $this->attributes['teilleistungsarten'],
-
-//            'lerngruppen' => LerngruppeResource::collection($this->lerngruppen),
-
+            'schueler' => SchuelerResource::collection(resource: $schueler),
         ];
     }
 }

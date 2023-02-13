@@ -38,6 +38,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereZb($value)
  * @mixin \Eloquent
  * @property-read \App\Models\Schueler|null $schueler
+ * @property string|null $ASV
+ * @property string $tsASV Timestamp
+ * @property string|null $AUE
+ * @property string $tsAUE Timestamp
+ * @property string|null $ZB
+ * @property string $tsZB Timestamp
+ * @property string|null $LELS
+ * @property string $tsIndividuelleVersetzungsbemerkungen Timestamp
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereASV($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereAUE($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereLELS($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereTsASV($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereTsAUE($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereTsIndividuelleVersetzungsbemerkungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereTsZB($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung whereZB($value)
  */
 class Bemerkung extends Model
 {
@@ -66,6 +82,6 @@ class Bemerkung extends Model
 
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(Schueler::class);
+        return $this->belongsTo(related: Schueler::class);
     }
 }

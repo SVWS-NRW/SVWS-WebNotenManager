@@ -6,17 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SchuelerBemerkungenRequest;
 use App\Models\Bemerkung;
 use App\Models\Schueler;
-use Illuminate\Database\Eloquent\Model;
 
 class SchuelerBemerkung extends Controller
 {
-    public function __invoke(SchuelerBemerkungenRequest $request, Schueler $schueler): Model
+    public function __invoke(SchuelerBemerkungenRequest $request, Schueler $schueler): Bemerkung
     {
-		return Bemerkung::updateOrCreate([
-			'schueler_id' => $schueler->id
-		], [
-			$request->key => $request->value,
-			"ts{$request->key}" => now()->format('Y-m-d H:i:s.u'),
-		]);
+		return Bemerkung::updateOrCreate(
+			attributes: ['schueler_id' => $schueler->id],
+			values: [
+				$request->key => $request->value,
+				"ts{$request->key}" => now()->format(format: 'Y-m-d H:i:s.u'),
+			]
+		);
     }
 }

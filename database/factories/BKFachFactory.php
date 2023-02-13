@@ -9,9 +9,6 @@ use App\Models\Note;
 use App\Models\Lehrer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\BKFach>
- */
 class BKFachFactory extends Factory
 {
     protected $model = BKFach::class;
@@ -32,21 +29,29 @@ class BKFachFactory extends Factory
 
     public function withIstSchriftlich(): Factory
     {
-        return $this->state(fn () => ['istSchriftlich' => true]);
+        return $this->state(fn (): array => [
+			'istSchriftlich' => true,
+		]);
     }
    
     public function withMuendlichePruefung(): Factory
     {
-        return $this->state(fn () => ['muendlichePruefung' => true]);
+        return $this->state(fn (): array => [
+			'muendlichePruefung' => true,
+		]);
     }    
 
     public function withMuendlichePruefungFreiwillig(): Factory
     {
-        return $this->state(fn () => ['muendlichePruefungFreiwillig' => true]);
+        return $this->state(fn (): array  => [
+			'muendlichePruefungFreiwillig' => true,
+		]);
     }    
 
     public function withIstSchriftlichBerufsabschluss(): Factory
     {
-        return $this->state(fn () => ['istSchriftlichBerufsabschluss' => true]);
+        return $this->state(fn (): array  => [
+			'istSchriftlichBerufsabschluss' => true,
+		]);
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Leistung;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +17,7 @@ class FachbezogeneBemerkung extends Controller
 
 		return response()->json(
 			data: request()->all(),
-			status: Response::HTTP_OK
+			status: Response::HTTP_OK,
 		);
 	}
 }

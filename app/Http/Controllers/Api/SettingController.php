@@ -10,15 +10,20 @@ class SettingController extends Controller
 {
     public function get(string $type): Collection
 	{
-		return Setting::where(['type' => $type])->get()->pluck('value', 'key');
+		return Setting::query()
+			->where(column: 'type', operator: '=', value: $type)
+			->get()
+			->pluck(value: 'value', key: 'key');
 	}
 
     public function set(): void
 	{
-		collect(request()->settings)->each(fn (string $value, string $key) =>
-			Setting::where(['key' => $key, 'type' => request()->type])
+		collect(value: request()->settings)->each(callback: fn (string $value, string $key): bool =>
+			Setting::query()
+				->where(column: 'key', operator: '=', value: $key)
+				->where(column: 'type', operator: '=', value: request()->type)
 				->firstOrFail()
-				->update(['value' => $value])
+				->update(attributes: ['value' => $value])
 		);
 	}
 }

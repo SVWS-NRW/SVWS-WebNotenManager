@@ -7,7 +7,7 @@
     import { LeistungsDatenFilterValues } from '../Interfaces/Filter'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
-    import NoteInput from '../Components/Dashboard/NoteInput.vue'
+    import NoteInput from '../Components/NoteInput.vue'
     import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
 
     import {
@@ -90,7 +90,6 @@
     }
 
     onMounted((): void => {
-
         getLeistungen()
         drawTable()
     })
@@ -102,11 +101,11 @@
         filterOptions.klassen = setFilters(state.leistungen, 'klasse')
         filterOptions.faecher = setFilters(state.leistungen, 'fach')
     }
+
     const getLeistungen = (): Promise<any> => axios
         .get(route('api.mein_unterricht'))
         .then((response: AxiosResponse): void => {
             state.leistungen = response.data
-
         }).finally(() => getFilters())
 
     const setFilters = (data, column: string): { label: string, index: string | null | number }[] => {
@@ -126,11 +125,11 @@
     const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
         .filter((leistung: Leistung): boolean =>
             searchFilter(leistung)
-            // && tableFilter(leistung, 'klasse', true)
+            && tableFilter(leistung, 'klasse', true)
             && tableFilter(leistung, 'kurs', true)
-            // && tableFilter(leistung, 'jahrgang')
+            && tableFilter(leistung, 'jahrgang')
             && tableFilter(leistung, 'note', true)
-            // && tableFilter(leistung, 'fach')
+            && tableFilter(leistung, 'fach')
         )
     )
 

@@ -24,7 +24,7 @@
 
     const updateIstGemahnt = (value: boolean): void => {
         leistung.istGemahnt = value
-        axios.post(route('set_mahnung', leistung.id), leistung)
+        axios.post(route('api.mahnung', leistung.id), leistung)
     }
 
     const istGemahnt = computed((): boolean => Boolean(leistung.istGemahnt))

@@ -10,9 +10,9 @@ class SchuelerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'leistungsdaten' => LeistungsdatenResource::collection($this->leistungen),
-            'lernabschnitt' => new LernabschnittResource($this->lernabschnitt),
-            'bemerkungen' => new BemerkungResource($this->bemerkung),
+            'leistungsdaten' => LeistungsdatenResource::collection(resource: $this->leistungen),
+            'lernabschnitt' => new LernabschnittResource(resource: $this->lernabschnitt),
+            'bemerkungen' => new BemerkungResource(resource: $this->bemerkung),
 
         ];
     }

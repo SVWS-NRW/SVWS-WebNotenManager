@@ -39,6 +39,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\Note|null $lernbereich2Note
  * @property-read \App\Models\Foerderschwerpunkt|null $foerderschwerpunkt1Relation
  * @property-read \App\Models\Foerderschwerpunkt|null $foerderschwerpunkt2Relation
+ * @property int|null $fehlstundenGesamt
+ * @property string $tsFehlstundenGesamt Timestamp
+ * @property int|null $fehlstundenUnentschuldigt
+ * @property string $tsFehlstundenUnentschuldigt Timestamp
+ * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereFehlstundenGesamt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereFehlstundenUnentschuldigt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereTsFehlstundenGesamt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereTsFehlstundenUnentschuldigt($value)
  */
 class Lernabschnitt extends Model
 {
@@ -62,26 +70,42 @@ class Lernabschnitt extends Model
 
     public function foerderschwerpunkt1Relation(): BelongsTo
     {
-        return $this->belongsTo(Foerderschwerpunkt::class, 'foerderschwerpunkt1', 'id');
+        return $this->belongsTo(
+			related: Foerderschwerpunkt::class,
+			foreignKey: 'foerderschwerpunkt1',
+			ownerKey: 'id',
+		);
     }
 
     public function foerderschwerpunkt2Relation(): BelongsTo
     {
-        return $this->belongsTo(Foerderschwerpunkt::class, 'foerderschwerpunkt2', 'id');
+        return $this->belongsTo(
+			related: Foerderschwerpunkt::class,
+			foreignKey: 'foerderschwerpunkt2',
+			ownerKey: 'id',
+		);
     }
 
     public function lernbereich1Note(): BelongsTo
     {
-        return $this->belongsTo(Note::class, 'lernbereich1note', 'id');
+        return $this->belongsTo(
+			related: Note::class,
+			foreignKey: 'lernbereich1note',
+			ownerKey: 'id',
+		);
     }
 
     public function lernbereich2Note(): BelongsTo
     {
-        return $this->belongsTo(Note::class, 'lernbereich2note', 'id');
+        return $this->belongsTo(
+			related: Note::class,
+			foreignKey: 'lernbereich2note',
+			ownerKey: 'id',
+		);
     }
 
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(Schueler::class);
+        return $this->belongsTo(related: Schueler::class);
     }
 }

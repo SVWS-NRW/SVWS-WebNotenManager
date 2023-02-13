@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup lang="ts"> // ok
     import { watch, computed, reactive } from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
     import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios'
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
-    import { Leistung } from '../../Interfaces/Leistung'
+    import { Leistung } from '../Interfaces/Leistung'
 
     const props = defineProps(['leistung', 'disabled'])
 
@@ -20,7 +20,7 @@
     })
 
     const saveNote = (): AxiosPromise => axios
-        .post(route('set_noten', leistung), { note: leistung.note })
+        .post(route('api.noten', leistung), { note: leistung.note })
         .then((response: AxiosResponse): AxiosResponse => leistung.note = response.data.note)
         .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
 

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts"> // ok
     import { computed, reactive, Ref, ref } from 'vue'
     import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
@@ -71,7 +71,7 @@
     })
 
     const getBemerkungen = () : AxiosPromise => axios
-        .get(route('get_floskeln', props.floskelgruppe))
+        .get(route('api.floskeln', props.floskelgruppe))
         .then((response: AxiosResponse): AxiosResponse => {
             floskeln.value = response.data
             collapsed.value = false
@@ -85,7 +85,7 @@
 
     const setBemerkungen = (): AxiosPromise => axios
         .post(
-            route('set_schueler_bemerkung', props.leistung.id),
+            route('api.schueler_bemerkung', props.leistung.id),
             { key: props.floskelgruppe, value: state.bemerkung }
         ).then((response): AxiosResponse => {
             state.storedBemerkung = response.data[props.floskelgruppe]

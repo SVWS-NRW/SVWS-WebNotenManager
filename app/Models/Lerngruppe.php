@@ -44,6 +44,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property-read Fach|null $fach
  * @property string|null $kursartKuerzel
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKursartKuerzel($value)
+ * @property int|null $klasse_id
+ * @property string $kID
+ * @property-read \App\Models\Klasse|null $klasse
+ * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKID($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKlasseId($value)
  */
 class Lerngruppe extends Model
 {
@@ -65,16 +70,19 @@ class Lerngruppe extends Model
 
     public function lehrer(): BelongsToMany
     {
-        return $this->belongsToMany(Lehrer::class, 'lerngruppe_lehrer');
+        return $this->belongsToMany(
+			related: Lehrer::class,
+			table: 'lerngruppe_lehrer',
+		);
     }
 
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(Fach::class);
+        return $this->belongsTo(related: Fach::class);
     }
 
     public function klasse(): BelongsTo
     {
-        return $this->belongsTo(Klasse::class);
+        return $this->belongsTo(related: Klasse::class);
     }
 }

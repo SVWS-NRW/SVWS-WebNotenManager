@@ -51,11 +51,11 @@ class Teilleistung extends Model
 
     public function leistung(): BelongsTo
     {
-        return $this->belongsTo(Leistung::class);
+        return $this->belongsTo(related: Leistung::class);
     }
 
     public function teilleistungsart(): BelongsTo
     {
-        return $this->belongsTo(Teilleistungsart::class);
+        return $this->belongsTo(related: Teilleistungsart::class);
     }
 }

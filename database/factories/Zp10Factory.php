@@ -29,11 +29,15 @@ class Zp10Factory extends Factory
    
     public function withMuendlichePruefung(): Factory
     {
-        return $this->state(fn () => ['muendlichePruefung' => true]);
+        return $this->state(fn (): array => [
+			'muendlichePruefung' => true,
+		]);
     }    
 
     public function withMuendlichePruefungFreiwillig(): Factory
     {
-        return $this->state(fn () => ['muendlichePruefungFreiwillig' => true]);
+        return $this->state(fn (): array => [
+			'muendlichePruefungFreiwillig' => true,
+		]);
     }    
 }

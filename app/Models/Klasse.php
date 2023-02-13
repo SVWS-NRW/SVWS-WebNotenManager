@@ -31,6 +31,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereSortierung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Lerngruppe[] $lerngruppen
+ * @property-read int|null $lerngruppen_count
  */
 class Klasse extends Model
 {
@@ -49,11 +51,14 @@ class Klasse extends Model
 
 	public function lerngruppen(): HasMany
 	{
-		return $this->hasMany(Lerngruppe::class);
+		return $this->hasMany(related: Lerngruppe::class);
 	}
 
     public function klassenlehrer(): BelongsToMany
     {
-        return $this->belongsToMany(Lehrer::class, 'klasse_lehrer');
+        return $this->belongsToMany(
+			related: Lehrer::class,
+			table: 'klasse_lehrer',
+		);
     }
 }

@@ -13,7 +13,7 @@ class KlasseResource extends JsonResource
             'kuerzel' => $this->kuerzel,
             'kuerzelAnzeige' => $this->kuerzelAnzeige,
             'sortierung' => $this->sortierung,
-            'klassenlehrer' => $this->klassenlehrer->pluck('id'),
+            'klassenlehrer' => $this->klassenlehrer->pluck(key: 'id'),
         ];
     }
 }

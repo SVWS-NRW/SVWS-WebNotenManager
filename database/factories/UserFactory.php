@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Lehrer;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,13 +20,15 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-            'remember_token' => Str::random(10),
+            'remember_token' => Str::random(length: 10),
         ];
     }
 
     public function unverified(): Factory
     {
-        return $this->state(fn () => ['email_verified_at' => null]);
+        return $this->state(fn (): array => [
+			'email_verified_at' => null,
+		]);
     }
 
     public function withPersonalTeam(): Factory
@@ -35,12 +38,12 @@ class UserFactory extends Factory
         }
 
         return $this->has(
-            Team::factory()->state(fn (array $attributes, Lehrer $lehrer) => [
+            Team::factory()->state(state: fn (array $attributes, Lehrer $lehrer): array => [
                 'name' => $lehrer->kuerzel.'\'s Team', 
                 'user_id' => $lehrer->id, 
-                'personal_team' => true
+                'personal_team' => true,
             ]),
-            'ownedTeams'
+            relationship: 'ownedTeams'
         );
     }
 }

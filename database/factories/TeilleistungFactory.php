@@ -8,9 +8,6 @@ use App\Models\Teilleistung;
 use App\Models\Teilleistungsart;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Teilleistung>
- */
 class TeilleistungFactory extends Factory
 {
     protected $model = Teilleistung::class;
@@ -25,16 +22,22 @@ class TeilleistungFactory extends Factory
 
     public function withDatum(): Factory
     {
-        return $this->state(fn () => ['datum' => now()->format('Y-m-d')]);
+        return $this->state(fn (): array => [
+			'datum' => now()->format(format: 'Y-m-d'),
+		]);
     }
 
     public function withBemerkung(): Factory
     {
-        return $this->state(fn () => ['bemerkung' => $this->faker->paragraph]);
+        return $this->state(fn (): array => [
+			'bemerkung' => $this->faker->paragraph,
+		]);
     }
 
     public function withNote(): Factory
     {
-        return $this->state(fn () => ['note_id' => Note::factory()]);
+        return $this->state(fn (): array => [
+			'note_id' => Note::factory(),
+		]);
     }
 }

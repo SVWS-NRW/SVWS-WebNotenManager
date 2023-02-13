@@ -75,6 +75,10 @@ class Daten extends Model
 
     public function lehrer(): BelongsTo
     {
-        return $this->belongsTo(Lehrer::class, 'lehrer_id', 'id');
+        return $this->belongsTo(
+			related: Lehrer::class,
+			foreignKey: 'lehrer_id',
+			ownerKey: 'id',
+		);
     }
 }

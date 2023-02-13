@@ -13,7 +13,7 @@ class MeinUnterricht extends Controller
 {
 	public function __invoke(): AnonymousResourceCollection
 	{
-		$lerngruppen = auth()->user()->lerngruppen->pluck('id')->toArray();
+		$lerngruppen = auth()->user()->lerngruppen->pluck(value: 'id')->toArray();
 
 		$eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
@@ -39,6 +39,8 @@ class MeinUnterricht extends Controller
 			->get()
 			->sortBy(callback: $sortByColumns);
 
-		return LeistungResource::collection(resource: $leistungen);
+		return LeistungResource::collection(
+			resource: $leistungen
+		);
 	}
 }

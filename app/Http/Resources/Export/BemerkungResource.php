@@ -7,52 +7,71 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BemerkungResource extends JsonResource
 {
+
+
     public function toArray($request): array
     {
+
+
         return [
-            'ASV' => $this->ASV ? $this->formatBemerkung($this->schueler, $this->ASV) : null,
+            'ASV' => $this->ASV ? $this->formatBemerkung(bemerkung: $this->ASV) : null,
             'tsASV' => $this->tsASV,
-            'AUE' => $this->AUE ? $this->formatBemerkung($this->schueler, $this->AUE) : null,
+            'AUE' => $this->AUE ? $this->formatBemerkung(bemerkung: $this->AUE) : null,
             'tsAUE' => $this->tsAUE,
-            'ZB' => $this->ZB ? $this->formatBemerkung($this->schueler, $this->ZB) : null,
+            'ZB' => $this->ZB ? $this->formatBemerkung(bemerkung: $this->ZB) : null,
             'tsZB' => $this->tsZB,
             'LELS' => $this->LELS,
             'schulformEmpf' => $this->schulformEmpf,
-            'individuelleVersetzungsbemerkungen' => $this->individuelleVersetzungsbemerkungen ? $this->formatBemerkung($this->schueler, $this->individuelleVersetzungsbemerkungen) : null,
+            'individuelleVersetzungsbemerkungen' => $this->individuelleVersetzungsbemerkungen
+				? $this->formatBemerkung(bemerkung: $this->individuelleVersetzungsbemerkungen)
+				: null,
             'tsIndividuelleVersetzungsbemerkungen' => $this->tsIndividuelleVersetzungsbemerkungen,
             'foerderbemerkungen' => $this->foerderbemerkungen,
         ];
     }
 
-	private function formatBemerkung(Schueler $schueler, string $bemerkung): string
+	private function formatBemerkung(string $bemerkung): string
 	{
 		$firstOccurrence = true;
 
 		$pattern = '/(\$vorname\$ \$nachname\$|\$vorname\$|\$nachname\$)/i';
-		$text = preg_split($pattern, $bemerkung, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+		$text = preg_split(
+			pattern: $pattern,
+			subject: $bemerkung,
+			limit: -1,
+			flags: PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
+		);
 
 		$pronouns = ['m' => 'Er', 'w' => 'Sie'];
-		$pronoun = array_key_exists($schueler->geschlecht, $pronouns) ? $pronouns[$schueler->geschlecht] : null;
+		$pronoun = array_key_exists(key: $this->schueler->geschlecht, array: $pronouns)
+			? $pronouns[$this->schueler->geschlecht]
+			: null;
 
 		$initialOccurrence = [
-			'$vorname$ $nachname$' => "{$schueler->vorname} {$schueler->nachname}",
-			'$vorname$' => $schueler->vorname,
-			'$nachname$' => $schueler->nachname,
+			'$vorname$ $nachname$' => "{$this->schueler->vorname} {$this->schueler->nachname}",
+			'$vorname$' => $this->schueler->vorname,
+			'$nachname$' => $this->schueler->nachname,
 		];
 
 		$succeedingOccurrences = [
-			'$vorname$ $nachname$' => $pronoun ?? $schueler->vorname,
-			'$vorname$' => $pronoun ?? $schueler->vorname,
+			'$vorname$ $nachname$' => $pronoun ?? $this->schueler->vorname,
+			'$vorname$' => $pronoun ?? $this->schueler->vorname,
 			'$nachname$' => null,
 		];
 
 		foreach ($text as &$item) {
-			if (array_key_exists(strtolower($item), $array = $firstOccurrence ? $initialOccurrence : $succeedingOccurrences)) {
-				$item = $array[strtolower($item)];
+			$condition = array_key_exists(
+				key: strtolower($item),
+				array: $array = $firstOccurrence ? $initialOccurrence : $succeedingOccurrences
+			);
+
+			if ($condition) {
+				$item = $array[strtolower(string: $item)];
 				$firstOccurrence = false;
 			}
 		}
 
-		return implode($text);
+		return implode(separator: ' ', array: $text);
 	}
 }

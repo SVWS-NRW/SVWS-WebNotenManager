@@ -29,7 +29,7 @@
     import {Leistung} from '../Interfaces/Leistung'
     import {LeistungsDatenFilterValues} from '../Interfaces/Filter'
 
-    import NoteInput from '../Components/Dashboard/NoteInput.vue'
+    import NoteInput from '../Components/NoteInput.vue'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
     import {Schueler} from '../Interfaces/Schueler'
@@ -54,7 +54,7 @@
         leistungen: <Leistung[]> [],
     })
 
-    let filterOptions = <LeistungsDatenFilterValues>reactive({
+    let filterOptions = <any>reactive({
         'jahrgaenge': [],
         'klassen': [],
         'kurse': [],
@@ -75,7 +75,7 @@
         jahrgang: 0,
         kurs: 0,
         fach: '0',
-        note: 0,
+        note: '0',
     })
 
     const columns = ref<Column[]>([])
@@ -100,18 +100,37 @@
     watch(toggles, (): void => drawTable())
 
     onMounted((): void => {
-        getFilters()
+        // getFilters()
         getLeistungen()
         drawTable()
     })
 
-    const getFilters = (): AxiosPromise => axios
-        .get(route('get_filters'))
-        .then((response: AxiosResponse): AxiosResponse => filterOptions = response.data)
+    const getFilters = (): void => {
+        filterOptions.kurse = setFilters(state.leistungen, 'kurs')
+        filterOptions.noten = setFilters(state.leistungen, 'note')
+        filterOptions.jahrgaenge = setFilters(state.leistungen, 'jahrgang')
+        filterOptions.klassen = setFilters(state.leistungen, 'klasse')
+        filterOptions.faecher = setFilters(state.leistungen, 'fach')
+    }
+
+    const setFilters = (data, column: string): { label: string, index: string | null | number }[] => {
+        let set = [
+            ...new Set(data.map((item: any): string => item[column]))
+        ].map((item: string): {
+            label: string, index: string | null | number
+        } => {
+            return { label: item ?? 'Leer', index: item }
+        })
+
+        set.unshift({ label: 'Alle', index: '0' })
+
+        return set
+    }
 
     const getLeistungen = (): AxiosPromise => axios
-        .get(route('get_leistungen'))
+        .get(route('api.leistungsdatenuebersicht'))
         .then((response: AxiosResponse): AxiosResponse => state.leistungen = mapLeistungen(response.data))
+        .finally(() => getFilters())
 
     const mapLeistungen = (data) => data.map((leistung: Leistung): Leistung => {
         leistung.name = `${leistung.nachname}, ${leistung.vorname}`
@@ -140,6 +159,12 @@
         if (filters[column] == 0) return true
         return leistung[column] == filters[column]
     }
+
+    let lowScoreArray: Array<string> = [ // TODO: Create a helper
+        '6', '5-', '5', '5+', '4-',
+    ]
+
+    const lowScore = (note: string): boolean => lowScoreArray.includes(note)
 </script>
 
 <template>
@@ -173,7 +198,9 @@
 
             <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns" v-model="clickedRow">
                 <template #cell-note="{ row }">
-                    <NoteInput :leistung="row" :disabled="true"></NoteInput>
+                    <strong :class="{ 'low-score' : lowScore(row.note) }">
+                        {{ row.note }}
+                    </strong>
                 </template>
 
                 <template #cell-fach="{ row }">
@@ -211,4 +238,9 @@ header #headline {
 header #filters {
     @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6
 }
+
+ .low-score {
+     @apply ui-text-red-500 ui-font-bold
+ }
+
 </style>

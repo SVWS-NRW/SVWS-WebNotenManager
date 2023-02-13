@@ -45,6 +45,6 @@ class Floskelgruppe extends Model
 
     public function floskeln(): HasMany
     {
-        return $this->hasMany(Floskel::class);
+        return $this->hasMany(related: Floskel::class);
     }
 }

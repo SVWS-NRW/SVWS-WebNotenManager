@@ -9,9 +9,8 @@ use App\Models\Leistung;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class GetLeistungen extends Controller
+class Leistungsdatenuebersicht extends Controller
 {
-
 	/**
 	 * Fetches all Leistung Models records and returns as a formatted resource.
 	 * Lehrer users get only records where the Klasse Model intersects with their Klasse relationship.

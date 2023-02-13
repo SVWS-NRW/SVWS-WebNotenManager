@@ -10,12 +10,12 @@ class SchuelerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => implode(', ', [$this->nachname, $this->vorname]),
+            'name' => implode(separator: ', ', array: [$this->nachname, $this->vorname]),
             'vorname' => $this->vorname,
             'nachname' => $this->nachname,
             'geschlecht' => $this->geschlecht,
             'jahrgang_id' => $this->jahrgang->id,
-            'bemerkungen' => new BemerkungResource($this->bemerkung),
+            'bemerkungen' => new BemerkungResource(resource: $this->bemerkung),
         ];
     }
 }

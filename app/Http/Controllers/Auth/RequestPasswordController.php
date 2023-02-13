@@ -14,21 +14,21 @@ use Inertia\Response;
 
 class RequestPasswordController extends Controller
 {
-    public function index(): Response
-	{
-		return Inertia::render('Auth/RequestPassword');
-	}
-
-	public function store(FirstLoginRequest $request): void
+	public function store(FirstLoginRequest $request): void // TODO
 	{
 		try {
 			$lehrer = Lehrer::query()
-				->where($request->only('email', 'kuerzel'))
-				->whereHas('daten', fn ($daten) => $daten->where(['schulnummer' => (int) $request->schulnummer]))
+				->where(column: $request->only(keys: ['email', 'kuerzel']))
+				->whereHas(
+					relation: 'daten',
+					callback: fn ($daten) => $daten->where(
+						column: 'schulnummer', operator: '=', value: (int) $request->schulnummer
+					)
+				)
 				->firstOrFail();
 
-			$token = app(PasswordBroker::class)->createToken($lehrer);
-			$lehrer->notify(new RequestPasswordNotification($token));
+			$token = app(abstract: PasswordBroker::class)->createToken(user: $lehrer);
+			$lehrer->notify(instance: new RequestPasswordNotification(token: $token));
 		} finally {
 			return;
 		}

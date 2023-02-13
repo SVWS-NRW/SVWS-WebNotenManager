@@ -11,17 +11,17 @@ class ExportController extends Controller
 	public function __invoke(): AnonymousResourceCollection
 	{
 		$schueler = Schueler::query()
-			->with([
-				'leistungen' => [
-					'note',
-				],
+			->with(relations: [
+				'bemerkung',
+				'leistungen' => ['note'],
 				'lernabschnitt' => [
 					'lernbereich1Note', 'lernbereich2Note', 'foerderschwerpunkt1Relation', 'foerderschwerpunkt2Relation',
 				],
-				'bemerkung'
 			])
 			->get();
 
-		return SchuelerResource::collection($schueler);
+		return SchuelerResource::collection(
+			resource: $schueler
+		);
 	}
 }

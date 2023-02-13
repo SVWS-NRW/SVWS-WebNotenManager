@@ -55,16 +55,16 @@ class Floskel extends Model
 
     public function floskelgruppe(): BelongsTo
     {
-        return $this->belongsTo(Floskelgruppe::class);
+        return $this->belongsTo(related: Floskelgruppe::class);
     }    
 
     public function jahrgang(): BelongsTo
     {
-        return $this->belongsTo(Jahrgang::class);
+        return $this->belongsTo(related: Jahrgang::class);
     }
 
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(Fach::class);
+        return $this->belongsTo(related: Fach::class);
     }
 }

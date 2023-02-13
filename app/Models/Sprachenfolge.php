@@ -62,11 +62,11 @@ class Sprachenfolge extends Model
 
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(Fach::class);
+        return $this->belongsTo(related: Fach::class);
     }
 
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(Schueler::class);
+        return $this->belongsTo(related: Schueler::class);
     }
 }

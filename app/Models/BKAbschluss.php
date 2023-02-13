@@ -76,26 +76,26 @@ class BKAbschluss extends Model
 
     public function noteFachpraxis(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function noteKolloqium(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function notePraktischePruefung(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(Schueler::class);
+        return $this->belongsTo(related: Schueler::class);
     }
 
     public function bkFaecher(): HasMany
     {
-        return $this->hasMany(BKFach::class);
+        return $this->hasMany(related: BKFach::class);
     }
 }

@@ -9,9 +9,6 @@ use App\Models\Kurs;
 use App\Models\Lerngruppe;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Lerngruppe>
- */
 class LerngruppeFactory extends Factory
 {
     protected $model = Lerngruppe::class;
@@ -21,12 +18,12 @@ class LerngruppeFactory extends Factory
         return [
             'fach_id' => Fach::factory(),
             'klasse_id' => Klasse::factory(),
-			'kID' => $this->faker->numberBetween(1, 1_000_000),
-            'kursartID' => $this->faker->numberBetween(1, 1_000_000),
+			'kID' => $this->faker->numberBetween(int1: 1, int2: 1_000_000),
+            'kursartID' => $this->faker->numberBetween(int1: 1, int2: 1_000_000),
             'bezeichnung' => $this->faker->unique->word(),
             'kursartKuerzel' => $this->faker->unique->word(),
 			'bilingualeSprache' => $this->faker->unique->word(),
-            'wochenstunden' => rand(1, 10),
+            'wochenstunden' => rand(min: 1, max: 10),
         ];
     }
 

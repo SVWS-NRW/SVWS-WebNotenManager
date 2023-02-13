@@ -52,6 +52,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read \App\Models\LeistungNormalized|null $leistungNormalized
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereIstGemahnt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereMahndatum($value)
+ * @property string $tsNote Timestamp
+ * @property string $tsFehlstundenGesamt Timestamp
+ * @property string $tsFehlstundenUnentschuldigt Timestamp
+ * @property string $tsFachbezogeneBemerkungen Timestamp
+ * @property string $tsIstGemahnt Timestamp
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFachbezogeneBemerkungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFehlstundenGesamt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFehlstundenUnentschuldigt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsIstGemahnt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsNote($value)
  */
 class Leistung extends Model
 {
@@ -85,26 +95,21 @@ class Leistung extends Model
 
     public function lerngruppe(): BelongsTo
     {
-        return $this->belongsTo(Lerngruppe::class);
+        return $this->belongsTo(related: Lerngruppe::class);
     }
 
     public function note(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(Schueler::class);
+        return $this->belongsTo(related: Schueler::class);
     }
 
     public function teilleistungen(): HasMany
     {
-        return $this->hasMany(Teilleistung::class);
-    }
-
-    public function leistungNormalized(): HasOne // TODO: To be removed
-    {
-        return $this->hasOne(LeistungNormalized::class);
+        return $this->hasMany(related: Teilleistung::class);
     }
 }

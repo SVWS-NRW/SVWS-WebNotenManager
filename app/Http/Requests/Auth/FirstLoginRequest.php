@@ -14,9 +14,15 @@ class FirstLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email:dns,rfc', 'min:5', 'max:255'],
-            'kuerzel' => ['required', 'string', 'min:2', 'max:255'],
-            'schulnummer' => ['required', 'numeric'],
+            'email' => [
+				'required', 'string', 'email:dns,rfc', 'min:5', 'max:255',
+			],
+            'kuerzel' => [
+				'required', 'string', 'min:2', 'max:255',
+			],
+            'schulnummer' => [
+				'required', 'numeric',
+			],
         ];
     }
 

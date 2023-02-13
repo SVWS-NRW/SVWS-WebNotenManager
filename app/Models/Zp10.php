@@ -58,31 +58,31 @@ class Zp10 extends Model
 
     public function abschlussnote(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }   
 
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(Fach::class);
+        return $this->belongsTo(related: Fach::class);
     }
 
     public function noteMuendlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function noteSchriftlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     }
 
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(Schueler::class);
+        return $this->belongsTo(related: Schueler::class);
     }
 
     public function vornote(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(related: Note::class);
     } 
 }

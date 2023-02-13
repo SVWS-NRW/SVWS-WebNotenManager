@@ -5,9 +5,6 @@ namespace Database\Factories;
 use App\Models\Fach;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Fach>
- */
 class FachFactory extends Factory
 {
     protected $model = Fach::class;
@@ -17,7 +14,7 @@ class FachFactory extends Factory
         return [
             'kuerzel' => $this->faker->unique->word(),
             'kuerzelAnzeige' => $this->faker->unique->word(),
-            'sortierung' => rand(1, 15),
+            'sortierung' => rand(min: 1, max: 15),
             'istFremdsprache' => $this->faker->boolean(),
         ];
     }

@@ -8,9 +8,6 @@ use App\Models\Floskelgruppe;
 use App\Models\Jahrgang;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Floskel>
- */
 class FloskelFactory extends Factory
 {
     protected $model = Floskel::class;
@@ -26,17 +23,23 @@ class FloskelFactory extends Factory
 
     public function withFach(): Factory
     {
-        return $this->state(fn () => ['fach_id' => Fach::factory()]);
+        return $this->state(fn (): array  => [
+			'fach_id' => Fach::factory(),
+			]);
     }
 
     public function withNiveau(): Factory
     {
-        return $this->state(fn () => ['niveau' => rand(1, 10)]);
+        return $this->state(fn (): array  => [
+			'niveau' => rand(min: 1, max: 10),
+			]);
     }
 
     public function withJahrgang(): Factory
     {
-        return $this->state(fn () => ['jahrgang_id' => Jahrgang::factory()]);
+        return $this->state(fn (): array  => [
+			'jahrgang_id' => Jahrgang::factory(),
+		]);
     }
 }
 

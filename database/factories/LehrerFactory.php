@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Lehrer>
- */
 class LehrerFactory extends Factory
 {
 	protected $model = Lehrer::class;
@@ -21,22 +18,26 @@ class LehrerFactory extends Factory
 			'kuerzel' => $this->faker->unique->word(),
 			'vorname' => $this->faker->firstName(),
 			'nachname' => $this->faker->lastName(),
-			'geschlecht' => $this->faker->randomElement(Lehrer::GENDERS),
+			'geschlecht' => $this->faker->randomElement(array: Lehrer::GENDERS),
 			'email' => $this->faker->unique()->safeEmail(),
 			'email_verified_at' => now(),
 			'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-			'remember_token' => Str::random(10),
+			'remember_token' => Str::random(length: 10),
 		];
 	}
 
 	public function unverified(): Factory
 	{
-		return $this->state(fn () => ['email_verified_at' => null]);
+		return $this->state(fn (): array  => [
+			'email_verified_at' => null,
+		]);
 	}
 
 	public function administrator(): Factory
 	{
-		return $this->state(fn () => ['administrator' => true]);
+		return $this->state(fn (): array  => [
+			'administrator' => true,
+		]);
 	}
 
 	public function withPersonalTeam(): Factory
@@ -46,12 +47,12 @@ class LehrerFactory extends Factory
 		}
 
 		return $this->has(
-			Team::factory()->state(fn (array $attributes, Lehrer $lehrer) => [
+			Team::factory()->state(state: fn (array $attributes, Lehrer $lehrer): array => [
 				'name' => $lehrer->kuerzel.'\'s Team',
 				'lehrer_id' => $lehrer->id,
 				'personal_team' => true
 			]),
-			'ownedTeams'
+			relationship: 'ownedTeams'
 		);
 	}
 }

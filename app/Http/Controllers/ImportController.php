@@ -14,7 +14,7 @@ class ImportController extends Controller
 
 		$response = Http::accept(contentType: 'application/json')
 			->withBasicAuth(username: 'Admin', password: '')
-			->get($endpoint);
+			->get(url: $endpoint);
 
 		$this->import(
 			data: json_decode(
@@ -47,7 +47,7 @@ class ImportController extends Controller
 		$service = new DataImportService(data: $data);
 		$service->import();
 
-		Lehrer::all()->each(callback: fn (Lehrer $lehrer) => $lehrer->update(
+		Lehrer::all()->each(callback: fn (Lehrer $lehrer): bool => $lehrer->update(
 			attributes: ['password' => Hash::make(value: 'password')])
 		);
 	}

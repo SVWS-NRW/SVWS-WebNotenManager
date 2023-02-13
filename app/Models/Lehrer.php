@@ -52,6 +52,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|Lehrer whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lehrer whereVorname($value)
  * @mixin \Eloquent
+ * @property-read string $profile_photo_url
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
  */
 class Lehrer extends Authenticatable
 {
@@ -94,12 +99,18 @@ class Lehrer extends Authenticatable
 
 	public function lerngruppen(): BelongsToMany
 	{
-		return $this->belongsToMany(Lerngruppe::class, 'lerngruppe_lehrer');
+		return $this->belongsToMany(
+			related: Lerngruppe::class,
+			table: 'lerngruppe_lehrer'
+		);
 	}
 
 	public function klassen(): BelongsToMany
 	{
-		return $this->belongsToMany(Klasse::class, 'klasse_lehrer');
+		return $this->belongsToMany(
+			related: Klasse::class,
+			table: 'klasse_lehrer'
+		);
 	}
 
 	public function daten(): HasOne // TODO

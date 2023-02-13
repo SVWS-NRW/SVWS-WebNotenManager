@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts"> // ok
     import { computed, reactive, Ref, ref } from 'vue'
     import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
@@ -16,7 +16,6 @@
         SvwsUiTextInput,
         SvwsUiSelectInput,
     } from '@svws-nrw/svws-ui'
-
 
     const changesNotSavedWarning: string = 'Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren.'
 
@@ -45,8 +44,8 @@
         jahrgang: 0,
     })
 
-    const computedFloskeln = computed((): Array<FachbezogeneFloskel> => floskeln.value
-        .filter((floskel: FachbezogeneFloskel): boolean =>
+    const computedFloskeln = computed((): Array<FachbezogeneFloskel> =>
+        floskeln.value.filter((floskel: FachbezogeneFloskel): boolean =>
             searchFilter(floskel)
             && tableFilter(floskel, 'niveau', true)
             && tableFilter(floskel, 'jahrgang', true)
@@ -96,7 +95,7 @@
     })
 
     const getFloskeln = (): AxiosPromise => axios
-        .get(route('get_fachbezogene_floskeln', props.leistung.fach_id))
+        .get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
         .then((response: AxiosResponse): AxiosResponse => {
             floskeln.value = response.data?.data || []
             filterOptions.niveau = response.data?.niveau || []
@@ -113,7 +112,7 @@
 
     const setBemerkungen = (): AxiosPromise => axios
         .post(
-            route('set_fachbezogene_bemerkung', props.leistung.id),
+            route('api.fachbezogene_bemerkung', props.leistung.id),
             { bemerkung: state.bemerkung }
         ).then((response): AxiosResponse => {
             state.storedBemerkung = response.data.bemerkung
