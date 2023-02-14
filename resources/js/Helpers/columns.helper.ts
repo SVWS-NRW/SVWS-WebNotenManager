@@ -21,7 +21,7 @@ const fehlstundenColumns: Array<Column> = [
 ]
 
 const fachlehrerColumns: Array<Column> = [
-	{ key: 'lehrer', label: 'Lehrer', sortable: false },
+	{ key: 'lehrer', label: 'Lehrer', sortable: true },
 ]
 
 const teilleistungenColumns: Array<Column> = [
