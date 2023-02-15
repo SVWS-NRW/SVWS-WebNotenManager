@@ -122,7 +122,8 @@
         ].map((item: string): {
             label: string, index: string | null | number
         } => {
-            return { label: item ?? 'Leer', index: item }
+            console.log(item)
+            return { label: item || 'Leer', index: item }
         })
 
         set.unshift({ label: 'Alle', index: '0' })
@@ -149,7 +150,7 @@
 
     const tableFilter = (leistung: Leistung, column: string, containsOnlyEmptyOption: boolean = false): boolean => {
         if (filters[column] == '0') return true
-        if (containsOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] === null
+        if (containsOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] === ''
         return leistung[column] === filters[column]
     }
 </script>
