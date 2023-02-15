@@ -136,10 +136,14 @@
 
 <template>
     <div class="content-card--blockungsuebersicht ui-flex ui-h-full ui-content-start">
-        <SvwsUiIcon @click="open()" class="ui-flex ui-items-center">
-            <mdi-checkbox-marked-outline v-if="state.bemerkung"></mdi-checkbox-marked-outline>
-            <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
-        </SvwsUiIcon>
+        <div id="bemerkung">
+            <SvwsUiIcon @click="open()" class="ui-flex ui-items-center">
+                <mdi-checkbox-marked-outline v-if="state.bemerkung"></mdi-checkbox-marked-outline>
+                <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
+            </SvwsUiIcon>
+            {{ state.bemerkung }}
+        </div>
+
 
         <div class="app-layout--main-sidebar" :class="{ 'app-layout--main-sidebar--collapsed': collapsed }">
             <div class="app-layout--main-sidebar--container" v-if="!collapsed">
@@ -200,5 +204,9 @@
 
     #floskel-container {
         @apply ui-flex ui-flex-col ui-gap-6
+    }
+
+    #bemerkung {
+        @apply ui-flex ui-gap-1.5 ui-items-center ui-whitespace-nowrap ui-overflow-hidden
     }
 </style>
