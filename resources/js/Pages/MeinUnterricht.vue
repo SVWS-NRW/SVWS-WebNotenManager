@@ -1,11 +1,10 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import { onMounted, reactive, computed, ref, watch, Ref } from 'vue'
+    import { onMounted, reactive, computed, ref, watch } from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
     import { Column } from '../Interfaces/Column'
-    import { LeistungsDatenFilterValues } from '../Interfaces/Filter'
-    import axios, { AxiosPromise, AxiosResponse } from 'axios'
+    import axios, { AxiosResponse } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import NoteInput from '../Components/NoteInput.vue'
     import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
@@ -22,7 +21,7 @@
     import {
         SvwsUiCheckbox,
         SvwsUiSelectInput,
-        SvwsUiTable,
+        SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
@@ -55,8 +54,6 @@
 
     watch(toggles, (): void => drawTable())
 
-    const clickedRow: Ref<Leistung|null> = ref()
-
     let filters = <{
         search: string,
         klasse: Number | string,
@@ -81,20 +78,13 @@
         }
 
         columns.value.length = 0
-        pushTable(true, baseColumns)
-        pushTable(true, teilleistungenColumns)
-        pushTable(true, notenColumns)
-        pushTable(true, mahnungenColumns)
-        pushTable(true, fehlstundenColumns)
-        pushTable(true, fachbezogeneBemerkungenColumns)
 
-        // Temporary switched off https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/101
-        // pushTable(true, baseColumns)
-        // pushTable(toggles.teilleistungen, teilleistungenColumns)
-        // pushTable(true, notenColumns)
-        // pushTable(toggles.mahnungen, mahnungenColumns)
-        // pushTable(toggles.fehlstunden, fehlstundenColumns)
-        // pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+        pushTable(true, baseColumns)
+        pushTable(toggles.teilleistungen, teilleistungenColumns)
+        pushTable(true, notenColumns)
+        pushTable(toggles.mahnungen, mahnungenColumns)
+        pushTable(toggles.fehlstunden, fehlstundenColumns)
+        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
     onMounted((): void => {
@@ -184,22 +174,25 @@
 
             <h3 class="text-headline-sm ui-mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
-            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns" v-model="clickedRow">
-                <template #cell-note="{ row }">
-                    <NoteInput :leistung="row"></NoteInput>
+            <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
+                <template #cell(note)="{ rowData }">
+                    <NoteInput :leistung="rowData"></NoteInput>
                 </template>
-                <template #cell-fach="{ row }">
+
+                <template #cell(fach)="{ rowData }">
                     <strong>
-                        {{ row.fach }}
+                        {{ rowData.fach }}
                     </strong>
                 </template>
-                <template #cell-mahnung="{ row }">
-                    <MahnungIndicator :leistung="row" :key="row.id" :disabled="false"></MahnungIndicator>
+
+                <template #cell(mahnung)="{ rowData }">
+                    <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false"></MahnungIndicator>
                 </template>
-                <template #cell-fachbezogeneBemerkungen="{ row }">
-                    <FachbezogeneBemerkungenIndicator :leistung="row"></FachbezogeneBemerkungenIndicator>
+
+                <template #cell(fachbezogeneBemerkungen)="{ rowData }">
+                    <FachbezogeneBemerkungenIndicator :leistung="rowData"></FachbezogeneBemerkungenIndicator>
                 </template>
-            </SvwsUiTable>
+            </SvwsUiDataTable>
         </template>
     </AppLayout>
 </template>

@@ -1,10 +1,9 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import { Head } from '@inertiajs/inertia-vue3'
-    import {computed, onMounted, PropType, reactive, Ref, ref} from 'vue'
-    import { SchuelerFilterValues } from '../Interfaces/Filter'
-    import { Column } from '../Interfaces/Column'
+    import { computed, onMounted, PropType, reactive, ref } from 'vue'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
+    import { Head } from '@inertiajs/inertia-vue3'
+    import { Column } from '../Interfaces/Column'
     import { Schueler } from '../Interfaces/Schueler'
     import { Settings } from '../Interfaces/Settings'
     import BemerkungenIndicator from '../Components/BemerkungenIndicator.vue'
@@ -12,7 +11,7 @@
     import {
         SvwsUiCheckbox,
         SvwsUiSelectInput,
-        SvwsUiTable,
+        SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiIcon,
         SvwsUiContentCard
@@ -31,8 +30,6 @@
     let state = reactive({
         schueler: <Schueler[]> [],
     })
-
-    const clickedRow: Ref<Schueler|null> = ref()
 
     let filterOptions = <any>reactive({
         'klassen': [],
@@ -134,17 +131,17 @@
                 </div>
             </header>
 
-            <SvwsUiTable v-if="filteredSchueler.length" :data="filteredSchueler" :columns="columns"  v-model="clickedRow">
-                <template #cell-ASV="{ row }">
-                    <BemerkungenIndicator :leistung="row" floskelgruppe="ASV"></BemerkungenIndicator>
+            <SvwsUiDataTable v-if="filteredSchueler.length" :items="filteredSchueler" :columns="columns" clickable>
+                <template #cell(ASV)="{ rowData }">
+                    <BemerkungenIndicator :leistung="rowData" floskelgruppe="ASV"></BemerkungenIndicator>
                 </template>
-                <template #cell-AUE="{ row }">
-                    <BemerkungenIndicator :leistung="row" floskelgruppe="AUE"></BemerkungenIndicator>
+                <template #cell(AUE)="{ rowData }">
+                    <BemerkungenIndicator :leistung="rowData" floskelgruppe="AUE"></BemerkungenIndicator>
                 </template>
-                <template #cell-ZB="{ row }">
-                    <BemerkungenIndicator :leistung="row" floskelgruppe="ZB"></BemerkungenIndicator>
+                <template #cell(ZB)="{ rowData }">
+                    <BemerkungenIndicator :leistung="rowData" floskelgruppe="ZB"></BemerkungenIndicator>
                 </template>
-            </SvwsUiTable>
+            </SvwsUiDataTable>
 
             <h3 class="text-headline-sm ui-mx-6" v-else>Keine Einträge gefunden!</h3>
         </template>

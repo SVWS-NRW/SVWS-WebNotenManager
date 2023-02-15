@@ -1,10 +1,12 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, reactive, Ref, ref, watch} from 'vue'
-
+    import { computed, onMounted, reactive, ref, watch } from 'vue'
     import { Head } from '@inertiajs/inertia-vue3'
-
-
+    import { Column } from '../Interfaces/Column'
+    import axios, {AxiosPromise, AxiosResponse} from 'axios'
+    import { Leistung } from '../Interfaces/Leistung'
+    import MahnungIndicator from '../Components/MahnungIndicator.vue'
+    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
 
     import {
         baseColumns,
@@ -20,19 +22,11 @@
         SvwsUiCheckbox,
         SvwsUiTextInput,
         SvwsUiSelectInput,
-        SvwsUiTable,
         SvwsUiIcon,
+        SvwsUiDataTable,
     } from '@svws-nrw/svws-ui'
 
-    import {Column} from '../Interfaces/Column'
-    import axios, {AxiosPromise, AxiosResponse} from 'axios'
-    import {Leistung} from '../Interfaces/Leistung'
-    import {LeistungsDatenFilterValues} from '../Interfaces/Filter'
 
-    import NoteInput from '../Components/NoteInput.vue'
-    import MahnungIndicator from '../Components/MahnungIndicator.vue'
-    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
-    import {Schueler} from '../Interfaces/Schueler'
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
@@ -47,8 +41,6 @@
         mahnungen: false,
         teilleistungen: false,
     })
-
-    const clickedRow: Ref<Leistung|null> = ref()
 
     let state = reactive({
         leistungen: <Leistung[]> [],
@@ -89,27 +81,17 @@
 
         columns.value.length = 0
         pushTable(true, baseColumns)
-        pushTable(true, fachlehrerColumns)
-        pushTable(true, teilleistungenColumns)
+        pushTable(toggles.fachlehrer, fachlehrerColumns)
+        pushTable(toggles.teilleistungen, teilleistungenColumns)
         pushTable(true, notenColumns)
-        pushTable(true, mahnungenColumns)
+        pushTable(toggles.mahnungen, mahnungenColumns)
         pushTable(true, fehlstundenColumns)
-        pushTable(true, fachbezogeneBemerkungenColumns)
-
-        // Temporary switched off https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/101
-        // pushTable(true, baseColumns)
-        // pushTable(toggles.fachlehrer, fachlehrerColumns)
-        // pushTable(toggles.teilleistungen, teilleistungenColumns)
-        // pushTable(true, notenColumns)
-        // pushTable(toggles.mahnungen, mahnungenColumns)
-        // pushTable(true, fehlstundenColumns)
-        // pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
     watch(toggles, (): void => drawTable())
 
     onMounted((): void => {
-        // getFilters()
         getLeistungen()
         drawTable()
     })
@@ -205,25 +187,25 @@
 
             <h3 class="text-headline-sm mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
-            <SvwsUiTable v-else :data="filteredLeistungen" :columns="columns" v-model="clickedRow">
-                <template #cell-note="{ row }">
-                    <strong :class="{ 'low-score' : lowScore(row.note) }">
-                        {{ row.note }}
+            <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
+                <template #cell(note)="{ rowData }">
+                    <strong :class="{ 'low-score' : lowScore(rowData.note) }">
+                        {{ rowData.note }}
                     </strong>
                 </template>
 
-                <template #cell-fach="{ row }">
-                    <strong>{{ row.fach }}</strong>
+                <template #cell(fach)="{ rowData }">
+                    <strong>{{ rowData.fach }}</strong>
                 </template>
 
-                <template #cell-mahnung="{ row }">
-                    <MahnungIndicator :leistung="row" :disabled="true"></MahnungIndicator>
+                <template #cell(mahnung)="{ rowData }">
+                    <MahnungIndicator :leistung="rowData" :disabled="true"></MahnungIndicator>
                 </template>
 
-                <template #cell-fachbezogeneBemerkungen="{ row }">
-                    <FachbezogeneBemerkungenIndicator :leistung="row"></FachbezogeneBemerkungenIndicator>
+                <template #cell(fachbezogeneBemerkungen)="{ rowData }">
+                    <FachbezogeneBemerkungenIndicator :leistung="rowData"></FachbezogeneBemerkungenIndicator>
                 </template>
-            </SvwsUiTable>
+            </SvwsUiDataTable>
         </template>
     </AppLayout>
 </template>
