@@ -104,14 +104,17 @@
         filterOptions.faecher = setFilters(state.leistungen, 'fach')
     }
 
-    const setFilters = (data, column: string): { label: string, index: string | null | number }[] => {
+    const setFilters = (data, column: string, hasEmptyValue: boolean = true): {
+        label: string, index: string | null | number
+    }[] => {
         let set = [
             ...new Set(data.map((item: any): string => item[column]))
-        ].map((item: string): {
-            label: string, index: string | null | number
-        } => {
-            return { label: item ?? 'Leer', index: item }
+        ].filter((item: string): boolean => {
+            return !hasEmptyValue && item === ''
         })
+            .map((item: string): { label: string, index: string | null | number } => {
+                return { label: item ?? 'Leer', index: item }
+            })
 
         set.unshift({ label: 'Alle', index: '0' })
 
