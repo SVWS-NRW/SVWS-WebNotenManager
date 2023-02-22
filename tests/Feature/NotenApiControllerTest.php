@@ -6,7 +6,6 @@ use App\Models\Leistung;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class NotenApiControllerTest extends TestCase

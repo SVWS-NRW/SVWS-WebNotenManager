@@ -10,7 +10,7 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 
 class RequestPasswordController extends Controller
 {
-	public function store(FirstLoginRequest $request): void // TODO:
+	public function store(FirstLoginRequest $request): void // TODO: Has to be reworked.
 	{
 		try {
 			$user = User::query()

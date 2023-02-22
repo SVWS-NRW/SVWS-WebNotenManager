@@ -16,12 +16,12 @@ use App\Services\DataImportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
+//Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
 
 Route::middleware('auth:sanctum')->group(function () {
 	Route::controller(SettingController::class)
 		->prefix(prefix: 'settings')
-		->name('api.settings')
+		->name('api.settings.')
 		->group(function () {
 			Route::get(uri: 'index/{type}', action: 'index')->name(name: 'index');
 			Route::put(uri: 'update', action: 'update')->name(name: 'update');

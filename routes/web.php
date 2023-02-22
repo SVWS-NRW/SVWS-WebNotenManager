@@ -36,7 +36,7 @@ Route::controller(RequestPasswordController::class)
 	->middleware('guest')
 	->name('request_password')
 	->group(function () {
-		Route::inertia(uri: 'passwort-anfordern', component:'Auth/RequestPassword');
+		Route::inertia(uri: 'passwort-anfordern', component: 'Auth/RequestPassword');
 		Route::post(uri:'passwort-anfordern', action: 'store');
 	});
 
