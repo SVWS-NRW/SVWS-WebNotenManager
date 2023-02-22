@@ -12,12 +12,12 @@ class FachbezogeneBemerkung extends Controller
 	public function __invoke(Leistung $leistung): JsonResponse
 	{
 		$leistung->update(
-			attributes: ['fachbezogeneBemerkungen' => request()->bemerkung]
+			attributes: [
+				'fachbezogeneBemerkungen' => request()->bemerkung,
+				'tsFachbezogeneBemerkungen' => now()->format(format: 'Y-m-d H:i:s.u'),
+			]
 		);
 
-		return response()->json(
-			data: request()->all(),
-			status: Response::HTTP_OK,
-		);
+		return response()->json(status: Response::HTTP_NO_CONTENT);
 	}
 }

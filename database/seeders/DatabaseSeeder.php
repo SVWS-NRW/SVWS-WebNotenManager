@@ -12,8 +12,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory()->create(attributes: [
-			'email' => 'user@user.com'],
-		);
+			'email' => 'user@user.com',
+			'is_administrator' => true,
+		]);
 
         $this->call(class: [
             JsonImportSeeder::class,

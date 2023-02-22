@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
+    import { Auth } from '../Interfaces/Auth'
 
     import {
         SvwsUiAppLayout,
@@ -11,16 +12,16 @@
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
 
-    let props = defineProps({
+    let props = defineProps<{
         title: String,
-    })
+    }>()
 
     const isCollapsed = ref(false)
 
-    let links: { label: string, route: string, icon: string }[] = [
-        { label: 'Notenmanager', route: 'mein_unterricht', icon: 'home' },
-        { label: 'Leistungsdatenübersicht', route: 'leistungsdatenuebersicht', icon: 'book-open' },
-        { label: 'Klassenleitung', route: 'klassenleitung', icon: 'user' },
+    let links: { label: string, route: string, icon: string, isVisible: boolean }[] = [
+        { label: 'Notenmanager', route: 'mein_unterricht', icon: 'home', isVisible: true },
+        { label: 'Leistungsdatenübersicht', route: 'leistungsdatenuebersicht', icon: 'book-open', isVisible: true },
+        { label: 'Klassenleitung', route: 'klassenleitung', icon: 'user', isVisible: usePage().props.value.auth.user.klassen.length > 0 },
     ]
 
     const activePage = (routeName: string): boolean => route().current(routeName)
@@ -47,6 +48,7 @@
                 <template #default>
                     <SvwsUiSidebarMenuItem
                         v-for="link in links"
+                        v-show="link.isVisible"
                         :key="link.label"
                         :icon="link.icon"
                         :active="activePage(link.route)"

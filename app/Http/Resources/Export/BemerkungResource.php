@@ -7,12 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BemerkungResource extends JsonResource
 {
-
-
     public function toArray($request): array
     {
-
-
         return [
             'ASV' => $this->ASV ? $this->formatBemerkung(bemerkung: $this->ASV) : null,
             'tsASV' => $this->tsASV,

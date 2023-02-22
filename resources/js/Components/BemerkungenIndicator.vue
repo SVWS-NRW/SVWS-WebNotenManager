@@ -87,8 +87,8 @@
         .post(
             route('api.schueler_bemerkung', props.leistung.id),
             { key: props.floskelgruppe, value: state.bemerkung }
-        ).then((response): AxiosResponse => {
-            state.storedBemerkung = response.data[props.floskelgruppe]
+        ).then((): AxiosResponse => {
+            state.storedBemerkung = state.bemerkung
             state.isDirty = false
             return
         })

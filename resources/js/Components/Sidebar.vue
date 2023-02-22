@@ -24,7 +24,7 @@
     const close = (): void => state.leistung = null;
 
     onMounted((): AxiosPromise => axios
-        .get("/api/getFloskeln")
+        .get("/api/getFloskeln") // TODO: CHeck
         .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data));
 
     watch(() => props.leistung, (leistung: Leistung): Leistung => state.leistung = leistung);

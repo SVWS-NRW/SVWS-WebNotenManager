@@ -114,8 +114,8 @@
         .post(
             route('api.fachbezogene_bemerkung', props.leistung.id),
             { bemerkung: state.bemerkung }
-        ).then((response): AxiosResponse => {
-            state.storedBemerkung = response.data.bemerkung
+        ).then((): AxiosResponse => {
+            state.storedBemerkung = state.bemerkung
             state.isDirty = false
             return
         })
@@ -173,7 +173,7 @@
 
                             <SvwsUiTextInput type="search" v-model="filters.search"  placeholder="Suche"></SvwsUiTextInput>
                             <SvwsUiSelectInput v-if="filterOptions.niveau" placeholder="Niveau" v-model="filters.niveau" :options="filterOptions.niveau"></SvwsUiSelectInput>
-                            <SvwsUiSelectInput v-if="filterOptions.jahrgaenge" placeholder="Niveau" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>
+                            <SvwsUiSelectInput v-if="filterOptions.jahrgaenge" placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>
 
                             <SvwsUiTable v-if="computedFloskeln.length" :data="computedFloskeln" :columns="columns" v-model:selection="selectedRows" :footer="true" is-multi-select>
                                 <template #footer>

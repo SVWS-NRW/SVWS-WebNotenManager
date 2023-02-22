@@ -15,11 +15,11 @@
     const store = useStore();
     const settings = ref([])
 
-    axios.get(route('get_settings', 'school'))
+    axios.get(route('api.settings.index', 'school'))
         .then((response: AxiosResponse): void => settings.value = response.data)
 
     const saveSettings = () => axios
-        .post(route('set_settings', {type: 'school', settings: settings.value}))
+        .put(route('api.settings.update', {type: 'school', settings: settings.value}))
 </script>
 
 <template>

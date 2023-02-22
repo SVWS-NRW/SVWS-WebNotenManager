@@ -13,7 +13,6 @@ class SchuelerResource extends JsonResource
             'leistungsdaten' => LeistungsdatenResource::collection(resource: $this->leistungen),
             'lernabschnitt' => new LernabschnittResource(resource: $this->lernabschnitt),
             'bemerkungen' => new BemerkungResource(resource: $this->bemerkung),
-
         ];
     }
 }

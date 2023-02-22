@@ -21,7 +21,7 @@
 
     const saveNote = (): AxiosPromise => axios
         .post(route('api.noten', leistung), { note: leistung.note })
-        .then((response: AxiosResponse): AxiosResponse => leistung.note = response.data.note)
+        // .then((response: AxiosResponse): AxiosResponse => leistung.note = response.data.note)
         .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))

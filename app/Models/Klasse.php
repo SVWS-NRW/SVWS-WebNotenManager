@@ -57,8 +57,8 @@ class Klasse extends Model
     public function klassenlehrer(): BelongsToMany
     {
         return $this->belongsToMany(
-			related: Lehrer::class,
-			table: 'klasse_lehrer',
+			related: User::class,
+			table: 'klasse_user',
 		);
     }
 }

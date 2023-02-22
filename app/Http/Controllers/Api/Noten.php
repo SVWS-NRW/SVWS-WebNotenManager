@@ -13,6 +13,10 @@ class Noten extends Controller
 {
 	public function __invoke(Leistung $leistung): JsonResponse
 	{
+		if (request()->note == '') {
+			return $this->updateNote(leistung: $leistung);
+		}
+
 		try {
 			$note = Note::query()
 				->where(
@@ -32,14 +36,17 @@ class Noten extends Controller
 			);
 		}
 
+		return $this->updateNote(leistung: $leistung, note: $note->id);
+
+    }
+
+	private function updateNote(Leistung $leistung, int|null $note = null): JsonResponse
+	{
 		$leistung->update(attributes: [
-			'note_id' => $note->id,
+			'note_id' => $note,
 			'tsNote' => now()->format(format: 'Y-m-d H:i:s.u'),
 		]);
 
-		return response()->json(
-			data: ['note' => $note->kuerzel],
-			status: Response::HTTP_OK
-		);
-    }
+		return response()->json(status: Response::HTTP_NO_CONTENT);
+	}
 }

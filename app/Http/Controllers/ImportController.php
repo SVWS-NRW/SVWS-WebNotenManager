@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lehrer;
+use App\Models\User;
 use App\Services\DataImportService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -47,7 +47,7 @@ class ImportController extends Controller
 		$service = new DataImportService(data: $data);
 		$service->import();
 
-		Lehrer::all()->each(callback: fn (Lehrer $lehrer): bool => $lehrer->update(
+		User::all()->each(callback: fn (User $user): bool => $user->update(
 			attributes: ['password' => Hash::make(value: 'password')])
 		);
 	}

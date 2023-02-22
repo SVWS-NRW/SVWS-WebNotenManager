@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Daten;
-use App\Models\Lehrer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DatenFactory extends Factory
@@ -18,7 +18,7 @@ class DatenFactory extends Factory
             'anzahlAbschnitte' => rand(min: 1, max: 4),
             'aktuellerAbschnitt' => rand(min: 1, max: 4),
             'lehrerID' => $this->faker->unique()->numberBetween(int1: 1, int2: 1_000_000),
-            'lehrer_id' => Lehrer::factory(),
+            'user_id' => User::factory(),
         ];
     }
 

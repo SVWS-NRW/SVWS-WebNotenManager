@@ -19,12 +19,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
 
 Route::middleware('auth:sanctum')->group(function () {
-
-	Route::middleware('administrator')
-		->controller(SettingController::class)
+	Route::controller(SettingController::class)
+		->prefix(prefix: 'settings')
+		->name('api.settings')
 		->group(function () {
-			Route::get('get-settings/{type}', 'get')->name('get_settings');
-			Route::post('set-settings', 'set')->name('set_settings');
+			Route::get(uri: 'index/{type}', action: 'index')->name(name: 'index');
+			Route::put(uri: 'update', action: 'update')->name(name: 'update');
 		});
 
     Route::post(uri: 'fachbezogene-bemerkung/{leistung}', action: FachbezogeneBemerkung::class)
@@ -57,7 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 // TODO: To ber removed, temporary testing route
-Route::get(uri: 'export', action: ExportController::class);
+// TODO: Testing
+Route::get(uri: 'export', action: ExportController::class)->name('api.export'); // Rename namespace?
 Route::post(uri: 'import', action: [ImportController::class, 'request']);
 Route::get(uri: 'import', action: [ImportController::class, 'curl']);
 Route::get(uri: 'truncate', action: [DataImportService::class, 'truncate']);

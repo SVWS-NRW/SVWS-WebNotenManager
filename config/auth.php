@@ -65,14 +65,9 @@ return [
     */
 
     'providers' => [
-        'admin' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
-
         'web' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Lehrer::class,
+            'model' => App\Models\User::class,
         ],
 
         // 'users' => [

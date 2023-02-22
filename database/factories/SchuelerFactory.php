@@ -22,73 +22,24 @@ class SchuelerFactory extends Factory
         ];
     }
 
-    public function withBilingualeSprache(): Factory
+    public function bilingualeSprache(): Factory
     {
         return $this->state(fn (): array  => [
 			'bilingualeSprache' => $this->faker->unique->word(),
 		]);
     }
 
-    public function withIstZieldifferent(): Factory
+    public function istZieldifferent(): Factory
     {
         return $this->state(fn (): array  => [
 			'istZieldifferent' => true,
 		]);
     }
 
-    public function withIstDaZFoerderung(): Factory
+    public function istDaZFoerderung(): Factory
     {
         return $this->state(fn (): array  => [
 			'istDaZFoerderung' => true,
 		]);
     }
-
-	public function withAue(): Factory
-	{
-		return $this->state(fn (): array  => [
-			'aue' => $this->faker->unique->word(),
-		]);
-	}
-
-	public function withAsv(): Factory
-	{
-		return $this->state(fn (): array  => [
-			'asv' => $this->faker->unique->word(),
-		]);
-	}
-
-	public function withZb(): Factory
-	{
-		return $this->state(fn (): array  => [
-			'zb' => $this->faker->unique->word(),
-		]);
-	}
-
-	public function withLels(): Factory
-	{
-		return $this->state(fn (): array  => [
-			'lels' => $this->faker->unique->word(),
-		]);
-	}
-
-	public function withSchulformEmpf(): Factory
-	{
-		return $this->state(fn (): array  => [
-			'schulformEmpf' => $this->faker->unique->word(),
-		]);
-	}
-
-	public function withIndividuelleVersetzungsbemerkungen(): Factory
-	{
-		return $this->state(fn (): array  => [
-			'individuelleVersetzungsbemerkungen' => $this->faker->unique->word(),
-		]);
-	}
-
-	public function withFoerderbemerkungen(): Factory
-	{
-		return $this->state(fn (): array  => [
-			'foerderbemerkungen' => $this->faker->unique->word(),
-		]);
-	}
 }

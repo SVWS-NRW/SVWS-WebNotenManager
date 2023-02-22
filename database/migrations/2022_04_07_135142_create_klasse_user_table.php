@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Klasse;
-use App\Models\Lehrer;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,14 +10,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('klasse_lehrer', function (Blueprint $table) {
-            $table->foreignIdFor(Klasse::class);
-            $table->foreignIdFor(Lehrer::class);
+        Schema::create(table: 'klasse_user', callback: function (Blueprint $table): void {
+            $table->foreignIdFor(model: Klasse::class);
+            $table->foreignIdFor(model: User::class);
         });
     }
     
     public function down(): void
     {
-        Schema::dropIfExists('klasse_lehrer');
+        Schema::dropIfExists(table: 'klasse_user');
     }
 };

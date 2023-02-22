@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereLehrerID($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereSchulnummer($value)
  * @property int $lehrer_id User/Lehrer model relation
+ * @property int $user_id User/Lehrer model relation
  */
 class Daten extends Model
 {

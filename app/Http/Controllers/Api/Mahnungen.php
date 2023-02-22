@@ -17,8 +17,7 @@ class Mahnungen extends Controller
 		]);
 
         return response()->json(
-			data: request()->all(),
-			status: Response::HTTP_OK
+			status: Response::HTTP_NO_CONTENT
 		);
     }
 }

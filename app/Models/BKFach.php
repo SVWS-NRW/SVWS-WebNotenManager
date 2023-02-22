@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  * @property int $lehrer_id
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereLehrerId($value)
+ * @property int $user_id
  */
 class BKFach extends Model
 {

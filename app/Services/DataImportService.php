@@ -12,10 +12,10 @@ use App\Models\Klasse;
 use App\Models\Leistung;
 use App\Models\Lernabschnitt;
 use App\Models\Lerngruppe;
-use App\Models\Lehrer;
 use App\Models\Note;
 use App\Models\Schueler;
 use App\Models\Teilleistungsart;
+use App\Models\User;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -113,12 +113,12 @@ class DataImportService
 
 		foreach ($this->lehrer as $row) {
 			$row['email'] = $this->formatEmail(email: $row['eMailDienstlich']);
-			$row['geschlecht'] = $this->gender(data: $row, allowed: Lehrer::GENDERS);
+			$row['geschlecht'] = $this->gender(data: $row, allowed: User::GENDERS);
 
 			unset($row['eMailDienstlich']);
 
 			try {
-				Lehrer::findOrFail(id: $row['id']);
+				User::where(column: 'ext_id', operator: '=', value: $row['id'])->firstOrFail();
 			} catch (ModelNotFoundException $e) {
 				$row['password'] = app()->environment('production')
 					? Str::random()
@@ -126,8 +126,8 @@ class DataImportService
 				report($e);
 			}
 
-			Lehrer::updateOrCreate(
-				attributes: ['id' => $row['id']],
+			User::updateOrCreate(
+				attributes: ['ext_id' => $row['id']],
 				values: $row
 			);
 		}

@@ -6,7 +6,7 @@ use App\Models\BKAbschluss;
 use App\Models\BKFach;
 use App\Models\Fach;
 use App\Models\Note;
-use App\Models\Lehrer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BKFachFactory extends Factory
@@ -18,7 +18,7 @@ class BKFachFactory extends Factory
         return [
             'bkabschluss_id' => BKAbschluss::factory(),
             'fach_id' => Fach::factory(),
-            'lehrer_id' => Lehrer::factory(),
+            'user_id' => User::factory(),
             'vornote' => Note::factory(),
             'noteSchriftlichePruefung' => Note::factory(),        
             'noteMuendlichePruefung' => Note::factory(),

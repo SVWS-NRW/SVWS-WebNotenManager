@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Klasse;
-use App\Models\Kurs;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LeistungResource extends JsonResource

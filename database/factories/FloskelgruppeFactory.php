@@ -12,8 +12,8 @@ class FloskelgruppeFactory extends Factory
     public function definition(): array
     {
         return [
-            'kuerzelAnzeige' => $this->faker->unique->word(),
-            'bezeichnung' => $this->faker->paragraph,
+            'kuerzel' => $this->faker->unique->word(),
+            'bezeichnung' => $this->faker->catchPhrase(),
             'hauptgruppe' => $this->faker->unique->word(),
         ];
     }

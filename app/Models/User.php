@@ -63,33 +63,79 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read \App\Models\Daten|null $daten
  * @property bool $administrator
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAdministrator($value)
+ * @property string $geschlecht
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Klasse[] $klassen
+ * @property-read int|null $klassen_count
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereGeschlecht($value)
+ * @property int $is_administrator
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereIsAdministrator($value)
  */
 class User extends Authenticatable
 {
-    use HasApiTokens;
-    use HasFactory;
-    use HasProfilePhoto;
-    use Notifiable;
-    use TwoFactorAuthenticatable;
+	use HasApiTokens;
+	use HasFactory;
+	use HasProfilePhoto;
+	use Notifiable;
+	use TwoFactorAuthenticatable;
+
+	const GENDERS = ['m', 'w', 'd', 'x'];
 
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+		'id',
+		'ex_id',
+		'kuerzel',
+		'vorname',
+		'nachname',
+		'geschlecht',
+		'email',
+		'password',
+		'is_administrator',
     ];
 
     protected $hidden = [
-        'password',
-        'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
+		'password',
+		'remember_token',
+		'two_factor_recovery_codes',
+		'two_factor_secret',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+		'administrator' => 'boolean',
     ];
 
     protected $appends = [
         'profile_photo_url',
     ];
+
+	public function lerngruppen(): BelongsToMany
+	{
+		return $this->belongsToMany(
+			related: Lerngruppe::class,
+			table: 'lerngruppe_user'
+		);
+	}
+
+	public function klassen(): BelongsToMany
+	{
+		return $this->belongsToMany(
+			related: Klasse::class,
+			table: 'klasse_user'
+		);
+	}
+
+	public function daten(): HasOne // TODO
+	{
+		return $this->hasOne(Daten::class);
+	}
+
+	public function isAdministrator(): bool
+	{
+		return $this->is_administrator;
+	}
+
+	public function isLehrer(): bool
+	{
+		return ! $this->isAdministrator();
+	}
 }

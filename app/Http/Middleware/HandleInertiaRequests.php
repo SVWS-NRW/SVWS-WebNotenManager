@@ -22,7 +22,7 @@ class HandleInertiaRequests extends Middleware
             'auth.user' => fn (): array|null => $request->user()
 				? $request->user()->only('id', 'vorname', 'nachname', 'email', 'klassen')
 				: null,
-			'auth.administrator' => auth()->guard(name: 'admin')->check(),
+			'auth.administrator' => auth()->check() && auth()->user()->isAdministrator(),
 			'schoolName' => config(key:'app.school_name'),
 			'settings' => Setting::all()->pluck(value: 'value', key: 'key'),
 			'note_entry_disabled' => Setting::entryDisabled(entry: 'note_entry_until'),

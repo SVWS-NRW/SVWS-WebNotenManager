@@ -8,9 +8,8 @@ class FloskelResource extends JsonResource
 {
     public function toArray($request): array
     {
-        return[
+        return [
             'id' => $this->id,
-            'gruppe' => $this->floskelgruppe->hauptgruppe,
             'text' => $this->text,
             'kuerzel' => $this->kuerzel,
         ];

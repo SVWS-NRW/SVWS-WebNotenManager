@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FloskelResource;
 use App\Models\Floskel;
 use App\Models\Floskelgruppe;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,12 +27,12 @@ class Floskeln extends Controller
 		} catch (NotFoundHttpException $e) {
 			return response()->json(
 				data: $e->getMessage(),
-				status:Response::HTTP_NOT_FOUND
+				status: Response::HTTP_NOT_FOUND,
 			);
 		}
 
-		return Floskel::query()
-			->whereBelongsTo(related: $gruppe)
-			->get();
+		return response()->json(data: FloskelResource::collection(
+			resource: Floskel::query()->whereBelongsTo(related: $gruppe)->get()
+		));
 	}
 }

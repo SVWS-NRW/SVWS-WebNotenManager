@@ -8,18 +8,18 @@ use App\Models\Fach;
 use App\Models\Floskel;
 use App\Models\Floskelgruppe;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 
 class FachbezogeneFloskeln extends Controller
 {
-	public function __invoke(Fach $fach): AnonymousResourceCollection
+	public function __invoke(Fach $fach): JsonResponse
 	{
 		try {
 			$floskelgruppe = Floskelgruppe::query()
 				->where(column: 'kuerzel', operator: '=', value: 'FACH')
 				->firstOrFail();
 		} catch (ModelNotFoundException $e) {
-			return FachBezogeneFloskelResource::collection(resource: []);
+			return response()->json(data: FachBezogeneFloskelResource::collection(resource: []));
 		}
 
 		$floskeln = Floskel::query()
@@ -38,9 +38,8 @@ class FachbezogeneFloskeln extends Controller
 			'label' => $floskel->jahrgang?->kuerzel,
 		];
 
-		return FachBezogeneFloskelResource::collection(
-			resource: $floskeln
-		)->additional(data: [
+		return response()->json(data: [
+			'data' => FachBezogeneFloskelResource::collection(resource: $floskeln),
 			'niveau' => $floskeln
 				->unique(key: 'niveau')
 				->map(callback: $mapNiveau)

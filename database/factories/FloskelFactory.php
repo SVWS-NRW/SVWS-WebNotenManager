@@ -21,21 +21,21 @@ class FloskelFactory extends Factory
         ];
     }
 
-    public function withFach(): Factory
+    public function fach(): Factory
     {
         return $this->state(fn (): array  => [
 			'fach_id' => Fach::factory(),
-			]);
+		]);
     }
 
-    public function withNiveau(): Factory
+    public function niveau(): Factory
     {
         return $this->state(fn (): array  => [
 			'niveau' => rand(min: 1, max: 10),
-			]);
+		]);
     }
 
-    public function withJahrgang(): Factory
+    public function jahrgang(): Factory
     {
         return $this->state(fn (): array  => [
 			'jahrgang_id' => Jahrgang::factory(),
