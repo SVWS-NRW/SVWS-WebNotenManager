@@ -16,7 +16,8 @@
 
 ### SSH Installation
 
-Sie haben zugriff per SSH auf den Webserver siehe: [ssh Installationsanleitung](Installation_SSH.md).
+Sie haben Zugriff per SSH auf den Webserver siehe: 
+[ssh Installationsanleitung](https://git.svws-nrw.de/svws/svws-dokumentation/Deployment/installation_ssh.md).
 
 
 
