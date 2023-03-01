@@ -15,26 +15,10 @@
     * APP_KEY mit den Ergebnis von `echo 'base64:'.base64_encode(random_bytes(32));` befüllen
 
 ### SSH Installation
-* git clone
-* composer install
-* cp .env.copy .env
-* .env anpassen:
-    * APP_ENV=production
-    * APP_DEBUG=false
-    * APP_URL= mit den URL wo die App erreichbar wird befüllen
-    * DB_* mit die Datenbank Credentials befüllen
-    * MAIL_* mit SMTP Credentials befüllen
 
-In den Arbeitsordner das folgende Kommando ausfuhren:
-```
-php artisan key:generate \
-&& php artisan migrate:fresh --seed \
-&& npm install \
-&& npm audit fix \
-&& npm install --prefix resources/js/SVWS-Server/svws-webclient/ \
-&& npm run build --prefix resources/js/SVWS-Server/svws-webclient/src/ui-components/ts/ \
-&& npm run build
-```
+Sie haben zugriff per SSH auf den Webserver siehe: [ssh Installationsanleitung](Installation_SSH.md).
+
+
 
 ### Lokale Docker Installation
 * git clone
