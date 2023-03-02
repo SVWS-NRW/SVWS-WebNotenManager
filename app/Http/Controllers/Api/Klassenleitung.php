@@ -12,17 +12,12 @@ class Klassenleitung extends Controller
 {
 	public function __invoke(): AnonymousResourceCollection
 	{
-		abort_unless(
-			boolean: auth()->user()->isLehrer(),
-			code: Response::HTTP_FORBIDDEN
-		);
-
 		$schueler = Schueler::query()
 			->with(relations: ['klasse', 'leistungen', 'bemerkung'])
-			->whereIn(
+			->when(auth()->user()->isLehrer(), fn ($q) => $q			->whereIn(
 				column: 'klasse_id',
 				values: auth()->user()->klassen()->pluck(column: 'id')
-			)
+			))
 			->get()
 			->sortBy(callback: fn (Schueler $schueler): array => [
 				$schueler->klasse->kuerzel,

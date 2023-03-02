@@ -14,6 +14,8 @@ export interface Leistung {
 	kurs: string|null,
 	note: string|null,
 	fachbezogeneBemerkungen: string|null,
+	fehlstundenGesamt: Number,
+	fehlstundenUnentschuldigt: Number,
 	fs: number,
 	ufs: number,
 	istGemahnt: boolean,

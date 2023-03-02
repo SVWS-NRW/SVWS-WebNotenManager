@@ -5,7 +5,6 @@
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
-    import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
 
     import {
@@ -25,8 +24,7 @@
         SvwsUiIcon,
         SvwsUiDataTable,
     } from '@svws-nrw/svws-ui'
-
-
+    import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
@@ -201,12 +199,12 @@
                     <strong>{{ rowData.fach }}</strong>
                 </template>
 
-                <template #cell(mahnung)="{ rowData }">
-                    <MahnungIndicator :leistung="rowData" :disabled="true"></MahnungIndicator>
+                <template #cell(istGemahnt)="{ rowData }">
+                    <MahnungIndicatorReadonly :leistung="rowData" :disabled="true"></MahnungIndicatorReadonly>
                 </template>
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <FachbezogeneBemerkungenIndicator :leistung="rowData"></FachbezogeneBemerkungenIndicator>
+                    <FachbezogeneBemerkungenIndicator :leistung="rowData" :disabled="true"></FachbezogeneBemerkungenIndicator>
                 </template>
             </SvwsUiDataTable>
         </template>

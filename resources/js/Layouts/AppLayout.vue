@@ -21,7 +21,12 @@
     let links: { label: string, route: string, icon: string, isVisible: boolean }[] = [
         { label: 'Notenmanager', route: 'mein_unterricht', icon: 'home', isVisible: true },
         { label: 'Leistungsdatenübersicht', route: 'leistungsdatenuebersicht', icon: 'book-open', isVisible: true },
-        { label: 'Klassenleitung', route: 'klassenleitung', icon: 'user', isVisible: usePage().props.value.auth.user.klassen.length > 0 },
+        {
+            label: 'Klassenleitung',
+            route: 'klassenleitung',
+            icon: 'user',
+            isVisible: usePage().props.value.auth.user.klassen.length > 0  || usePage().props.value.auth.administrator
+        },
     ]
 
     const activePage = (routeName: string): boolean => route().current(routeName)

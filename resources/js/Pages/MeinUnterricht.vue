@@ -25,6 +25,7 @@
         SvwsUiTextInput,
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
+    import FehlstundenInput from '../Components/FehlstundenInput.vue'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -83,7 +84,7 @@
         pushTable(toggles.teilleistungen, teilleistungenColumns)
         pushTable(true, notenColumns)
         pushTable(toggles.mahnungen, mahnungenColumns)
-        pushTable(toggles.fehlstunden, fehlstundenColumns)
+        pushTable(true, fehlstundenColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
@@ -187,7 +188,15 @@
                     </strong>
                 </template>
 
-                <template #cell(mahnung)="{ rowData }">
+                <template #cell(fs)="{ rowData }">
+                    <FehlstundenInput :leistung="rowData" column="fs"></FehlstundenInput>
+                </template>
+
+                <template #cell(ufs)="{ rowData }">
+                    <FehlstundenInput :leistung="rowData" column="ufs"></FehlstundenInput>
+                </template>
+
+                <template #cell(istGemahnt)="{ rowData }">
                     <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false"></MahnungIndicator>
                 </template>
 

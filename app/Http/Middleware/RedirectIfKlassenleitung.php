@@ -12,10 +12,10 @@ class RedirectIfKlassenleitung
 {
     public function handle(Request $request, Closure $next): RedirectResponse|JsonResponse|Response
     {
-		if (auth()->user()->klassen->count() == 0) {
-			return redirect()->route(route: 'mein_unterricht');
+		if (auth()->user()->klassen->count() > 0 || auth()->user()->isAdministrator()) {
+        	return $next($request);
 		}
 
-        return $next($request);
+		return redirect()->route(route: 'mein_unterricht');
     }
 }

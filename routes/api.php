@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\FachbezogeneBemerkung;
 use App\Http\Controllers\Api\FachbezogeneFloskeln;
+use App\Http\Controllers\Api\Fehlstunden;
 use App\Http\Controllers\Api\Floskeln;
 use App\Http\Controllers\Api\Leistungsdatenuebersicht;
 use App\Http\Controllers\Api\Klassenleitung;
@@ -13,7 +14,6 @@ use App\Http\Controllers\Api\SchuelerBemerkung;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Services\DataImportService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 //Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
@@ -26,6 +26,17 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::get(uri: 'index/{type}', action: 'index')->name(name: 'index');
 			Route::put(uri: 'update', action: 'update')->name(name: 'update');
 		});
+
+	Route::controller(Fehlstunden::class)
+		->name('api.fehlstunden.')
+		->group(function(): void {
+			Route::post(uri: 'leistung/gesamt/{leistung}', action: 'fehlstundenLeistungGesamt')
+				->name(name: 'leistung.gesamt');
+
+			Route::post(uri: 'leistung/unentschuldigt/{leistung}', action: 'fehlstundenLeistungUnentschuldigt')
+				->name(name: 'leistung.unentschuldigt');
+	});
+
 
     Route::post(uri: 'fachbezogene-bemerkung/{leistung}', action: FachbezogeneBemerkung::class)
 		->name(name: 'api.fachbezogene_bemerkung');

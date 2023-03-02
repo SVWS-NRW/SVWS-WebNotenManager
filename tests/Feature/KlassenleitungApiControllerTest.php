@@ -21,11 +21,10 @@ class KlassenleitungApiControllerTest extends TestCase
 
 		$user = User::factory()->lehrer()->create();
 		$user->klassen()->attach(id: $klasse);
-		$this->actingAs(user: $user);
 
-		$response = $this->getJson(uri: route(name: $this->url));
-
-		$response->assertOk()
+		$this->actingAs(user: $user)
+			->getJson(uri: route(name: $this->url))
+			->assertOk()
 			->assertJsonCount(count: 3)
 			->assertJsonStructure(structure: [
 				'*' => [
@@ -41,27 +40,31 @@ class KlassenleitungApiControllerTest extends TestCase
 		$klasse = Klasse::factory()->create();
 		$user = User::factory()->lehrer()->create();
 		$user->klassen()->attach(id: $klasse);
-		$this->actingAs(user: $user);
 
-		$response = $this->getJson(uri: route(name: $this->url));
-
-		$response->assertOk()
+		$this->actingAs(user: $user)
+			->getJson(uri: route(name: $this->url))
+			->assertOk()
 			->assertJsonCount(count: 0);
 	}
 
-	public function test_administrator_cannot_read(): void
+	public function test_administrator_can_read_all_schueler(): void
 	{
-		$this->actingAs(user: User::factory()->administrator()->create());
+		Schueler::factory(count: 3)->create();
 
-		$response = $this->getJson(uri: route(name: $this->url));
-
-		$response->assertForbidden();
+		$this->actingAs(user: User::factory()->administrator()->create())
+			->getJson(uri: route(name: $this->url))
+			->assertOk()
+			->assertJsonCount(count: 3)
+			->assertJsonStructure(structure: [
+				'*' => [
+					'id', 'nachname', 'vorname', 'name', 'geschlecht', 'klasse', 'ASV', 'AUE', 'ZB', 'gfs', 'gfsu',
+				]
+			]);
 	}
 
 	public function test_guests_cannot_read(): void
 	{
-		$response = $this->getJson(uri: route(name: $this->url));
-
-		$response->assertUnauthorized();
+		$this->getJson(uri: route(name: $this->url))
+			->assertUnauthorized();
 	}
 }

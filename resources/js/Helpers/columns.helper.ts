@@ -12,7 +12,7 @@ const fachbezogeneBemerkungenColumns: Array<Column> = [
 ]
 
 const mahnungenColumns: Array<Column> = [
-	{ key: 'mahnung', label: 'Mahnung', sortable: true },
+	{ key: 'istGemahnt', label: 'Mahnung', sortable: true },
 ]
 
 const fehlstundenColumns: Array<Column> = [
