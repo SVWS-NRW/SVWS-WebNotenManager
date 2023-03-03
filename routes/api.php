@@ -67,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-// TODO: To ber removed, temporary testing route
+// TODO: To be removed, temporary testing route
 // TODO: Testing
 Route::get(uri: 'export', action: ExportController::class)->name('api.export'); // Rename namespace?
 Route::post(uri: 'import', action: [ImportController::class, 'request']);

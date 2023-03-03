@@ -95,7 +95,7 @@
     })
 
     const getFilters = (): void => {
-        filterOptions.kurse = setFilters(state.leistungen, 'kurs')
+        filterOptions.kurse = setFilters(state.leistungen, 'kurs', false)
         filterOptions.noten = setFilters(state.leistungen, 'note')
         filterOptions.jahrgaenge = setFilters(state.leistungen, 'jahrgang')
         filterOptions.klassen = setFilters(state.leistungen, 'klasse')
@@ -105,18 +105,35 @@
     const setFilters = (data, column: string, hasEmptyValue: boolean = true): {
         label: string, index: string | null | number
     }[] => {
+        let hasEmpty: boolean = true
+
         let set = [
             ...new Set(data.map((item: any): string => item[column]))
-        ].filter((item: string): boolean => {
-            return !hasEmptyValue && item === ''
-        })
-            .map((item: string): { label: string, index: string | null | number } => {
-                return { label: item ?? 'Leer', index: item }
-            })
+        ]
+        .filter((item: string): boolean => {
+            if (['', null].includes(item)) {
+                hasEmpty = hasEmptyValue
+                return false
+            }
 
+            return true
+        })
+        .map((item: string): { label: string, index: string | null | number } => {
+            return { label: item, index: item }
+        })
+
+        set.sort(function(a, b) {
+            let textA = a.label.toUpperCase()
+            let textB = b.label.toUpperCase()
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
+        })
+
+        if (hasEmpty) {
+            set.unshift({ label: 'Leer', index: '' })
+        }
         set.unshift({ label: 'Alle', index: '0' })
 
-        return set
+        return set;
     }
 
     const getLeistungen = (): AxiosPromise => axios

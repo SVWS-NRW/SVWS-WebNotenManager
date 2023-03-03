@@ -64,9 +64,9 @@
         note: Number | string,
     }>reactive({
         search: '',
-        klasse: 0,
+        klasse: '0',
         jahrgang: 0,
-        kurs: 0,
+        kurs: '0',
         fach: '0',
         note: 0,
     })
@@ -103,34 +103,50 @@
 
     const getLeistungen = (): Promise<any> => axios
         .get(route('api.mein_unterricht'))
-        .then((response: AxiosResponse): void => {
-            state.leistungen = response.data
-        }).finally(() => getFilters())
+        .then((response: AxiosResponse): void => state.leistungen = response.data)
+        .finally(() => getFilters())
 
     const setFilters = (data, column: string, hasEmptyValue: boolean = true): {
         label: string, index: string | null | number
     }[] => {
+        let hasEmpty: boolean = true
+
         let set = [
             ...new Set(data.map((item: any): string => item[column]))
-        ].filter((item: string): boolean => {
-            return !hasEmptyValue && item === ''
+        ]
+        .filter((item: string): boolean => {
+            if (['', null].includes(item)) {
+                hasEmpty = hasEmptyValue
+                return false
+            }
+
+            return true
         })
         .map((item: string): { label: string, index: string | null | number } => {
-            return { label: item ?? 'Leer', index: item }
+            return { label: item, index: item }
         })
 
+        set.sort(function(a, b) {
+            let textA = a.label.toUpperCase()
+            let textB = b.label.toUpperCase()
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
+        })
+
+        if (hasEmpty) {
+            set.unshift({ label: 'Leer', index: '' })
+        }
         set.unshift({ label: 'Alle', index: '0' })
 
-        return set
+        return set;
     }
 
     const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
         .filter((leistung: Leistung): boolean =>
             searchFilter(leistung)
-            && tableFilter(leistung, 'klasse', true)
-            && tableFilter(leistung, 'kurs', true)
+            && tableFilter(leistung, 'kurs')
+            && tableFilter(leistung, 'klasse')
             && tableFilter(leistung, 'jahrgang')
-            && tableFilter(leistung, 'note', true)
+            && tableFilter(leistung, 'note')
             && tableFilter(leistung, 'fach')
         )
     )
@@ -141,10 +157,9 @@
         return search(leistung.vorname) || search(leistung.nachname)
     }
 
-    const tableFilter = (leistung: Leistung, column: string, containsOnlyEmptyOption: boolean = false): boolean => {
+    const tableFilter = (leistung: Leistung, column: string): boolean => {
         if (filters[column] == '0') return true
-        if (containsOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] === ''
-        return leistung[column] === filters[column]
+        return leistung[column] == filters[column]
     }
 </script>
 
@@ -153,7 +168,7 @@
         <title>{{ title }}</title>
     </Head>
 
-    <AppLayout>
+    <AppLayout title="">
         <template #main>
             <header>
                 <div id="headline">
@@ -179,7 +194,7 @@
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
                 <template #cell(note)="{ rowData }">
-                    <NoteInput :leistung="rowData"></NoteInput>
+                    <NoteInput :leistung="rowData" :key="rowData.id"></NoteInput>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
