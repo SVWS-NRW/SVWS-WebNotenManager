@@ -15,7 +15,7 @@ class ExportControllerTest extends TestCase
 
 	private string $url = 'api.export';
 
-    public function test_export_for_everyone()
+    public function test_export_for_everyone(): void
     {
 		Schueler::factory()
 			->count(count: 3)
@@ -40,8 +40,8 @@ class ExportControllerTest extends TestCase
 						],
 					],
 					'lernabschnitt' => [
-						'id', 'fehlstundenGesamt', 'tsFehlstundenGesamt', 'fehlstundenUnentschuldigt',
-						'tsFehlstundenUnentschuldigt', 'lernbereich1note', 'lernbereich2note', 'foerderschwerpunkt1',
+						'id', 'fehlstundenGesamt', 'tsFehlstundenGesamt', 'fehlstundenGesamtUnentschuldigt',
+						'tsFehlstundenGesamtUnentschuldigt', 'lernbereich1note', 'lernbereich2note', 'foerderschwerpunkt1',
 						'foerderschwerpunkt2',
 					],
 					'bemerkungen' => [

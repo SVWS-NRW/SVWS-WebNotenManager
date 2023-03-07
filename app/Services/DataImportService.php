@@ -477,8 +477,8 @@ class DataImportService
 			$this->updateByTimestamp(
 				data: $data,
 				model: $lernabschnitt,
-				column: 'fehlstundenUnentschuldigt',
-				tsColumn: 'tsFehlstundenUnentschuldigt'
+				column: 'fehlstundenGesamtUnentschuldigt',
+				tsColumn: 'tsFehlstundenGesamtUnentschuldigt'
 			);
 
 			$lernabschnitt->foerderschwerpunkt1 = $this->getValueFromArray(

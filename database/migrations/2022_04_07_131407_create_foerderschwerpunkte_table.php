@@ -9,15 +9,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('foerderschwerpunkte', function (Blueprint $table) {
+        Schema::create(table: 'foerderschwerpunkte', callback: function (Blueprint $table): void {
             $table->id();
-            $table->string('kuerzel')->unique();
-            $table->string('beschreibung');
+            $table->string(column: 'kuerzel')->unique();
+            $table->text(column: 'beschreibung');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('foerderschwerpunkte');
+        Schema::dropIfExists(table: 'foerderschwerpunkte');
     }
 };

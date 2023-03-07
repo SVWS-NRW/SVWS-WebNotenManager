@@ -27,16 +27,19 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::put(uri: 'update', action: 'update')->name(name: 'update');
 		});
 
-	Route::controller(Fehlstunden::class)
-		->name('api.fehlstunden.')
-		->group(function(): void {
-			Route::post(uri: 'leistung/gesamt/{leistung}', action: 'fehlstundenLeistungGesamt')
-				->name(name: 'leistung.gesamt');
+	Route::controller(Fehlstunden::class)->name('api.fehlstunden.')->group(function(): void {
+		Route::post(uri: 'leistung/gesamt/{leistung}', action: 'fehlstundenLeistungGesamt')
+			->name(name: 'leistung.gesamt');
 
-			Route::post(uri: 'leistung/unentschuldigt/{leistung}', action: 'fehlstundenLeistungUnentschuldigt')
-				->name(name: 'leistung.unentschuldigt');
+		Route::post(uri: 'leistung/unentschuldigt/{leistung}', action: 'fehlstundenLeistungUnentschuldigt')
+			->name(name: 'leistung.unentschuldigt');
+
+		Route::post(uri: 'schueler/gesamt/{schueler}', action: 'fehlstundenSchuelerGesamt')
+			->name(name: 'schueler.gesamt');
+
+		Route::post(uri: 'schueler/gesamt-unentschuldigt/{schueler}', action: 'fehlstundenSchuelerGesamtUnentschuldigt')
+			->name(name: 'schueler.gesamt_unentschuldigt');
 	});
-
 
     Route::post(uri: 'fachbezogene-bemerkung/{leistung}', action: FachbezogeneBemerkung::class)
 		->name(name: 'api.fachbezogene_bemerkung');

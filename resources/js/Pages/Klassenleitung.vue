@@ -7,6 +7,7 @@
     import { Schueler } from '../Interfaces/Schueler'
     import { Settings } from '../Interfaces/Settings'
     import BemerkungenIndicator from '../Components/BemerkungenIndicator.vue'
+    import FehlstundenInput from '../Components/FehlstundenInput.vue'
 
     import {
         SvwsUiCheckbox,
@@ -119,7 +120,7 @@
         <title>{{ title }}</title>
     </Head>
 
-    <AppLayout>
+    <AppLayout title="">
         <template #main>
             <header>
                 <div id="headline">
@@ -132,6 +133,14 @@
             </header>
 
             <SvwsUiDataTable v-if="filteredSchueler.length" :items="filteredSchueler" :columns="columns" clickable>
+                <template #cell(gfs)="{ rowData }">
+                    <FehlstundenInput :model="rowData" column="gfs"></FehlstundenInput>
+                </template>
+
+                <template #cell(gfsu)="{ rowData }">
+                    <FehlstundenInput :model="rowData" column="gfsu"></FehlstundenInput>
+                </template>
+
                 <template #cell(ASV)="{ rowData }">
                     <BemerkungenIndicator :leistung="rowData" floskelgruppe="ASV"></BemerkungenIndicator>
                 </template>

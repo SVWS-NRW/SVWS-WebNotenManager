@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create(table: 'settings', callback: function (Blueprint $table): void {
             $table->id();
-            $table->string('type');
-            $table->string('key')->unique();
-            $table->text('value')->nullable();
+            $table->string(column: 'type');
+            $table->string(column: 'key')->unique();
+            $table->text(column: 'value')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists(table: 'settings');
     }
 };

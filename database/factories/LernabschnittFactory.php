@@ -21,16 +21,6 @@ class LernabschnittFactory extends Factory
         ];
     }
 
-	public function withFehlstundenGesamt(int|null $amount = null): LernabschnittFactory
-	{
-		return $this->withTimestamp(column: 'fehlstundenGesamt', value: $amount ?? rand(max: 10));
-	}
-
-	public function withFehlstundenUnentschuldigt(int|null $amount = null): LernabschnittFactory
-	{
-		return $this->withTimestamp(column: 'fehlstundenUnentschuldigt', value: $amount ?? rand(max: 10));
-	}
-
 	private function withTimestamp(
 		string $column,
 		string|null $tsColumn = null,

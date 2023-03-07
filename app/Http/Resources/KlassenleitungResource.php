@@ -18,8 +18,8 @@ class KlassenleitungResource extends JsonResource
 			'ASV' => $this->bemerkung?->ASV,
 			'AUE' => $this->bemerkung?->AUE,
 			'ZB' => $this->bemerkung?->ZB,
-			'gfs' => $this->leistungen->sum(callback: 'fehlstundenGesamt'),
-			'gfsu' => $this->leistungen->sum(callback: 'fehlstundenUnentschuldigt'),
+			'gfs' => $this->lernabschnitt?->fehlstundenGesamt,
+			'gfsu' => $this->lernabschnitt?->fehlstundenGesamtUnentschuldigt,
 		];
     }
 }

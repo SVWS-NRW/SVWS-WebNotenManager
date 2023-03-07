@@ -13,8 +13,8 @@ class Klassenleitung extends Controller
 	public function __invoke(): AnonymousResourceCollection
 	{
 		$schueler = Schueler::query()
-			->with(relations: ['klasse', 'leistungen', 'bemerkung'])
-			->when(auth()->user()->isLehrer(), fn ($q) => $q			->whereIn(
+			->with(relations: ['klasse', 'leistungen', 'bemerkung', 'lernabschnitt'])
+			->when(auth()->user()->isLehrer(), fn ($q) => $q->whereIn(
 				column: 'klasse_id',
 				values: auth()->user()->klassen()->pluck(column: 'id')
 			))

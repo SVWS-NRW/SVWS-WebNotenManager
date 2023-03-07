@@ -84,7 +84,7 @@
         pushTable(toggles.teilleistungen, teilleistungenColumns)
         pushTable(true, notenColumns)
         pushTable(toggles.mahnungen, mahnungenColumns)
-        pushTable(true, fehlstundenColumns)
+        pushTable(toggles.fehlstunden, fehlstundenColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
     }
 
@@ -204,11 +204,11 @@
                 </template>
 
                 <template #cell(fs)="{ rowData }">
-                    <FehlstundenInput :leistung="rowData" column="fs"></FehlstundenInput>
+                    <FehlstundenInput :model="rowData" column="fs"></FehlstundenInput>
                 </template>
 
                 <template #cell(ufs)="{ rowData }">
-                    <FehlstundenInput :leistung="rowData" column="ufs"></FehlstundenInput>
+                    <FehlstundenInput :model="rowData" column="ufs"></FehlstundenInput>
                 </template>
 
                 <template #cell(istGemahnt)="{ rowData }">
