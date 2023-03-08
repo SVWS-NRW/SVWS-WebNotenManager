@@ -23,8 +23,8 @@ class LeistungResource extends JsonResource
 			'note' => $this->note?->kuerzel,
 			'istGemahnt' => $this->istGemahnt,
 			'mahndatum' => $this->mahndatum,
-			'fs' => $this->fehlstundenGesamt,
-			'ufs' => $this->fehlstundenUnentschuldigt,
+			'fs' => $this->fehlstundenFach,
+			'ufs' => $this->fehlstundenUnentschuldigtFach,
 			'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
         ];
     }

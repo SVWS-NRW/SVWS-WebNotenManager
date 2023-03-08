@@ -20,7 +20,7 @@ class FehlstundenControllerTest extends TestCase
 	private string $urlSchuelerFehlstundenGesamt = 'api.fehlstunden.schueler.gesamt';
 	private string $urlSchuelerFehlstundenGesamtUnentschuldigt = 'api.fehlstunden.schueler.gesamt_unentschuldigt';
 
-	public function test_user_can_set_leistung_fehlstunden_gesamt(): void
+	public function test_user_can_set_leistung_fehlstunden_facht(): void
 	{
 		$lerngruppe = Lerngruppe::factory()->create();
 
@@ -30,8 +30,8 @@ class FehlstundenControllerTest extends TestCase
 		$leistung = Leistung::factory()
 			->for(factory: $lerngruppe)
 			->create(attributes: [
-				'fehlstundenGesamt' => 3,
-				'fehlstundenUnentschuldigt' => 3,
+				'fehlstundenFach' => 3,
+				'fehlstundenUnentschuldigtFach' => 3,
 			]);
 
 		$this->actingAs(user: $user)->postJson(
@@ -40,13 +40,13 @@ class FehlstundenControllerTest extends TestCase
 		)->assertNoContent();
 
 		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenGesamt' => 5]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 5]
 		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenGesamt' => 3]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 3]
 		);
 	}
 
-	public function test_user_can_set_leistung_fehlstunden_unentschuldigt(): void
+	public function test_user_can_set_leistung_fehlstunden_unentschuldigt_fach(): void
 	{
 		$lerngruppe = Lerngruppe::factory()->create();
 
@@ -56,8 +56,8 @@ class FehlstundenControllerTest extends TestCase
 		$leistung = Leistung::factory()
 			->for(factory: $lerngruppe)
 			->create(attributes: [
-				'fehlstundenGesamt' => 5,
-				'fehlstundenUnentschuldigt' => 3,
+				'fehlstundenFach' => 5,
+				'fehlstundenUnentschuldigtFach' => 3,
 			]);
 
 		$this->actingAs(user: $user)->postJson(
@@ -66,9 +66,9 @@ class FehlstundenControllerTest extends TestCase
 		)->assertNoContent();
 
 		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigt' => 5]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]
 		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigt' => 3]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3]
 		);
 	}
 
@@ -137,8 +137,8 @@ class FehlstundenControllerTest extends TestCase
 		$user->lerngruppen()->attach(id: $lerngruppe);
 
 		$leistung = Leistung::factory()->for(factory: $lerngruppe)->create(attributes: [
-			'fehlstundenGesamt' => 3,
-			'fehlstundenUnentschuldigt' => 3,
+			'fehlstundenFach' => 3,
+			'fehlstundenUnentschuldigtFach' => 3,
 		]);
 
 		$this->actingAs(user: $user)->postJson(
@@ -147,9 +147,9 @@ class FehlstundenControllerTest extends TestCase
 		)->assertUnprocessable();
 
 		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenGesamt' => 3]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 3]
 		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenGesamt' => 1]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 1]
 		);
 	}
 
@@ -161,8 +161,8 @@ class FehlstundenControllerTest extends TestCase
 		$user->lerngruppen()->attach(id: $lerngruppe);
 
 		$leistung = Leistung::factory()->for(factory: $lerngruppe)->create(attributes: [
-			'fehlstundenGesamt' => 3,
-			'fehlstundenUnentschuldigt' => 3,
+			'fehlstundenFach' => 3,
+			'fehlstundenUnentschuldigtFach' => 3,
 		]);
 
 		$this->actingAs(user: $user)->postJson(
@@ -171,9 +171,9 @@ class FehlstundenControllerTest extends TestCase
 		)->assertUnprocessable();
 
 		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigt' => 3]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3]
 		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigt' => 5]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]
 		);
 	}
 
@@ -236,7 +236,7 @@ class FehlstundenControllerTest extends TestCase
 	public function test_user_cannot_set_leistung_fehlstunden_gesamt_for_leistung_not_in_a_common_lerngruppe(): void
 	{
 		$leistung = Leistung::factory()->create(attributes: [
-			'fehlstundenGesamt' => 3,
+			'fehlstundenFach' => 3,
 		]);
 
 		$this->actingAs(user: User::factory()->lehrer()->create())
@@ -246,16 +246,16 @@ class FehlstundenControllerTest extends TestCase
 			)->assertForbidden();
 
 		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenGesamt' => 3]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 3]
 		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenGesamt' => 5]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 5]
 		);
 	}
 
 	public function test_user_cannot_set_leistung_fehlstunden_unentschuldigt_for_leistung_not_in_a_common_lerngruppe(): void
 	{
 		$leistung = Leistung::factory()->create(attributes: [
-			'fehlstundenUnentschuldigt' => 3,
+			'fehlstundenUnentschuldigtFach' => 3,
 		]);
 
 		$this->actingAs(user: User::factory()->lehrer()->create())->postJson(
@@ -264,9 +264,9 @@ class FehlstundenControllerTest extends TestCase
 		)->assertForbidden();
 
 		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigt' => 3]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3]
 		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigt' => 5]
+			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]
 		);
 	}
 
@@ -321,7 +321,10 @@ class FehlstundenControllerTest extends TestCase
 	public function test_guest_cannot_set_leistung_fehlstunden_gesamt(): void
 	{
 		$this->postJson(
-			uri: route(name: $this->urlLeistungFehlstundenGesamt, parameters: Leistung::factory()->create()),
+			uri: route(
+				name: $this->urlLeistungFehlstundenGesamt,
+				parameters: Leistung::factory()->create()
+			),
 			data: ['value' => 5]
 		)->assertUnauthorized();
 	}
@@ -329,7 +332,10 @@ class FehlstundenControllerTest extends TestCase
 	public function test_guest_cannot_set_leistung_fehlstunden_unentschuldigt(): void
 	{
 		$this->postJson(
-			uri: route(name: $this->urlLeistungFehlstundenUnentschuldigt, parameters: Leistung::factory()->create()),
+			uri: route(
+				name: $this->urlLeistungFehlstundenUnentschuldigt,
+				parameters: Leistung::factory()->create()
+			),
 			data: ['value' => 5]
 		)->assertUnauthorized();
 	}
@@ -337,7 +343,10 @@ class FehlstundenControllerTest extends TestCase
 	public function test_guest_cannot_set_schueler_fehlstunden_gesamt(): void
 	{
 		$this->postJson(
-			uri: route(name: $this->urlSchuelerFehlstundenGesamt, parameters: Leistung::factory()->create()),
+			uri: route(
+				name: $this->urlSchuelerFehlstundenGesamt,
+				parameters: Leistung::factory()->create()
+			),
 			data: ['value' => 5]
 		)->assertUnauthorized();
 	}
@@ -345,8 +354,13 @@ class FehlstundenControllerTest extends TestCase
 	public function test_guest_cannot_set_schueler_fehlstunden_gesamt_unentschuldigt(): void
 	{
 		$this->postJson(
-			uri: route(name: $this->urlSchuelerFehlstundenGesamtUnentschuldigt, parameters: Leistung::factory()->create()),
+			uri: route(
+				name: $this->urlSchuelerFehlstundenGesamtUnentschuldigt,
+				parameters: Leistung::factory()->create()
+			),
 			data: ['value' => 5]
 		)->assertUnauthorized();
 	}
+
+
 }

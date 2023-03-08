@@ -532,9 +532,9 @@ class DataImportService
 				$leistung = Leistung::findOrFail($row['id']);
 
 				$this->updateByTimestamp(data: $row, model: $leistung, column: 'note_id', tsColumn: 'tsNote', value: $noteId);
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fehlstundenGesamt', tsColumn: 'tsFehlstundenGesamt');
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fehlstundenUnentschuldigt', tsColumn: 'tsFehlstundenUnentschuldigt');
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fachbezogeneBemerkungen', tsColumn: 'tsFachbezogeneBemerkungen');
+				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fehlstundenFach', tsColumn: 'tsFehlstundenFach');
+				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fehlstundenUnentschuldigtFach', tsColumn: 'tsFehlstundenUnentschuldigt');
+				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fachbezogeneBemerkungen', tsColumn: 'tsFehlstundenUnentschuldigtFach');
 				$this->updateByTimestamp(data: $row, model: $leistung, column: 'istGemahnt', tsColumn: 'tsIstGemahnt');
 
 				$leistung->save();

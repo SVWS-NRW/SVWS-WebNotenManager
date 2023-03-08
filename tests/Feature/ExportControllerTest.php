@@ -34,8 +34,8 @@ class ExportControllerTest extends TestCase
 					'id',
 					'leistungsdaten' => [
 						'*' => [
-							'id', 'note', 'tsNote', 'fehlstundenGesamt', 'tsFehlstundenGesamt',
-							'fehlstundenUnentschuldigt', 'tsFehlstundenUnentschuldigt', 'fachbezogeneBemerkungen',
+							'id', 'note', 'tsNote', 'fehlstundenFach', 'tsFehlstundenFach',
+							'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigtFach', 'fachbezogeneBemerkungen',
 							'tsFachbezogeneBemerkungen', 'istGemahnt', 'tsIstGemahnt',
 						],
 					],

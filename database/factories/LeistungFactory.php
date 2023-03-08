@@ -23,7 +23,8 @@ class LeistungFactory extends Factory
     public function withAbiturfach(int|null $amount = null): LeistungFactory
     {
         return $this->state(fn (): array  => [
-			'abiturfach' => $amount ?? rand(0, 10)]);
+			'abiturfach' => $amount ?? rand(0, 10)
+		]);
     }
 
     public function withNote(): LeistungFactory
@@ -35,17 +36,17 @@ class LeistungFactory extends Factory
     {
         return $this->state(fn (): array  => [
 			'istSchriftlich' => true,
-			]);
+		]);
     }
 
-    public function withFehlstundenGesamt(int|null $amount = null): LeistungFactory
+    public function withFehlstundenFach(int|null $amount = null): LeistungFactory
     {
-		return $this->withTimestamp(column: 'fehlstundenGesamt', value: $amount ?? rand(min: 0, max: 10));
+		return $this->withTimestamp(column: 'fehlstundenFach', value: $amount ?? rand(max: 10));
     }
 
-    public function withFehlstundenUnentschuldigt(int|null $amount = null): LeistungFactory
+    public function withFehlstundenUnentschuldigtFach(int|null $amount = null): LeistungFactory
     {
-		return $this->withTimestamp(column: 'fehlstundenUnentschuldigt', value: $amount ?? rand(min: 0, max: 10));
+		return $this->withTimestamp(column: 'fehlstundenUnentschuldigtFach', value: $amount ?? rand(max: 10));
     }
 
     public function withFachbezogeneBemerkungen(): LeistungFactory

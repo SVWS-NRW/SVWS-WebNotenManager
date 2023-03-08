@@ -19,10 +19,10 @@ return new class extends Migration
 			$table->timestamp(column: 'tsNote', precision: 3)->default(value: now());
             $table->boolean(column: 'istSchriftlich')->default(value: false);
             $table->string(column: 'abiturfach')->nullable();
-            $table->integer(column: 'fehlstundenGesamt')->nullable();
-			$table->timestamp(column: 'tsFehlstundenGesamt', precision: 3)->default(value: now());
-            $table->integer(column: 'fehlstundenUnentschuldigt')->nullable();
-			$table->timestamp(column: 'tsFehlstundenUnentschuldigt', precision: 3)->default(value: now());
+            $table->integer(column: 'fehlstundenFach')->nullable();
+			$table->timestamp(column: 'tsFehlstundenFach', precision: 3)->default(value: now());
+            $table->integer(column: 'fehlstundenUnentschuldigtFach')->nullable();
+			$table->timestamp(column: 'tsFehlstundenUnentschuldigtFach', precision: 3)->default(value: now());
             $table->text(column: 'fachbezogeneBemerkungen')->nullable();
 			$table->timestamp(column: 'tsFachbezogeneBemerkungen', precision: 3)->default(value: now());
             $table->string(column: 'neueZuweisungKursart')->nullable();
