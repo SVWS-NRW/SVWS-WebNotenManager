@@ -25,6 +25,7 @@
         SvwsUiTextInput,
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
+
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
 
     const title = 'Notenmanager - mein Unterricht'
@@ -161,6 +162,8 @@
         if (filters[column] == '0') return true
         return leistung[column] == filters[column]
     }
+
+    const updateFachbezogeneBemerkungen = (fb: string, data: Leistung): string => data.fachbezogeneBemerkungen = fb
 </script>
 
 <template>
@@ -216,7 +219,7 @@
                 </template>
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <FachbezogeneBemerkungenIndicator :leistung="rowData"></FachbezogeneBemerkungenIndicator>
+                    <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)"></FachbezogeneBemerkungenIndicator>
                 </template>
             </SvwsUiDataTable>
         </template>

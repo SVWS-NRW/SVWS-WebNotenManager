@@ -23,6 +23,8 @@
         leistung: Leistung
     }>()
 
+    const emit = defineEmits(['updated'])
+
     let state: { bemerkung: string, storedBemerkung: string, isDirty: boolean } = reactive({
         bemerkung: <string> props.leistung.fachbezogeneBemerkungen,
         storedBemerkung: <string> props.leistung.fachbezogeneBemerkungen,
@@ -117,6 +119,7 @@
         ).then((): AxiosResponse => {
             state.storedBemerkung = state.bemerkung
             state.isDirty = false
+            emit('updated', state.bemerkung)
             return
         })
         .catch((error: AxiosError): AxiosResponse => {
@@ -143,7 +146,6 @@
             </SvwsUiIcon>
             {{ state.bemerkung }}
         </div>
-
 
         <div class="app-layout--main-sidebar" :class="{ 'app-layout--main-sidebar--collapsed': collapsed }">
             <div class="app-layout--main-sidebar--container" v-if="!collapsed">
