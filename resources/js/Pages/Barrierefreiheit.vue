@@ -11,7 +11,7 @@
 
         <AuthLayout>
             <template #main>
-                <div class="component">
+                <main>
                     <h1 class="headline-1">Erklärung zur Barrierefreiheit</h1>
 
                     <h2 class="headline-2">Barrierefreiheit dieser Internetseite</h2>
@@ -42,15 +42,15 @@
                     <p>Die Überwachungsstelle für barrierefreie Informationstechnik des Landes Nordrhein-Westfalen prüft regelmäßig, ob und inwiefern Internetseiten und mobile Anwendungen öffentlicher Stellen des Landes den Anforderungen an die Barrierefreiheit genügen. Ziel der Arbeit der Überwachungsstelle ist es, die Einhaltung der Anforderungen an die barrierefreie Informationstechnik sicherzustellen und für eine flächendeckende Umsetzung der gesetzlichen Regelungen zu sorgen. Eine E-Mail an die Überwachungsstelle können Sie an die E-Mail-Adresse <a href="mailto:ombudsstelle-barrierefreie-it@mags.nrw.de" target="_blank">ombudsstelle-barrierefreie-it@mags.nrw.de</a> senden. Weitere Informationen zur Überwachungsstelle finden Sie hier: <a href="https://www.mags.nrw/ueberwachungsstelle-barrierefreie-informationstechnik" target="_blank">www.mags.nrw/ueberwachungsstelle-barrierefreie-informationstechnik</a></p>
                     <h2 class="headline-2">Schlichtungsverfahren/ Durchsetzungsverfahren</h2>
                     <p>Sollten Sie auf Mitteilungen oder Anfragen zur barrierefreien Informationstechnik dieser Internetseite keine zufriedenstellende Antwort erhalten, können Sie die Ombudsstelle für barrierefreie Informationstechnik des Landes Nordrhein-Westfalen einschalten. Die Ombudsstelle ist der Beauftragten für die Belange der Menschen mit Behinderung zugeordnet und in §§ 10d, 10e BGG NRW und §§ 9 ff der BITV NRW gesetzlich verankert. Unter Einbeziehung aller Beteiligten versucht die Ombudsstelle, die Umstände der fehlenden Barrierefreiheit zu ermitteln, damit der Träger diese beheben kann. Dabei geht es nicht darum, Gewinner oder Verlierer zu finden. Vielmehr ist es das Ziel, mit Hilfe der Schlichtungsstelle gemeinsam und außergerichtlich eine Lösung für ein Problem zu finden. Das Schlichtungsverfahren ist kostenlos. Sie brauchen auch keinen Rechtsbeistand. Telefonisch ist die Ombudsstelle für barrierefreie Informationstechnik NRW unter folgender Rufnummer zu erreichen: 0211 / 855-3451. Weitere Informationen zur Ombudsstelle für barrierefreie Informationstechnik NRW finden Sie hier: <a href="https://www.mags.nrw/ombudsstelle-barrierefreie-informationstechnik" target="_blank">www.mags.nrw/ombudsstelle-barrierefreie-informationstechnik</a></p>
-                </div>
+                </main>
             </template>
         </AuthLayout>
     </div>
 </template>
 
 <style scoped>
-    div.component {
-        @apply ui-bg-white ui-rounded-lg ui-shadow-lg ui-p-8 ui-flex ui-flex-col ui-gap-6 ui-w-full ui-max-w-6xl
+    main {
+        @apply ui-bg-white ui-rounded-lg ui-shadow-lg ui-p-8 ui-flex ui-flex-col ui-gap-6 ui-w-full ui-max-w-6xl ui-mx-auto ui-my-8 ui-overflow-y-auto
     }
 
     h1 {

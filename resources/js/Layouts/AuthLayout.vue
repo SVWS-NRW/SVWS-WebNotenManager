@@ -7,9 +7,8 @@
     <SvwsUiAppLayout :fullwidthContent="true" v-cloak>
         <template #main>
             <div class="component">
-                <main>
-                    <slot name="main" />
-                </main>
+                <slot name="main" />
+
                 <footer>
                     <div class="disclaimer">
                         <h3>Powered by SVWS-NRW, Version {{ usePage().props.value.version }}</h3>
@@ -36,9 +35,6 @@
         @apply ui-bg-chalk ui-bg-cover ui-w-full ui-h-full ui-flex ui-flex-col ui-justify-between
     }
 
-    main {
-        @apply ui-grow ui-flex ui-justify-center ui-items-center
-    }
 
     footer {
         @apply ui-bg-white ui-p-8 ui-flex ui-flex-col-reverse md:ui-flex-row ui-gap-8 ui-text-lg ui-items-center
