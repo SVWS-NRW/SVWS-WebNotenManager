@@ -25,6 +25,7 @@
         SvwsUiDataTable,
     } from '@svws-nrw/svws-ui'
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
+    import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
@@ -221,7 +222,7 @@
                 </template>
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <FachbezogeneBemerkungenIndicator :leistung="rowData" :disabled="true"></FachbezogeneBemerkungenIndicator>
+                    <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData"></FachbezogeneBemerkungenIndicatorReadonly>
                 </template>
             </SvwsUiDataTable>
         </template>
