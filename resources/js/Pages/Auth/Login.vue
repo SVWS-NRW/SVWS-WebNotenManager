@@ -123,6 +123,7 @@ const submit = (): void => {
     ui-flex ui-flex-col ui-gap-6
     ui-w-full ui-max-w-lg
     ui-bg-white
+    ui-m-auto
 }
 
 #buttons {

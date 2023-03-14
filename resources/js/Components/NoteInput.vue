@@ -21,7 +21,6 @@
 
     const saveNote = (): AxiosPromise => axios
         .post(route('api.noten', leistung), { note: leistung.note })
-        // .then((response: AxiosResponse): AxiosResponse => leistung.note = response.data.note)
         .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))
@@ -29,8 +28,10 @@
 </script>
 
 <template>
-    <strong v-if="isDisabled()" :class="{ 'low-score' : lowScore }">{{ leistung.note }}</strong>
-    <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore" :headless="true"></SvwsUiTextInput>
+    <span :class="{ 'low-score' : lowScore }" >
+        <span v-if="isDisabled()">{{ leistung.note }}</span>
+        <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore" :headless="true"></SvwsUiTextInput>
+    </span>
 </template>
 
 <style scoped>

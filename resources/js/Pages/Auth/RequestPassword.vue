@@ -121,12 +121,7 @@
     }
 
     #component {
-        @apply
-        ui-rounded-lg ui-shadow-lg
-        ui-p-8
-        ui-flex ui-flex-col ui-gap-6
-        ui-w-full ui-max-w-lg
-        ui-bg-white
+        @apply ui-bg-white ui-rounded-lg ui-shadow-lg ui-p-8 ui-flex ui-flex-col ui-gap-6 ui-w-full ui-max-w-6xl ui-m-auto ui-overflow-y-auto
     }
 
     .form-control {
