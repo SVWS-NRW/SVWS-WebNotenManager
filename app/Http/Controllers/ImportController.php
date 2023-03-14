@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Http;
 
 class ImportController extends Controller
 {
-    public function curl() {
+    public function curl()
+	{
 		$endpoint = 'https://nightly.svws-nrw.de/db/ENM1/enm/alle';
 
 		$response = Http::accept(contentType: 'application/json')
@@ -19,6 +20,22 @@ class ImportController extends Controller
 		$this->import(
 			data: json_decode(
 				json: $response->body(),
+				associative: true
+			)
+		);
+	}
+
+	public function gzip()
+	{
+		$endpoint = 'https://nightly.svws-nrw.de/db/ENM1/enm/alle/gzip';
+
+		$response = Http::accept(contentType: 'application/octet-stream')
+			->withBasicAuth(username: 'Admin', password: '')
+			->get(url: $endpoint);
+
+		$this->import(
+			data: json_decode(
+				json: gzdecode($response->body()),
 				associative: true
 			)
 		);
