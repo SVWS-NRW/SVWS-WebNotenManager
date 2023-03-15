@@ -28,14 +28,14 @@
 </script>
 
 <template>
-    <span :class="{ 'low-score' : lowScore }" >
+    <strong :class="{ 'low-score' : lowScore }" >
         <span v-if="isDisabled()">{{ leistung.note }}</span>
         <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore" :headless="true"></SvwsUiTextInput>
-    </span>
+    </strong>
 </template>
 
 <style scoped>
     .low-score {
-        @apply ui-text-red-500 ui-font-bold
+        @apply ui-text-red-500
     }
 </style>
