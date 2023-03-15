@@ -14,9 +14,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 		->name(name: 'klassenleitung')
 		->middleware(middleware: 'klassenleitung');
 
-	Route::middleware('admin')
+	Route::middleware('administrator')
 		->prefix('einstellungen')
-		->namespace('settings.')
+		->name('settings.')
 		->group(function () {
 			Route::inertia('/', 'Settings/Index')->name('index');
 			Route::inertia('schule', 'Settings/School')->name('school');

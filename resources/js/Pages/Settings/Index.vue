@@ -1,9 +1,10 @@
 <script setup lang="ts">
     import { useStore } from '../../store'
-    // import Menubar from '../../Components/Menubar.vue'
-    // import TopMenu from "../../Components/TopMenu.vue"
     import {Inertia} from "@inertiajs/inertia";
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
+
+    import {SvwsUiSecondaryMenu, SvwsUiSidebarMenuItem} from '@svws-nrw/svws-ui'
+    import AppLayout from '../../Layouts/AppLayout.vue'
 
     const store = useStore();
 
@@ -14,16 +15,15 @@
 
 <template>
     <div>
-        <SvwsUiAppLayout :collapsed="store.sidebarCollapsed">
-            <template #sidebar>
-<!--                <Menubar :auth="props.auth" />-->
+        <AppLayout title="Einstellungen">
+            <template #main>
+
             </template>
             <template #secondaryMenu>
                 <SvwsUiSecondaryMenu>
                     <template #headline>
                         Schulverwaltung
                     </template>
-
                     <template #content>
                         <SvwsUiSidebarMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')">
                             <template #label>Schule bearbeiten</template>
@@ -31,16 +31,7 @@
                     </template>
                 </SvwsUiSecondaryMenu>
             </template>
-
-            <template #main>
-                <div class="ui-relative ui-flex ui-flex-col ui-w-full ui-h-screen">
-<!--                    <TopMenu headline="Einstellungen"></TopMenu>-->
-                </div>
-            </template>
-
-            <template #contentSidebar>
-            </template>
-        </SvwsUiAppLayout>
+        </AppLayout>
     </div>
 </template>
 

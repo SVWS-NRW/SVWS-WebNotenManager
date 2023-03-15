@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SettingController extends Controller
 {
-    public function index(string $type): JsonResponse
+    public function index(string $type): JsonResponse // TODO: Test
 	{
 		abort_unless(boolean: auth()->check() && auth()->user()->isAdministrator(), code: Response::HTTP_FORBIDDEN);
 

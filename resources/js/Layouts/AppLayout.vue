@@ -3,6 +3,8 @@
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
     import { Auth } from '../Interfaces/Auth'
+    import { useSlots } from 'vue'
+
 
     import {
         SvwsUiAppLayout,
@@ -15,6 +17,8 @@
     let props = defineProps<{
         title: String,
     }>()
+
+    const slots = useSlots()
 
     const isCollapsed = ref(false)
 
@@ -97,6 +101,9 @@
         </template>
         <template #main>
             <slot name="main" />
+        </template>
+        <template #secondaryMenu v-if="slots.secondaryMenu">
+            <slot name="secondaryMenu" />
         </template>
     </SvwsUiAppLayout>
 </template>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Leistung;
 use App\Models\Note;
+use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +15,14 @@ class Noten extends Controller
 {
 	public function __invoke(Leistung $leistung): JsonResponse
 	{
+		$date = Setting::where(['type' => 'school', 'key' => 'note_entry_until'])->first(); // TODO: Test
+		if ($date->value !== null) {
+			abort_if(
+				boolean: Carbon::parse($date->value)->lte(now()->startOfDay()),
+				code: Response::HTTP_FORBIDDEN
+			);
+		}
+
 		if (request()->note == '') {
 			return $this->updateNote(leistung: $leistung);
 		}

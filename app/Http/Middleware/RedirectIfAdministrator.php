@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class RedirectIfAdministrator
 {
-    public function handle(Request $request, Closure $next): JsonResponse|RedirectResponse
+    public function handle(Request $request, Closure $next)
 	{
 		if (auth()->check() && auth()->user()->isAdministrator()) {
 			return $next($request);
