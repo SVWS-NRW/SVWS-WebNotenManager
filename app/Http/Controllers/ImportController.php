@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\DataImportService;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\Response as Status;
 
 class ImportController extends Controller
 {
@@ -25,7 +29,7 @@ class ImportController extends Controller
 		);
 	}
 
-	public function gzip()
+	public function gzipEnm()
 	{
 		$endpoint = 'https://nightly.svws-nrw.de/db/ENM1/enm/alle/gzip';
 
@@ -39,6 +43,29 @@ class ImportController extends Controller
 				associative: true
 			)
 		);
+	}
+
+	public function gzip(): JsonResponse
+	{
+		$key = 'file';
+
+		if (!request()->has(key: $key)) {
+			return response()->json(data: 'No file found.', status: Status::HTTP_UNPROCESSABLE_ENTITY);
+		}
+
+		$decodedData = gzdecode(
+			data: request()->file(key: $key)->getContent()
+		);
+
+		if ($decodedData === false) {
+			return response()->json(data: 'File invalid.', status: Status::HTTP_BAD_REQUEST);
+		}
+
+		$this->import(
+			data: json_decode(json: $decodedData, associative: true)
+		);
+
+		return response()->json(status: Status::HTTP_OK);
 	}
 
     public function request(): void
