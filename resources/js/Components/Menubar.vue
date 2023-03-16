@@ -42,7 +42,6 @@
             <SvwsUiSidebarMenuItem v-if="props.auth.user.klassen.length > 0 || props.auth.administrator" :collapsed="store.sidebarCollapsed" @click="navigate('klassenleitung')" :active="route().current('klassenleitung')">
                 <template #label>Klassenleitung</template>
                 <template #icon>
-
                      <SvwsUiIcon>
                          <i-ri-user2-line aria-hidden="true"></i-ri-user2-line>
                     </SvwsUiIcon>

@@ -79,6 +79,19 @@
                 <template #footer>
                     <SvwsUiSidebarMenuItem
                         :collapsed="isCollapsed"
+                        icon="cog-outline"
+                        @click="navigate('settings.index')"
+                        v-if="usePage().props.value.auth.administrator"
+                    >
+                        <template #label>
+                            Einstellungen
+                        </template>
+                        <template #icon>
+                            <mdi-cog-outline></mdi-cog-outline>
+                        </template>
+                    </SvwsUiSidebarMenuItem>
+                    <SvwsUiSidebarMenuItem
+                        :collapsed="isCollapsed"
                         icon="logout"
                         @click="logout()"
                     >

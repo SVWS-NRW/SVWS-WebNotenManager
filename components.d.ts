@@ -12,6 +12,8 @@ declare module '@vue/runtime-core' {
     MdiCheckboxMarkedOutline: typeof import('~icons/mdi/checkbox-marked-outline')['default']
     MdiCheckboxOutline: typeof import('~icons/mdi/checkbox-outline')['default']
     MdiClose: typeof import('~icons/mdi/close')['default']
+    MdiCog: typeof import('~icons/mdi/cog')['default']
+    MdiCogOutline: typeof import('~icons/mdi/cog-outline')['default']
     MdiHomeOutline: typeof import('~icons/mdi/home-outline')['default']
     MdiLogout: typeof import('~icons/mdi/logout')['default']
     MdiUserOutline: typeof import('~icons/mdi/user-outline')['default']

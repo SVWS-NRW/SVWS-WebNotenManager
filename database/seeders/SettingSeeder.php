@@ -26,6 +26,16 @@ class SettingSeeder extends Seeder
 		['type' => 'school', 'key' => 'note_entry_until', 'value' => null],
 
 		['type' => 'school', 'key' => 'klassenleitung_fehlstunden_visible', 'value' => true],
+
+		['type' => 'filter', 'key' => 'mein_unterricht_teilleistungen', 'value' => false],
+		['type' => 'filter', 'key' => 'mein_unterricht_mahnungen', 'value' => true],
+		['type' => 'filter', 'key' => 'mein_unterricht_fehlstunden', 'value' => false],
+		['type' => 'filter', 'key' => 'mein_unterricht_bemerkungen', 'value' => true],
+
+		['type' => 'filter', 'key' => 'leistungdatenuebersicht_teilleistungen', 'value' => false],
+		['type' => 'filter', 'key' => 'leistungdatenuebersicht_fachlehrer', 'value' => true],
+		['type' => 'filter', 'key' => 'leistungdatenuebersicht_mahnungen', 'value' => false],
+		['type' => 'filter', 'key' => 'leistungdatenuebersicht_bemerkungen', 'value' => true],
 	];
 
     public function run(): void

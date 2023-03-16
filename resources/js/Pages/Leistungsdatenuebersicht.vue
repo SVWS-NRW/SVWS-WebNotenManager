@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { computed, onMounted, reactive, ref, watch } from 'vue'
-    import { Head } from '@inertiajs/inertia-vue3'
+    import {Head, usePage} from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
@@ -29,16 +29,19 @@
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
+
+    const getToggleValue = (column: string): boolean => usePage().props.value.settings[column] == 1
+
     let toggles = <{
         fachlehrer: boolean,
         bemerkungen: boolean,
         mahnungen: boolean,
         teilleistungen: boolean,
     }>reactive({
-        fachlehrer: true,
-        bemerkungen: true,
-        mahnungen: false,
-        teilleistungen: false,
+        fachlehrer: getToggleValue('leistungdatenuebersicht_teilleistungen'),
+        bemerkungen: getToggleValue('leistungdatenuebersicht_fachlehrer'),
+        mahnungen: getToggleValue('leistungdatenuebersicht_mahnungen'),
+        teilleistungen: getToggleValue('leistungdatenuebersicht_bemerkungen'),
     })
 
     let state = reactive({

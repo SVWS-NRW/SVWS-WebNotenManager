@@ -1,9 +1,10 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import { onMounted, reactive, computed, ref, watch } from 'vue'
+    import {onMounted, reactive, computed, ref, watch, PropType} from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
     import { Column } from '../Interfaces/Column'
+    import { usePage } from '@inertiajs/inertia-vue3'
     import axios, { AxiosResponse } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import NoteInput from '../Components/NoteInput.vue'
@@ -27,6 +28,7 @@
     } from '@svws-nrw/svws-ui'
 
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
+    import {Settings} from '../Interfaces/Settings'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -42,17 +44,28 @@
         'faecher': [],
     })
 
+
+    const getToggleValue = (column: string): boolean => usePage().props.value.settings[column] == 1
+
     let toggles = <{
         teilleistungen: boolean,
         mahnungen: boolean,
         bemerkungen: boolean,
         fehlstunden: boolean
     }>reactive({
-        teilleistungen: false,
-        mahnungen: true,
-        bemerkungen: true,
-        fehlstunden: false,
+        teilleistungen: getToggleValue('mein_unterricht_teilleistungen'),
+        mahnungen: getToggleValue('mein_unterricht_mahnungen'),
+        bemerkungen: getToggleValue('mein_unterricht_bemerkungen'),
+        fehlstunden: getToggleValue('mein_unterricht_fehlstunden'),
     })
+
+    let props = defineProps({
+        settings: {
+            type: Object as PropType<Settings>,
+            required: true,
+        }
+    })
+
 
     watch(toggles, (): void => drawTable())
 
@@ -170,7 +183,6 @@
     <Head>
         <title>{{ title }}</title>
     </Head>
-
     <AppLayout title="">
         <template #main>
             <header>
