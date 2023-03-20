@@ -71,10 +71,19 @@ class DataImportService
 				continue;
 			}
 
+			if ($name == 'settings') {
+				continue;
+			}
+
 			DB::table(table: $name)->truncate();
 		}
 
 		Schema::enableForeignKeyConstraints();
+
+		User::factory()->create(attributes: [
+			'email' => 'user@user.com',
+			'is_administrator' => true,
+		]);
 
 		$this->stop();
 	}
