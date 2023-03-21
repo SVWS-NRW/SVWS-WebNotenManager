@@ -23,7 +23,12 @@
     const isCollapsed = ref(false)
 
     let links: { label: string, route: string, icon: string, isVisible: boolean }[] = [
-        { label: 'Notenmanager', route: 'mein_unterricht', icon: 'home', isVisible: true },
+        {
+            label: 'Notenmanager',
+            route: 'mein_unterricht',
+            icon: 'home',
+            isVisible: !usePage().props.value.auth.administrator || (usePage().props.value.auth.user.lerngruppen.length > 0  && usePage().props.value.auth.administrator)
+        },
         { label: 'Leistungsdatenübersicht', route: 'leistungsdatenuebersicht', icon: 'book-open', isVisible: true },
         {
             label: 'Klassenleitung',

@@ -213,7 +213,7 @@
                         </div>
                     </div>
                     <div>
-                        <SvwsUiButton @click="leistungEditToggle()" v-if="lehrerCanOverrideFachlehrer" :type="leistungEdit ? 'secondary' : 'primary'" size="big">Fachlehrer vertreten</SvwsUiButton>
+                        <SvwsUiButton @click="leistungEditToggle()" v-if="lehrerCanOverrideFachlehrer" :type="leistungEdit ? 'secondary' : 'primary'" size="big">Bearbeiten</SvwsUiButton>
                     </div>
                 </div>
                 <div id="filters">

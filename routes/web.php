@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 	Route::inertia(uri: '/', component: 'MeinUnterricht')
-		->name(name: 'mein_unterricht');
+		->name(name: 'mein_unterricht')
+		->middleware(middleware: 'mein.unterricht');
 
 	Route::inertia(uri: 'leistungsdatenuebersicht', component: 'Leistungsdatenuebersicht')
 		->name(name: 'leistungsdatenuebersicht');
