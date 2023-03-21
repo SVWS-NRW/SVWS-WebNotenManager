@@ -24,6 +24,7 @@ class SettingSeeder extends Seeder
 
 		['type' => 'school', 'key' => 'warning_entry_until', 'value' => null],
 		['type' => 'school', 'key' => 'note_entry_until', 'value' => null],
+		['type' => 'school', 'key' => 'lehrer_can_override_note', 'value' => false],
 
 		['type' => 'school', 'key' => 'klassenleitung_fehlstunden_visible', 'value' => true],
 

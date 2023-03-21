@@ -1,11 +1,13 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { computed, onMounted, reactive, ref, watch } from 'vue'
+
     import {Head, usePage} from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
     import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
+    import NoteInput from '../Components/NoteInput.vue'
 
     import {
         baseColumns,
@@ -23,6 +25,7 @@
         SvwsUiSelectInput,
         SvwsUiIcon,
         SvwsUiDataTable,
+        SvwsUiButton,
     } from '@svws-nrw/svws-ui'
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
@@ -178,6 +181,15 @@
     ]
 
     const lowScore = (note: string): boolean => lowScoreArray.includes(note)
+
+    let leistungEdit = ref(false)
+    let lehrerCanOverrideFachlehrer = (usePage().props.value.settings['lehrer_can_override_note'] == 1)
+
+    const leistungEditToggle = () => {
+        if (lehrerCanOverrideFachlehrer) {
+            leistungEdit.value = !leistungEdit.value
+        }
+    }
 </script>
 
 <template>
@@ -185,17 +197,24 @@
         <title>{{ title }}</title>
     </Head>
 
-    <AppLayout>
+    <AppLayout title="Leistungsdatenuebersicht">
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
-                </div>
-                <div id="toggles">
-                    <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+            <header class="header">
+                <div class="header__headline">
+                    <div class="header__headline__left">
+                        <div id="headline">
+                            <h2 class="text-headline">{{ title }}</h2>
+                        </div>
+                        <div class="header__toggles">
+                            <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                            <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
+                            <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
+                            <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                        </div>
+                    </div>
+                    <div>
+                        <SvwsUiButton @click="leistungEditToggle()" v-if="lehrerCanOverrideFachlehrer" :type="leistungEdit ? 'secondary' : 'primary'" size="big">Fachlehrer vertreten</SvwsUiButton>
+                    </div>
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
@@ -211,9 +230,15 @@
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
                 <template #cell(note)="{ rowData }">
-                    <strong :class="{ 'low-score' : lowScore(rowData.note) }">
+                    <strong :class="{ 'low-score' : lowScore(rowData.note) }" v-if="leistungEdit">
                         {{ rowData.note }}
                     </strong>
+                    <div class="note-input-override" v-else>
+                        <NoteInput :leistung="rowData" :key="rowData.id"></NoteInput>
+                        <SvwsUiIcon>
+                            <mdi-warning-outline></mdi-warning-outline>
+                        </SvwsUiIcon>
+                    </div>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
@@ -236,13 +261,22 @@
 .span {
     @apply ui-w-screen
 }
-header {
+.header {
     @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
 }
 
-header #toggles {
+.header__headline {
+    @apply ui-flex ui-gap-6 ui-justify-between
+}
+
+.header__headline__left {
+    @apply ui-flex ui-flex-col ui-gap-4
+}
+
+.header__toggles {
     @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
 }
+
 
 header #headline {
     @apply ui-flex ui-items-center ui-justify-start ui-gap-6
@@ -252,8 +286,20 @@ header #filters {
     @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6
 }
 
+header #header {
+    @apply ui-flex ui-gap-6 ui-justify-between
+}
+
+
  .low-score {
      @apply ui-text-red-500 ui-font-bold
  }
 
+ .note-input-override {
+     @apply ui-flex ui-gap-6 ui-justify-between ui-items-center
+ }
+
+ .note-input-override svg {
+     @apply ui-text-red-600
+ }
 </style>
