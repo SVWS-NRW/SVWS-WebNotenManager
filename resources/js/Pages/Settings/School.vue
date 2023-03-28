@@ -4,7 +4,7 @@
     import axios, {AxiosResponse} from 'axios'
     import SettingsMenu from '../../Components/SettingsMenu.vue'
 
-    import { SvwsUiTextInput, SvwsUiButton} from '@svws-nrw/svws-ui'
+    import { SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox} from '@svws-nrw/svws-ui'
 
     let props = defineProps({
         settings: Object,
@@ -66,6 +66,7 @@
                     <h3 class="headline-3">Mahnungeneingabe</h3>
                     <SvwsUiTextInput v-model="settings.warning_entry_until" type="date" placeholder="Mahnungeingabe möglich bis"></SvwsUiTextInput>
                     <SvwsUiTextInput v-model="settings.note_entry_until" type="date" placeholder="Noteneingabe möglich bis"></SvwsUiTextInput>
+                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_note" value="true">Lehrer kann Noten überschreiben</SvwsUiCheckbox>
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
