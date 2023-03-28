@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AesController;
 use App\Http\Controllers\Api\FachbezogeneBemerkung;
 use App\Http\Controllers\Api\FachbezogeneFloskeln;
 use App\Http\Controllers\Api\Fehlstunden;
@@ -78,3 +79,5 @@ Route::post(uri: 'import/gzip', action: [ImportController::class, 'gzip']);
 Route::post(uri: 'import', action: [ImportController::class, 'request']);
 Route::get(uri: 'import', action: [ImportController::class, 'curl']);
 Route::get(uri: 'truncate', action: [DataImportService::class, 'truncate']);
+
+Route::get('import/aes', AesController::class);
