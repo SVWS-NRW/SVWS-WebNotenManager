@@ -18,6 +18,7 @@ declare module '@vue/runtime-core' {
     MdiHomeOutline: typeof import('~icons/mdi/home-outline')['default']
     MdiHomeWarning: typeof import('~icons/mdi/home-warning')['default']
     MdiLogout: typeof import('~icons/mdi/logout')['default']
+    MdiPencil: typeof import('~icons/mdi/pencil')['default']
     MdiUserOutline: typeof import('~icons/mdi/user-outline')['default']
     MdiWarning: typeof import('~icons/mdi/warning')['default']
     MdiWarningOutline: typeof import('~icons/mdi/warning-outline')['default']
