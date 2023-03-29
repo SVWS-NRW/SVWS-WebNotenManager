@@ -48,7 +48,7 @@ class AesController extends Controller
 			password: config(key: 'wenom.aes_password'),
 			salt: config(key: 'wenom.aes_salt'),
 			iterations: 1000,
-			length: 16,
+			length: 256,
 		);
 	}
 }

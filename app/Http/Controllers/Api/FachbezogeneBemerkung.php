@@ -11,6 +11,8 @@ class FachbezogeneBemerkung extends Controller
 {
 	public function __invoke(Leistung $leistung): JsonResponse
 	{
+		// TODO: CHeck if user is allowed to do that
+
 		$leistung->update(
 			attributes: [
 				'fachbezogeneBemerkungen' => request()->bemerkung,

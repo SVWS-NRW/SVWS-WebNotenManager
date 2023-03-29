@@ -28,7 +28,9 @@
         SvwsUiButton,
     } from '@svws-nrw/svws-ui'
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
+    import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
+    import FehlstundenInput from '../Components/FehlstundenInput.vue'
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
@@ -190,6 +192,8 @@
             leistungEdit.value = !leistungEdit.value
         }
     }
+
+    const updateFachbezogeneBemerkungen = (fb: string, data: Leistung): string => data.fachbezogeneBemerkungen = fb
 </script>
 
 <template>
@@ -230,15 +234,15 @@
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
                 <template #cell(note)="{ rowData }">
-                    <strong :class="{ 'low-score' : lowScore(rowData.note) }" v-if="leistungEdit">
-                        {{ rowData.note }}
-                    </strong>
-                    <div class="note-input-override" v-else>
+                    <div class="input-override" v-if="leistungEdit">
                         <NoteInput :leistung="rowData" :key="rowData.id"></NoteInput>
                         <SvwsUiIcon>
                             <mdi-warning-outline></mdi-warning-outline>
                         </SvwsUiIcon>
                     </div>
+                    <strong :class="{ 'low-score' : lowScore(rowData.note) }" v-else>
+                        {{ rowData.note }}
+                    </strong>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
@@ -246,11 +250,47 @@
                 </template>
 
                 <template #cell(istGemahnt)="{ rowData }">
-                    <MahnungIndicatorReadonly :leistung="rowData" :disabled="true"></MahnungIndicatorReadonly>
+                    <div class="input-override" v-if="leistungEdit">
+                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false"></MahnungIndicator>
+                        <SvwsUiIcon>
+                            <mdi-warning-outline></mdi-warning-outline>
+                        </SvwsUiIcon>
+                    </div>
+                    <MahnungIndicatorReadonly :leistung="rowData" :disabled="true" v-else></MahnungIndicatorReadonly>
                 </template>
 
+
+
+                <template #cell(fs)="{ rowData }">
+                    <div class="input-override" v-if="leistungEdit">
+                        <FehlstundenInput :model="rowData" column="fs"></FehlstundenInput>
+                        <SvwsUiIcon>
+                            <mdi-warning-outline></mdi-warning-outline>
+                        </SvwsUiIcon>
+                    </div>
+                    <span v-else>{{ rowData.fs }}</span>
+                </template>
+
+                <template #cell(ufs)="{ rowData }">
+                    <div class="input-override" v-if="leistungEdit">
+                        <FehlstundenInput :model="rowData" column="ufs"></FehlstundenInput>
+                        <SvwsUiIcon>
+                            <mdi-warning-outline></mdi-warning-outline>
+                        </SvwsUiIcon>
+                    </div>
+                    <span v-else>{{ rowData.ufs }}</span>
+                </template>
+
+
+
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData"></FachbezogeneBemerkungenIndicatorReadonly>
+                    <div class="input-override" v-if="leistungEdit">
+                        <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)"></FachbezogeneBemerkungenIndicator>
+                        <SvwsUiIcon>
+                            <mdi-warning-outline></mdi-warning-outline>
+                        </SvwsUiIcon>
+                    </div>
+                    <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData" v-else></FachbezogeneBemerkungenIndicatorReadonly>
                 </template>
             </SvwsUiDataTable>
         </template>
@@ -295,11 +335,11 @@ header #header {
      @apply ui-text-red-500 ui-font-bold
  }
 
- .note-input-override {
-     @apply ui-flex ui-gap-6 ui-justify-between ui-items-center
+ .input-override {
+     @apply ui-flex ui-gap-6 ui-justify-between ui-items-center ui-w-full
  }
 
- .note-input-override svg {
+ .input-override svg {
      @apply ui-text-red-600
  }
 </style>

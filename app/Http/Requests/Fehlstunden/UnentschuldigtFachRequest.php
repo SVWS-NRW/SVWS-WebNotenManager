@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Fehlstunden;
 
+use App\Models\Setting;
 use App\Rules\LessThanOrEqualWhenPresent;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,6 +16,14 @@ class UnentschuldigtFachRequest extends FormRequest
 
 		if (auth()->user()->isAdministrator()) {
 			return false;
+		}
+
+		// TODO Refactor
+		if (Setting::where(['type' => 'school', 'key' => 'lehrer_can_override_note'])->first()->value && in_array(
+				needle: $this->leistung->schueler->klasse_id,
+				haystack: auth()->user()->klassen->pluck(value: 'id')->toArray()
+			)) {
+			return true;
 		}
 
 		return in_array(
