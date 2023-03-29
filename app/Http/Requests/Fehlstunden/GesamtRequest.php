@@ -14,7 +14,7 @@ class GesamtRequest extends FormRequest
 		}
 
 		if (auth()->user()->isAdministrator()) {
-			return false;
+			return true;
 		}
 
 		return in_array(

@@ -12,7 +12,7 @@ class SchuelerBemerkungenRequest extends FormRequest
     public function authorize(): bool
     {
 		if (auth()->user()->is_administrator) {
-			return false;
+			return true;
 		}
 
 		return in_array(

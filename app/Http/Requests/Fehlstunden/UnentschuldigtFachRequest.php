@@ -15,7 +15,7 @@ class UnentschuldigtFachRequest extends FormRequest
 		}
 
 		if (auth()->user()->isAdministrator()) {
-			return false;
+			return true;
 		}
 
 		// TODO Refactor

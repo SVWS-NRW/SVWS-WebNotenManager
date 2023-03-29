@@ -15,7 +15,7 @@ class FachRequest extends FormRequest
 		}
 
 		if (auth()->user()->isAdministrator()) {
-			return false;
+			return true;
 		}
 
 		// TODO Refactor
