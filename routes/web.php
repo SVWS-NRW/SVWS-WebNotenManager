@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 			Route::inertia('/', 'Settings/Index')->name('index');
 			Route::inertia('schule', 'Settings/School')->name('school');
 			Route::inertia('filter', 'Settings/Filter')->name('filter');
+			Route::inertia('matrix', 'Settings/Matrix')->name('matrix');
 		});
 });
 

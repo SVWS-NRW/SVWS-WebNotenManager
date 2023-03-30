@@ -18,6 +18,9 @@ const navigate = (routeName: string): void => Inertia.get(route(routeName))
                 <SvwsUiSidebarMenuItem @click="navigate('settings.filter')" :active="route().current('settings.filter')">
                     <template #label>Filter bearbeiten</template>
                 </SvwsUiSidebarMenuItem>
+                <SvwsUiSidebarMenuItem @click="navigate('settings.matrix')" :active="route().current('settings.matrix')">
+                    <template #label>Matrix bearbeiten</template>
+                </SvwsUiSidebarMenuItem>
             </div>
         </template>
     </SvwsUiSecondaryMenu>

@@ -50,4 +50,10 @@ class Jahrgang extends Model
     ];
 
 	public $timestamps = false;
+
+	public function klassen(): HasMany
+	{
+		return $this->hasMany(related: Klasse::class, foreignKey: 'idJahrgang');
+	}
+
 }

@@ -42,10 +42,30 @@ class Klasse extends Model
 
     protected $fillable = [
         'id',
+		'idJahrgang',
         'kuerzel',
         'kuerzelAnzeige',
         'sortierung',
+		'editable_teilnoten',
+		'editable_noten',
+		'editable_mahnungen',
+		'editable_fehlstunden',
+		'editable_fb',
+		'editable_asv',
+		'editable_aue',
+		'editable_zb',
     ];
+
+	protected $casts = [
+		'editable_teilnoten' => 'boolean',
+		'editable_noten' => 'boolean',
+		'editable_mahnungen' => 'boolean',
+		'editable_fehlstunden' => 'boolean',
+		'editable_fb' => 'boolean',
+		'editable_asv' => 'boolean',
+		'editable_aue' => 'boolean',
+		'editable_zb' => 'boolean',
+	];
 
 	public $timestamps = false;
 
@@ -56,9 +76,6 @@ class Klasse extends Model
 
     public function klassenlehrer(): BelongsToMany
     {
-        return $this->belongsToMany(
-			related: User::class,
-			table: 'klasse_user',
-		);
+        return $this->belongsToMany(related: User::class, table: 'klasse_user');
     }
 }
