@@ -12,6 +12,13 @@ class SchuelerBemerkung extends Controller
 {
     public function __invoke(SchuelerBemerkungenRequest $request, Schueler $schueler): Response
     {
+		$key = sprintf('editable_%s', strtolower(string: $request->key));
+
+		abort_unless(
+			boolean: $schueler->klasse->$key,
+			code: Response::HTTP_FORBIDDEN
+		);
+
 		Bemerkung::updateOrCreate(
 			attributes: ['schueler_id' => $schueler->id],
 			values: [

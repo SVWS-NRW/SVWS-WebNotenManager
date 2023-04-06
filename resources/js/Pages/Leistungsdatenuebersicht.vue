@@ -237,64 +237,61 @@
             <h3 class="text-headline-sm mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
-                <template #cell(note)="{ rowData }">
-                    <div class="input-override" v-if="leistungEdit">
-                        <NoteInput :leistung="rowData" :key="rowData.id"></NoteInput>
-                        <SvwsUiIcon>
-                            <mdi-warning-outline></mdi-warning-outline>
-                        </SvwsUiIcon>
-                    </div>
-                    <strong :class="{ 'low-score' : lowScore(rowData.note) }" v-else>
-                        {{ rowData.note }}
-                    </strong>
+                <template #cell(teilnoten)="{ rowData }">
+                    <span class="readonly">TBD</span>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
-                    <strong>{{ rowData.fach }}</strong>
+                    <strong class="readonly">{{ rowData.fach }}</strong>
+                </template>
+
+                <template #cell(klasse)="{ rowData }">
+                    <div class="readonly">{{ rowData.klasse }}</div>
+                </template>
+
+                <template #cell(name)="{ rowData }">
+                    <div class="readonly">{{ rowData.name }}</div>
+                </template>
+
+                <template #cell(kurs)="{ rowData }">
+                    <div class="readonly">{{ rowData.kurs }}</div>
+                </template>
+
+                <template #cell(note)="{ rowData }">
+                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_noten }">
+                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="leistungEdit && rowData.matrix.editable_noten"></NoteInput>
+                        <strong :class="{ 'low-score' : lowScore(rowData.note) }" v-else>
+                            {{ rowData.note }}
+                        </strong>
+                    </div>
                 </template>
 
                 <template #cell(istGemahnt)="{ rowData }">
-                    <div class="input-override" v-if="leistungEdit">
-                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false"></MahnungIndicator>
-                        <SvwsUiIcon>
-                            <mdi-warning-outline></mdi-warning-outline>
-                        </SvwsUiIcon>
+                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_mahnungen }">
+                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false" v-if="leistungEdit && rowData.matrix.editable_mahnungen"></MahnungIndicator>
+                        <MahnungIndicatorReadonly :leistung="rowData" :disabled="true" v-else></MahnungIndicatorReadonly>
                     </div>
-                    <MahnungIndicatorReadonly :leistung="rowData" :disabled="true" v-else></MahnungIndicatorReadonly>
                 </template>
 
-
-
                 <template #cell(fs)="{ rowData }">
-                    <div class="input-override" v-if="leistungEdit">
-                        <FehlstundenInput :model="rowData" column="fs"></FehlstundenInput>
-                        <SvwsUiIcon>
-                            <mdi-warning-outline></mdi-warning-outline>
-                        </SvwsUiIcon>
+                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_fehlstunden }">
+                        <FehlstundenInput :model="rowData" column="fs" v-if="leistungEdit && rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                        <strong v-else>{{ rowData.fs }}</strong>
                     </div>
-                    <span v-else>{{ rowData.fs }}</span>
                 </template>
 
                 <template #cell(ufs)="{ rowData }">
-                    <div class="input-override" v-if="leistungEdit">
-                        <FehlstundenInput :model="rowData" column="ufs"></FehlstundenInput>
-                        <SvwsUiIcon>
-                            <mdi-warning-outline></mdi-warning-outline>
-                        </SvwsUiIcon>
+                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_fehlstunden }">
+                        <FehlstundenInput :model="rowData" column="ufs" v-if="leistungEdit && rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                        <strong v-else>{{ rowData.ufs }}</strong>
                     </div>
-                    <span v-else>{{ rowData.ufs }}</span>
                 </template>
 
-
-
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <div class="input-override" v-if="leistungEdit">
-                        <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)"></FachbezogeneBemerkungenIndicator>
-                        <SvwsUiIcon>
-                            <mdi-warning-outline></mdi-warning-outline>
-                        </SvwsUiIcon>
+                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_fb }">
+                        <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)" v-if="leistungEdit && rowData.matrix.editable_fb"></FachbezogeneBemerkungenIndicator>
+                        <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData" v-else></FachbezogeneBemerkungenIndicatorReadonly>
                     </div>
-                    <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData" v-else></FachbezogeneBemerkungenIndicatorReadonly>
                 </template>
             </SvwsUiDataTable>
         </template>
@@ -302,6 +299,10 @@
 </template>
 
 <style scoped>
+.readonly {
+    @apply ui-bg-gray-200 ui-w-full ui-block ui-h-full
+}
+
 .span {
     @apply ui-w-screen
 }

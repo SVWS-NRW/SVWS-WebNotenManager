@@ -7,6 +7,7 @@
     import { Schueler } from '../Interfaces/Schueler'
     import { Settings } from '../Interfaces/Settings'
     import BemerkungenIndicator from '../Components/BemerkungenIndicator.vue'
+    import BemerkungenIndicatorReadonly from '../Components/BemerkungenIndicatorReadonly.vue'
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
 
     import {
@@ -133,22 +134,51 @@
             </header>
 
             <SvwsUiDataTable v-if="filteredSchueler.length" :items="filteredSchueler" :columns="columns" clickable>
+                <template #cell(name)="{ rowData }">
+                    <span class="readonly">{{ rowData.name }}</span>
+                </template>
+
+                <template #cell(klasse)="{ rowData }">
+                    <span class="readonly">{{ rowData.klasse }}</span>
+                </template>
+
                 <template #cell(gfs)="{ rowData }">
-                    <FehlstundenInput :model="rowData" column="gfs"></FehlstundenInput>
+                    <div :class="{ readonly: rowData.matrix.editable_fehlstunden }">
+                        <FehlstundenInput :model="rowData" column="gfs" v-if="!rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                        <strong v-else>
+                            {{ rowData.gfs }}
+                        </strong>
+                    </div>
                 </template>
 
                 <template #cell(gfsu)="{ rowData }">
-                    <FehlstundenInput :model="rowData" column="gfsu"></FehlstundenInput>
+                    <div :class="{ readonly: rowData.matrix.editable_fehlstunden }">
+                        <FehlstundenInput :model="rowData" column="gfsu" v-if="!rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                        <strong v-else>
+                            {{ rowData.gfsu }}
+                        </strong>
+                    </div>
                 </template>
 
                 <template #cell(ASV)="{ rowData }">
-                    <BemerkungenIndicator :leistung="rowData" floskelgruppe="ASV"></BemerkungenIndicator>
+                    <div :class="{ readonly: !rowData.matrix.editable_asv }">
+                        <BemerkungenIndicator :leistung="rowData" floskelgruppe="ASV" v-if="rowData.matrix.editable_asv"></BemerkungenIndicator>
+                        <BemerkungenIndicatorReadonly :leistung="rowData" floskelgruppe="ASV" v-else></BemerkungenIndicatorReadonly>
+                   </div>
                 </template>
+
                 <template #cell(AUE)="{ rowData }">
-                    <BemerkungenIndicator :leistung="rowData" floskelgruppe="AUE"></BemerkungenIndicator>
+                    <div :class="{ readonly: !rowData.matrix.editable_aue }">
+                        <BemerkungenIndicator :leistung="rowData" floskelgruppe="AUE" v-if="rowData.matrix.editable_aue"></BemerkungenIndicator>
+                        <BemerkungenIndicatorReadonly :leistung="rowData" floskelgruppe="AUE" v-else></BemerkungenIndicatorReadonly>
+                   </div>
                 </template>
+
                 <template #cell(ZB)="{ rowData }">
-                    <BemerkungenIndicator :leistung="rowData" floskelgruppe="ZB"></BemerkungenIndicator>
+                    <div :class="{ readonly: !rowData.matrix.editable_zb }">
+                        <BemerkungenIndicator :leistung="rowData" floskelgruppe="ZB" v-if="rowData.matrix.editable_zb"></BemerkungenIndicator>
+                        <BemerkungenIndicatorReadonly :leistung="rowData" floskelgruppe="ZB" v-else></BemerkungenIndicatorReadonly>
+                    </div>
                 </template>
             </SvwsUiDataTable>
 
@@ -157,7 +187,11 @@
     </AppLayout>
 </template>
 
-<style>
+<style scoped>
+    .readonly {
+        @apply ui-bg-gray-200 ui-w-full ui-block ui-h-full
+    }
+
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }

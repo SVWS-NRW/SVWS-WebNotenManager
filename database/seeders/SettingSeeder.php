@@ -19,13 +19,9 @@ class SettingSeeder extends Seeder
 		['type' => 'school', 'key' => 'school_board_contact', 'value' => '[Kontaktdaten des Schulträgers]'],
 		['type' => 'school', 'key' => 'school_gdpr_email', 'value' => '[Email des Datenschutzbeauftragten]'],
 		['type' => 'school', 'key' => 'school_gdpr_address', 'value' => '[Anschrift des Datenschutzbeauftragten]'],
-		['type' => 'school', 'key' => 'hosting_provider_name', 'value' => '[Name des Hosters] '],
+		['type' => 'school', 'key' => 'hosting_provider_name', 'value' => '[Name des Hosters]'],
 		['type' => 'school', 'key' => 'hosting_provider_address', 'value' => '[Anschrift des Hosters]'],
-
-		['type' => 'school', 'key' => 'warning_entry_until', 'value' => null],
-		['type' => 'school', 'key' => 'note_entry_until', 'value' => null],
 		['type' => 'school', 'key' => 'lehrer_can_override_note', 'value' => false],
-
 		['type' => 'school', 'key' => 'klassenleitung_fehlstunden_visible', 'value' => true],
 
 		['type' => 'filter', 'key' => 'mein_unterricht_teilleistungen', 'value' => false],

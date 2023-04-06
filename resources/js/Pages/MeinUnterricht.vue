@@ -29,6 +29,8 @@
 
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
     import {Settings} from '../Interfaces/Settings'
+    import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
+    import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -209,36 +211,83 @@
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
                 <template #cell(note)="{ rowData }">
-                    <NoteInput :leistung="rowData" :key="rowData.id"></NoteInput>
+                    <div :class="{ readonly: !rowData.matrix.editable_noten }">
+                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="rowData.matrix.editable_noten"></NoteInput>
+                        <strong v-else>
+                            {{ rowData.note }}
+                        </strong>
+                    </div>
+                </template>
+
+                <template #cell(teilnoten)="{ rowData }">
+                    <span class="readonly">TBD</span>
+                </template>
+
+                <template #cell(klasse)="{ rowData }">
+                    <div class="readonly">
+                        {{ rowData.klasse }}
+                    </div>
+                </template>
+
+                <template #cell(kurs)="{ rowData }">
+                    <div class="readonly">
+                        {{ rowData.kurs }}
+                    </div>
+                </template>
+
+                <template #cell(name)="{ rowData }">
+                    <div class="readonly">
+                        {{ rowData.name }}
+                    </div>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
-                    <strong>
+                    <strong class="readonly">
                         {{ rowData.fach }}
                     </strong>
                 </template>
 
                 <template #cell(fs)="{ rowData }">
-                    <FehlstundenInput :model="rowData" column="fs"></FehlstundenInput>
+                    <div :class="{ readonly: !rowData.matrix.editable_fehlstunden }">
+                        <FehlstundenInput :model="rowData" column="fs" v-if="rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                        <strong v-else>
+                            {{ rowData.fs }}
+                        </strong>
+                    </div>
                 </template>
 
                 <template #cell(ufs)="{ rowData }">
-                    <FehlstundenInput :model="rowData" column="ufs"></FehlstundenInput>
+                    <div :class="{ readonly: !rowData.matrix.editable_fehlstunden }">
+                        <FehlstundenInput :model="rowData" column="ufs" v-if="rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                        <strong v-else>
+                            {{ rowData.ufs }}
+                        </strong>
+                    </div>
                 </template>
 
                 <template #cell(istGemahnt)="{ rowData }">
-                    <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false"></MahnungIndicator>
+                    <div :class="{ readonly: !rowData.matrix.editable_mahnungen }">
+                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false" v-if="rowData.matrix.editable_mahnungen"></MahnungIndicator>
+                        <MahnungIndicatorReadonly v-else :leistung="rowData" :key="rowData.id" :disabled="true"></MahnungIndicatorReadonly>
+                    </div>
                 </template>
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)"></FachbezogeneBemerkungenIndicator>
+                    <div :class="{ readonly: !rowData.matrix.editable_fb }">
+                        <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)" v-if="rowData.matrix.editable_fb"></FachbezogeneBemerkungenIndicator>
+                        <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)" v-else></FachbezogeneBemerkungenIndicatorReadonly>
+                    </div>
                 </template>
             </SvwsUiDataTable>
         </template>
     </AppLayout>
 </template>
 
-<style>
+<style scoped>
+    .readonly {
+        @apply ui-bg-gray-200 ui-w-full ui-block ui-h-full
+    }
+
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }

@@ -15,13 +15,10 @@ class Noten extends Controller
 {
 	public function __invoke(Leistung $leistung): JsonResponse
 	{
-		$date = Setting::where(['type' => 'school', 'key' => 'note_entry_until'])->first(); // TODO: Test
-		if ($date->value !== null) {
-			abort_if(
-				boolean: Carbon::parse($date->value)->lte(now()->startOfDay()),
-				code: Response::HTTP_FORBIDDEN
-			);
-		}
+		abort_unless(
+			boolean: $leistung->schueler->klasse->editable_noten,
+			code: Response::HTTP_FORBIDDEN
+		);
 
 		if (request()->note == '') {
 			return $this->updateNote(leistung: $leistung);
@@ -47,7 +44,6 @@ class Noten extends Controller
 		}
 
 		return $this->updateNote(leistung: $leistung, note: $note->id);
-
     }
 
 	private function updateNote(Leistung $leistung, int|null $note = null): JsonResponse

@@ -11,7 +11,11 @@ class FachbezogeneBemerkung extends Controller
 {
 	public function __invoke(Leistung $leistung): JsonResponse
 	{
-		// TODO: CHeck if user is allowed to do that
+		// TODO: Add tests
+		abort_unless(
+			boolean: $leistung->schueler->klasse->editable_fb,
+			code: Response::HTTP_FORBIDDEN
+		);
 
 		$leistung->update(
 			attributes: [
