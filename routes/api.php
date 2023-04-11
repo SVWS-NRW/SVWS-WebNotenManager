@@ -9,12 +9,12 @@ use App\Http\Controllers\Api\Leistungsdatenuebersicht;
 use App\Http\Controllers\Api\Klassenleitung;
 use App\Http\Controllers\Api\MeinUnterricht;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\KlassenMatrix;
 use App\Http\Controllers\Api\Noten;
 use App\Http\Controllers\Api\Mahnungen;
 use App\Http\Controllers\Api\SchuelerBemerkung;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
-use App\Http\Controllers\KlassenMatrix;
 use App\Services\DataImportService;
 use Illuminate\Support\Facades\Route;
 

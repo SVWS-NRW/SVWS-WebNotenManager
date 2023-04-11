@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $sortierung
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|Lehrer[] $klassenlehrer
+ * @property-read Collection|Lehrer[] $klassenlehrer
  * @property-read int|null $klassenlehrer_count
  * @method static \Database\Factories\KlasseFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse newModelQuery()
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereSortierung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Lerngruppe[] $lerngruppen
+ * @property-read Collection|\App\Models\Lerngruppe[] $lerngruppen
  * @property-read int|null $lerngruppen_count
  */
 class Klasse extends Model
@@ -78,4 +79,12 @@ class Klasse extends Model
     {
         return $this->belongsToMany(related: User::class, table: 'klasse_user');
     }
+
+	public static function notBelongingToJahrgangOrdered(string $direction = 'asc'): Collection
+	{
+		return self::query()
+			->whereNull(columns: 'idJahrgang')
+			->orderBy(column: 'sortierung', direction: $direction)
+			->get();
+	}
 }

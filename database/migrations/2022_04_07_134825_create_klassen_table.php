@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create(table: 'klassen', callback: function (Blueprint $table): void {
             $table->id();
-			$table->foreignIdFor(model: Jahrgang::class, column: 'idJahrgang');
+			$table->foreignIdFor(model: Jahrgang::class, column: 'idJahrgang')->nullable();
             $table->string(column: 'kuerzel');
             $table->string(column: 'kuerzelAnzeige');
             $table->integer(column: 'sortierung');

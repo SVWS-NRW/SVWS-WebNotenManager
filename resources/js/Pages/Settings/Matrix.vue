@@ -12,7 +12,7 @@
     })
 
     let jahrgaenge = ref([])
-
+    let klassen = ref([])
 
     const matrixItems = [
         'editable_teilnoten', 'editable_noten', 'editable_mahnungen', 'editable_fehlstunden',
@@ -20,7 +20,10 @@
     ]
 
     axios.get(route('api.settings.matrix.index'))
-        .then((response: AxiosResponse): void => jahrgaenge.value = response.data)
+        .then((response: AxiosResponse): void => {
+            jahrgaenge.value = response.data.jahrgaenge
+            klassen.value = response.data.klassen
+        })
 
     const saveMatrix = (klasse, item, value) => axios.put(
         route('api.settings.matrix.update', [klasse]),
@@ -51,6 +54,15 @@
                             <th>ZB</th>
                         </tr>
                     </thead>
+
+                    <tbody v-if="klassen">
+                        <tr v-for="klasse in klassen">
+                            <td>{{ klasse.kuerzel }}</td>
+                            <td v-for="item in matrixItems">
+                                <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>
+                            </td>
+                        </tr>
+                    </tbody>
 
                     <template v-for="(groupedJahrgaenge, jahrgangKey) in jahrgaenge">
                         <tbody v-for="jahrgang in groupedJahrgaenge">

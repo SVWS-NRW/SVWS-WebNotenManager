@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,6 +55,19 @@ class Jahrgang extends Model
 	public function klassen(): HasMany
 	{
 		return $this->hasMany(related: Klasse::class, foreignKey: 'idJahrgang');
+	}
+
+	public static function orderedWithKlassenOrdered(string $direction = 'asc'): Collection
+	{
+		return self::query()
+			->with(
+				relations: 'klassen',
+				callback: fn (HasMany $related): HasMany =>
+					$related->orderBy(column: 'sortierung', direction: $direction
+				)
+			)
+			->orderBy(column: 'sortierung', direction: $direction)
+			->get();
 	}
 
 }
