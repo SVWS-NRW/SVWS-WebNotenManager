@@ -21,7 +21,7 @@ class AesController extends Controller
 
 		$decryptedData = openssl_decrypt(
 			data: substr(string: $decodedData, offset: 16),
-			cipher_algo: 'AES-256-CBC',
+			cipher_algo: 'aes-256-cbc-hmac-sha256',
 			passphrase: $this->getKey(),
 			options: OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING,
 			iv: $this->getIv($decodedData)
@@ -47,8 +47,9 @@ class AesController extends Controller
 			algo: 'sha256',
 			password: config(key: 'wenom.aes_password'),
 			salt: config(key: 'wenom.aes_salt'),
-			iterations: 1000,
-			length: 256,
+			iterations: 65536,
+			length: 32,
+			binary: true
 		);
 	}
 }
