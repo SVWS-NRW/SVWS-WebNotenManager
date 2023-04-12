@@ -8,6 +8,8 @@ export interface Schueler {
 }
 
 const formatStringBasedOnGender = (text: string, schueler: Schueler): string => {
+	if (!text) return ''
+
 	const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/
 
 	let pronouns: Pronoun = { m: 'Er', w: 'Sie' };
@@ -24,6 +26,8 @@ const formatStringBasedOnGender = (text: string, schueler: Schueler): string => 
 		"$vorname$": pronoun ?? schueler.vorname,
 		"$nachname$": null
 	};
+
+
 
 	return text
 		.replace(new RegExp(pattern,"i"), (matched: string): string => initialOccurrence[matched.toLowerCase()])
