@@ -58,7 +58,7 @@ const submit = (): void => {
                         <h1 class="headline-1">SVWS NRW</h1>
                     </div>
 
-                    <h2 class="headline-4">{{ settings.school_name }}</h2>
+                    <h2 class="headline-4">{{ settings.general.name }}</h2>
 
                     <div class="form-control">
                         <SvwsUiTextInput

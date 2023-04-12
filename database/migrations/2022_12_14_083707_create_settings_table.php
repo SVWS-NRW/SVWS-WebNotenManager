@@ -10,9 +10,10 @@ return new class extends Migration
     {
         Schema::create(table: 'settings', callback: function (Blueprint $table): void {
             $table->id();
-            $table->string(column: 'type');
-            $table->string(column: 'key')->unique();
-            $table->text(column: 'value')->nullable();
+            $table->string(column: 'group')->index();
+            $table->string(column: 'name');
+            $table->boolean(column: 'locked');
+            $table->json(column: 'payload');
             $table->timestamps();
         });
     }

@@ -1,25 +1,21 @@
 <script setup lang="ts">
-    import { reactive } from 'vue'
+    import { ref } from 'vue'
     import AppLayout from '../../Layouts/AppLayout.vue'
     import axios, { AxiosResponse } from 'axios'
     import SettingsMenu from '../../Components/SettingsMenu.vue'
     import {SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox} from '@svws-nrw/svws-ui'
 
     let props = defineProps({
-        settings: Object,
         auth: Object,
     })
 
-    let settings = reactive({})
+    let settings = ref({})
 
     axios.get(route('api.settings.index', 'filter'))
-        .then((response: AxiosResponse): void => populateValues(response.data))
-
-    const populateValues = (data: { key:string, value: Number }[]): void =>
-        data.forEach((item): boolean => settings[item.key] = item.value == 1)
+        .then((response: AxiosResponse) => settings.value = response.data)
 
     const saveSettings = () => axios
-        .put(route('api.settings.update', {type: 'filter', settings: settings}))
+        .put(route('api.settings.bulk_update', {group: 'filter'}),  {settings: settings})
 </script>
 
 <template>

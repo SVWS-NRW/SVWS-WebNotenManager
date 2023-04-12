@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(class: [
             JsonImportSeeder::class,
-            SettingSeeder::class,
         ]);
     }
 }

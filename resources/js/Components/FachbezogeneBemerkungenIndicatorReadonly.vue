@@ -3,6 +3,10 @@
     import { Leistung } from '../Interfaces/Leistung'
     import { formatStringBasedOnGender } from '../Helpers/string.helper'
 
+import {
+    SvwsUiButton, SvwsUiIcon, SvwsUiBadge
+} from '@svws-nrw/svws-ui'
+
     const props = defineProps<{
         leistung: Leistung
     }>()

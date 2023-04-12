@@ -34,8 +34,7 @@
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
-
-    const getToggleValue = (column: string): boolean => usePage().props.value.settings[column] == 1
+    const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
 
     let toggles = <{
         fachlehrer: boolean,
@@ -185,7 +184,7 @@
     const lowScore = (note: string): boolean => lowScoreArray.includes(note)
 
     let leistungEdit = ref(false)
-    let lehrerCanOverrideFachlehrer = (usePage().props.value.settings['lehrer_can_override_note'] == 1)
+    let lehrerCanOverrideFachlehrer = (usePage().props.value.settings.matrix['lehrer_can_override_fachlehrer'] == 1)
 
     const leistungEditToggle = () => {
         if (lehrerCanOverrideFachlehrer) {
@@ -255,6 +254,10 @@
 
                 <template #cell(kurs)="{ rowData }">
                     <div class="readonly">{{ rowData.kurs }}</div>
+                </template>
+
+                <template #cell(lehrer)="{ rowData }">
+                    <div class="readonly">{{ rowData.lehrer }}</div>
                 </template>
 
                 <template #cell(note)="{ rowData }">

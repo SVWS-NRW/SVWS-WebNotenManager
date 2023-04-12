@@ -4,6 +4,9 @@ namespace App\Http\Middleware;
 
 use App\Models\Setting;
 use App\Models\User;
+use App\Settings\FilterSettings;
+use App\Settings\GeneralSettings;
+use App\Settings\MatrixSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -24,9 +27,11 @@ class HandleInertiaRequests extends Middleware
 				: null,
 			'auth.administrator' => $request->user() ? $request->user()->is_administrator : false,
 			'schoolName' => config(key:'app.school_name'),
-			'settings' => Setting::all()->pluck(value: 'value', key: 'key'),
-			'note_entry_disabled' => Setting::entryDisabled(entry: 'note_entry_until'),
-			'warning_entry_disabled' => Setting::entryDisabled(entry: 'warning_entry_until'),
+			'settings' => [
+				'general' => app(abstract: GeneralSettings::class),
+				'filters' => app(abstract: FilterSettings::class),
+				'matrix' => app(abstract: MatrixSettings::class),
+			],
 			'version' => config(key: 'wenom.version'),
         ]);
     }

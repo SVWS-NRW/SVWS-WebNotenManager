@@ -7,15 +7,24 @@ use App\Http\Requests\Fehlstunden as FehlstundenRequest;
 use App\Models\Leistung;
 use App\Models\Lernabschnitt;
 use App\Models\Schueler;
+use App\Settings\MatrixSettings;
 use Symfony\Component\HttpFoundation\Response;
 
 class Fehlstunden extends Controller
 {
 	// TODO: Add tests
-    public function fehlstundenLeistungGesamt(FehlstundenRequest\FachRequest $request, Leistung $leistung): Response
-	{
+    public function fehlstundenLeistungGesamt(
+		FehlstundenRequest\FachRequest $request,
+		Leistung $leistung,
+		MatrixSettings $settings,
+	): Response{
 		abort_unless(
 			boolean: $leistung->schueler->klasse->editable_fehlstunden,
+			code: Response::HTTP_FORBIDDEN
+		);
+
+		abort_unless(
+			boolean: $settings->lehrer_can_override_fahlehrer,
 			code: Response::HTTP_FORBIDDEN
 		);
 
@@ -30,9 +39,15 @@ class Fehlstunden extends Controller
     public function fehlstundenLeistungUnentschuldigt(
 		FehlstundenRequest\UnentschuldigtFachRequest $request,
 		Leistung $leistung,
+		MatrixSettings $settings,
 	): Response {
 		abort_unless(
 			boolean: $leistung->schueler->klasse->editable_fehlstunden,
+			code: Response::HTTP_FORBIDDEN
+		);
+
+		abort_unless(
+			boolean: $settings->lehrer_can_override_fahlehrer,
 			code: Response::HTTP_FORBIDDEN
 		);
 
@@ -44,9 +59,18 @@ class Fehlstunden extends Controller
 		return response(status: Response::HTTP_NO_CONTENT);
     }
 
-    public function fehlstundenSchuelerGesamt(FehlstundenRequest\GesamtRequest $request, Schueler $schueler): Response {
+    public function fehlstundenSchuelerGesamt(
+		FehlstundenRequest\GesamtRequest $request,
+		Schueler $schueler,
+		MatrixSettings $settings,
+	): Response {
 		abort_if(
 			boolean: $schueler->klasse->editable_fehlstunden,
+			code: Response::HTTP_FORBIDDEN
+		);
+
+		abort_unless(
+			boolean: $settings->lehrer_can_override_fahlehrer,
 			code: Response::HTTP_FORBIDDEN
 		);
 
@@ -61,9 +85,15 @@ class Fehlstunden extends Controller
     public function fehlstundenSchuelerGesamtUnentschuldigt(
 		FehlstundenRequest\GesamtUnentschuldigtRequest $request,
 		Schueler $schueler,
+		MatrixSettings $settings,
 	): Response {
 		abort_if(
 			boolean: $schueler->klasse->editable_fehlstunden,
+			code: Response::HTTP_FORBIDDEN
+		);
+
+		abort_unless(
+			boolean: $settings->lehrer_can_override_fahlehrer,
 			code: Response::HTTP_FORBIDDEN
 		);
 

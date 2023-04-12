@@ -47,7 +47,7 @@
     })
 
 
-    const getToggleValue = (column: string): boolean => usePage().props.value.settings[column] == 1
+    const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
 
     let toggles = <{
         teilleistungen: boolean,

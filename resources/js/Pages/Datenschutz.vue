@@ -26,11 +26,11 @@
 
                     <h3 class="headline-3">Verantwortlicher</h3>
                     <p>Verantwortlicher gem. Art. 4 Nr. 7 EU-Datenschutz-Grundverordnung (EU-DSGVO) ist</p>
-                    <p>{{ settings.school_management_name }} <br> {{ settings.school_address }}</p>
-                    <p>Den Datenschutzbeauftragten erreichen Sie per E-Mail unter {{ settings.school_gdpr_email }} oder über die Adresse:</p>
+                    <p>{{ settings.general.management_name }} <br> {{ settings.general.address }}</p>
+                    <p>Den Datenschutzbeauftragten erreichen Sie per E-Mail unter {{ settings.general.gdpr_email }} oder über die Adresse:</p>
 
                     <h3 class="headline-3">Datenschutzbeauftragter</h3>
-                    <p>{{ settings.school_gdpr_address }}</p>
+                    <p>{{ settings.general.gdpr_address }}</p>
                     <p>Die Schule unterliegt als öffentliche Stelle den Bestimmungen des Nordrhein-Westfälischen Datenschutzgesetzes. Es ist sichergestellt, dass die Vorschriften über den Datenschutz auch von beteiligten externen Dienstleistern beachtet werden.</p>
 
                     <h2 class="headline-2">Ihre Rechte als Nutzerinnen und Nutzer</h2>
@@ -47,8 +47,8 @@
 
                     <h2 class="headline-2">Hinweise zur Datenverarbeitung</h2>
                     <p>Bereitstellung der Website und Erstellung von Protokoll- oder Log-Dateien:</p>
-                    <p>Das Internetangebot der Schule wird bei {{ settings.hosting_provider_name }} gehostet.</p>
-                    <p>{{ settings.hosting_provider_address }}</p>
+                    <p>Das Internetangebot der Schule wird bei {{ settings.general.hosting_provider_name }} gehostet.</p>
+                    <p>{{ settings.general.hosting_provider_address }}</p>
                     <p>verarbeitet im Auftrag zu diesem Zweck die unten genannten Daten.</p>
 
                     <h3 class="headline-3">Speicherung</h3>

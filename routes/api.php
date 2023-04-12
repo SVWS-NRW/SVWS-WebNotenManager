@@ -27,8 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
 		->prefix(prefix: 'settings')
 		->name('api.settings.')
 		->group(function () {
-			Route::get(uri: 'index/{type}', action: 'index')->name(name: 'index');
-			Route::put(uri: 'update', action: 'update')->name(name: 'update');
+			Route::get(uri: 'index/{group}', action: 'index')->name(name: 'index');
+			Route::put(uri: 'update/{group}', action: 'update')->name(name: 'update');
+			Route::put(uri: 'bulk-update/{group}', action: 'bulkUpdate')->name(name: 'bulk_update');
 		}); // TODO: Admin middleware
 
 

@@ -4,11 +4,12 @@ namespace App\Http\Requests\Fehlstunden;
 
 use App\Models\Setting;
 use App\Rules\GreaterThanOrEqualWhenPresent;
+use App\Settings\MatrixSettings;
 use Illuminate\Foundation\Http\FormRequest;
 
 class FachRequest extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize(MatrixSettings $settings): bool
     {
 		if (auth()->guest()) {
 			return false;
@@ -18,8 +19,7 @@ class FachRequest extends FormRequest
 			return true;
 		}
 
-		// TODO Refactor
-		if (Setting::where(['type' => 'school', 'key' => 'lehrer_can_override_note'])->first()->value && in_array(
+		if ($settings->lehrer_can_override_fachlehrer && in_array(
 			needle: $this->leistung->schueler->klasse_id,
 			haystack: auth()->user()->klassen->pluck(value: 'id')->toArray()
 		)) {

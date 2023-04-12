@@ -7,7 +7,6 @@
     import { SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox} from '@svws-nrw/svws-ui'
 
     let props = defineProps({
-        settings: Object,
         auth: Object,
     })
 
@@ -29,6 +28,16 @@
         route('api.settings.matrix.update', [klasse]),
         {key: item, value: value }
     )
+
+
+    let settings = ref({})
+
+    axios.get(route('api.settings.index', 'matrix'))
+        .then((response: AxiosResponse): void => settings.value = response.data)
+
+    const saveSettings = (value, column) => axios
+        .put(route('api.settings.update', {group: 'matrix'}), {value: value, column: column})
+
 </script>
 
 <template>
@@ -75,6 +84,8 @@
                         </tbody>
                     </template>
                 </table>
+
+                <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="saveSettings($event, 'lehrer_can_override_fachlehrer')">Die Klassenlehrkraft darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten usw. der Fachlehrkraft editieren. Der Button zum Editieren wird mit dieser Checkbox für alle Klassenlehrkräfte sichtbar geschaltet.</SvwsUiCheckbox>
             </div>
         </template>
         <template #secondaryMenu>
