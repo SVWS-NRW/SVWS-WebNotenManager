@@ -88,6 +88,22 @@ class DataImportService
 		$this->stop();
 	}
 
+	public function execute($data): void
+	{
+		$this->lehrer = $data['lehrer'] ?? [];
+		$this->foerderschwerpunkte = $data['foerderschwerpunkte'] ?? [];
+		$this->klassen = $data['klassen'] ?? [];
+		$this->noten = $data['noten'] ?? [];
+		$this->jahrgaenge = $data['jahrgaenge'] ?? [];
+		$this->faecher = $data['faecher'] ?? [];
+		$this->floskelgruppen = $data['floskelgruppen'] ?? [];
+		$this->lerngruppen = $data['lerngruppen'] ?? [];
+		$this->teilleistungsarten = $data['teilleistungsarten'] ?? [];
+		$this->schueler = $data['schueler'] ?? [];
+
+		$this->import();
+	}
+
     public function import(): void
     {
         $this->importLehrer();

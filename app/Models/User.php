@@ -82,7 +82,7 @@ class User extends Authenticatable
 
     protected $fillable = [
 		'id',
-		'ex_id',
+		'ext_id',
 		'kuerzel',
 		'vorname',
 		'nachname',

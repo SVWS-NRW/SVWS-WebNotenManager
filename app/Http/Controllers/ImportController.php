@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response as Status;
 
 class ImportController extends Controller
 {
+
+
     public function curl()
 	{
 		$endpoint = 'https://nightly.svws-nrw.de/db/ENM1/enm/alle';

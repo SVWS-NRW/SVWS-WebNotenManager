@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Mahnungen;
 use App\Http\Controllers\Api\SchuelerBemerkung;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\SecureTransferController;
 use App\Services\DataImportService;
 use Illuminate\Support\Facades\Route;
 
@@ -94,3 +95,9 @@ Route::get(uri: 'import', action: [ImportController::class, 'curl']);
 Route::get(uri: 'truncate', action: [DataImportService::class, 'truncate']);
 
 Route::get('import/aes', AesController::class);
+
+Route::controller(SecureTransferController::class)->prefix('secure')->group(function(): void {
+	Route::post(uri: 'import', action: 'import');
+	Route::get(uri: 'export', action: 'export');
+});
+
