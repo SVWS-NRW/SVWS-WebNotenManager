@@ -2,7 +2,7 @@
   "compilerOptions": {
       "target": "esnext",
       "module": "esnext",
-      "strict": false,
+      "strict": true,
       "jsx": "preserve",
       "importHelpers": true,
       "moduleResolution": "node",
@@ -13,6 +13,8 @@
       "allowSyntheticDefaultImports": true,
       "sourceMap": true,
       "baseUrl": ".",
+      "isolatedModules": true,
+      "noImplicitThis": true,
       "types": [
           "node",
           "vite/client"

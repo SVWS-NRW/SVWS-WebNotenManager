@@ -11,7 +11,7 @@
         SvwsUiTextareaInput,
         SvwsUiButton,
         SvwsUiBadge,
-        SvwsUiTable,
+        SvwsUiDataTable,
         SvwsUiTextInput,
     } from '@svws-nrw/svws-ui'
 
@@ -30,19 +30,19 @@
     })
 
     const computedFloskeln = computed(() =>
-        floskeln.value.filter((floskel: Floskel): boolean => searchFilter(floskel))
+        floskeln.value.filter((floskel: Floskel): boolean => floskelFilter(floskel))
     );
 
-    const searchFilter = (floskel: Floskel): boolean => {
-        if (state.search == '') {
-            return true
-        }
+    const floskelFilter = (floskel: Floskel): boolean => {
+        if (state.search == '') return true
 
-        return floskel.text.toLowerCase().includes(state.search.toLowerCase())
+        const includes = (column: string): boolean => floskel[column].toLowerCase().includes(state.search.toLowerCase())
+
+        return includes('text') || includes('kuerzel')
     }
 
     const floskeln: Ref<Floskel[]> = ref([])
-    const selectedRows: Ref<Floskel[]> = ref([])
+    const selectedRows: Ref<Floskel[]> =  ref([])
     const columns: Ref<Column[]> = ref([
         { key: 'id', label: 'id', sortable: true },
         { key: 'kuerzel', label: 'Kuerzel', sortable: true },
@@ -62,25 +62,19 @@
 
     const computedBemerkung = computed((): string => {
         state.isDirty = state.bemerkung != state.storedBemerkung
-
-        if (!state.bemerkung) {
-            return
-        }
-
+        if (!state.bemerkung) return
         return formatStringBasedOnGender(state.bemerkung, props.leistung)
     })
 
-    const getBemerkungen = () : AxiosPromise => axios
+    const getBemerkungen = (): AxiosPromise => axios
         .get(route('api.floskeln', props.floskelgruppe))
         .then((response: AxiosResponse): AxiosResponse => {
             floskeln.value = response.data
             collapsed.value = false
-            return
         })
         .catch((error: AxiosError): AxiosResponse => {
             alert('Ein Fehler ist aufgetreten.')
             console.log(error)
-            return
         })
 
     const setBemerkungen = (): AxiosPromise => axios
@@ -104,6 +98,11 @@
         let bemerkung: string = selectedRows.value.map((selected: Floskel): string => selected.text).join(' ')
         state.bemerkung = [state.bemerkung, bemerkung].join(' ').trim()
         selectedRows.value = []
+    }
+
+    const selectFloskel = (floskel: Floskel): void => {
+        selectedRows.value = []
+        floskel.forEach(floskel => selectedRows.value.push(floskel))
     }
 </script>
 
@@ -143,14 +142,14 @@
                             <hr>
                             <h3 class="headline-3">Floskeln</h3>
 
-                            <SvwsUiTextInput type="search" v-model="state.search"  placeholder="Suche"></SvwsUiTextInput>
-
-                            <SvwsUiTable v-if="computedFloskeln.length" :data="computedFloskeln" :columns="columns" v-model:selection="selectedRows" :footer="true" is-multi-select>
-                                <template #footer>
+                            <SvwsUiDataTable :items="computedFloskeln" :columns="columns" :footer="true" :selectable="true" :clickable="true" @update:modelValue="selectFloskel" :modelValue="selectedRows">
+                                <template #search>
+                                    <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
+                                </template>
+                                <template #footerActions>
                                     <SvwsUiButton @click="addFloskelToBemerkung" :type="selectedRows.length ? 'primary' : 'secondary'">Zuweisen</SvwsUiButton>
                                 </template>
-                            </SvwsUiTable>
-                            <strong v-else>Keine Einträge gefunden!</strong>
+                            </SvwsUiDataTable>
                         </div>
                     </div>
                 </div>

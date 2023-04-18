@@ -2,124 +2,141 @@
     import { ref } from 'vue';
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import { Auth } from '../Interfaces/Auth'
     import { useSlots } from 'vue'
-
+    import { Auth } from '../Interfaces/Auth'
 
     import {
         SvwsUiAppLayout,
-        SvwsUiSidebarMenu,
-        SvwsUiSidebarMenuHeader,
-        SvwsUiSidebarMenuItem,
+        SvwsUiMenu,
+        SvwsUiMenuHeader,
+        SvwsUiMenuItem,
         SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
 
-    let props = defineProps<{
-        title: String,
-    }>()
+    const modal = ref<any>(null);
+    const modalInfo = ref<any>(null);
+    const isCollapsed = ref(false)
 
     const slots = useSlots()
 
-    const isCollapsed = ref(false)
+    const auth: Auth = usePage().props.value.auth
 
-    let links: { label: string, route: string, icon: string, isVisible: boolean }[] = [
-        {
-            label: 'Notenmanager',
-            route: 'mein_unterricht',
-            icon: 'home',
-            isVisible: !usePage().props.value.auth.administrator || (usePage().props.value.auth.user.lerngruppen.length > 0  && usePage().props.value.auth.administrator)
-        },
-        { label: 'Leistungsdatenübersicht', route: 'leistungsdatenuebersicht', icon: 'book-open', isVisible: true },
-        {
-            label: 'Klassenleitung',
-            route: 'klassenleitung',
-            icon: 'user',
-            isVisible: usePage().props.value.auth.user.klassen.length > 0  || usePage().props.value.auth.administrator
-        },
-    ]
+    const visible = (link: string): bool => {
+        return {
+            'mein_unterricht': !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator),
+            'klassenleitung': auth.user.klassen.length > 0  || auth.administrator,
+            'settings': auth.administrator,
+        }[link]
+    }
 
-    const activePage = (routeName: string): boolean => route().current(routeName)
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
     const logout = (): void => Inertia.post(route('logout'))
+
+    const activePage = (routeName: string): boolean => route().current(routeName)
     const toggleCollapse = (): boolean => isCollapsed.value = !isCollapsed.value
 
-    const username = (): string => {
-        let user: { vorname: string, nachname: string } = usePage().props.value.auth.user
-
-        return `${user.vorname} ${user.nachname}`
-    }
 </script>
 
 <template>
     <SvwsUiAppLayout :fullwidthContent="true" v-cloak>
         <template #sidebar>
-            <SvwsUiSidebarMenu :collapsed="isCollapsed">
+            <SvwsUiMenu :collapsed="isCollapsed" @toggle="toggleCollapse">
                 <template #header>
-                    <SvwsUiSidebarMenuHeader :collapsed="isCollapsed" @toggle="toggleCollapse">
-                        {{ username() }}
-                    </SvwsUiSidebarMenuHeader>
+                    <SvwsUiMenuHeader :collapsed="isCollapsed">
+                        {{ auth.user.vorname }} {{ auth.user.nachname }}
+                    </SvwsUiMenuHeader>
                 </template>
+
                 <template #default>
-                    <SvwsUiSidebarMenuItem
-                        v-for="link in links"
-                        v-show="link.isVisible"
-                        :key="link.label"
-                        :icon="link.icon"
-                        :active="activePage(link.route)"
+                    <SvwsUiMenuItem
                         :collapsed="isCollapsed"
-                        @click="navigate(link.route)"
+                        :active="activePage('mein_unterricht')"
+                        @click="navigate('mein_unterricht')"
+                        v-if="visible('mein_unterricht')"
                     >
-                        <template #label>
-                            {{ link.label }}
-                        </template>
                         <template #icon>
                             <SvwsUiIcon>
-                                <mdi-home-outline v-if="link.icon === 'home'"></mdi-home-outline>
-                                <mdi-book-open-outline v-if="link.icon === 'book-open'"></mdi-book-open-outline>
-                                <mdi-user-outline v-if="link.icon === 'user'"></mdi-user-outline>
+                                <mdi-home-outline />
                             </SvwsUiIcon>
                         </template>
-                    </SvwsUiSidebarMenuItem>
-                </template>
-                <template #footer>
-                    <SvwsUiSidebarMenuItem
+                        <template #label>
+                            Notenmanager
+                        </template>
+                    </SvwsUiMenuItem>
+
+                    <SvwsUiMenuItem
                         :collapsed="isCollapsed"
-                        icon="cog-outline"
-                        @click="navigate('settings.index')"
-                        v-if="usePage().props.value.auth.administrator"
+                        :active="activePage('leistungsdatenuebersicht')"
+                        @click="navigate('leistungsdatenuebersicht')"
                     >
+                        <template #icon>
+                            <SvwsUiIcon>
+                                <mdi-book-open-outline />
+                            </SvwsUiIcon>
+                        </template>
+                        <template #label>
+                            Leistungsdatenübersicht
+                        </template>
+                    </SvwsUiMenuItem>
+
+                    <SvwsUiMenuItem
+                        :collapsed="isCollapsed"
+                        :active="activePage('klassenleitung')"
+                        @click="navigate('klassenleitung')"
+                        v-if="visible('klassenleitung')"
+                    >
+                        <template #icon>
+                            <SvwsUiIcon>
+                                <mdi-user-outline/>
+                            </SvwsUiIcon>
+                        </template>
+                        <template #label>
+                            Klassenleitung
+                        </template>
+                    </SvwsUiMenuItem>
+                </template>
+
+                <template #footer>
+                    <SvwsUiMenuItem
+                        :collapsed="isCollapsed"
+                        @click="navigate('settings.index')"
+                        v-if="visible('settings')"
+                    >
+                        <template #icon>
+                            <SvwsUiIcon>
+                                <mdi-cog-outline />
+                            </SvwsUiIcon>
+                        </template>
                         <template #label>
                             Einstellungen
                         </template>
-                        <template #icon>
-                            <mdi-cog-outline></mdi-cog-outline>
-                        </template>
-                    </SvwsUiSidebarMenuItem>
-                    <SvwsUiSidebarMenuItem
+                    </SvwsUiMenuItem>
+
+                    <SvwsUiMenuItem
                         :collapsed="isCollapsed"
-                        icon="logout"
                         @click="logout()"
                     >
+                        <template #icon>
+                            <SvwsUiIcon>
+                                <mdi-logout />
+                            </SvwsUiIcon>
+                        </template>
                         <template #label>
                             Abmelden
                         </template>
-                        <template #icon>
-                            <mdi-logout></mdi-logout>
-                        </template>
-                    </SvwsUiSidebarMenuItem>
+                    </SvwsUiMenuItem>
                 </template>
+
                 <template #version>
                     {{ usePage().props.value.version }}
                 </template>
-                <template #metaNavigation>
-                    <a :href="route('impressum')" target="_blank">Impressum</a>
-                    <a :href="route('datenschutz')" target="_blank">Datenschutz</a>
-                </template>
-            </SvwsUiSidebarMenu>
+            </SvwsUiMenu>
         </template>
+
         <template #main>
             <slot name="main" />
         </template>
+
         <template #secondaryMenu v-if="slots.secondaryMenu">
             <slot name="secondaryMenu" />
         </template>

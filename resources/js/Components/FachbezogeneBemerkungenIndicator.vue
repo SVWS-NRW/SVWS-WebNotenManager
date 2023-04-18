@@ -6,13 +6,14 @@
     import { FachbezogeneFloskel } from '../Interfaces/FachbezogeneFloskel'
     import { formatStringBasedOnGender } from '../Helpers/string.helper'
     import { FachbezogeneFloskelnFilterValues } from '../Interfaces/Filter'
+    import {Floskel} from '../Interfaces/Floskel'
 
     import {
         SvwsUiIcon,
         SvwsUiTextareaInput,
         SvwsUiButton,
         SvwsUiBadge,
-        SvwsUiTable,
+        SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiSelectInput,
     } from '@svws-nrw/svws-ui'
@@ -134,7 +135,12 @@
         let bemerkung: string = selectedRows.value.map((selected: FachbezogeneFloskel): string => selected.text).join(' ')
         state.bemerkung = [state.bemerkung, bemerkung].join(' ').trim()
         selectedRows.value = []
-}
+    }
+
+    const selectFloskel = (floskel: Floskel): void => {
+        selectedRows.value = []
+        floskel.forEach(floskel => selectedRows.value.push(floskel))
+    }
 </script>
 
 <template>
@@ -173,16 +179,20 @@
                             <hr>
                             <h3 class="headline-3">Floskeln</h3>
 
-                            <SvwsUiTextInput type="search" v-model="filters.search"  placeholder="Suche"></SvwsUiTextInput>
-                            <SvwsUiSelectInput v-if="filterOptions.niveau" placeholder="Niveau" v-model="filters.niveau" :options="filterOptions.niveau"></SvwsUiSelectInput>
-                            <SvwsUiSelectInput v-if="filterOptions.jahrgaenge" placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>
 
-                            <SvwsUiTable v-if="computedFloskeln.length" :data="computedFloskeln" :columns="columns" v-model:selection="selectedRows" :footer="true" is-multi-select>
-                                <template #footer>
+                            <SvwsUiDataTable :items="computedFloskeln" :columns="columns" :footer="true" :selectable="true" :clickable="true" @update:modelValue="selectFloskel" :modelValue="selectedRows">
+                                <template #search>
+                                    <SvwsUiTextInput type="search" v-model="filters.search"  placeholder="Suche"></SvwsUiTextInput>
+                                </template>
+                                <template #filter>
+                                    <SvwsUiSelectInput v-if="filterOptions.niveau" placeholder="Niveau" v-model="filters.niveau" :options="filterOptions.niveau"></SvwsUiSelectInput>
+                                    <SvwsUiSelectInput v-if="filterOptions.jahrgaenge" placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>
+                                </template>
+
+                                <template #footerActions>
                                     <SvwsUiButton @click="addFloskelToBemerkung" :type="selectedRows.length ? 'primary' : 'secondary'">Zuweisen</SvwsUiButton>
                                 </template>
-                            </SvwsUiTable>
-                            <strong v-else>Keine Einträge gefunden!</strong>
+                            </SvwsUiDataTable>
                         </div>
                     </div>
                 </div>

@@ -1,12 +1,13 @@
 import './bootstrap'
 import './../css/app.css'
-import '@svws-nrw/svws-ui/dist/style.css'
+
+import '@svws-nrw/svws-ui/style.css'
+
 
 import { createApp, h, Plugin } from 'vue'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createInertiaApp, InertiaApp, InertiaAppProps } from '@inertiajs/inertia-vue3'
 import { createPinia } from 'pinia'
-import { SvwsUiPlugin } from '@svws-nrw/svws-ui'
 
 const pinia = createPinia()
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel'
@@ -22,7 +23,7 @@ createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({el, app, props, plugin}: { el: Element, app: InertiaApp, props: InertiaAppProps, plugin: Plugin }): void | any {
         return createApp({render: () => h(app, props)})
-            .use(SvwsUiPlugin)
+            // .use(SvwsUiPlugin)
             .use(plugin)
             .use(createPinia())
             .mixin({ methods: {route}})

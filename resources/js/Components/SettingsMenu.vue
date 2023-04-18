@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SvwsUiSecondaryMenu, SvwsUiSidebarMenuItem } from '@svws-nrw/svws-ui'
+import { SvwsUiSecondaryMenu, SvwsUiMenuItem } from '@svws-nrw/svws-ui'
 import { Inertia } from "@inertiajs/inertia";
 const navigate = (routeName: string): void => Inertia.get(route(routeName))
 
@@ -12,15 +12,15 @@ const navigate = (routeName: string): void => Inertia.get(route(routeName))
         </template>
         <template #content>
             <div class="container">
-                <SvwsUiSidebarMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')">
+                <SvwsUiMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')">
                     <template #label>Schule bearbeiten</template>
-                </SvwsUiSidebarMenuItem>
-                <SvwsUiSidebarMenuItem @click="navigate('settings.filter')" :active="route().current('settings.filter')">
+                </SvwsUiMenuItem>
+                <SvwsUiMenuItem @click="navigate('settings.filter')" :active="route().current('settings.filter')">
                     <template #label>Filter bearbeiten</template>
-                </SvwsUiSidebarMenuItem>
-                <SvwsUiSidebarMenuItem @click="navigate('settings.matrix')" :active="route().current('settings.matrix')">
+                </SvwsUiMenuItem>
+                <SvwsUiMenuItem @click="navigate('settings.matrix')" :active="route().current('settings.matrix')">
                     <template #label>Matrix bearbeiten</template>
-                </SvwsUiSidebarMenuItem>
+                </SvwsUiMenuItem>
             </div>
         </template>
     </SvwsUiSecondaryMenu>

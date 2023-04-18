@@ -27,6 +27,7 @@
         SvwsUiDataTable,
         SvwsUiButton,
     } from '@svws-nrw/svws-ui'
+
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
