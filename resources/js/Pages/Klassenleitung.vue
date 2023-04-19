@@ -16,7 +16,8 @@
         SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiIcon,
-        SvwsUiContentCard
+        SvwsUiContentCard,
+        SvwsUiTooltip,
     } from '@svws-nrw/svws-ui'
     import {Leistung} from '../Interfaces/Leistung'
 
@@ -57,15 +58,15 @@
 
         if (fehlstundenVisible()) {
             columns.value.push(
-                { key: 'gfs', label: 'gFS', sortable: true },
-                { key: 'gfsu', label: 'gFSU', sortable: true },
+                { key: 'gfs', label: 'Gesamtfehlstunden', sortable: true },
+                { key: 'gfsu', label: 'Unentschuldigte Gesamtfehlstunden', sortable: true },
             )
         }
 
         columns.value.push(
-            { key: 'ASV', label: 'ASV', sortable: true },
-            { key: 'AUE', label: 'AUE', sortable: true },
-            { key: 'ZB', label: 'ZB', sortable: true },
+            { key: 'ASV', label: 'Arbeits und Sozialverhalten', sortable: true },
+            { key: 'AUE', label: 'Außerunterrichtliches Engagement', sortable: true },
+            { key: 'ZB', label: 'Zeugnisbemerkung', sortable: true },
         )
     }
 
@@ -134,6 +135,10 @@
             </header>
 
             <SvwsUiDataTable v-if="filteredSchueler.length" :items="filteredSchueler" :columns="columns" clickable>
+                <template #header(ASV)="{ column: { label } }">ASV</template>
+                <template #header(AUE)="{ column: { label } }">AUE</template>
+                <template #header(ZB)="{ column: { label } }">ZB</template>
+
                 <template #cell(name)="{ rowData }">
                     <span class="readonly">{{ rowData.name }}</span>
                 </template>

@@ -4,7 +4,7 @@
     import axios, {AxiosResponse} from 'axios'
     import SettingsMenu from '../../Components/SettingsMenu.vue'
 
-    import { SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox} from '@svws-nrw/svws-ui'
+    import { SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox, SvwsUiTooltip} from '@svws-nrw/svws-ui'
 
     let props = defineProps({
         auth: Object,
@@ -41,7 +41,7 @@
 </script>
 
 <template>
-    <AppLayout title="Einstellungen">
+    <AppLayout>
         <template #main>
                 <header>
                     <div id="headline">
@@ -85,7 +85,14 @@
                     </template>
                 </table>
 
-                <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="saveSettings($event, 'lehrer_can_override_fachlehrer')">Die Klassenlehrkraft darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten usw. der Fachlehrkraft editieren. Der Button zum Editieren wird mit dieser Checkbox für alle Klassenlehrkräfte sichtbar geschaltet.</SvwsUiCheckbox>
+                <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="saveSettings($event, 'lehrer_can_override_fachlehrer')">
+                    <SvwsUiTooltip>
+                        Die Klassenlehrkraft darf einer Fachlehrkraft vertreten.
+                        <template #content>
+                            Die Klassenlehrkraft darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten usw. der Fachlehrkraft editieren. Der Button zum Editieren wird mit dieser Checkbox für alle Klassenlehrkräfte sichtbar geschaltet.
+                        </template>
+                    </SvwsUiTooltip>
+                </SvwsUiCheckbox>
             </div>
         </template>
         <template #secondaryMenu>

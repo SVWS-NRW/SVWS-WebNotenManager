@@ -210,6 +210,12 @@
             <h3 class="text-headline-sm ui-mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
+                <template #header(istGemahnt)="{ column: { label } }">M</template>
+                <template #header(fs)="{ column: { label } }">FS</template>
+                <template #header(ufs)="{ column: { label } }">FSU</template>
+                <template #header(fachbezogeneBemerkungen)="{ column: { label } }">FB</template>
+
+
                 <template #cell(note)="{ rowData }">
                     <div :class="{ readonly: !rowData.matrix.editable_noten }">
                         <NoteInput :leistung="rowData" :key="rowData.id" v-if="rowData.matrix.editable_noten"></NoteInput>

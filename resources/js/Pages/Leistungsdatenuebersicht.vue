@@ -237,6 +237,11 @@
             <h3 class="text-headline-sm mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
+                <template #header(fs)="{ column: { label } }">FS</template>
+                <template #header(ufs)="{ column: { label } }">FSU</template>
+                <template #header(fachbezogeneBemerkungen)="{ column: { label } }">FB</template>
+
+
                 <template #cell(teilnoten)="{ rowData }">
                     <span class="readonly">TBD</span>
                 </template>
