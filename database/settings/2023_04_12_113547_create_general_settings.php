@@ -23,6 +23,7 @@ return new class extends SettingsMigration
 
 		$this->migrator->add(property: 'general.hosting_provider_name', value: '[Name des Hosters]');
 		$this->migrator->add(property: 'general.hosting_provider_address', value: '[Anschrift des Hosters]');
+		$this->migrator->add(property: 'general.klassenleitung_fehlstunden_visible', value: false);
     }
 };
 

@@ -2,7 +2,7 @@
     import AppLayout from '../Layouts/AppLayout.vue'
     import { computed, onMounted, PropType, reactive, ref } from 'vue'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
-    import { Head } from '@inertiajs/inertia-vue3'
+    import {Head, usePage} from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import { Schueler } from '../Interfaces/Schueler'
     import { Settings } from '../Interfaces/Settings'
@@ -48,7 +48,6 @@
 
     const columns = ref<Column[]>([])
 
-    const fehlstundenVisible = () => props.settings.klassenleitung_fehlstunden_visible == 1  // TODO: Move settings to json fields
 
     const setupColumns = (): void => {
         columns.value.push(
@@ -56,17 +55,17 @@
             { key: 'name', label: 'Name, Vorname', sortable: true },
         )
 
-        if (fehlstundenVisible()) {
+        if (usePage().props.value.settings.general.klassenleitung_fehlstunden_visible) {
             columns.value.push(
-                { key: 'gfs', label: 'Gesamtfehlstunden', sortable: true },
-                { key: 'gfsu', label: 'Unentschuldigte Gesamtfehlstunden', sortable: true },
+                { key: 'gfs', label: 'gfs', sortable: true },
+                { key: 'gfsu', label: 'gfsu', sortable: true },
             )
         }
 
         columns.value.push(
-            { key: 'ASV', label: 'Arbeits und Sozialverhalten', sortable: true },
-            { key: 'AUE', label: 'Außerunterrichtliches Engagement', sortable: true },
-            { key: 'ZB', label: 'Zeugnisbemerkung', sortable: true },
+            { key: 'ASV', label: 'ASV', sortable: true },
+            { key: 'AUE', label: 'AUE', sortable: true },
+            { key: 'ZB', label: 'ZB', sortable: true },
         )
     }
 
@@ -135,9 +134,50 @@
             </header>
 
             <SvwsUiDataTable v-if="filteredSchueler.length" :items="filteredSchueler" :columns="columns" clickable>
-                <template #header(ASV)="{ column: { label } }">ASV</template>
-                <template #header(AUE)="{ column: { label } }">AUE</template>
-                <template #header(ZB)="{ column: { label } }">ZB</template>
+                <template #header(ASV)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        ASV
+                        <template #content>
+                            Arbeits und Sozialverhalten
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+
+                <template #header(AUE)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        AUE
+                        <template #content>
+                            Außerunterrichtliches Engagement
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+
+                <template #header(ZB)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        ZB
+                        <template #content>
+                            Zeugnisbemerkung
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+
+                <template #header(gfs)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        gfs
+                        <template #content>
+                            Gesamtfehlstunden
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+
+                <template #header(gfsu)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        gfsu
+                        <template #content>
+                            Unentschuldigte Gesamtfehlstunden
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
 
                 <template #cell(name)="{ rowData }">
                     <span class="readonly">{{ rowData.name }}</span>

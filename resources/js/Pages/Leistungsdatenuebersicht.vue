@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import { computed, onMounted, reactive, ref, watch } from 'vue'
+    import {computed, onMounted, reactive, Ref, ref, watch} from 'vue'
 
     import {Head, usePage} from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
@@ -26,16 +26,23 @@
         SvwsUiIcon,
         SvwsUiDataTable,
         SvwsUiButton,
+        SvwsUiTooltip,
     } from '@svws-nrw/svws-ui'
 
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
+    import FbIndicator from '../Components/FbIndicator.vue'
+    import FbEditor from '../Components/FbEditor.vue'
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
     const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
+
+    const selectedFbLeistung: Ref<Leistung | null> = ref(null)
+
+    const valueReadonly = (leistung: Leistung, permission: 'editable_fb'): boolean => !leistungEdit || !leistung.matrix[permission]
 
     let toggles = <{
         fachlehrer: boolean,
@@ -193,7 +200,8 @@
         }
     }
 
-    const updateFachbezogeneBemerkungen = (fb: string, data: Leistung): string => data.fachbezogeneBemerkungen = fb
+    const updateFachbezogeneBemerkungen = (fb: string, data: Leistung) => data.fachbezogeneBemerkungen = 'asd'
+
 </script>
 
 <template>
@@ -202,6 +210,15 @@
     </Head>
 
     <AppLayout title="Leistungsdatenuebersicht">
+
+        <template v-slot:aside v-if="selectedFbLeistung">
+            <FbEditor
+                :leistung="selectedFbLeistung"
+                :readonly="valueReadonly(selectedFbLeistung, 'editable_fb')"
+                @close="selectedFbLeistung = null"
+            ></FbEditor>
+        </template>
+
         <template #main>
             <header class="header">
                 <div class="header__headline">
@@ -237,9 +254,30 @@
             <h3 class="text-headline-sm mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
-                <template #header(fs)="{ column: { label } }">FS</template>
-                <template #header(ufs)="{ column: { label } }">FSU</template>
-                <template #header(fachbezogeneBemerkungen)="{ column: { label } }">FB</template>
+                <template #header(fs)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        FS
+                        <template #content>
+                            Fachbezogene Fehlstunden
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+                <template #header(ufs)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        FSU
+                        <template #content>
+                            Unentschuldigte fachbezogene Fehlstunden
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+                <template #header(fachbezogeneBemerkungen)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        FB
+                        <template #content>
+                            Fachbezogene Bemerkungen
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
 
 
                 <template #cell(teilnoten)="{ rowData }">
@@ -297,9 +335,12 @@
                 </template>
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_fb }">
-                        <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)" v-if="leistungEdit && rowData.matrix.editable_fb"></FachbezogeneBemerkungenIndicator>
-                        <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData" v-else></FachbezogeneBemerkungenIndicatorReadonly>
+                    <div :class="{ readonly: valueReadonly(rowData, 'editable_fb') }">
+                        <FbIndicator
+                            :leistung="rowData"
+                            :editable="leistungEdit"
+                            @clicked="selectedFbLeistung = rowData"
+                        ></FbIndicator>
                     </div>
                 </template>
             </SvwsUiDataTable>

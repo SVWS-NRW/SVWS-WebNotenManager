@@ -140,5 +140,9 @@
         <template #secondaryMenu v-if="slots.secondaryMenu">
             <slot name="secondaryMenu" />
         </template>
+
+        <template v-slot:aside v-if="slots.aside">
+            <slot name="aside" />
+        </template>
     </SvwsUiAppLayout>
 </template>

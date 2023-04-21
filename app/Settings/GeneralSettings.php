@@ -24,6 +24,8 @@ class GeneralSettings extends Settings
 	public string $hosting_provider_name;
 	public string $hosting_provider_address;
 
+	public bool $klassenleitung_fehlstunden_visible;
+
     public static function group(): string
     {
         return 'general';

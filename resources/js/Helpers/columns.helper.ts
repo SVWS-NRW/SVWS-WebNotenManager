@@ -8,7 +8,7 @@ const baseColumns: Array<Column> = [
 ]
 
 const fachbezogeneBemerkungenColumns: Array<Column> = [
-	{ key: 'fachbezogeneBemerkungen', label: 'Fachbezogene Bemerkungen', sortable: true },
+	{ key: 'fachbezogeneBemerkungen', label: 'FB', sortable: true },
 ]
 
 const mahnungenColumns: Array<Column> = [
@@ -16,8 +16,8 @@ const mahnungenColumns: Array<Column> = [
 ]
 
 const fehlstundenColumns: Array<Column> = [
-	{ key: 'fs', label: 'Fachbezogene Fehlstunden', sortable: true },
-	{ key: 'ufs', label: 'Unentschuldigte fachbezogene Fehlstunden', sortable: true },
+	{ key: 'fs', label: 'FS', sortable: true },
+	{ key: 'ufs', label: 'FSU', sortable: true },
 ]
 
 const fachlehrerColumns: Array<Column> = [
@@ -29,7 +29,7 @@ const teilleistungenColumns: Array<Column> = [
 ]
 
 const notenColumns: Array<Column> = [
-	{ key: 'note', label: 'Note', sortable: true },
+	{ key: 'note', label: 'Note', sortable: true},
 ]
 
 export {

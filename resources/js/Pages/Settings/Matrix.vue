@@ -18,16 +18,16 @@
         'editable_fb', 'editable_asv', 'editable_aue', 'editable_zb',
     ]
 
-    axios.get(route('api.settings.matrix.index'))
+    axios.get(route('api.matrix.index'))
         .then((response: AxiosResponse): void => {
             jahrgaenge.value = response.data.jahrgaenge
             klassen.value = response.data.klassen
         })
 
-    const saveMatrix = (klasse, item, value) => axios.put(
-        route('api.settings.matrix.update', [klasse]),
+    const saveMatrix = (klasse: {id: Number}, item: string, value: string) => axios.put(
+        route('api.matrix.update', [klasse.id]),
         {key: item, value: value }
-    )
+    ).then(res => console.log(res))
 
 
     let settings = ref({})
@@ -35,7 +35,7 @@
     axios.get(route('api.settings.index', 'matrix'))
         .then((response: AxiosResponse): void => settings.value = response.data)
 
-    const saveSettings = (value, column) => axios
+    const saveSettings = (value: boolean, column: string) => axios
         .put(route('api.settings.update', {group: 'matrix'}), {value: value, column: column})
 
 </script>
@@ -43,24 +43,75 @@
 <template>
     <AppLayout>
         <template #main>
-                <header>
-                    <div id="headline">
-                        <h2 class="text-headline">Einstellungen - Matrix</h2>
-                    </div>
-                </header>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">Einstellungen - Schreibrechte</h2>
+                </div>
+            </header>
             <div class="content">
+                <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="saveSettings($event, 'lehrer_can_override_fachlehrer')">
+                    <SvwsUiTooltip>
+                        Die Klassenlehrkraft darf einer Fachlehrkraft vertreten.
+                        <template #content>
+                            Die Klassenlehrkraft darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten usw. der Fachlehrkraft editieren. Der Button zum Editieren wird mit dieser Checkbox für alle Klassenlehrkräfte sichtbar geschaltet.
+                        </template>
+                    </SvwsUiTooltip>
+                </SvwsUiCheckbox>
+
                 <table>
                     <thead>
                         <tr>
                             <th>Gruppierung</th>
                             <th>Teilnoten</th>
                             <th>Noten</th>
-                            <th>M</th>
-                            <th>FS</th>
-                            <th>FB</th>
-                            <th>ASV</th>
-                            <th>AUE</th>
-                            <th>ZB</th>
+                            <th>
+                                <SvwsUiTooltip indicator="info">
+                                M
+                                    <template #content>
+                                        Mahnungen
+                                    </template>
+                                </SvwsUiTooltip>
+                            </th>
+                            <th>
+                                <SvwsUiTooltip indicator="info">
+                                    FS
+                                    <template #content>
+                                        Fehlstunden
+                                    </template>
+                                </SvwsUiTooltip>
+                            </th>
+                            <th>
+                                <SvwsUiTooltip indicator="info">
+                                    FB
+                                    <template #content>
+                                        Fachbezogene Bemerkungen
+                                    </template>
+                                </SvwsUiTooltip>
+                            </th>
+                            <th>
+                                <SvwsUiTooltip indicator="info">
+                                    ASV
+                                    <template #content>
+                                        Arbeits und Sozialverhalten
+                                    </template>
+                                </SvwsUiTooltip>
+                            </th>
+                            <th>
+                                <SvwsUiTooltip indicator="info">
+                                    AUE
+                                    <template #content>
+                                        Außerunterrichtliches Engagement
+                                    </template>
+                                </SvwsUiTooltip>
+                            </th>
+                            <th>
+                                <SvwsUiTooltip indicator="info">
+                                    ZB
+                                    <template #content>
+                                        Zeugnisbemerkung
+                                    </template>
+                                </SvwsUiTooltip>
+                            </th>
                         </tr>
                     </thead>
 
@@ -84,15 +135,6 @@
                         </tbody>
                     </template>
                 </table>
-
-                <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="saveSettings($event, 'lehrer_can_override_fachlehrer')">
-                    <SvwsUiTooltip>
-                        Die Klassenlehrkraft darf einer Fachlehrkraft vertreten.
-                        <template #content>
-                            Die Klassenlehrkraft darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten usw. der Fachlehrkraft editieren. Der Button zum Editieren wird mit dieser Checkbox für alle Klassenlehrkräfte sichtbar geschaltet.
-                        </template>
-                    </SvwsUiTooltip>
-                </SvwsUiCheckbox>
             </div>
         </template>
         <template #secondaryMenu>

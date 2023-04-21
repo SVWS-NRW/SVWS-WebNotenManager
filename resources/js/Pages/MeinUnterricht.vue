@@ -25,6 +25,7 @@
         SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiIcon,
+        SvwsUiTooltip,
     } from '@svws-nrw/svws-ui'
 
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
@@ -210,10 +211,39 @@
             <h3 class="text-headline-sm ui-mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
-                <template #header(istGemahnt)="{ column: { label } }">M</template>
-                <template #header(fs)="{ column: { label } }">FS</template>
-                <template #header(ufs)="{ column: { label } }">FSU</template>
-                <template #header(fachbezogeneBemerkungen)="{ column: { label } }">FB</template>
+                <template #header(istGemahnt)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        M
+                        <template #content>
+                            Mahnungen
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+                <template #header(fs)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        FS
+                        <template #content>
+                            Fachbezogene Fehlstunden
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+                <template #header(ufs)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        FSU
+                        <template #content>
+                            Unentschuldigte fachbezogene Fehlstunden
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+                <template #header(fachbezogeneBemerkungen)="{ column: { label } }">
+                    <SvwsUiTooltip indicator="info">
+                        FB
+                        <template #content>
+                            Fachbezogene Bemerkungen
+                        </template>
+                    </SvwsUiTooltip>
+                </template>
+
 
 
                 <template #cell(note)="{ rowData }">

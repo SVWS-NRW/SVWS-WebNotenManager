@@ -24,6 +24,14 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth:sanctum')->group(function () {
+	Route::controller(KlassenMatrix::class)
+		->prefix(prefix: 'settings')
+		->name('api.matrix.')
+		->group(function () {
+			Route::get(uri: 'index', action: 'index')->name(name: 'index');
+			Route::put(uri: 'update/{klasse}', action: 'update')->name(name: 'update');
+		}); // TODO: Admin middleware
+
 	Route::controller(SettingController::class)
 		->prefix(prefix: 'settings')
 		->name('api.settings.')
@@ -34,13 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
 		}); // TODO: Admin middleware
 
 
-	Route::controller(KlassenMatrix::class)
-		->prefix(prefix: 'settings')
-		->name('api.settings.matrix.')
-		->group(function () {
-			Route::get(uri: 'index', action: 'index')->name(name: 'index');
-			Route::put(uri: 'update/{klasse}', action: 'update')->name(name: 'update');
-		}); // TODO: Admin middleware
+
 
 	Route::controller(Fehlstunden::class)->name('api.fehlstunden.')->group(function(): void {
 		Route::post(uri: 'leistung/gesamt/{leistung}', action: 'fehlstundenLeistungGesamt')

@@ -8,7 +8,7 @@ const navigate = (routeName: string): void => Inertia.get(route(routeName))
 <template>
     <SvwsUiSecondaryMenu>
         <template #headline>
-            Schulverwaltung
+            Einstellungen
         </template>
         <template #content>
             <div class="container">
@@ -19,7 +19,7 @@ const navigate = (routeName: string): void => Inertia.get(route(routeName))
                     <template #label>Filter bearbeiten</template>
                 </SvwsUiMenuItem>
                 <SvwsUiMenuItem @click="navigate('settings.matrix')" :active="route().current('settings.matrix')">
-                    <template #label>Matrix bearbeiten</template>
+                    <template #label>Schreibrechte bearbeiten</template>
                 </SvwsUiMenuItem>
             </div>
         </template>
