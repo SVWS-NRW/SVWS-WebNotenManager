@@ -51,21 +51,25 @@
 
     const setupColumns = (): void => {
         columns.value.push(
-            { key: 'klasse', label: 'Klasse', sortable: true },
-            { key: 'name', label: 'Name, Vorname', sortable: true },
+            { key: 'klasse', label: 'Klasse', sortable: true, minWidth: 6 },
+            { key: 'name', label: 'Name, Vorname', sortable: true, minWidth: 15 },
         )
 
         if (usePage().props.value.settings.general.klassenleitung_fehlstunden_visible) {
             columns.value.push(
-                { key: 'gfs', label: 'gfs', sortable: true },
-                { key: 'gfsu', label: 'gfsu', sortable: true },
+                { key: 'gfs', label: 'GFS', sortable: true, fixedWidth: 7 },
+                { key: 'gfsu', label: 'GFSU', sortable: true, fixedWidth: 7 },
             )
         }
 
         columns.value.push(
-            { key: 'ASV', label: 'ASV', sortable: true },
-            { key: 'AUE', label: 'AUE', sortable: true },
-            { key: 'ZB', label: 'ZB', sortable: true },
+            { key: 'ASV', label: 'ASV', sortable: true, fixedWidth: 5 },
+            { key: 'AUE', label: 'AUE', sortable: true, fixedWidth: 5 },
+            { key: 'ZB', label: 'ZB', sortable: true, fixedWidth: 5 },
+        )
+
+        columns.value.push(
+            { key: '', label: '', minWidth: '50%'},
         )
     }
 
@@ -163,7 +167,7 @@
 
                 <template #header(gfs)="{ column: { label } }">
                     <SvwsUiTooltip>
-                        gfs
+                        GFS
                         <template #content>
                             Gesamtfehlstunden
                         </template>
@@ -172,7 +176,7 @@
 
                 <template #header(gfsu)="{ column: { label } }">
                     <SvwsUiTooltip>
-                        gfsu
+                        GFSU
                         <template #content>
                             Unentschuldigte Gesamtfehlstunden
                         </template>
