@@ -135,7 +135,7 @@
 
             <SvwsUiDataTable v-if="filteredSchueler.length" :items="filteredSchueler" :columns="columns" clickable>
                 <template #header(ASV)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         ASV
                         <template #content>
                             Arbeits und Sozialverhalten
@@ -144,7 +144,7 @@
                 </template>
 
                 <template #header(AUE)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         AUE
                         <template #content>
                             Außerunterrichtliches Engagement
@@ -153,7 +153,7 @@
                 </template>
 
                 <template #header(ZB)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         ZB
                         <template #content>
                             Zeugnisbemerkung
@@ -162,7 +162,7 @@
                 </template>
 
                 <template #header(gfs)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         gfs
                         <template #content>
                             Gesamtfehlstunden
@@ -171,7 +171,7 @@
                 </template>
 
                 <template #header(gfsu)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         gfsu
                         <template #content>
                             Unentschuldigte Gesamtfehlstunden

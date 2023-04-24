@@ -212,7 +212,7 @@
 
             <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
                 <template #header(istGemahnt)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         M
                         <template #content>
                             Mahnungen
@@ -220,7 +220,7 @@
                     </SvwsUiTooltip>
                 </template>
                 <template #header(fs)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         FS
                         <template #content>
                             Fachbezogene Fehlstunden
@@ -228,7 +228,7 @@
                     </SvwsUiTooltip>
                 </template>
                 <template #header(ufs)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         FSU
                         <template #content>
                             Unentschuldigte fachbezogene Fehlstunden
@@ -236,7 +236,7 @@
                     </SvwsUiTooltip>
                 </template>
                 <template #header(fachbezogeneBemerkungen)="{ column: { label } }">
-                    <SvwsUiTooltip indicator="info">
+                    <SvwsUiTooltip>
                         FB
                         <template #content>
                             Fachbezogene Bemerkungen

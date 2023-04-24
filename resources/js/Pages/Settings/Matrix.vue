@@ -51,9 +51,9 @@
             <div class="content">
                 <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="saveSettings($event, 'lehrer_can_override_fachlehrer')">
                     <SvwsUiTooltip>
-                        Die Klassenlehrkraft darf einer Fachlehrkraft vertreten.
+                        Die Klassenleitung darf alle Leistungsdaten bearbeiten.
                         <template #content>
-                            Die Klassenlehrkraft darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten usw. der Fachlehrkraft editieren. Der Button zum Editieren wird mit dieser Checkbox für alle Klassenlehrkräfte sichtbar geschaltet.
+                            "Die Klassenleitung darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten, usw. der Fachlehrkraft editieren. Der Button zum Editieren damit für alle Klassenleitungen sichtbar.
                         </template>
                     </SvwsUiTooltip>
                 </SvwsUiCheckbox>
@@ -65,15 +65,15 @@
                             <th>Teilnoten</th>
                             <th>Noten</th>
                             <th>
-                                <SvwsUiTooltip indicator="info">
-                                M
+                                <SvwsUiTooltip>
+                                    M
                                     <template #content>
                                         Mahnungen
                                     </template>
                                 </SvwsUiTooltip>
                             </th>
                             <th>
-                                <SvwsUiTooltip indicator="info">
+                                <SvwsUiTooltip>
                                     FS
                                     <template #content>
                                         Fehlstunden
@@ -81,7 +81,7 @@
                                 </SvwsUiTooltip>
                             </th>
                             <th>
-                                <SvwsUiTooltip indicator="info">
+                                <SvwsUiTooltip>
                                     FB
                                     <template #content>
                                         Fachbezogene Bemerkungen
@@ -89,7 +89,7 @@
                                 </SvwsUiTooltip>
                             </th>
                             <th>
-                                <SvwsUiTooltip indicator="info">
+                                <SvwsUiTooltip>
                                     ASV
                                     <template #content>
                                         Arbeits und Sozialverhalten
@@ -97,7 +97,7 @@
                                 </SvwsUiTooltip>
                             </th>
                             <th>
-                                <SvwsUiTooltip indicator="info">
+                                <SvwsUiTooltip>
                                     AUE
                                     <template #content>
                                         Außerunterrichtliches Engagement
@@ -105,7 +105,7 @@
                                 </SvwsUiTooltip>
                             </th>
                             <th>
-                                <SvwsUiTooltip indicator="info">
+                                <SvwsUiTooltip>
                                     ZB
                                     <template #content>
                                         Zeugnisbemerkung
@@ -119,7 +119,12 @@
                         <tr v-for="klasse in klassen">
                             <td>{{ klasse.kuerzel }}</td>
                             <td v-for="item in matrixItems">
-                                <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>
+                                <SvwsUiTooltip>
+                                    <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>
+                                    <template #content>
+                                        Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                    </template>
+                                </SvwsUiTooltip>
                             </td>
                         </tr>
                     </tbody>
@@ -129,7 +134,12 @@
                             <tr v-for="klasse in jahrgang.klassen">
                                 <td>{{ jahrgangKey }} /  {{ jahrgang.kuerzel }} / {{ klasse.kuerzel }}</td>
                                 <td v-for="item in matrixItems">
-                                    <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
                                 </td>
                             </tr>
                         </tbody>
