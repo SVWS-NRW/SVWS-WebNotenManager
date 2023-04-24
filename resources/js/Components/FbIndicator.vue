@@ -19,6 +19,9 @@
 
 <style scoped>
     button {
-        @apply ui-flex ui-gap-3 ui-items-start ui-justify-start ui-text-left ui-leading-6
+        @apply
+        ui-flex ui-gap-3 ui-items-start ui-justify-start
+        ui-text-left
+        ui-leading-6
     }
 </style>

@@ -262,6 +262,7 @@
                         </template>
                     </SvwsUiTooltip>
                 </template>
+
                 <template #header(ufs)="{ column: { label } }">
                     <SvwsUiTooltip>
                         FSU
@@ -270,6 +271,7 @@
                         </template>
                     </SvwsUiTooltip>
                 </template>
+
                 <template #header(fachbezogeneBemerkungen)="{ column: { label } }">
                     <SvwsUiTooltip>
                         FB
