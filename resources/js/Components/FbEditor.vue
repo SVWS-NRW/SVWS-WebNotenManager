@@ -33,10 +33,10 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
     const floskeln: Ref<FachbezogeneFloskel[]> = ref([])
     const selectedFloskeln: Ref<FachbezogeneFloskel[]> = ref([])
     const columns: Ref<Column[]> = ref([
-        { key: 'kuerzel', label: 'Kürzel', sortable: true },
-        { key: 'text', label: 'Text', sortable: true },
-        { key: 'niveau', label: 'Niveau', sortable: true },
-        { key: 'jahrgang', label: 'Jahrgang', sortable: true },
+        { key: 'kuerzel', label: 'Kürzel', sortable: true, minWidth: 6 },
+        { key: 'text', label: 'Text', sortable: true, span: 5 },
+        { key: 'niveau', label: 'Niveau', sortable: true, minWidth: 6 },
+        { key: 'jahrgang', label: 'Jahrgang', sortable: true, minWidth: 8 },
     ])
 
     let filterOptions = <FachbezogeneFloskelnFilterOptions>reactive({
@@ -127,7 +127,7 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
 
 <template>
     <div class="container">
-        <h2 class="text-headline">{{ props.leistung.fach }} FB</h2>
+        <h2 class="text-headline">{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
         <h1 class="text-headline-xl text-primary">{{ props.leistung.name }}</h1>
 
         <SvwsUiTextareaInput
