@@ -287,31 +287,43 @@
                 </template>
 
                 <template #cell(fach)="{ rowData }">
-                    <strong class="readonly">{{ rowData.fach }}</strong>
+                    <strong class="readonly">
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.fach }}
+                        </button>
+                    </strong>
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <div class="readonly">{{ rowData.klasse }}</div>
+                    <div class="readonly">
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.klasse }}
+                        </button>
+                    </div>
                 </template>
 
                 <template #cell(name)="{ rowData }">
                     <div class="readonly">
-                        <button
-                            type="button"
-                            @click="selectedFbLeistung = rowData"
-                            :title="`Fachbezogene Bemerkungen für ${rowData.vorname} ${rowData.nachname} einblenden`"
-                        >
+                        <button type="button" @click="selectedFbLeistung = rowData">
                             {{ rowData.name }}
                         </button>
                     </div>
                 </template>
 
                 <template #cell(kurs)="{ rowData }">
-                    <div class="readonly">{{ rowData.kurs }}</div>
+                    <div class="readonly">
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.kurs }}
+                        </button>
+                    </div>
                 </template>
 
                 <template #cell(lehrer)="{ rowData }">
-                    <div class="readonly">{{ rowData.lehrer }}</div>
+                    <div class="readonly">
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.lehrer }}
+                        </button>
+                    </div>
                 </template>
 
                 <template #cell(note)="{ rowData }">
