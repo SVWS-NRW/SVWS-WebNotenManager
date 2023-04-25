@@ -53,14 +53,10 @@
         columns.value.push(
             { key: 'klasse', label: 'Klasse', sortable: true, minWidth: 6 },
             { key: 'name', label: 'Name, Vorname', sortable: true, minWidth: 15 },
+            { key: 'gfs', label: 'GFS', sortable: true, fixedWidth: 7 },
+            { key: 'gfsu', label: 'GFSU', sortable: true, fixedWidth: 7 },
         )
 
-        if (usePage().props.value.settings.general.klassenleitung_fehlstunden_visible) {
-            columns.value.push(
-                { key: 'gfs', label: 'GFS', sortable: true, fixedWidth: 7 },
-                { key: 'gfsu', label: 'GFSU', sortable: true, fixedWidth: 7 },
-            )
-        }
 
         columns.value.push(
             { key: 'ASV', label: 'ASV', sortable: true, fixedWidth: 5 },

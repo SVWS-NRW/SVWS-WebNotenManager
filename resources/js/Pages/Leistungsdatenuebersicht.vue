@@ -295,7 +295,15 @@
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <div class="readonly">{{ rowData.name }}</div>
+                    <div class="readonly">
+                        <button
+                            type="button"
+                            @click="selectedFbLeistung = rowData"
+                            :title="`Fachbezogene Bemerkungen für ${rowData.vorname} ${rowData.nachname} einblenden`"
+                        >
+                            {{ rowData.name }}
+                        </button>
+                    </div>
                 </template>
 
                 <template #cell(kurs)="{ rowData }">

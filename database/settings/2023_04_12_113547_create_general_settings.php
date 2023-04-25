@@ -5,7 +5,7 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class extends SettingsMigration
 {
     public function up(): void
-    {
+	{
 		$this->migrator->add(property: 'general.name', value: '[Name der Schule]');
 		$this->migrator->add(property: 'general.address', value: '[Adresse der Schule]');
 		$this->migrator->add(property: 'general.email', value: '[E-Mail Adresse der Schule]');
@@ -23,8 +23,7 @@ return new class extends SettingsMigration
 
 		$this->migrator->add(property: 'general.hosting_provider_name', value: '[Name des Hosters]');
 		$this->migrator->add(property: 'general.hosting_provider_address', value: '[Anschrift des Hosters]');
-		$this->migrator->add(property: 'general.klassenleitung_fehlstunden_visible', value: false);
-    }
+	}
 };
 
 

@@ -16,7 +16,7 @@ class FilterSettings extends Settings
 	public bool $leistungdatenuebersicht_mahnungen;
 	public bool $leistungdatenuebersicht_bemerkungen;
 
-    public static function group(): string
+	public static function group(): string
     {
         return 'filter';
     }

@@ -2,8 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Setting;
-use App\Models\User;
 use App\Settings\FilterSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\MatrixSettings;

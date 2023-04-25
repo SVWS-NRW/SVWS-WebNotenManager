@@ -171,7 +171,7 @@
     }
 
     .content {
-        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12
+        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-items-start ui-w-full
     }
 
     .button {

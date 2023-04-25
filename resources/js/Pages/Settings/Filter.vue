@@ -21,11 +21,11 @@
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
-                <header>
-                    <div id="headline">
-                        <h2 class="text-headline">Einstellungen - Filter</h2>
-                    </div>
-                </header>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">Einstellungen - Filter</h2>
+                </div>
+            </header>
             <div class="content">
                 <div>
                     <h3 class="headline-3">Mein Unterricht</h3>
@@ -61,7 +61,7 @@
     }
 
     .content {
-        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-max-w-lg
+        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-max-w-lg ui-items-start
     }
 
     .content > div {
