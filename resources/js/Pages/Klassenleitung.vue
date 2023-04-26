@@ -1,12 +1,12 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import { computed, onMounted, PropType, reactive, ref } from 'vue'
+    import {computed, onMounted, PropType, reactive, Ref, ref, watch} from 'vue'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import {Head, usePage} from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import { Schueler } from '../Interfaces/Schueler'
     import { Settings } from '../Interfaces/Settings'
-    import BemerkungenIndicator from '../Components/BemerkungenIndicator.vue'
+    import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
     import BemerkungenIndicatorReadonly from '../Components/BemerkungenIndicatorReadonly.vue'
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
 
@@ -18,8 +18,10 @@
         SvwsUiIcon,
         SvwsUiContentCard,
         SvwsUiTooltip,
+        SvwsUiButton,
     } from '@svws-nrw/svws-ui'
     import {Leistung} from '../Interfaces/Leistung'
+    import BemerkungEditor from '../Components/BemerkungEditor.vue'
 
     let props = defineProps({
         settings: {
@@ -48,7 +50,6 @@
 
     const columns = ref<Column[]>([])
 
-
     const setupColumns = (): void => {
         columns.value.push(
             { key: 'klasse', label: 'Klasse', sortable: true, minWidth: 6 },
@@ -59,13 +60,9 @@
 
 
         columns.value.push(
-            { key: 'ASV', label: 'ASV', sortable: true, fixedWidth: 5 },
-            { key: 'AUE', label: 'AUE', sortable: true, fixedWidth: 5 },
-            { key: 'ZB', label: 'ZB', sortable: true, fixedWidth: 5 },
-        )
-
-        columns.value.push(
-            { key: '', label: '', minWidth: '50%'},
+            { key: 'ASV', label: 'ASV', sortable: true },
+            { key: 'AUE', label: 'AUE', sortable: true },
+            { key: 'ZB', label: 'ZB', sortable: true},
         )
     }
 
@@ -114,6 +111,20 @@
         .get(route('api.klassenleitung'))
         .then((response: AxiosResponse): AxiosResponse => state.schueler = response.data)
         .finally((): void => getFilters())
+
+    const selectedSchueler: Ref<Schueler | null> = ref(null)
+    const selectedFloskelgruppe: Ref<string> = ref('asv')
+
+    const selectSchueler = (schueler: Schueler, floskelgruppe?: string): void => {
+        selectedSchueler.value = null
+        selectedSchueler.value = schueler
+
+        if (floskelgruppe) {
+            selectedFloskelgruppe.value = floskelgruppe
+        }
+    }
+
+    const valueReadonly = (schueler: Schueler, permission: 'editable_fb'): boolean => !schueler.matrix[permission]
 </script>
 
 <template>
@@ -121,7 +132,15 @@
         <title>{{ title }}</title>
     </Head>
 
-    <AppLayout title="">
+    <AppLayout title="Klassenleitung">
+        <template v-slot:aside v-if="selectedSchueler">
+            <BemerkungEditor
+                :schueler="selectedSchueler"
+                :floskelgruppe="selectedFloskelgruppe"
+                @close="selectedSchueler = null"
+            ></BemerkungEditor>
+        </template>
+
         <template #main>
             <header>
                 <div id="headline">
@@ -180,11 +199,19 @@
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <span class="readonly">{{ rowData.name }}</span>
+                    <span class="readonly">
+                        <button @click="selectSchueler(rowData)">
+                            {{ rowData.name }}
+                        </button>
+                    </span>
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <span class="readonly">{{ rowData.klasse }}</span>
+                    <span class="readonly">
+                        <button @click="selectSchueler(rowData)">
+                            {{ rowData.klasse }} qwe
+                        </button>
+                    </span>
                 </template>
 
                 <template #cell(gfs)="{ rowData }">
@@ -207,22 +234,19 @@
 
                 <template #cell(ASV)="{ rowData }">
                     <div :class="{ readonly: !rowData.matrix.editable_asv }">
-                        <BemerkungenIndicator :leistung="rowData" floskelgruppe="ASV" v-if="rowData.matrix.editable_asv"></BemerkungenIndicator>
-                        <BemerkungenIndicatorReadonly :leistung="rowData" floskelgruppe="ASV" v-else></BemerkungenIndicatorReadonly>
+                        <BemerkungIndicator :bemerkung="rowData.ASV" @clicked="selectSchueler(rowData, 'asv')"></BemerkungIndicator>
                    </div>
                 </template>
 
                 <template #cell(AUE)="{ rowData }">
                     <div :class="{ readonly: !rowData.matrix.editable_aue }">
-                        <BemerkungenIndicator :leistung="rowData" floskelgruppe="AUE" v-if="rowData.matrix.editable_aue"></BemerkungenIndicator>
-                        <BemerkungenIndicatorReadonly :leistung="rowData" floskelgruppe="AUE" v-else></BemerkungenIndicatorReadonly>
+                        <BemerkungIndicator :bemerkung="rowData.AUE" @clicked="selectSchueler(rowData, 'aue')"></BemerkungIndicator>
                    </div>
                 </template>
 
                 <template #cell(ZB)="{ rowData }">
                     <div :class="{ readonly: !rowData.matrix.editable_zb }">
-                        <BemerkungenIndicator :leistung="rowData" floskelgruppe="ZB" v-if="rowData.matrix.editable_zb"></BemerkungenIndicator>
-                        <BemerkungenIndicatorReadonly :leistung="rowData" floskelgruppe="ZB" v-else></BemerkungenIndicatorReadonly>
+                        <BemerkungIndicator :bemerkung="rowData.ZB" @clicked="selectSchueler(rowData, 'zb')"></BemerkungIndicator>
                     </div>
                 </template>
             </SvwsUiDataTable>

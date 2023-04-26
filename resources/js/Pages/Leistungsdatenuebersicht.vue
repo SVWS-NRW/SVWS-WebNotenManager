@@ -360,7 +360,6 @@
                     <div :class="{ readonly: valueReadonly(rowData, 'editable_fb') }">
                         <FbIndicator
                             :leistung="rowData"
-                            :editable="leistungEdit"
                             @clicked="selectedFbLeistung = rowData"
                         ></FbIndicator>
                     </div>

@@ -1,64 +1,67 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
-    import axios, {AxiosError, AxiosResponse} from 'axios'
-    import { Leistung } from '../Interfaces/Leistung'
-    import {FachbezogeneFloskel} from '../Interfaces/FachbezogeneFloskel'
-    import {Column} from '../Interfaces/Column'
-    import { FachbezogeneFloskelnFilterOptions, FachbezogeneFloskelnFilterValues } from '../Interfaces/Filter'
-    import { formatStringBasedOnGender } from '../Helpers/string.helper'
+import {computed, onMounted, Ref, ref, watch} from 'vue'
+    import axios, { AxiosError, AxiosResponse } from 'axios'
+    import { Floskel, TableColumn, Leistung, FachbezogeneFloskel } from '../types'
+
+    import {
+        addSelectedFloskelnToBemerkung,
+        closeEditor,
+        formatStringBasedOnGender,
+        saveBemerkung,
+        searchFilter,
+        selectFloskeln,
+        tableFilter,
+    } from '../Helpers/bemerkungen.helper'
 
     import {
         SvwsUiTextareaInput,
-        SvwsUiButton,
         SvwsUiDataTable,
         SvwsUiTextInput,
+        SvwsUiButton,
         SvwsUiSelectInput,
     } from '@svws-nrw/svws-ui'
 
-    const changesNotSavedWarning: string = 'Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren.'
-
     const emit = defineEmits(['close', 'updated'])
-
     const props = defineProps<{
         leistung: Leistung,
         readonly: boolean,
     }>()
 
-    const state = reactive({
-        bemerkung: <string> props.leistung.fachbezogeneBemerkungen,
-        storedBemerkung: <string> props.leistung.fachbezogeneBemerkungen,
-        isDirty: false,
-    })
+    const bemerkung: Ref<string> = ref(props.leistung.fachbezogeneBemerkungen)
+    const storedBemerkung: Ref<string> = ref(props.leistung.fachbezogeneBemerkungen)
+    const isDirty: Ref<bool> = ref(false)
+
+    const searchTerm: Ref<string> = ref('')
 
     const floskeln: Ref<FachbezogeneFloskel[]> = ref([])
     const selectedFloskeln: Ref<FachbezogeneFloskel[]> = ref([])
-    const columns: Ref<Column[]> = ref([
+    const columns: Ref<TableColumn[]> = ref([
         { key: 'kuerzel', label: 'Kürzel', sortable: true, minWidth: 6 },
         { key: 'text', label: 'Text', sortable: true, span: 5 },
         { key: 'niveau', label: 'Niveau', sortable: true, minWidth: 6 },
         { key: 'jahrgang', label: 'Jahrgang', sortable: true, minWidth: 8 },
     ])
 
-    let filterOptions = <FachbezogeneFloskelnFilterOptions>reactive({
+    const niveauOptions: Ref<{ index: Number, label: Number | string | null }> = ref([])
+    const jahrgaengeOptions: Ref<{ index: Number, label: Number | string | null }> =  ref([])
+    const niveauFilter: Ref<Number> = ref(0)
+    const jahrgangFilter: Ref<Number> = ref(0)
+
+    let filterOptions = ref({
         'niveau': [],
         'jahrgaenge': [],
     })
 
-    let filters = <FachbezogeneFloskelnFilterValues>reactive({
-        search: '',
-        niveau: 0,
-        jahrgang: 0,
-    })
-
-    watch(() => props.leistung, (): string => state.bemerkung = props.leistung.fachbezogeneBemerkungen || '')
+    watch(() => props.leistung, (): void =>
+        bemerkung.value = storedBemerkung.value = props.schueler[props.leistung.fachbezogeneBemerkungen]
+    )
 
     onMounted((): void => {
-        axios
-            .get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
-            .then((response: AxiosResponse): void => {
+        axios.get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
+            .then((response: AxiosResponse): AxiosResponse => {
                 floskeln.value = response.data?.data || []
-                filterOptions.niveau = response.data?.niveau || []
-                filterOptions.jahrgaenge = response.data?.jahrgaenge || []
+                niveauOptions.value = response.data?.niveau || []
+                jahrgaengeOptions.value = response.data?.jahrgaenge || []
             })
             .catch((error: AxiosError): void => {
                 alert('Ein Fehler ist aufgetreten.')
@@ -68,61 +71,26 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
 
     const computedFloskeln = computed((): Array<FachbezogeneFloskel> =>
         floskeln.value.filter((floskel: FachbezogeneFloskel): boolean =>
-            searchFilter(floskel)
-            && tableFilter(floskel, 'niveau', true)
-            && tableFilter(floskel, 'jahrgang', true)
+            searchFilter(floskel, searchTerm.value)
+                && tableFilter(floskel, 'niveau', niveauFilter, true)
+                && tableFilter(floskel, 'jahrgang', jahrgangFilter, true)
         )
     )
 
     const computedBemerkung = computed((): string | void => {
-        state.isDirty = state.bemerkung != state.storedBemerkung
-        if (!state.bemerkung) return
-        return formatStringBasedOnGender(state.bemerkung, props.leistung)
+        isDirty.value = bemerkung.value != storedBemerkung.value
+        if (!bemerkung.value) return
+        return formatStringBasedOnGender(bemerkung.value, props.leistung)
     })
 
-    const tableFilter = (floskel: FachbezogeneFloskel, column: 'jahrgang' | 'niveau', containsOnlyEmptyOption: boolean = false): boolean => {
-        if (containsOnlyEmptyOption && filters[column] == null) return floskel[column] == null
-        if (filters[column] == 0) return true
-        return floskel[column] == filters[column]
-    }
+    const save = (): void => saveBemerkung('api.fachbezogene_bemerkung', props.leistung.id,
+        { bemerkung: bemerkung.value }, bemerkung, storedBemerkung, isDirty,
+        (): void => emit('updated', bemerkung.value)
+    )
 
-    const searchFilter = (floskel: FachbezogeneFloskel): boolean => {
-        if (filters.search === '') return true
-        const search = (search: string) => search.toLowerCase().includes(filters.search.toLowerCase())
-        return search(floskel.text) || search(floskel.kuerzel)
-    }
-
-    const saveBemerkung = (): Promise<void> => axios
-        .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: state.bemerkung })
-        .then((): void => {
-            state.storedBemerkung = state.bemerkung
-            state.isDirty = false
-            emit('updated', state.bemerkung)
-        })
-        .catch((error: AxiosError): void => {
-            alert('Ein Fehler ist aufgetreten.')
-            console.log(error)
-        })
-
-    const selectFloskel = (floskel: FachbezogeneFloskel[]): void => {
-        selectedFloskeln.value = []
-        floskel.forEach((floskel: FachbezogeneFloskel): Number => selectedFloskeln.value.push(floskel))
-    }
-
-    const addSelectedToBemerkung = (): void => {
-        let bemerkung: string = selectedFloskeln.value.map(
-            (selected: FachbezogeneFloskel): string => selected.text
-        ).join(' ')
-
-        state.bemerkung = [state.bemerkung, bemerkung].join(' ').trim()
-        selectedFloskeln.value = []
-    }
-
-    const close = (): void => {
-        if (state.isDirty ? confirm(changesNotSavedWarning) : true) {
-            emit('close')
-        }
-    }
+    const addSelected = (): void => addSelectedFloskelnToBemerkung(bemerkung, selectedFloskeln)
+    const select = (floskeln: FachbezogeneFloskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
+    const close = (): void => closeEditor(isDirty, () => emit('close'))
 </script>
 
 <template>
@@ -132,7 +100,7 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
 
         <SvwsUiTextareaInput
             :modelValue="computedBemerkung"
-            @update:modelValue="state.bemerkung = $event"
+            @update:modelValue="bemerkung = $event"
             autoresize
             :disabled="props.readonly"
         ></SvwsUiTextareaInput>
@@ -140,7 +108,7 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
         <div class="buttons">
             <SvwsUiButton
                 v-if="!readonly"
-                @click="addSelectedToBemerkung"
+                @click="addSelected"
                 :disabled="selectedFloskeln.length === 0"
             >
                 Zuweisen
@@ -148,13 +116,16 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
 
             <SvwsUiButton
                 v-if="!readonly"
-                @click="saveBemerkung"
-                :disabled="!state.isDirty"
+                @click="save"
+                :disabled="!isDirty"
             >
                 Speichern
             </SvwsUiButton>
 
-            <SvwsUiButton @click="close" :type="state.isDirty ? 'danger' : 'secondary'">
+            <SvwsUiButton
+                @click="close"
+                :type="isDirty ? 'danger' : 'secondary'"
+            >
                 Schließen
             </SvwsUiButton>
         </div>
@@ -164,30 +135,28 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
             :items="computedFloskeln"
             :columns="columns"
             :selectable="true"
-            @update:modelValue="selectFloskel"
+            @update:modelValue="select($event)"
             v-if="!readonly"
         >
             <template #search>
                 <SvwsUiTextInput
                     type="search"
-                    v-model="filters.search"
+                    v-model="searchTerm"
                     placeholder="Suche"
                 ></SvwsUiTextInput>
             </template>
 
             <template #filter>
                 <SvwsUiSelectInput
-                    v-if="filterOptions.niveau"
                     placeholder="Niveau"
-                    v-model="filters.niveau"
-                    :options="filterOptions.niveau"
+                    v-model="niveauFilter"
+                    :options="niveauOptions"
                 ></SvwsUiSelectInput>
 
                 <SvwsUiSelectInput
-                    v-if="filterOptions.jahrgaenge"
                     placeholder="Jahrgang"
-                    v-model="filters.jahrgang"
-                    :options="filterOptions.jahrgaenge"
+                    v-model="jahrgangFilter"
+                    :options="jahrgaengeOptions"
                 ></SvwsUiSelectInput>
             </template>
         </SvwsUiDataTable>
@@ -196,18 +165,10 @@ import {computed, onMounted, reactive, ref, Ref, watch} from 'vue'
 
 <style scoped>
     .container {
-        @apply
-            ui-p-6
-            ui-flex
-            ui-flex-col
-            ui-gap-6
+        @apply ui-p-6 ui-flex ui-flex-col ui-gap-6
     }
 
     .buttons {
-        @apply
-            ui-flex
-            ui-justify-end
-            ui-gap-3
+        @apply ui-flex ui-justify-end ui-gap-3
     }
-
 </style>
