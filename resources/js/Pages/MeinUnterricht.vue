@@ -1,14 +1,16 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import {onMounted, reactive, computed, ref, watch, PropType} from 'vue'
+    import {onMounted, reactive, computed, ref, watch, PropType, Ref} from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
     import { Column } from '../Interfaces/Column'
     import { usePage } from '@inertiajs/inertia-vue3'
     import axios, { AxiosResponse } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import NoteInput from '../Components/NoteInput.vue'
-    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
+
+    import FbIndicator from '../Components/FbIndicator.vue'
+    import FbEditor from '../Components/FbEditor.vue'
 
     import {
         baseColumns,
@@ -31,7 +33,6 @@
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
     import {Settings} from '../Interfaces/Settings'
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
-    import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -47,6 +48,7 @@
         'faecher': [],
     })
 
+    const selectedFbLeistung: Ref<Leistung | null> = ref(null)
 
     const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
 
@@ -186,7 +188,15 @@
     <Head>
         <title>{{ title }}</title>
     </Head>
-    <AppLayout title="">
+    <AppLayout title="Mein Unterricht">
+        <template v-slot:aside v-if="selectedFbLeistung">
+            <FbEditor
+                :leistung="selectedFbLeistung"
+                :readonly="!selectedFbLeistung.matrix.editable_fb"
+                @close="selectedFbLeistung = null"
+            ></FbEditor>
+        </template>
+
         <template #main>
             <header>
                 <div id="headline">
@@ -244,8 +254,6 @@
                     </SvwsUiTooltip>
                 </template>
 
-
-
                 <template #cell(note)="{ rowData }">
                     <div :class="{ readonly: !rowData.matrix.editable_noten }">
                         <NoteInput :leistung="rowData" :key="rowData.id" v-if="rowData.matrix.editable_noten"></NoteInput>
@@ -261,25 +269,33 @@
 
                 <template #cell(klasse)="{ rowData }">
                     <div class="readonly">
-                        {{ rowData.klasse }}
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.klasse }}
+                        </button>
                     </div>
                 </template>
 
                 <template #cell(kurs)="{ rowData }">
                     <div class="readonly">
-                        {{ rowData.kurs }}
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.kurs }}
+                        </button>
                     </div>
                 </template>
 
                 <template #cell(name)="{ rowData }">
                     <div class="readonly">
-                        {{ rowData.name }}
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.name }}
+                        </button>
                     </div>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
                     <strong class="readonly">
-                        {{ rowData.fach }}
+                        <button type="button" @click="selectedFbLeistung = rowData">
+                            {{ rowData.fach }}
+                        </button>
                     </strong>
                 </template>
 
@@ -310,8 +326,10 @@
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
                     <div :class="{ readonly: !rowData.matrix.editable_fb }">
-                        <FachbezogeneBemerkungenIndicator :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)" v-if="rowData.matrix.editable_fb"></FachbezogeneBemerkungenIndicator>
-                        <FachbezogeneBemerkungenIndicatorReadonly :leistung="rowData" @updated="updateFachbezogeneBemerkungen($event, rowData)" v-else></FachbezogeneBemerkungenIndicatorReadonly>
+                        <FbIndicator
+                            :leistung="rowData"
+                            @clicked="selectedFbLeistung = rowData"
+                        ></FbIndicator>
                     </div>
                 </template>
             </SvwsUiDataTable>

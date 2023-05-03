@@ -6,7 +6,6 @@
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
-    import FachbezogeneBemerkungenIndicator from '../Components/FachbezogeneBemerkungenIndicator.vue'
     import NoteInput from '../Components/NoteInput.vue'
 
     import {
@@ -31,7 +30,6 @@
 
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
-    import FachbezogeneBemerkungenIndicatorReadonly from '../Components/FachbezogeneBemerkungenIndicatorReadonly.vue'
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
     import FbIndicator from '../Components/FbIndicator.vue'
     import FbEditor from '../Components/FbEditor.vue'
