@@ -89,8 +89,8 @@ const saveBemerkung = (
 	bemerkung: Ref<string>,
 	storedBemerkung: Ref<string>,
 	isDirty: Ref<boolean>,
-	callback,
-): void => axios
+	callback: any,
+) => axios
 	.post(route(routeName, id), data)
 	.then((): void => {
 		storedBemerkung.value = bemerkung.value

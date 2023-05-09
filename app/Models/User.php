@@ -49,7 +49,6 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTwoFactorRecoveryCodes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTwoFactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property int|null $ext_id
  * @property string $kuerzel
  * @property string $nachname
@@ -69,6 +68,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereGeschlecht($value)
  * @property int $is_administrator
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsAdministrator($value)
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {

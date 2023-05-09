@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,7 +45,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereNoteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereSchuelerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property int $ext_id
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereExtId($value)
  * @property int $istGemahnt
@@ -62,6 +62,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFehlstundenUnentschuldigt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsIstGemahnt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsNote($value)
+ * @property int|null $fehlstundenFach
+ * @property string $tsFehlstundenFach
+ * @property int|null $fehlstundenUnentschuldigtFach
+ * @property string $tsFehlstundenUnentschuldigtFach
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereFehlstundenFach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereFehlstundenUnentschuldigtFach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFehlstundenFach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFehlstundenUnentschuldigtFach($value)
+ * @mixin \Eloquent
  */
 class Leistung extends Model
 {
@@ -112,4 +121,20 @@ class Leistung extends Model
     {
         return $this->hasMany(related: Teilleistung::class);
     }
+
+	public function sharesKlasseWithCurrentUser(): bool
+	{
+		return in_array(
+			needle: $this->schueler->klasse_id,
+			haystack: Auth::user()->klassen->pluck(value: 'id')->toArray()
+		);
+	}
+
+	public function sharesLerngruppeWithCurrentUser(): bool
+	{
+		return in_array(
+			needle: $this->lerngruppe_id,
+			haystack: Auth::user()->lerngruppen->pluck(value: 'id')->toArray()
+		);
+	}
 }

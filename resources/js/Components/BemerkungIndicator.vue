@@ -1,28 +1,40 @@
 <script setup lang="ts">
-    import { Leistung } from '../Interfaces/Leistung'
-    import { SvwsUiIcon } from '@svws-nrw/svws-ui'
-    import {Schueler} from '../Interfaces/Schueler'
+    import { formatStringBasedOnGender } from '../Helpers/bemerkungen.helper'
+    import {Leistung, Schueler} from '../types'
 
-    const props = defineProps<{ bemerkung: string }>()
+    import { SvwsUiIcon } from '@svws-nrw/svws-ui'
+
+    const props = defineProps<{
+        model: Schueler|Leistung,
+        bemerkung: string
+    }>()
+
     const emit = defineEmits(['clicked'])
     const clicked = (): void => emit('clicked')
 </script>
 
 <template>
-    <button @click="clicked">
+    <button @click="clicked" class="indicator">
         <SvwsUiIcon>
             <mdi-checkbox-marked-outline v-if="props.bemerkung"></mdi-checkbox-marked-outline>
             <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
         </SvwsUiIcon>
-        {{ props.bemerkung }}
+
+        <span class="indicator__bemerkung">
+            {{ formatStringBasedOnGender(props.bemerkung, props.model) }}
+        </span>
     </button>
 </template>
 
 <style scoped>
-    button {
+    .indicator {
         @apply
-        ui-flex ui-gap-3 ui-items-start ui-justify-start
-        ui-text-left
-        ui-leading-6
+        ui-max-w-full
+        ui-flex ui-gap-1.5 ui-items-center ui-justify-start
+    }
+
+    .indicator__bemerkung {
+        @apply
+        ui-truncate
     }
 </style>

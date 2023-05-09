@@ -34,7 +34,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt wherePruefungsordnung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereSchuelerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property-read \App\Models\Note|null $lernbereich1Note
  * @property-read \App\Models\Note|null $lernbereich2Note
  * @property-read \App\Models\Foerderschwerpunkt|null $foerderschwerpunkt1Relation
@@ -47,6 +46,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereFehlstundenUnentschuldigt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereTsFehlstundenGesamt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereTsFehlstundenUnentschuldigt($value)
+ * @property int|null $fehlstundenGesamtUnentschuldigt
+ * @property string $tsFehlstundenGesamtUnentschuldigt
+ * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereFehlstundenGesamtUnentschuldigt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Lernabschnitt whereTsFehlstundenGesamtUnentschuldigt($value)
+ * @mixin \Eloquent
  */
 class Lernabschnitt extends Model
 {

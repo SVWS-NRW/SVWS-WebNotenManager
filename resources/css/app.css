@@ -5,3 +5,15 @@
 [v-cloak] {
     display: none;
 }
+
+.cell {}
+
+.cell__input {
+    @apply
+    ui-w-full ui-h-full
+    ui-block
+}
+
+.cell--editable {
+    @apply ui-bg-grey
+}

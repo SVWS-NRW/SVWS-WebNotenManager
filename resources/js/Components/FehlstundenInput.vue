@@ -6,18 +6,15 @@
     import { Leistung } from '../Interfaces/Leistung'
     import {Schueler} from '../Interfaces/Schueler'
 
-    const props = defineProps(['model', 'column'])
+
+    const props = defineProps<{
+        model: Leistung|Schueler,
+        column: 'fs'|'fsu'|'gfs'|'gfsu'
+    }>()
 
     let model = reactive<Leistung|Schueler>(props.model)
     let timeout: ReturnType<typeof setTimeout>
     let stored: number = props.model[props.column]
-
-    const config = {
-        'fs': 'api.fehlstunden.leistung.gesamt',
-        'ufs': 'api.fehlstunden.leistung.unentschuldigt',
-        'gfs': 'api.fehlstunden.schueler.gesamt',
-        'gfsu': 'api.fehlstunden.schueler.gesamt_unentschuldigt',
-    }
 
     watch((): any => model[props.column], (): void => {
         clearTimeout(timeout)
@@ -26,11 +23,13 @@
     })
 
     const saveFehlstunden = () => axios
-        .post(route(config[props.column], model), { value : model[props.column] })
+        .post(route(`api.fehlstunden.${props.column}`, model), { value : model[props.column] })
         .then((): Number => stored = model[props.column])
         .catch((): Number => model[props.column] = stored)
 </script>
 
 <template>
-    <SvwsUiTextInput v-model="model[props.column]" :headless="true"></SvwsUiTextInput>
+    <strong>
+        <SvwsUiTextInput v-model="model[props.column]" :headless="true"></SvwsUiTextInput>
+    </strong>
 </template>

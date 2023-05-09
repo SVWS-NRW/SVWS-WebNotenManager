@@ -22,6 +22,8 @@
     } from '@svws-nrw/svws-ui'
     import {Leistung} from '../Interfaces/Leistung'
     import BemerkungEditor from '../Components/BemerkungEditor.vue'
+    import {Auth} from '../Interfaces/Auth'
+    import {tableCellEditable} from '../Helpers/pages.helper'
 
     let props = defineProps({
         settings: {
@@ -35,6 +37,10 @@
     let state = reactive({
         schueler: <Schueler[]> [],
     })
+
+
+
+    const auth: Auth = usePage().props.value.auth
 
     let filterOptions = <any>reactive({
         'klassen': [],
@@ -125,6 +131,9 @@
     }
 
     const valueReadonly = (schueler: Schueler, permission: 'editable_fb'): boolean => !schueler.matrix[permission]
+
+
+    const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator) // ok
 </script>
 
 <template>
@@ -199,24 +208,20 @@
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <span class="readonly">
-                        <button @click="selectSchueler(rowData)">
-                            {{ rowData.name }}
-                        </button>
-                    </span>
+                    <button @click="selectSchueler(rowData)">
+                        {{ rowData.name }}
+                    </button>
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <span class="readonly">
-                        <button @click="selectSchueler(rowData)">
-                            {{ rowData.klasse }} qwe
-                        </button>
-                    </span>
+                    <button @click="selectSchueler(rowData)">
+                        {{ rowData.klasse }}
+                    </button>
                 </template>
 
                 <template #cell(gfs)="{ rowData }">
-                    <div :class="{ readonly: rowData.matrix.editable_fehlstunden }">
-                        <FehlstundenInput :model="rowData" column="gfs" v-if="!rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(!rowData.matrix.editable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="gfs" v-if="editable(!rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
                             {{ rowData.gfs }}
                         </strong>
@@ -224,8 +229,8 @@
                 </template>
 
                 <template #cell(gfsu)="{ rowData }">
-                    <div :class="{ readonly: rowData.matrix.editable_fehlstunden }">
-                        <FehlstundenInput :model="rowData" column="gfsu" v-if="!rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(!rowData.matrix.editable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="gfsu" v-if="editable(!rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
                             {{ rowData.gfsu }}
                         </strong>
@@ -233,20 +238,32 @@
                 </template>
 
                 <template #cell(ASV)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_asv }">
-                        <BemerkungIndicator :bemerkung="rowData.ASV" @clicked="selectSchueler(rowData, 'asv')"></BemerkungIndicator>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_asv) }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData['ASV']"
+                            @clicked="selectSchueler(rowData, 'asv')"
+                        ></BemerkungIndicator>
                    </div>
                 </template>
 
                 <template #cell(AUE)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_aue }">
-                        <BemerkungIndicator :bemerkung="rowData.AUE" @clicked="selectSchueler(rowData, 'aue')"></BemerkungIndicator>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_aue) }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData['AUE']"
+                            @clicked="selectSchueler(rowData, 'aue')"
+                        ></BemerkungIndicator>
                    </div>
                 </template>
 
                 <template #cell(ZB)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_zb }">
-                        <BemerkungIndicator :bemerkung="rowData.ZB" @clicked="selectSchueler(rowData, 'zb')"></BemerkungIndicator>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_zb) }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData['ZB']"
+                            @clicked="selectSchueler(rowData, 'zb')"
+                        ></BemerkungIndicator>
                     </div>
                 </template>
             </SvwsUiDataTable>
@@ -257,10 +274,6 @@
 </template>
 
 <style scoped>
-    .readonly {
-        @apply ui-bg-gray-200 ui-w-full ui-block ui-h-full
-    }
-
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }

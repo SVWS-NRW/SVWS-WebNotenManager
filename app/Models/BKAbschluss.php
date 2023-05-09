@@ -47,10 +47,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereSchuelerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereThemaAbschlussarbeit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BKFach[] $bkFaecher
  * @property-read int|null $bk_faecher_count
  * @property-read \App\Models\Schueler|null $schueler
+ * @mixin \Eloquent
  */
 class BKAbschluss extends Model
 {

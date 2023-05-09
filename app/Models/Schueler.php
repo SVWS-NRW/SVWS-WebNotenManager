@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -52,7 +53,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereNachname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereVorname($value)
- * @mixin \Eloquent
  * @property string|null $asv
  * @property string|null $aue
  * @property string|null $zb
@@ -67,6 +67,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereLels($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereSchulformEmpf($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereZb($value)
+ * @mixin \Eloquent
  */
 class Schueler extends Model
 {
@@ -134,4 +135,12 @@ class Schueler extends Model
     {
         return $this->hasOne(related: Zp10::class);
     }
+
+	public function sharesKlasseWithCurrentUser(): bool
+	{
+		return in_array(
+			needle: $this->klasse_id,
+			haystack: Auth::user()->klassen->pluck(value: 'id')->toArray()
+		);
+	}
 }

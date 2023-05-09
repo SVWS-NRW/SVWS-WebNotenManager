@@ -25,7 +25,7 @@ class LeistungResource extends JsonResource
 			'istGemahnt' => $this->istGemahnt,
 			'mahndatum' => $this->mahndatum,
 			'fs' => $this->fehlstundenFach,
-			'ufs' => $this->fehlstundenUnentschuldigtFach,
+			'fsu' => $this->fehlstundenUnentschuldigtFach,
 			'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
         ];
     }

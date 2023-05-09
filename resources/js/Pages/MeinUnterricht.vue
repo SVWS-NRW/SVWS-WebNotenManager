@@ -9,8 +9,9 @@
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import NoteInput from '../Components/NoteInput.vue'
 
-    import FbIndicator from '../Components/FbIndicator.vue'
     import FbEditor from '../Components/FbEditor.vue'
+
+    import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
 
     import {
         baseColumns,
@@ -33,6 +34,8 @@
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
     import {Settings} from '../Interfaces/Settings'
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
+    import {Auth} from '../Interfaces/Auth'
+    import {tableCellEditable} from '../Helpers/pages.helper'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -68,9 +71,10 @@
         settings: {
             type: Object as PropType<Settings>,
             required: true,
-        }
+        },
     })
 
+    const auth: Auth = usePage().props.value.auth
 
     watch(toggles, (): void => drawTable())
 
@@ -182,6 +186,9 @@
     }
 
     const updateFachbezogeneBemerkungen = (fb: string, data: Leistung): string => data.fachbezogeneBemerkungen = fb
+
+
+    const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator) // ok
 </script>
 
 <template>
@@ -229,6 +236,7 @@
                         </template>
                     </SvwsUiTooltip>
                 </template>
+
                 <template #header(fs)="{ column: { label } }">
                     <SvwsUiTooltip>
                         FS
@@ -237,7 +245,8 @@
                         </template>
                     </SvwsUiTooltip>
                 </template>
-                <template #header(ufs)="{ column: { label } }">
+
+                <template #header(fsu)="{ column: { label } }">
                     <SvwsUiTooltip>
                         FSU
                         <template #content>
@@ -245,6 +254,7 @@
                         </template>
                     </SvwsUiTooltip>
                 </template>
+
                 <template #header(fachbezogeneBemerkungen)="{ column: { label } }">
                     <SvwsUiTooltip>
                         FB
@@ -255,8 +265,8 @@
                 </template>
 
                 <template #cell(note)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_noten }">
-                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="rowData.matrix.editable_noten"></NoteInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_noten) }">
+                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="editable(rowData.matrix.editable_noten)"></NoteInput>
                         <strong v-else>
                             {{ rowData.note }}
                         </strong>
@@ -264,35 +274,31 @@
                 </template>
 
                 <template #cell(teilnoten)="{ rowData }">
-                    <span class="readonly">TBD</span>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_teilnoten) }">
+                        TBD
+                    </div>
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <div class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.klasse }}
-                        </button>
-                    </div>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        {{ rowData.klasse }}
+                    </button>
                 </template>
 
                 <template #cell(kurs)="{ rowData }">
-                    <div class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.kurs }}
-                        </button>
-                    </div>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        {{ rowData.kurs }}
+                    </button>
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <div class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.name }}
-                        </button>
-                    </div>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        {{ rowData.name }}
+                    </button>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
-                    <strong class="readonly">
+                    <strong>
                         <button type="button" @click="selectedFbLeistung = rowData">
                             {{ rowData.fach }}
                         </button>
@@ -300,36 +306,37 @@
                 </template>
 
                 <template #cell(fs)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_fehlstunden }">
-                        <FehlstundenInput :model="rowData" column="fs" v-if="rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fs" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
                             {{ rowData.fs }}
                         </strong>
                     </div>
                 </template>
 
-                <template #cell(ufs)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_fehlstunden }">
-                        <FehlstundenInput :model="rowData" column="ufs" v-if="rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                <template #cell(fsu)="{ rowData }">
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fsu" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
-                            {{ rowData.ufs }}
+                            {{ rowData.fsu }}
                         </strong>
                     </div>
                 </template>
 
                 <template #cell(istGemahnt)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_mahnungen }">
-                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false" v-if="rowData.matrix.editable_mahnungen"></MahnungIndicator>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_mahnungen) }">
+                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false" v-if="editable(rowData.matrix.editable_mahnungen)"></MahnungIndicator>
                         <MahnungIndicatorReadonly v-else :leistung="rowData" :key="rowData.id" :disabled="true"></MahnungIndicatorReadonly>
                     </div>
                 </template>
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <div :class="{ readonly: !rowData.matrix.editable_fb }">
-                        <FbIndicator
-                            :leistung="rowData"
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fb) }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData.fachbezogeneBemerkungen"
                             @clicked="selectedFbLeistung = rowData"
-                        ></FbIndicator>
+                        ></BemerkungIndicator>
                     </div>
                 </template>
             </SvwsUiDataTable>
@@ -338,10 +345,6 @@
 </template>
 
 <style scoped>
-    .readonly {
-        @apply ui-bg-gray-200 ui-w-full ui-block ui-h-full
-    }
-
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }

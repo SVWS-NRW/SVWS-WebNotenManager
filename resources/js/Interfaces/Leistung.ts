@@ -17,7 +17,7 @@ export interface Leistung {
 	fehlstundenGesamt: Number,
 	fehlstundenUnentschuldigt: Number,
 	fs: number,
-	ufs: number,
+	fsu: number,
 	istGemahnt: boolean,
 	mahndatum: string,
 	schueler: Schueler,

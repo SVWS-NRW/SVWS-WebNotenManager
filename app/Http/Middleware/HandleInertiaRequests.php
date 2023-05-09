@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Settings\FilterSettings;
+use App\Settings\GdprSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\MatrixSettings;
 use Illuminate\Http\Request;
@@ -29,6 +30,7 @@ class HandleInertiaRequests extends Middleware
 				'general' => app(abstract: GeneralSettings::class),
 				'filters' => app(abstract: FilterSettings::class),
 				'matrix' => app(abstract: MatrixSettings::class),
+				'gdpr' => app(abstract: GdprSettings::class),
 			],
 			'version' => config(key: 'wenom.version'),
         ]);

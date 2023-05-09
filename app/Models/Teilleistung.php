@@ -31,9 +31,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereNoteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereTeilleistungsartId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property int $ext_id
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereExtId($value)
+ * @mixin \Eloquent
  */
 class Teilleistung extends Model
 {

@@ -45,10 +45,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereVornote($value)
- * @mixin \Eloquent
  * @property int $lehrer_id
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereLehrerId($value)
  * @property int $user_id
+ * @mixin \Eloquent
  */
 class BKFach extends Model
 {

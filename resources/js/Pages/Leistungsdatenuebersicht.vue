@@ -7,6 +7,9 @@
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
     import NoteInput from '../Components/NoteInput.vue'
+    import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
+
+    import { tableCellEditable } from '../Helpers/pages.helper'
 
     import {
         baseColumns,
@@ -31,8 +34,8 @@
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
-    import FbIndicator from '../Components/FbIndicator.vue'
     import FbEditor from '../Components/FbEditor.vue'
+    import {Auth} from '../Interfaces/Auth'
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
@@ -107,6 +110,9 @@
         getLeistungen()
         drawTable()
     })
+
+
+    const auth: Auth = usePage().props.value.auth
 
     const getFilters = (): void => {
         filterOptions.kurse = setFilters(state.leistungen, 'kurs', false)
@@ -200,6 +206,7 @@
 
     const updateFachbezogeneBemerkungen = (fb: string, data: Leistung) => data.fachbezogeneBemerkungen = 'asd'
 
+    const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator, leistungEdit.value) // ok
 </script>
 
 <template>
@@ -218,26 +225,21 @@
         </template>
 
         <template #main>
-            <header class="header">
-                <div class="header__headline">
-                    <div class="header__headline__left">
-                        <div id="headline">
-                            <h2 class="text-headline">{{ title }}</h2>
-                        </div>
-                        <div class="header__toggles">
-                            <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                            <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
-                            <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
-                            <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                        </div>
-                    </div>
-                    <div>
-                        <SvwsUiButton @click="leistungEditToggle()" v-if="lehrerCanOverrideFachlehrer" :type="leistungEdit ? 'secondary' : 'primary'" size="big">
-                            <SvwsUiIcon>
-                                <mdi-pencil></mdi-pencil>
-                            </SvwsUiIcon>
-                        </SvwsUiButton>
-                    </div>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">{{ title }}</h2>
+                </div>
+                <div id="toggles">
+                    <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+
+                    <SvwsUiButton @click="leistungEditToggle()" v-if="lehrerCanOverrideFachlehrer" :type="leistungEdit ? 'secondary' : 'primary'" size="big">
+                        <SvwsUiIcon>
+                            <mdi-pencil></mdi-pencil>
+                        </SvwsUiIcon>
+                    </SvwsUiButton>
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
@@ -261,7 +263,7 @@
                     </SvwsUiTooltip>
                 </template>
 
-                <template #header(ufs)="{ column: { label } }">
+                <template #header(fsu)="{ column: { label } }">
                     <SvwsUiTooltip>
                         FSU
                         <template #content>
@@ -279,54 +281,45 @@
                     </SvwsUiTooltip>
                 </template>
 
-
-                <template #cell(teilnoten)="{ rowData }">
-                    <span class="readonly">TBD</span>
-                </template>
-
                 <template #cell(fach)="{ rowData }">
-                    <strong class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.fach }}
-                        </button>
-                    </strong>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        <strong>{{ rowData.fach }}</strong>
+                    </button>
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <div class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.klasse }}
-                        </button>
-                    </div>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        {{ rowData.klasse }}
+                    </button>
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <div class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.name }}
-                        </button>
-                    </div>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        {{ rowData.name }}
+                    </button>
                 </template>
 
                 <template #cell(kurs)="{ rowData }">
-                    <div class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.kurs }}
-                        </button>
-                    </div>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        {{ rowData.kurs }}
+                    </button>
                 </template>
 
                 <template #cell(lehrer)="{ rowData }">
-                    <div class="readonly">
-                        <button type="button" @click="selectedFbLeistung = rowData">
-                            {{ rowData.lehrer }}
-                        </button>
+                    <button type="button" @click="selectedFbLeistung = rowData">
+                        {{ rowData.lehrer }}
+                    </button>
+                </template>
+
+                <template #cell(teilnoten)="{ rowData }">
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_teilnoten) }">
+                        TBD
                     </div>
                 </template>
 
                 <template #cell(note)="{ rowData }">
-                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_noten }">
-                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="leistungEdit && rowData.matrix.editable_noten"></NoteInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_noten) }">
+                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="editable(rowData.matrix.editable_noten)"></NoteInput>
                         <strong :class="{ 'low-score' : lowScore(rowData.note) }" v-else>
                             {{ rowData.note }}
                         </strong>
@@ -334,32 +327,33 @@
                 </template>
 
                 <template #cell(istGemahnt)="{ rowData }">
-                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_mahnungen }">
-                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false" v-if="leistungEdit && rowData.matrix.editable_mahnungen"></MahnungIndicator>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_mahnungen) }">
+                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false" v-if="editable(rowData.matrix.editable_mahnungen)"></MahnungIndicator>
                         <MahnungIndicatorReadonly :leistung="rowData" :disabled="true" v-else></MahnungIndicatorReadonly>
                     </div>
                 </template>
 
                 <template #cell(fs)="{ rowData }">
-                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_fehlstunden }">
-                        <FehlstundenInput :model="rowData" column="fs" v-if="leistungEdit && rowData.matrix.editable_fehlstunden"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fs" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>{{ rowData.fs }}</strong>
                     </div>
                 </template>
 
-                <template #cell(ufs)="{ rowData }">
-                    <div :class="{ readonly: !leistungEdit || !rowData.matrix.editable_fehlstunden }">
-                        <FehlstundenInput :model="rowData" column="ufs" v-if="leistungEdit && rowData.matrix.editable_fehlstunden"></FehlstundenInput>
-                        <strong v-else>{{ rowData.ufs }}</strong>
+                <template #cell(fsu)="{ rowData }">
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fsu" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
+                        <strong v-else>{{ rowData.fsu }}</strong>
                     </div>
                 </template>
 
                 <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <div :class="{ readonly: valueReadonly(rowData, 'editable_fb') }">
-                        <FbIndicator
-                            :leistung="rowData"
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fb) }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData.fachbezogeneBemerkungen"
                             @clicked="selectedFbLeistung = rowData"
-                        ></FbIndicator>
+                        ></BemerkungIndicator>
                     </div>
                 </template>
             </SvwsUiDataTable>
@@ -368,29 +362,15 @@
 </template>
 
 <style scoped>
-.readonly {
-    @apply ui-bg-gray-200 ui-w-full ui-block ui-h-full
-}
 
-.span {
-    @apply ui-w-screen
-}
-.header {
+
+header {
     @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
 }
 
-.header__headline {
-    @apply ui-flex ui-gap-6 ui-justify-between
-}
-
-.header__headline__left {
-    @apply ui-flex ui-flex-col ui-gap-4
-}
-
-.header__toggles {
+header #toggles {
     @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
 }
-
 
 header #headline {
     @apply ui-flex ui-items-center ui-justify-start ui-gap-6
@@ -400,20 +380,49 @@ header #filters {
     @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6
 }
 
-header #header {
-    @apply ui-flex ui-gap-6 ui-justify-between
-}
+/*.editable {*/
+/*    @apply ui-bg-grey ui-w-full ui-block ui-h-full*/
+/*}*/
+
+/*.header {*/
+/*    @apply ui-flex ui-flex-col ui-gap-4 ui-p-6*/
+/*}*/
+
+/*.header__headline {*/
+/*    @apply ui-flex ui-gap-6 ui-justify-between*/
+/*}*/
+
+/*.header__headline__left {*/
+/*    @apply ui-flex ui-flex-col ui-gap-4*/
+/*}*/
+
+/*.header__toggles {*/
+/*    @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap*/
+/*}*/
 
 
- .low-score {
-     @apply ui-text-red-500 ui-font-bold
- }
+/*header #headline {*/
+/*    @apply ui-flex ui-items-center ui-justify-start ui-gap-6*/
+/*}*/
 
- .input-override {
-     @apply ui-flex ui-gap-6 ui-justify-between ui-items-center ui-w-full
- }
+/*header #filters {*/
+/*    @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6*/
+/*}*/
 
- .input-override svg {
-     @apply ui-text-red-600
- }
+/*header #header {*/
+/*    @apply ui-flex ui-gap-6 ui-justify-between*/
+/*}*/
+
+
+/* .low-score {*/
+/*     @apply ui-text-red-500 ui-font-bold*/
+/* }*/
+
+/* .input-override {*/
+/*     @apply ui-flex ui-gap-6 ui-justify-between ui-items-center ui-w-full*/
+/* }*/
+
+/* .input-override svg {*/
+/*     @apply ui-text-red-600*/
+/* }*/
 </style>

@@ -42,7 +42,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereSchuljahr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereUserId($value)
- * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Schueler[] $schueler
  * @property-read int|null $schueler_count
  * @property int $schulnummer
@@ -51,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Daten whereSchulnummer($value)
  * @property int $lehrer_id User/Lehrer model relation
  * @property int $user_id User/Lehrer model relation
+ * @mixin \Eloquent
  */
 class Daten extends Model
 {

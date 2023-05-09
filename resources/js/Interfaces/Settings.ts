@@ -31,6 +31,15 @@ export interface Settings {
 		leistungdatenuebersicht_fachlehrer: boolean,
 		leistungdatenuebersicht_mahnungen: boolean,
 		leistungdatenuebersicht_bemerkungen: boolean,
+	},
+	gdpr: {
+		domain_url: string,
+		domain_owner: string,
 
+		creation_date: string,
+		last_update: string,
+
+		report_contact_person: string,
+		feedback_form_url: string,
 	},
 }

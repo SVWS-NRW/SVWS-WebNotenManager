@@ -3,29 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Fehlstunden as FehlstundenRequest;
+use App\Http\Requests\Fehlstunden\FsRequest;
+use App\Http\Requests\Fehlstunden\GfsRequest;
+use App\Http\Requests\Fehlstunden\GfsuRequest;
+use App\Http\Requests\Fehlstunden\FsuRequest;
 use App\Models\Leistung;
 use App\Models\Lernabschnitt;
 use App\Models\Schueler;
 use App\Settings\MatrixSettings;
+use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class Fehlstunden extends Controller
 {
 	// TODO: Add tests
-    public function fehlstundenLeistungGesamt(
-		FehlstundenRequest\FachRequest $request,
-		Leistung $leistung,
-		MatrixSettings $settings,
-	): Response{
-		abort_unless(
-			boolean: $leistung->schueler->klasse->editable_fehlstunden,
-			code: Response::HTTP_FORBIDDEN
-		);
 
-		abort_unless(
-			boolean: $settings->lehrer_can_override_fahlehrer,
-			code: Response::HTTP_FORBIDDEN
+	/**
+	 * @throws AuthorizationException
+	 */
+	public function fs(FsRequest $request, Leistung $leistung, MatrixSettings $settings): Response
+	{
+		$this->authorize(
+			ability: 'update',
+			arguments: [$leistung, $settings],
 		);
 
         $leistung->update(attributes: [
@@ -36,19 +36,14 @@ class Fehlstunden extends Controller
 		return response(status: Response::HTTP_NO_CONTENT);
     }
 
-    public function fehlstundenLeistungUnentschuldigt(
-		FehlstundenRequest\UnentschuldigtFachRequest $request,
-		Leistung $leistung,
-		MatrixSettings $settings,
-	): Response {
-		abort_unless(
-			boolean: $leistung->schueler->klasse->editable_fehlstunden,
-			code: Response::HTTP_FORBIDDEN
-		);
-
-		abort_unless(
-			boolean: $settings->lehrer_can_override_fahlehrer,
-			code: Response::HTTP_FORBIDDEN
+	/**
+	 * @throws AuthorizationException
+	 */
+	public function fsu(FsuRequest $request, Leistung $leistung, MatrixSettings $settings): Response
+	{
+		$this->authorize(
+			ability: 'update',
+			arguments: [$leistung, $settings],
 		);
 
         $leistung->update(attributes: [
@@ -59,19 +54,14 @@ class Fehlstunden extends Controller
 		return response(status: Response::HTTP_NO_CONTENT);
     }
 
-    public function fehlstundenSchuelerGesamt(
-		FehlstundenRequest\GesamtRequest $request,
-		Schueler $schueler,
-		MatrixSettings $settings,
-	): Response {
-		abort_if(
-			boolean: $schueler->klasse->editable_fehlstunden,
-			code: Response::HTTP_FORBIDDEN
-		);
-
-		abort_unless(
-			boolean: $settings->lehrer_can_override_fahlehrer,
-			code: Response::HTTP_FORBIDDEN
+	/**
+	 * @throws AuthorizationException
+	 */
+	public function gfs(GfsRequest $request, Schueler $schueler): Response
+	{
+		$this->authorize(
+			ability: 'update',
+			arguments: $schueler,
 		);
 
 		$schueler->lernabschnitt->update(attributes: [
@@ -82,19 +72,14 @@ class Fehlstunden extends Controller
 		return response(status: Response::HTTP_NO_CONTENT);
     }
 
-    public function fehlstundenSchuelerGesamtUnentschuldigt(
-		FehlstundenRequest\GesamtUnentschuldigtRequest $request,
-		Schueler $schueler,
-		MatrixSettings $settings,
-	): Response {
-		abort_if(
-			boolean: $schueler->klasse->editable_fehlstunden,
-			code: Response::HTTP_FORBIDDEN
-		);
-
-		abort_unless(
-			boolean: $settings->lehrer_can_override_fahlehrer,
-			code: Response::HTTP_FORBIDDEN
+	/**
+	 * @throws AuthorizationException
+	 */
+	public function gfsu(GfsuRequest $request, Schueler $schueler): Response
+	{
+		$this->authorize(
+			ability: 'update',
+			arguments: $schueler,
 		);
 
 		Lernabschnitt::whereBelongsTo(related: $schueler)->first()->update(attributes: [

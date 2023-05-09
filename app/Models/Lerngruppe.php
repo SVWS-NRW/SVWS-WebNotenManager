@@ -40,7 +40,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKursartID($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereWochenstunden($value)
- * @mixin \Eloquent
  * @property-read Fach|null $fach
  * @property string|null $kursartKuerzel
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKursartKuerzel($value)
@@ -51,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKlasseId($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $user
  * @property-read int|null $user_count
+ * @mixin \Eloquent
  */
 class Lerngruppe extends Model
 {

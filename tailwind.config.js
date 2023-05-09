@@ -20,6 +20,9 @@ module.exports = {
             backgroundImage: {
                 'chalk': "url('@/Images/chalk.jpg')",
             },
+			colors: {
+				grey: '#f5f5f5',
+			},
         },
     },
 

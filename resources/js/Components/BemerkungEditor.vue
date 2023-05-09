@@ -84,7 +84,7 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
     )
 
     const save = (): void => saveBemerkung('api.schueler_bemerkung', props.schueler.id,
-        { key: props.floskelgruppe, value: bemerkung.value }, bemerkung, storedBemerkung, isDirty,
+        { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value }, bemerkung, storedBemerkung, isDirty,
         (): void => emit('updated', bemerkung.value)
     )
 

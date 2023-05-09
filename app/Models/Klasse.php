@@ -31,9 +31,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereKuerzelAnzeige($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereSortierung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property-read Collection|\App\Models\Lerngruppe[] $lerngruppen
  * @property-read int|null $lerngruppen_count
+ * @property int|null $idJahrgang
+ * @property bool $editable_teilnoten
+ * @property bool $editable_noten
+ * @property bool $editable_mahnungen
+ * @property bool $editable_fehlstunden
+ * @property bool $editable_fb
+ * @property bool $editable_asv
+ * @property bool $editable_aue
+ * @property bool $editable_zb
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableAsv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableAue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableFb($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableFehlstunden($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableMahnungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableNoten($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableTeilnoten($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableZb($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereIdJahrgang($value)
+ * @mixin \Eloquent
  */
 class Klasse extends Model
 {

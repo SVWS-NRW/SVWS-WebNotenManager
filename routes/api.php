@@ -41,22 +41,15 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::put(uri: 'bulk-update/{group}', action: 'bulkUpdate')->name(name: 'bulk_update');
 		}); // TODO: Admin middleware
 
-
-
-
-	Route::controller(Fehlstunden::class)->name('api.fehlstunden.')->group(function(): void {
-		Route::post(uri: 'leistung/gesamt/{leistung}', action: 'fehlstundenLeistungGesamt')
-			->name(name: 'leistung.gesamt');
-
-		Route::post(uri: 'leistung/unentschuldigt/{leistung}', action: 'fehlstundenLeistungUnentschuldigt')
-			->name(name: 'leistung.unentschuldigt');
-
-		Route::post(uri: 'schueler/gesamt/{schueler}', action: 'fehlstundenSchuelerGesamt')
-			->name(name: 'schueler.gesamt');
-
-		Route::post(uri: 'schueler/gesamt-unentschuldigt/{schueler}', action: 'fehlstundenSchuelerGesamtUnentschuldigt')
-			->name(name: 'schueler.gesamt_unentschuldigt');
-	});
+	Route::controller(Fehlstunden::class)
+		->name('api.fehlstunden.')
+		->prefix('fehlstunden.')
+		->group(function(): void {
+			Route::post(uri: 'fs/{leistung}', action: 'fs')->name(name: 'fs');
+			Route::post(uri: 'fsu/{leistung}', action: 'fsu')->name(name: 'fsu');
+			Route::post(uri: 'gfs/{schueler}', action: 'gfs')->name(name: 'gfs');
+			Route::post(uri: 'gfsu/{schueler}', action: 'gfsu')->name(name: 'gfsu');
+		});
 
     Route::post(uri: 'fachbezogene-bemerkung/{leistung}', action: FachbezogeneBemerkung::class)
 		->name(name: 'api.fachbezogene_bemerkung');
