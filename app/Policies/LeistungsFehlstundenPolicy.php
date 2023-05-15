@@ -21,7 +21,7 @@ class LeistungsFehlstundenPolicy
 			return false;
 		}
 
-		if ($leistung->schueler->klasse->toggleable_fehlstunden) {
+		if (!$leistung->schueler->klasse->toggleable_fehlstunden) {
 			return false;
 		}
 // check if is klassen lehrer

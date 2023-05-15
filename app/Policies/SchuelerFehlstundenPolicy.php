@@ -16,16 +16,11 @@ class SchuelerFehlstundenPolicy
 			return true;
 		}
 
-		if ($schueler->klasse->editable_fehlstunden) {
-			return false;
-		}
-
-
 		if (!$schueler->klasse->editable_fehlstunden) {
 			return false;
 		}
 
-		if (!$schueler->klasse->toggleable_fehlstunden) {
+		if ($schueler->klasse->toggleable_fehlstunden) {
 			return false;
 		}
 
