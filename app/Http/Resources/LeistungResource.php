@@ -10,7 +10,7 @@ class LeistungResource extends JsonResource
     {
         return [
 			'id' => $this->id,
-			'klasse' => $this->schueler->klasse->kuerzel,
+			'klasse' => $this->schueler->klasse->kuerzelAnzeige,
 			'matrix' => new MatrixResource($this->schueler->klasse),
 			'name' => "{$this->schueler->nachname}, {$this->schueler->vorname}",
 			'vorname' => $this->schueler->vorname,

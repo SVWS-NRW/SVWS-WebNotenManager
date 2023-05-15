@@ -24,7 +24,7 @@
     const visible = (link: string): bool => {
         return {
             'mein_unterricht': !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator),
-            'klassenleitung': auth.user.klassen.length > 0  || auth.administrator,
+            'klassenleitung': auth.user.klassen.length > 0,
             'settings': auth.administrator,
         }[link]
     }

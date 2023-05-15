@@ -19,6 +19,7 @@ return new class extends Migration
 			$table->boolean(column: 'editable_noten')->default(value: true);
 			$table->boolean(column: 'editable_mahnungen')->default(value: true);
 			$table->boolean(column: 'editable_fehlstunden')->default(value: true);
+			$table->boolean(column: 'toggleable_fehlstunden')->default(value: true);
 			$table->boolean(column: 'editable_fb')->default(value: true);
 			$table->boolean(column: 'editable_asv')->default(value: true);
 			$table->boolean(column: 'editable_aue')->default(value: true);

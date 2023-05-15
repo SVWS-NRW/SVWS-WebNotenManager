@@ -16,6 +16,7 @@ class KlasseResource extends JsonResource
 			'editable_noten' => $this->editable_noten,
 			'editable_mahnungen' => $this->editable_mahnungen,
 			'editable_fehlstunden' => $this->editable_fehlstunden,
+			'toggleable_fehlstunden' => $this->toggleable_fehlstunden,
 			'editable_fb' => $this->editable_fb,
 			'editable_asv' => $this->editable_asv,
 			'editable_aue' => $this->editable_aue,

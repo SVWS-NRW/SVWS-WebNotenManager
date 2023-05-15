@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereUpdatedAt($value)
  * @property-read Collection<int, \App\Models\Klasse> $klassen
  * @property-read int|null $klassen_count
+ * @property-read Collection<int, \App\Models\Klasse> $klassen
  * @mixin \Eloquent
  */
 class Jahrgang extends Model

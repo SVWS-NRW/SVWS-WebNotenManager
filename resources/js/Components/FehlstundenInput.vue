@@ -1,11 +1,10 @@
 <script setup lang="ts"> // ok
-    import { watch, computed, reactive } from 'vue'
-    import { usePage } from '@inertiajs/inertia-vue3'
+    import { watch, reactive } from 'vue'
     import axios from 'axios'
-    import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
     import { Leistung } from '../Interfaces/Leistung'
-    import {Schueler} from '../Interfaces/Schueler'
+    import { Schueler } from '../Interfaces/Schueler'
 
+    import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
 
     const props = defineProps<{
         model: Leistung|Schueler,

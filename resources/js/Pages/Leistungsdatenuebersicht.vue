@@ -2,7 +2,7 @@
     import AppLayout from '../Layouts/AppLayout.vue'
     import {computed, onMounted, reactive, Ref, ref, watch} from 'vue'
 
-    import {Head, usePage} from '@inertiajs/inertia-vue3'
+    import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
@@ -282,31 +282,31 @@
                 </template>
 
                 <template #cell(fach)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         <strong>{{ rowData.fach }}</strong>
                     </button>
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         {{ rowData.klasse }}
                     </button>
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         {{ rowData.name }}
                     </button>
                 </template>
 
                 <template #cell(kurs)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         {{ rowData.kurs }}
                     </button>
                 </template>
 
                 <template #cell(lehrer)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         {{ rowData.lehrer }}
                     </button>
                 </template>
@@ -334,15 +334,15 @@
                 </template>
 
                 <template #cell(fs)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="fs" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fs" v-if="editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>{{ rowData.fs }}</strong>
                     </div>
                 </template>
 
                 <template #cell(fsu)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="fsu" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fsu" v-if="editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>{{ rowData.fsu }}</strong>
                     </div>
                 </template>
@@ -363,6 +363,9 @@
 
 <style scoped>
 
+.truncate {
+    @apply ui-truncate
+}
 
 header {
     @apply ui-flex ui-flex-col ui-gap-4 ui-p-6

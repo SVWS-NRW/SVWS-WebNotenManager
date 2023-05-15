@@ -20,6 +20,15 @@ class SchuelerFehlstundenPolicy
 			return false;
 		}
 
+
+		if (!$schueler->klasse->editable_fehlstunden) {
+			return false;
+		}
+
+		if (!$schueler->klasse->toggleable_fehlstunden) {
+			return false;
+		}
+
 		return $schueler->sharesKlasseWithCurrentUser();
     }
 }

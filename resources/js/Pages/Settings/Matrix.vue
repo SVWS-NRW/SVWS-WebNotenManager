@@ -4,7 +4,7 @@
     import axios, {AxiosResponse} from 'axios'
     import SettingsMenu from '../../Components/SettingsMenu.vue'
 
-    import { SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox, SvwsUiTooltip} from '@svws-nrw/svws-ui'
+    import { SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox, SvwsUiTooltip, SvwsUiRadioOption} from '@svws-nrw/svws-ui'
 
     let props = defineProps({
         auth: Object,
@@ -37,6 +37,7 @@
 
     const saveSettings = (value: boolean, column: string) => axios
         .put(route('api.settings.update', {group: 'matrix'}), {value: value, column: column})
+
 
 </script>
 
@@ -118,13 +119,14 @@
                     <tbody v-if="klassen">
                         <tr v-for="klasse in klassen">
                             <td>{{ klasse.kuerzel }}</td>
-                            <td v-for="item in matrixItems">
-                                <SvwsUiTooltip>
-                                    <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>
-                                    <template #content>
-                                        Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
-                                    </template>
-                                </SvwsUiTooltip>
+                            <td>
+                                {{ matrixItems}}
+<!--                                <SvwsUiTooltip>-->
+<!--                                    <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>-->
+<!--                                    <template #content>-->
+<!--                                        Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.-->
+<!--                                    </template>-->
+<!--                                </SvwsUiTooltip>-->
                             </td>
                         </tr>
                     </tbody>
@@ -133,9 +135,67 @@
                         <tbody v-for="jahrgang in groupedJahrgaenge">
                             <tr v-for="klasse in jahrgang.klassen">
                                 <td>{{ jahrgangKey }} /  {{ jahrgang.kuerzel }} / {{ klasse.kuerzel }}</td>
-                                <td v-for="item in matrixItems">
+                                <td>
                                     <SvwsUiTooltip>
-                                        <SvwsUiCheckbox v-model="klasse[item]" @update:modelValue="saveMatrix(klasse, item, $event)"></SvwsUiCheckbox>
+                                        <SvwsUiCheckbox v-model="klasse.editable_teilnoten" @update:modelValue="saveMatrix(klasse, 'editable_teilnoten', $event)"></SvwsUiCheckbox>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
+                                </td>
+                                <td>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse.editable_noten" @update:modelValue="saveMatrix(klasse, 'editable_noten', $event)"></SvwsUiCheckbox>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
+                                </td>
+                                <td>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse.editable_mahnungen" @update:modelValue="saveMatrix(klasse, 'editable_mahnungen', $event)"></SvwsUiCheckbox>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
+                                </td>
+                                <td>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" @update:modelValue="saveMatrix(klasse, 'editable_fehlstunden', $event)"></SvwsUiCheckbox>
+                                        <SvwsUiRadioOption v-model="klasse.toggleable_fehlstunden" name="toggleable" :value="true" @input="saveMatrix(klasse, 'toggleable_fehlstunden', true)">FS</SvwsUiRadioOption>
+                                        <SvwsUiRadioOption v-model="klasse.toggleable_fehlstunden" name="toggleable" :value="false" @input="saveMatrix(klasse, 'toggleable_fehlstunden', false)">GFS</SvwsUiRadioOption>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
+                                </td>
+                                <td>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse.editable_fb" @update:modelValue="saveMatrix(klasse, 'editable_fb', $event)"></SvwsUiCheckbox>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
+                                </td>
+                                <td>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse.editable_asv" @update:modelValue="saveMatrix(klasse, 'editable_asv', $event)"></SvwsUiCheckbox>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
+                                </td>
+                                <td>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse.editable_aue" @update:modelValue="saveMatrix(klasse, 'editable_aue', $event)"></SvwsUiCheckbox>
+                                        <template #content>
+                                            Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
+                                        </template>
+                                    </SvwsUiTooltip>
+                                </td>
+                                <td>
+                                    <SvwsUiTooltip>
+                                        <SvwsUiCheckbox v-model="klasse.editable_zb" @update:modelValue="saveMatrix(klasse, 'editable_zb', $event)"></SvwsUiCheckbox>
                                         <template #content>
                                             Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in den Leistungsdaten für die einzelne Lehrerkraft beschreibbar geschaltet.
                                         </template>

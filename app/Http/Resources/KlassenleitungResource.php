@@ -14,7 +14,7 @@ class KlassenleitungResource extends JsonResource
 			'vorname' => $this->vorname,
 			'name' => "{$this->nachname}, {$this->vorname}",
 			'geschlecht' => $this->geschlecht,
-			'klasse' => $this->klasse->kuerzel,
+			'klasse' => $this->klasse->kuerzelAnzeige,
 			'matrix' => new MatrixResource($this->klasse),
 			'ASV' => $this->bemerkung?->ASV,
 			'AUE' => $this->bemerkung?->AUE,

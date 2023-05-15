@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
 	Route::controller(KlassenMatrix::class)
-		->prefix(prefix: 'settings')
+		->prefix('matrix')
 		->name('api.matrix.')
 		->group(function () {
 			Route::get(uri: 'index', action: 'index')->name(name: 'index');
@@ -33,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 		}); // TODO: Admin middleware
 
 	Route::controller(SettingController::class)
-		->prefix(prefix: 'settings')
+		->prefix('settings')
 		->name('api.settings.')
 		->group(function () {
 			Route::get(uri: 'index/{group}', action: 'index')->name(name: 'index');

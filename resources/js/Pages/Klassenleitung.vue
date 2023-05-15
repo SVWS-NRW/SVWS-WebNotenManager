@@ -58,17 +58,16 @@
 
     const setupColumns = (): void => {
         columns.value.push(
-            { key: 'klasse', label: 'Klasse', sortable: true, minWidth: 6 },
-            { key: 'name', label: 'Name, Vorname', sortable: true, minWidth: 15 },
-            { key: 'gfs', label: 'GFS', sortable: true, fixedWidth: 7 },
-            { key: 'gfsu', label: 'GFSU', sortable: true, fixedWidth: 7 },
+            { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6 },
+            { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
+            { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6 },
+            { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6 },
         )
 
-
         columns.value.push(
-            { key: 'ASV', label: 'ASV', sortable: true },
-            { key: 'AUE', label: 'AUE', sortable: true },
-            { key: 'ZB', label: 'ZB', sortable: true},
+            { key: 'ASV', label: 'ASV', sortable: true, span: 8, minWidth: 5 },
+            { key: 'AUE', label: 'AUE', sortable: true, span: 8, minWidth: 5 },
+            { key: 'ZB', label: 'ZB', sortable: true, span: 8, minWidth: 5},
         )
     }
 
@@ -208,20 +207,20 @@
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <button @click="selectSchueler(rowData)">
+                    <button @click="selectSchueler(rowData)" class="truncate">
                         {{ rowData.name }}
                     </button>
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <button @click="selectSchueler(rowData)">
+                    <button @click="selectSchueler(rowData)"  class="truncate">
                         {{ rowData.klasse }}
                     </button>
                 </template>
 
                 <template #cell(gfs)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(!rowData.matrix.editable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="gfs" v-if="editable(!rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="gfs" v-if="editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
                             {{ rowData.gfs }}
                         </strong>
@@ -229,8 +228,8 @@
                 </template>
 
                 <template #cell(gfsu)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(!rowData.matrix.editable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="gfsu" v-if="editable(!rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="gfsu" v-if="editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
                             {{ rowData.gfsu }}
                         </strong>
@@ -274,6 +273,9 @@
 </template>
 
 <style scoped>
+.truncate {
+    @apply ui-truncate
+}
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }

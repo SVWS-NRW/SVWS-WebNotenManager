@@ -21,6 +21,10 @@ class LeistungsFehlstundenPolicy
 			return false;
 		}
 
+		if ($leistung->schueler->klasse->toggleable_fehlstunden) {
+			return false;
+		}
+// check if is klassen lehrer
 		if ($leistung->sharesKlasseWithCurrentUser() && $settings->lehrer_can_override_fachlehrer) {
 			return true;
 		}

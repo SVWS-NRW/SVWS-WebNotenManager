@@ -280,34 +280,34 @@
                 </template>
 
                 <template #cell(klasse)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         {{ rowData.klasse }}
                     </button>
                 </template>
 
                 <template #cell(kurs)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         {{ rowData.kurs }}
                     </button>
                 </template>
 
                 <template #cell(name)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData">
+                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                         {{ rowData.name }}
                     </button>
                 </template>
 
                 <template #cell(fach)="{ rowData }">
                     <strong>
-                        <button type="button" @click="selectedFbLeistung = rowData">
+                        <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
                             {{ rowData.fach }}
                         </button>
                     </strong>
                 </template>
 
                 <template #cell(fs)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="fs" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fs" v-if="editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
                             {{ rowData.fs }}
                         </strong>
@@ -315,8 +315,8 @@
                 </template>
 
                 <template #cell(fsu)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="fsu" v-if="editable(rowData.matrix.editable_fehlstunden)"></FehlstundenInput>
+                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden) }">
+                        <FehlstundenInput :model="rowData" column="fsu" v-if="editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                         <strong v-else>
                             {{ rowData.fsu }}
                         </strong>
@@ -345,6 +345,11 @@
 </template>
 
 <style scoped>
+
+    .truncate {
+        @apply ui-truncate
+    }
+
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }

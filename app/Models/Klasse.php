@@ -51,6 +51,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableTeilnoten($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableZb($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereIdJahrgang($value)
+ * @property bool $toggleable_fehlstunden
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereToggleableFehlstunden($value)
  * @mixin \Eloquent
  */
 class Klasse extends Model
@@ -69,6 +71,7 @@ class Klasse extends Model
 		'editable_noten',
 		'editable_mahnungen',
 		'editable_fehlstunden',
+		'toggleable_fehlstunden',
 		'editable_fb',
 		'editable_asv',
 		'editable_aue',
@@ -80,6 +83,7 @@ class Klasse extends Model
 		'editable_noten' => 'boolean',
 		'editable_mahnungen' => 'boolean',
 		'editable_fehlstunden' => 'boolean',
+		'toggleable_fehlstunden' => 'boolean',
 		'editable_fb' => 'boolean',
 		'editable_asv' => 'boolean',
 		'editable_aue' => 'boolean',

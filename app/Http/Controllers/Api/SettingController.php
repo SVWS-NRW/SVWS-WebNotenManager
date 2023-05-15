@@ -25,6 +25,7 @@ class SettingController extends Controller
 
     public function update(string $group): JsonResponse
 	{
+
 		abort_unless(
 			boolean: auth()->check() && auth()->user()->isAdministrator(),
 			code: Response::HTTP_FORBIDDEN,

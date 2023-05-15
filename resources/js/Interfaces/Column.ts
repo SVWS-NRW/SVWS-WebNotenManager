@@ -3,4 +3,5 @@ export interface Column {
 	label: string,
 	sortable: boolean,
 	span?: string|Number,
+	minWidth?: string|Number,
 }
