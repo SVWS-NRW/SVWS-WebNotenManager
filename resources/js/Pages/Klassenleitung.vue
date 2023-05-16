@@ -56,23 +56,18 @@
 
     const columns = ref<Column[]>([])
 
-    const setupColumns = (): void => {
-        columns.value.push(
-            { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6 },
-            { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
-            { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6 },
-            { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6 },
-        )
-
-        columns.value.push(
-            { key: 'ASV', label: 'ASV', sortable: true, span: 8, minWidth: 5 },
-            { key: 'AUE', label: 'AUE', sortable: true, span: 8, minWidth: 5 },
-            { key: 'ZB', label: 'ZB', sortable: true, span: 8, minWidth: 5},
-        )
-    }
+    const drawTable = (): Column[] => columns.value = [
+        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, },
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
+        { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6, },
+        { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6, },
+        { key: 'ASV', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
+        { key: 'AUE', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
+        { key: 'ZB', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
+    ]
 
     onMounted((): void => {
-        setupColumns()
+        drawTable()
         fetchSchueler()
     })
 
@@ -146,6 +141,7 @@
                 :schueler="selectedSchueler"
                 :floskelgruppe="selectedFloskelgruppe"
                 @close="selectedSchueler = null"
+                @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event; drawTable()"
             ></BemerkungEditor>
         </template>
 

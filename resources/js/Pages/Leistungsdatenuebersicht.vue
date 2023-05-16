@@ -43,8 +43,6 @@
 
     const selectedFbLeistung: Ref<Leistung | null> = ref(null)
 
-    const valueReadonly = (leistung: Leistung, permission: 'editable_fb'): boolean => !leistungEdit || !leistung.matrix[permission]
-
     let toggles = <{
         fachlehrer: boolean,
         bemerkungen: boolean,
@@ -204,9 +202,8 @@
         }
     }
 
-    const updateFachbezogeneBemerkungen = (fb: string, data: Leistung) => data.fachbezogeneBemerkungen = 'asd'
-
     const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator, leistungEdit.value) // ok
+    const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => !editable(leistung.matrix[permission])
 </script>
 
 <template>
@@ -219,8 +216,9 @@
         <template v-slot:aside v-if="selectedFbLeistung">
             <FbEditor
                 :leistung="selectedFbLeistung"
-                :readonly="valueReadonly(selectedFbLeistung, 'editable_fb')"
+                :readonly="readonly(selectedFbLeistung, 'editable_fb')"
                 @close="selectedFbLeistung = null"
+                @updated="selectedFbLeistung.fachbezogeneBemerkungen = $event; drawTable()"
             ></FbEditor>
         </template>
 

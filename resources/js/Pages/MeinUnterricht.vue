@@ -185,7 +185,6 @@
         return leistung[column] == filters[column]
     }
 
-    const updateFachbezogeneBemerkungen = (fb: string, data: Leistung): string => data.fachbezogeneBemerkungen = fb
 
 
     const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator) // ok
@@ -201,6 +200,7 @@
                 :leistung="selectedFbLeistung"
                 :readonly="!selectedFbLeistung.matrix.editable_fb"
                 @close="selectedFbLeistung = null"
+                @updated="selectedFbLeistung.fachbezogeneBemerkungen = $event; drawTable()"
             ></FbEditor>
         </template>
 
