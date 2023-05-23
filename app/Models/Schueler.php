@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Auth;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,10 +31,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read \App\Models\Daten|null $daten
  * @property-read \App\Models\Jahrgang|null $jahrgang
  * @property-read \App\Models\Klasse|null $klasse
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Leistung[] $leistungen
+ * @property-read Collection|\App\Models\Leistung[] $leistungen
  * @property-read int|null $leistungen_count
  * @property-read \App\Models\Lernabschnitt|null $lernabschnitt
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Sprachenfolge[] $sprachenfolgen
+ * @property-read Collection|\App\Models\Sprachenfolge[] $sprachenfolgen
  * @property-read int|null $sprachenfolgen_count
  * @property-read \App\Models\Zp10|null $zp10
  * @method static \Database\Factories\SchuelerFactory factory(...$parameters)
@@ -142,5 +143,20 @@ class Schueler extends Model
 			needle: $this->klasse_id,
 			haystack: Auth::user()->klassen->pluck(value: 'id')->toArray()
 		);
+	}
+
+	public static function exportCollection()
+	{
+		return self::with(relations: [
+				'bemerkung',
+				'leistungen' => ['note'],
+				'lernabschnitt' => [
+					'lernbereich1Note',
+					'lernbereich2Note',
+					'foerderschwerpunkt1Relation',
+					'foerderschwerpunkt2Relation',
+				],
+			])
+			->get();
 	}
 }

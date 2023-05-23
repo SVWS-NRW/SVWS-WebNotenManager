@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Export\SchuelerResource;
+use App\Models\Schueler;
 use App\Services\AesService;
 use App\Services\GzipService;
 use App\Services\DataImportService;
@@ -23,13 +25,13 @@ class SecureTransferController extends Controller
 		}
 
 		try {
-			$encodedData = $gzipService->decompress(file: $request->file(key: 'file')->getContent());
+			$decodedData = $gzipService->decode(file: $request->file(key: 'file')->getContent());
 		} catch (Exception $e) {
 			return response(content: $e->getMessage(), status: Status::HTTP_BAD_REQUEST);
 		}
 
 		try {
-			$decryptedData = $aesService->decrypt(data: $encodedData);
+			$decryptedData = $aesService->decrypt(data: $decodedData);
 		} catch (Exception $e) {
 			return response(content: $e->getMessage(), status: Status::HTTP_BAD_REQUEST);
 		}
@@ -45,10 +47,24 @@ class SecureTransferController extends Controller
 		return response(content: 'Import successful', status: Status::HTTP_OK);
 	}
 
-    public function export(): Response
+    public function export(AesService $aesService, GzipService $gzipService): Response
 	{
+		$data = SchuelerResource::collection(
+			resource: Schueler::exportCollection()
+		)->toJson();
 
+		try {
+			$encryptedData = $aesService->encrypt(data: $data);
+		} catch (Exception $e) {
+			return response(content: $e->getMessage(), status: Status::HTTP_BAD_REQUEST);
+		}
 
-		return response(content: 'Export successful', status: Status::HTTP_OK);
+		try {
+			$encodedData = $gzipService->encode(file: $encryptedData);
+		} catch (Exception $e) {
+			return response(content: $e->getMessage(), status: Status::HTTP_BAD_REQUEST);
+		}
+
+		return response(content: $encodedData, status: Status::HTTP_OK);
 	}
 }

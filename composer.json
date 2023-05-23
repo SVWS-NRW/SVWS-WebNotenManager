@@ -14,7 +14,8 @@
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
         "spatie/laravel-settings": "^2.8",
-        "tightenco/ziggy": "^1.0"
+        "tightenco/ziggy": "^1.0",
+        "ext-zlib": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
