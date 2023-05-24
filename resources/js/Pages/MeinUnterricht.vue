@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import {onMounted, reactive, computed, ref, watch, PropType, Ref} from 'vue'
+    import { onMounted, reactive, computed, ref, watch, PropType, Ref } from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
     import { Column } from '../Interfaces/Column'
     import { usePage } from '@inertiajs/inertia-vue3'
@@ -35,7 +35,7 @@
     import {Settings} from '../Interfaces/Settings'
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import {Auth} from '../Interfaces/Auth'
-    import {tableCellEditable} from '../Helpers/pages.helper'
+    import {tableCellEditable, nextNote} from '../Helpers/pages.helper'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -188,6 +188,8 @@
 
 
     const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator) // ok
+
+
 </script>
 
 <template>
@@ -266,7 +268,12 @@
 
                 <template #cell(note)="{ rowData }">
                     <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_noten) }">
-                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="editable(rowData.matrix.editable_noten)"></NoteInput>
+                        <NoteInput
+                            :leistung="rowData"
+                            :key="rowData.id"
+                            v-if="editable(rowData.matrix.editable_noten)"
+                            @next="nextNote(rowData.id, filteredLeistungen)"
+                        ></NoteInput>
                         <strong v-else>
                             {{ rowData.note }}
                         </strong>

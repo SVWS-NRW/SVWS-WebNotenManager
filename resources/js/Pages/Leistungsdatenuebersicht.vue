@@ -9,7 +9,7 @@
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
 
-    import { tableCellEditable } from '../Helpers/pages.helper'
+    import { tableCellEditable, nextNote } from '../Helpers/pages.helper'
 
     import {
         baseColumns,
@@ -317,7 +317,12 @@
 
                 <template #cell(note)="{ rowData }">
                     <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_noten) }">
-                        <NoteInput :leistung="rowData" :key="rowData.id" v-if="editable(rowData.matrix.editable_noten)"></NoteInput>
+                        <NoteInput
+                            :leistung="rowData"
+                            :key="rowData.id"
+                            v-if="editable(rowData.matrix.editable_noten)"
+                            @next="nextNote(rowData.id, filteredLeistungen)"
+                        ></NoteInput>
                         <strong :class="{ 'low-score' : lowScore(rowData.note) }" v-else>
                             {{ rowData.note }}
                         </strong>

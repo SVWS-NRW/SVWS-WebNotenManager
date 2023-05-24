@@ -2,10 +2,12 @@
     import { watch, computed, reactive } from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
     import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios'
+    import { Leistung } from '../types'
+
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
-    import { Leistung } from '../Interfaces/Leistung'
 
     const props = defineProps(['leistung', 'disabled'])
+    const emit = defineEmits(['next'])
 
     let leistung = reactive<Leistung>(props.leistung)
     let timeout: ReturnType<typeof setTimeout>
@@ -25,12 +27,19 @@
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))
     const isDisabled = (): boolean => usePage().props.value.note_entry_disabled || props.disabled
+    const next = (): void => emit('next')
 </script>
 
 <template>
     <strong :class="{ 'low-score' : lowScore }" >
         <span v-if="isDisabled()">{{ leistung.note }}</span>
-        <SvwsUiTextInput v-else v-model="leistung.note" :valid="!lowScore" :headless="true"></SvwsUiTextInput>
+        <SvwsUiTextInput
+            v-else
+            v-model="leistung.note"
+            :valid="!lowScore"
+            :headless="true"
+            @keyup.enter="next"
+        ></SvwsUiTextInput>
     </strong>
 </template>
 
