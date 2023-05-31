@@ -83,7 +83,8 @@
     })
 
 
-    const noteFilter = ref(filterOptions.noten[0]);
+    const noteFilter = ref();
+
 
     const columns = ref<Column[]>([])
 
@@ -116,13 +117,13 @@
 
     const getFilters = (): void => {
         filterOptions.kurse = setFilters(state.leistungen, 'kurs', false)
-        filterOptions.noten = setFilters(state.leistungen, 'note')
+        filterOptions.noten = setFilters(state.leistungen, 'note', true, false)
         filterOptions.jahrgaenge = setFilters(state.leistungen, 'jahrgang')
         filterOptions.klassen = setFilters(state.leistungen, 'klasse')
         filterOptions.faecher = setFilters(state.leistungen, 'fach')
     }
 
-    const setFilters = (data, column: string, hasEmptyValue: boolean = true): {
+    const setFilters = (data, column: string, hasEmptyValue: boolean = true, hasAllValue: boolean = true): {
         label: string, index: string | null | number
     }[] => {
         let hasEmpty: boolean = true
@@ -151,7 +152,10 @@
         if (hasEmpty) {
             set.unshift({ label: 'Leer', index: '' })
         }
-        set.unshift({ label: 'Alle', index: '0' })
+
+        if (hasAllValue) {
+            set.unshift({ label: 'Alle', index: '0' })
+        }
 
         return set;
     }
@@ -183,10 +187,6 @@
         ).length > 0
 
         if (noteFilter.value === undefined) { // No item selected
-            return true
-        }
-
-        if (indexContains('0')) { // "All" item selected
             return true
         }
 
