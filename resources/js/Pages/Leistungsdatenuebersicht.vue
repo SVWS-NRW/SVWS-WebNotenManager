@@ -29,6 +29,7 @@
         SvwsUiDataTable,
         SvwsUiButton,
         SvwsUiTooltip,
+        SvwsUiMultiSelect,
     } from '@svws-nrw/svws-ui'
 
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
@@ -72,16 +73,17 @@
         klasse: Number | string,
         jahrgang: Number | string,
         kurs: Number | string,
-        fach: Number | string,
-        note: Number | string,
+        fach: Number | string
     }>reactive({
         search: '',
         klasse: 0,
         jahrgang: 0,
         kurs: 0,
         fach: '0',
-        note: '0',
     })
+
+
+    const noteFilter = ref(filterOptions.noten[0]);
 
     const columns = ref<Column[]>([])
 
@@ -170,10 +172,30 @@
             && tableFilter(leistung, 'klasse', true)
             && tableFilter(leistung, 'kurs', true)
             && tableFilter(leistung, 'jahrgang')
-            && tableFilter(leistung, 'note', true)
             && tableFilter(leistung, 'fach')
+            && multiSelectFilter(leistung, 'note')
         )
     )
+
+    const multiSelectFilter = (leistung: Leistung, column: string): boolean => {
+        const indexContains = (index: string): boolean => noteFilter.value.filter(
+            (item: {index: string, label: string}): boolean => item.index === index
+        ).length > 0
+
+        if (noteFilter.value === undefined) { // No item selected
+            return true
+        }
+
+        if (indexContains('0')) { // "All" item selected
+            return true
+        }
+
+        return noteFilter.value.filter(
+            (item: {index: string, label: string}): boolean =>
+                item.label === leistung.note
+                || (indexContains('') && [null, ''].includes(leistung.note))
+        ).length > 0
+    }
 
     const searchFilter = (leistung: Leistung): boolean => {
         if (filters.search === '') return true
@@ -204,6 +226,12 @@
 
     const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator, leistungEdit.value) // ok
     const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => !editable(leistung.matrix[permission])
+
+
+
+
+
+
 </script>
 
 <template>
@@ -240,12 +268,23 @@
                     </SvwsUiButton>
                 </div>
                 <div id="filters">
+
+                    {{ noteFilter}}
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
                     <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>
                     <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>
                     <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" :options="filterOptions.faecher"></SvwsUiSelectInput>
                     <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" :options="filterOptions.kurse"></SvwsUiSelectInput>
-                    <SvwsUiSelectInput placeholder="Note" v-model="filters.note" :options="filterOptions.noten"></SvwsUiSelectInput>
+                    <SvwsUiMultiSelect
+                        v-model="noteFilter"
+                        title="Note"
+                        :item-text="item => item?.label || ''"
+                        :items="filterOptions.noten"
+                        autocomplete
+                        tags
+                        :item-filter="(items: {index: Number, label: String}, search: String) => items.filter((i: any) => i.label.includes(search))"
+                        :removable="true"
+                    ></SvwsUiMultiSelect>
                 </div>
             </header>
 
