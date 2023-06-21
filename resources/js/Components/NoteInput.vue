@@ -7,7 +7,6 @@
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
 
     const props = defineProps(['leistung', 'disabled'])
-    const emit = defineEmits(['next'])
 
     let leistung = reactive<Leistung>(props.leistung)
     let timeout: ReturnType<typeof setTimeout>
@@ -27,7 +26,7 @@
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))
     const isDisabled = (): boolean => usePage().props.value.note_entry_disabled || props.disabled
-    const next = (): void => emit('next')
+
 </script>
 
 <template>
@@ -38,7 +37,6 @@
             v-model="leistung.note"
             :valid="!lowScore"
             :headless="true"
-            @keyup.enter="next"
         ></SvwsUiTextInput>
     </strong>
 </template>
