@@ -57,8 +57,8 @@
     const columns = ref<Column[]>([])
 
     const drawTable = (): Column[] => columns.value = [
-        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, },
-        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
+        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: true  },
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: true , },
         { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6, },
         { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6, },
         { key: 'ASV', label: 'ASV', sortable: true, span: 8, minWidth: 5, },

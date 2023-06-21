@@ -39,7 +39,7 @@
         "vue-template-compiler": "^2.6.14"
     },
     "dependencies": {
-        "@svws-nrw/svws-ui": "^0.6.2",
+        "@svws-nrw/svws-ui": "^0.6.9",
         "moment": "^2.29.4"
     }
 }
