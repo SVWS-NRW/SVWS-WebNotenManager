@@ -7,6 +7,12 @@ const tableCellEditable = (
 	editMode: boolean = true,
 ): boolean => editMode && (administrator || condition)
 
+const tableCellDisabled = (
+	condition: boolean,
+	administrator: boolean,
+	editMode: boolean = true,
+): boolean => !editMode || !(administrator && condition)
+
 const nextNote = (rowId: number, leistungen: Leistung[]): void => {
 	let indexCount: number = leistungen.length
 	let currentIndex: number = leistungen.findIndex((leistung: Leistung): boolean => leistung.id == rowId)
@@ -24,5 +30,6 @@ const nextNote = (rowId: number, leistungen: Leistung[]): void => {
 
 export {
 	tableCellEditable,
+	tableCellDisabled,
 	nextNote,
 }

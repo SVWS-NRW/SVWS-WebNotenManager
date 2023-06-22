@@ -9,7 +9,7 @@
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
 
-    import { tableCellEditable, nextNote } from '../Helpers/pages.helper'
+    import { tableCellEditable, tableCellDisabled } from '../Helpers/pages.helper'
 
     import {
         baseColumns,
@@ -115,7 +115,7 @@
     })
 
 
-    const auth: Auth = usePage().props.value.auth
+    const auth: Auth = usePage().props.value.auth as Auth
 
     const getFilters = (): void => {
         filterOptions.kurse = setFilters(state.leistungen, 'kurs', false)
@@ -124,6 +124,8 @@
         filterOptions.klassen = setFilters(state.leistungen, 'klasse')
         filterOptions.faecher = setFilters(state.leistungen, 'fach')
     }
+
+
 
     const setFilters = (data, column: string, hasEmptyValue: boolean = true, hasAllValue: boolean = true): {
         label: string, index: string | null | number
@@ -172,7 +174,40 @@
         return leistung
     })
 
-    const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
+    const direction = ref(true);
+    const sortBy: Ref<'name' | 'klasse'> = ref('name');
+
+    const filteredLeistungen = computed(() => state.leistungen
+        .sort(function(a: Leistung, b: Leistung) {
+            if (a[sortBy.value] === null) {
+                return 1;
+            }
+
+            if (a[sortBy.value] === '') {
+                return 1;
+            }
+
+            if (b[sortBy.value] === null) {
+                return -1;
+            }
+
+            if (b[sortBy.value] === '') {
+                return -1;
+            }
+
+            let x: string | Number = a[sortBy.value].toString();
+            let y: string | Number = b[sortBy.value].toString();
+
+            if (x > y) {
+                return direction.value ? 1 : -1;
+            }
+
+            if (x < y) {
+                return direction.value ? -1 : 1;
+            }
+
+            return 0;
+        })
         .filter((leistung: Leistung): boolean =>
             searchFilter(leistung)
             && tableFilter(leistung, 'klasse', true)
@@ -226,9 +261,20 @@
         }
     }
 
-    const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator, leistungEdit.value) // ok
-    const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => !editable(leistung.matrix[permission])
+    const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator, leistungEdit.value)
+    const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => disabled(leistung.matrix[permission])
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
+    const test = () => alert(123)
+
+
+    const sortTable = (name: 'klasse' | 'name') => {
+        if (sortBy.value == name) {
+            direction.value = !direction.value
+        } else {
+            direction.value = true
+            sortBy.value = name
+        }
+    }
 </script>
 
 <template>
@@ -237,7 +283,6 @@
     </Head>
 
     <AppLayout title="Leistungsdatenuebersicht">
-
         <template v-slot:aside v-if="selectedFbLeistung">
             <FbEditor
                 :leistung="selectedFbLeistung"
@@ -283,29 +328,51 @@
                 </div>
             </header>
 
-            <svws-ui-data-table clickable >
+            <SvwsUiDataTable clickable :noData="false">
                 <template #header>
                     <SvwsUiDataTableRow thead>
-                        <SvwsUiDataTableCell thead>Klasse</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>Name, Vorname</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>Fach</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>Kurs</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">Lehrer</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">Teilnoten</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>Note</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead v-if="toggles.mahnungen">Mahnung</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">FS</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">FSU</SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen">FB</SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead>
+                            <button @click="sortTable('klasse')">Klasse</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead>
+                            <button @click="sortTable('name')">Name, Vorname</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead>
+                            <button @click="sortTable('fach')">Fach</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead>
+                            <button @click="sortTable('kurs')">Kurs</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
+                            <button @click="sortTable('fachlehrer')">Lehrer</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">
+                            Teilnoten
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead>
+                            <button @click="sortTable('note')">Note</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
+                            <button @click="sortTable('mahnung')">Mahnung</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
+                            <button @click="sortTable('fs')">FS</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">
+                            <button @click="sortTable('fsu')">FSU</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen">
+                            <button @click="sortTable('fachbezogeneBemerkungen')">FB</button>
+                        </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
 
-                <template #body="{ rows }">
+                <template #body="{ rows }" >
                     <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index">
                         <SvwsUiDataTableCell disabled @click="select(row)">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="true" @click="select(row)">
+                        <SvwsUiDataTableCell disabled @click="select(row)">
                             <span class="truncate">{{ row.name }}</span>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell disabled @click="select(row)">
@@ -317,33 +384,33 @@
                         <SvwsUiDataTableCell disabled v-if="toggles.fachlehrer" @click="select(row)">
                             <span class="truncate">{{ row.lehrer }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="!editable(row.matrix.editable_teilnoten)" v-if="toggles.teilleistungen">
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_teilnoten)" v-if="toggles.teilleistungen">
                             <span class="truncate">TBD</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="!editable(row.matrix.editable_noten)">
-                            <NoteInput :leistung="row" :key="row.id" v-if="editable(row.matrix.editable_noten)"></NoteInput>
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_noten)">
+                            <NoteInput :leistung="row" :key="row.id" v-if="!disabled(row.matrix.editable_noten)"></NoteInput>
                             <strong :class="{ 'low-score' : lowScore(row.note) }" v-else>
                                 {{ row.note }}
                             </strong>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="!editable(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen">
-                            <MahnungIndicator :leistung="row" :key="row.id" :disabled="false" v-if="editable(row.matrix.editable_mahnungen)"></MahnungIndicator>
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen">
+                            <MahnungIndicator :leistung="row" :key="row.id" :disabled="false" v-if="!disabled(row.matrix.editable_mahnungen)"></MahnungIndicator>
                             <MahnungIndicatorReadonly :leistung="row" :disabled="true" v-else></MahnungIndicatorReadonly>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="!editable(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
-                            <FehlstundenInput :model="row" column="fs" v-if="editable(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
+                            <FehlstundenInput :model="row" column="fs" v-if="!disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                             <strong v-else>{{ row.fs }}</strong>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="!editable(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
-                            <FehlstundenInput :model="row" column="fsu" v-if="editable(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
+                            <FehlstundenInput :model="row" column="fsu" v-if="!disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
                             <strong v-else>{{ row.fsu }}</strong>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="!editable(row.matrix.editable_fb)" @click="select(row)" v-if="toggles.bemerkungen">
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fb)" @click="select(row)" v-if="toggles.bemerkungen">
                              <BemerkungIndicator :model="row" :bemerkung="row.fachbezogeneBemerkungen"></BemerkungIndicator>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
-            </svws-ui-data-table>
+            </SvwsUiDataTable>
         </template>
     </AppLayout>
 </template>

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { ref, useSlots } from 'vue';
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import { useSlots } from 'vue'
     import { Auth } from '../Interfaces/Auth'
 
     import {
@@ -15,115 +14,79 @@
 
     const modal = ref<any>(null);
     const modalInfo = ref<any>(null);
-    const isCollapsed = ref(false)
-
     const slots = useSlots()
+    const auth: Auth = usePage().props.value.auth as Auth
 
-    const auth: Auth = usePage().props.value.auth
-
-    const visible = (link: string): bool => {
-        return {
-            'mein_unterricht': !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator),
-            'klassenleitung': auth.user.klassen.length > 0,
-            'settings': auth.administrator,
-        }[link]
+    const visible = (item: 'mein_unterricht' | 'klassenleitung' | 'settings'): boolean => {
+        switch (item) {
+            case 'mein_unterricht':
+                return !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator)
+            case 'klassenleitung':
+                return auth.user.klassen.length > 0
+            case 'settings':
+                return auth.administrator
+            default:
+                return false
+        }
     }
 
     const navigate = (routeName: string): void => Inertia.get(route(routeName))
     const logout = (): void => Inertia.post(route('logout'))
-
     const activePage = (routeName: string): boolean => route().current(routeName)
-    const toggleCollapse = (): boolean => isCollapsed.value = !isCollapsed.value
-
+    const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ')
 </script>
 
 <template>
     <SvwsUiAppLayout :fullwidthContent="true" v-cloak>
         <template #sidebar>
-            <SvwsUiMenu :collapsed="isCollapsed" @toggle="toggleCollapse">
+            <SvwsUiMenu>
                 <template #header>
-                    <SvwsUiMenuHeader :collapsed="isCollapsed">
-                        {{ auth.user.vorname }} {{ auth.user.nachname }}
-                    </SvwsUiMenuHeader>
+                    <SvwsUiMenuHeader
+                        :user="currentUser()"
+                        :schule="usePage().props.value.schoolName"
+                    />
                 </template>
 
                 <template #default>
                     <SvwsUiMenuItem
-                        :collapsed="isCollapsed"
+                        v-if="visible('mein_unterricht')"
                         :active="activePage('mein_unterricht')"
                         @click="navigate('mein_unterricht')"
-                        v-if="visible('mein_unterricht')"
                     >
-                        <template #icon>
-                            <SvwsUiIcon>
-                                <mdi-home-outline />
-                            </SvwsUiIcon>
-                        </template>
-                        <template #label>
-                            Notenmanager
-                        </template>
+                        <template #icon><mdi-home-outline /></template>
+                        <template #label>Notenmanager</template>
                     </SvwsUiMenuItem>
 
                     <SvwsUiMenuItem
-                        :collapsed="isCollapsed"
                         :active="activePage('leistungsdatenuebersicht')"
                         @click="navigate('leistungsdatenuebersicht')"
                     >
-                        <template #icon>
-                            <SvwsUiIcon>
-                                <mdi-book-open-outline />
-                            </SvwsUiIcon>
-                        </template>
-                        <template #label>
-                            Leistungsdatenübersicht
-                        </template>
+                        <template #icon><mdi-book-open-outline /></template>
+                        <template #label>Leistungsdatenübersicht</template>
                     </SvwsUiMenuItem>
 
                     <SvwsUiMenuItem
-                        :collapsed="isCollapsed"
+                        v-if="visible('klassenleitung')"
                         :active="activePage('klassenleitung')"
                         @click="navigate('klassenleitung')"
-                        v-if="visible('klassenleitung')"
                     >
-                        <template #icon>
-                            <SvwsUiIcon>
-                                <mdi-user-outline/>
-                            </SvwsUiIcon>
-                        </template>
-                        <template #label>
-                            Klassenleitung
-                        </template>
+                        <template #icon><mdi-user-outline/></template>
+                        <template #label>Klassenleitung</template>
                     </SvwsUiMenuItem>
                 </template>
 
                 <template #footer>
                     <SvwsUiMenuItem
-                        :collapsed="isCollapsed"
-                        @click="navigate('settings.index')"
                         v-if="visible('settings')"
+                        @click="navigate('settings.index')"
                     >
-                        <template #icon>
-                            <SvwsUiIcon>
-                                <mdi-cog-outline />
-                            </SvwsUiIcon>
-                        </template>
-                        <template #label>
-                            Einstellungen
-                        </template>
+                        <template #icon><mdi-cog-outline /></template>
+                        <template #label>Einstellungen</template>
                     </SvwsUiMenuItem>
 
-                    <SvwsUiMenuItem
-                        :collapsed="isCollapsed"
-                        @click="logout()"
-                    >
-                        <template #icon>
-                            <SvwsUiIcon>
-                                <mdi-logout />
-                            </SvwsUiIcon>
-                        </template>
-                        <template #label>
-                            Abmelden
-                        </template>
+                    <SvwsUiMenuItem @click="logout()">
+                        <template #icon><mdi-logout /></template>
+                        <template #label>Abmelden</template>
                     </SvwsUiMenuItem>
                 </template>
 

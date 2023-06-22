@@ -6,7 +6,7 @@
 
     const props = defineProps<{
         model: Schueler|Leistung,
-        bemerkung: string
+        bemerkung: string|null,
     }>()
 
     const emit = defineEmits(['clicked'])

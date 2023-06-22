@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { SvwsUiSecondaryMenu, SvwsUiMenuItem } from '@svws-nrw/svws-ui'
-import { Inertia } from "@inertiajs/inertia";
-const navigate = (routeName: string): void => Inertia.get(route(routeName))
+    import { Inertia } from "@inertiajs/inertia";
 
+    import {
+        SvwsUiSecondaryMenu,
+        SvwsUiMenuItem,
+    } from '@svws-nrw/svws-ui'
+
+    const navigate = (routeName: string): void => Inertia.get(route(routeName))
 </script>
 
 <template>
