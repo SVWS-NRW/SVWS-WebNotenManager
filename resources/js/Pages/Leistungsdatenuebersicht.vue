@@ -81,7 +81,7 @@
         klasse: 0,
         jahrgang: 0,
         kurs: 0,
-        fach: '0',
+        fach: 0,
     })
 
 
@@ -282,7 +282,7 @@
         <title>{{ title }}</title>
     </Head>
 
-    <AppLayout title="Leistungsdatenuebersicht">
+    <AppLayout>
         <template v-slot:aside v-if="selectedFbLeistung">
             <FbEditor
                 :leistung="selectedFbLeistung"
