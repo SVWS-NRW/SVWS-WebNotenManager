@@ -8,6 +8,7 @@
     import { Leistung } from '../Interfaces/Leistung'
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
+    import TableSortButton from '../Components/TableSortButton.vue'
 
     import { tableCellEditable, tableCellDisabled } from '../Helpers/pages.helper'
 
@@ -338,7 +339,8 @@
                             <button @click="sortTable('name')">Name, Vorname</button>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <button @click="sortTable('fach')">Fach</button>
+                            <!-- <button @click="sortTable('fach')">Fach</button> -->
+                            <TableSortButton columnName="Fach"/>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('kurs')">Kurs</button>

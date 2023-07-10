@@ -7,21 +7,16 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    MdiArrowDownThick: typeof import('~icons/mdi/arrow-down-thick')['default']
+    MdiArrowDownThinCircleOutline: typeof import('~icons/mdi/arrow-down-thin-circle-outline')['default']
+    MdiArrowUpThick: typeof import('~icons/mdi/arrow-up-thick')['default']
     MdiBookOpenOutline: typeof import('~icons/mdi/book-open-outline')['default']
     MdiCheckboxBlankOutline: typeof import('~icons/mdi/checkbox-blank-outline')['default']
     MdiCheckboxMarkedOutline: typeof import('~icons/mdi/checkbox-marked-outline')['default']
-    MdiCheckboxOutline: typeof import('~icons/mdi/checkbox-outline')['default']
-    MdiClose: typeof import('~icons/mdi/close')['default']
-    MdiCog: typeof import('~icons/mdi/cog')['default']
     MdiCogOutline: typeof import('~icons/mdi/cog-outline')['default']
-    MdiHomeExclamationMark: typeof import('~icons/mdi/home-exclamation-mark')['default']
     MdiHomeOutline: typeof import('~icons/mdi/home-outline')['default']
-    MdiHomeWarning: typeof import('~icons/mdi/home-warning')['default']
     MdiLogout: typeof import('~icons/mdi/logout')['default']
-    MdiLogoutOutline: typeof import('~icons/mdi/logout-outline')['default']
     MdiPencil: typeof import('~icons/mdi/pencil')['default']
     MdiUserOutline: typeof import('~icons/mdi/user-outline')['default']
-    MdiWarning: typeof import('~icons/mdi/warning')['default']
-    MdiWarningOutline: typeof import('~icons/mdi/warning-outline')['default']
   }
 }
