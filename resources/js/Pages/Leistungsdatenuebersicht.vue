@@ -338,9 +338,8 @@
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('name')">Name, Vorname</button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>
-                            <!-- <button @click="sortTable('fach')">Fach</button> -->
-                            <TableSortButton columnName="Fach"/>
+                        <SvwsUiDataTableCell thead @click="sortTable('fach')">
+                            <TableSortButton columnName="Fach"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('kurs')">Kurs</button>

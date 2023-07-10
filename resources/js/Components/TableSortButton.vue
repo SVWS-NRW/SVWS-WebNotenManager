@@ -1,24 +1,30 @@
 <script setup lang="ts">
 //was noch?
     //import {Leistung, Schueler} from '../types'
+import {computed, onMounted, Ref, ref, watch} from 'vue'
 import { SvwsUiIcon } from '@svws-nrw/svws-ui';
 
     const props = defineProps<{
         //do i need table?
-        table: string,
-        direction: string,
+        //table: bool,
+        direction: bool,
         columnName: string,
     }>()
 
+    const isActive: Ref<bool> = ref(false)
+    //isActive = true;
     const emit = defineEmits(['clicked'])
-    const clicked = (): void => emit('clicked')
+    const clicked = (): void => emit('clicked', isActive.value = true )
+
+
+
 </script>
 
 <template>
     <button  @click="clicked" class="">
         <SvwsUiIcon>
             <span class="column-name">{{ props.columnName }}</span>
-            <mdi-arrow-down-thick v-if="props.columnName" class="sort-icon"></mdi-arrow-down-thick>
+            <mdi-arrow-down-thick v-if="isActive" class="sort-icon"></mdi-arrow-down-thick>
             <!-- todo: up or down, depending on order -->
             <!-- <mdi-arrow-up-thick v-else></mdi-arrow-up-thick> -->
         </SvwsUiIcon>
