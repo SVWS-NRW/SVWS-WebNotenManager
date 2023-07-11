@@ -46,6 +46,7 @@
     const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
 
     const selectedFbLeistung: Ref<Leistung | null> = ref(null)
+    const selectedColumn: Ref<Leistung | null> = ref(null)
 
     let toggles = <{
         fachlehrer: boolean,
@@ -330,7 +331,6 @@
                     ></SvwsUiMultiSelect>
                 </div>
             </header>
-
             <SvwsUiDataTable clickable :noData="false">
                 <template #header>
                     <SvwsUiDataTableRow thead>
@@ -342,7 +342,7 @@
                         </SvwsUiDataTableCell>
                         <!-- <SvwsUiDataTableCell thead @click="sortTable('fach')"> -->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton columnName="Fach"></TableSortButton>
+                            <TableSortButton :table="sortBy" columnName="Fach"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('kurs')">Kurs</button>

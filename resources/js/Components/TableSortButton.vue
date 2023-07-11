@@ -18,17 +18,21 @@ import { SvwsUiIcon } from '@svws-nrw/svws-ui';
     const sortBy = ref(props.columnName); */
 
     const direction = ref(false);
-    const sortBy: Ref<'name' | 'klasse'> = ref('name')
+    const sortedBy: Ref<string> = ref('name')
 
-    const mySort = (name: 'klasse' | 'name') => {
-          direction.value = !direction.value;
-          alert(direction.value)
-        if (sortBy.value == name) {
+    const mySort = (columnName: string) => {
+        //todo: direction hasn't been worked on yet
+        if (props.table == columnName) {
             direction.value = !direction.value
+            alert("same")
         } else {
             direction.value = true
-            sortBy.value = name
+            //cannot do this, 'cause props are readonly, should send it back to be SortBy.value on parent
+            //props.table = columnName
+            sortedBy.value = columnName
         }
+        alert(sortedBy.value)
+        alert(props.table)
     }
 
     const emit = defineEmits(['clicked'])
@@ -38,8 +42,9 @@ import { SvwsUiIcon } from '@svws-nrw/svws-ui';
 </script>
 
 <template>
+    <!-- TODO: emit to parent -->
     <!-- <button  @click="clicked" class=""> -->
-    <button  @click="mySort('fach')" class="">
+    <button  @click="mySort(props.columnName)" class="">
         <SvwsUiIcon>
             <span class="column-name">{{ props.columnName }}</span>
             <mdi-arrow-down-thick class="sort-icon" v-if="direction"></mdi-arrow-down-thick>
