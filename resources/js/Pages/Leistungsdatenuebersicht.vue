@@ -9,6 +9,8 @@
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
     import TableSortButton from '../Components/TableSortButton.vue'
+    //testing here
+    import ShoppingCart from '../Components/ShoppingCart.vue'
 
     import { tableCellEditable, tableCellDisabled } from '../Helpers/pages.helper'
 
@@ -179,6 +181,9 @@
     const direction = ref(true);
     const sortBy: Ref<'name' | 'klasse'> = ref('name');
 
+    //testing here
+    const isOpened = ref("initial");
+
     const filteredLeistungen = computed(() => state.leistungen
         .sort(function(a: Leistung, b: Leistung) {
             if (a[sortBy.value] === null) {
@@ -268,20 +273,25 @@
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
     const test = () => alert(123)
 
-
     const sortTable = (name: 'klasse' | 'name') => {
-         if (sortBy.value == name) {
+        if (sortBy.value == name) {
             direction.value = !direction.value
         } else {
             direction.value = true
             sortBy.value = name
-        } 
+        }
     }
-
 
 </script>
 
 <template>
+
+<!-- testing here -->
+<button>Dummy value on parent page is "{{ isOpened }}" </button>
+and sortBy there is "{{ sortBy }}"
+  
+  <ShoppingCart :isOpened="isOpened" @toggle="(value) => isOpened = value"/>
+
     <Head>
         <title>{{ title }}</title>
     </Head>
@@ -340,9 +350,10 @@
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('name')">Name, Vorname</button>
                         </SvwsUiDataTableCell>
+                        <!-- testing here -->
                         <!-- <SvwsUiDataTableCell thead @click="sortTable('fach')"> -->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :table="sortBy" columnName="Fach"></TableSortButton>
+                            <TableSortButton :sortBy="sortBy" columnName="Fach" @clicked="(value) => sortBy = value"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('kurs')">Kurs</button>
