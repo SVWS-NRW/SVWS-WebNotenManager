@@ -8,17 +8,23 @@ use App\Http\Resources\Matrix\KlasseResource;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 
 class KlassenMatrix extends Controller
 {
     public function index(): JsonResponse
 	{
+		$jahrgaenge =  JahrgangResource::collection(resource: Jahrgang::orderedWithKlassenOrdered())
+			->collection
+			->groupBy(groupBy: 'stufe');
+
+		$klassen = KlasseResource::collection(resource: Klasse::notBelongingToJahrgangOrdered());
+
 		return response()->json(data: [
-			'jahrgaenge' => JahrgangResource::collection(resource: Jahrgang::orderedWithKlassenOrdered())
-				->collection
-				->groupBy(groupBy: 'stufe'),
-			'klassen' => KlasseResource::collection(resource: Klasse::notBelongingToJahrgangOrdered())
+			'jahrgaenge' => $jahrgaenge,
+			'klassen' => $klassen,
 		]);
 	}
 

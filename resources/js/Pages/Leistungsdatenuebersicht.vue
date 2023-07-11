@@ -269,13 +269,15 @@
 
 
     const sortTable = (name: 'klasse' | 'name') => {
-        if (sortBy.value == name) {
+         if (sortBy.value == name) {
             direction.value = !direction.value
         } else {
             direction.value = true
             sortBy.value = name
-        }
+        } 
     }
+
+
 </script>
 
 <template>
@@ -338,7 +340,8 @@
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('name')">Name, Vorname</button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead @click="sortTable('fach')">
+                        <!-- <SvwsUiDataTableCell thead @click="sortTable('fach')"> -->
+                        <SvwsUiDataTableCell thead>
                             <TableSortButton columnName="Fach"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
