@@ -179,9 +179,9 @@
     })
 
     const direction = ref(true);
-    const sortBy: Ref<'name' | 'klasse'> = ref('name');
+    const sortBy: Ref<string> = ref('name');
 
-    //testing here
+    //testing dummy here
     const isOpened = ref("initial");
 
     const filteredLeistungen = computed(() => state.leistungen
@@ -273,8 +273,9 @@
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
     const test = () => alert(123)
 
-    const sortTable = (name: 'klasse' | 'name') => {
-        if (sortBy.value == name) {
+    //TODO: not needed anymore here once table has been adjusted to TableSortButton component
+    const sortTable = (name: string) => {
+         if (sortBy.value == name) {
             direction.value = !direction.value
         } else {
             direction.value = true
@@ -353,7 +354,7 @@ and sortBy there is "{{ sortBy }}"
                         <!-- testing here -->
                         <!-- <SvwsUiDataTableCell thead @click="sortTable('fach')"> -->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" columnName="Fach" @clicked="(value) => sortBy = value"></TableSortButton>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Fach" @clicked="(value) => sortBy = value"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
                             <button @click="sortTable('kurs')">Kurs</button>
