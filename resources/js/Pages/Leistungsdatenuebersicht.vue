@@ -9,9 +9,6 @@
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
     import TableSortButton from '../Components/TableSortButton.vue'
-    //testing here
-    import ShoppingCart from '../Components/ShoppingCart.vue'
-
     import { tableCellEditable, tableCellDisabled } from '../Helpers/pages.helper'
 
     import {
@@ -286,14 +283,6 @@
 </script>
 
 <template>
-
-<!-- testing here -->
-<button>Dummy value on parent page is "{{ isOpened }}" </button>
-and sortBy there is "{{ sortBy }}"
-and direction there is "{{ direction }}"
-  
-  <ShoppingCart :isOpened="isOpened" @toggle="(value) => isOpened = value"/>
-
     <Head>
         <title>{{ title }}</title>
     </Head>
@@ -347,37 +336,36 @@ and direction there is "{{ direction }}"
                 <template #header>
                     <SvwsUiDataTableRow thead>
                         <SvwsUiDataTableCell thead>
-                            <button @click="sortTable('klasse')">Klasse</button>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Klasse" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <button @click="sortTable('name')">Name, Vorname</button>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Name" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
-                        <!-- testing here -->
-                        <!-- <SvwsUiDataTableCell @click="sortTable('fach')"> -->
                         <SvwsUiDataTableCell thead>
                             <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Fach" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                         <button @click="sortTable('kurs')">Kurs</button>
-                         <!--<TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Kurs" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>-->
+                         <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Kurs" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
-                            <button @click="sortTable('fachlehrer')">Lehrer</button>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Lehrer" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">
                             Teilnoten
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <button @click="sortTable('note')">Note</button>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Note" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
-                            <button @click="sortTable('mahnung')">Mahnung</button>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Mahnung" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
+
+
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
-                            <button @click="sortTable('fs')">FS</button>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="FS" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">
-                            <button @click="sortTable('fsu')">FSU</button>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="FSU" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen">
                             <button @click="sortTable('fachbezogeneBemerkungen')">FB</button>
