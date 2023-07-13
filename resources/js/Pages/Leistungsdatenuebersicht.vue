@@ -290,6 +290,7 @@
 <!-- testing here -->
 <button>Dummy value on parent page is "{{ isOpened }}" </button>
 and sortBy there is "{{ sortBy }}"
+and direction there is "{{ direction }}"
   
   <ShoppingCart :isOpened="isOpened" @toggle="(value) => isOpened = value"/>
 
@@ -352,12 +353,13 @@ and sortBy there is "{{ sortBy }}"
                             <button @click="sortTable('name')">Name, Vorname</button>
                         </SvwsUiDataTableCell>
                         <!-- testing here -->
-                        <!-- <SvwsUiDataTableCell thead @click="sortTable('fach')"> -->
+                        <!-- <SvwsUiDataTableCell @click="sortTable('fach')"> -->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Fach" @clicked="(value) => sortBy = value"></TableSortButton>
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Fach" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <button @click="sortTable('kurs')">Kurs</button>
+                         <button @click="sortTable('kurs')">Kurs</button>
+                         <!--<TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Kurs" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>-->
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
                             <button @click="sortTable('fachlehrer')">Lehrer</button>

@@ -15,29 +15,35 @@
     }>()
 
     const presentColumn: Ref<string> = ref(props.columnName);
-    const originalDirection = ref(props.descDirection);
+    const direction = ref(props.descDirection);
     const sortByColumn: Ref<string> = ref(props.sortBy);
 
-    const sortTable = (name: string) => {
-        if (props.sortBy == name) {
-            originalDirection.value = !originalDirection.value
+    //problem: of course this is only called when sthg is clicked
+    const sortTable = (newSortBy: string): void => {
+        if (props.sortBy == newSortBy) {
+            direction.value = !direction.value
         } else {
-            originalDirection.value = true
-            props.sortBy = name
+            direction.value = true
+            sortByColumn.value = newSortBy
         }
+        //this is working
+        //alert(direction.value)
+        clicked(newSortBy, direction.value)
+
     }
-    
+
     const emit = defineEmits(['clicked'])
-    const clicked = (value: string): void => emit('clicked', value, sortTable(value))
+    const clicked = (clickedTable: string, newDirection: boolean): void => emit('clicked', clickedTable, newDirection)
 
 </script>
 
 <template>
-    <button  @click="clicked(presentColumn.toLowerCase())">
+    <!-- <button  @click="updateSorting(presentColumn.toLowerCase(), direction)"> -->
+    <button  @click="sortTable(presentColumn.toLowerCase())">
         <span class="column-name">{{ presentColumn }}</span>
         <SvwsUiIcon>
-            <mdi-arrow-down-thick class="sort-icon" v-if="presentColumn.toLowerCase() == props.sortBy && originalDirection == true"></mdi-arrow-down-thick>
-            <mdi-arrow-up-thick class="sort-icon" v-else-if="originalDirection == false"></mdi-arrow-up-thick>
+            <mdi-arrow-down-thick class="sort-icon" v-if="presentColumn.toLowerCase() == props.sortBy && direction == true"></mdi-arrow-down-thick>
+            <mdi-arrow-up-thick class="sort-icon" v-else-if="presentColumn.toLowerCase() == props.sortBy && direction == false"></mdi-arrow-up-thick>
         </SvwsUiIcon>
     </button>
 </template>
