@@ -359,8 +359,6 @@
                         <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
                             <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="Mahnung" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
-
-
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
                             <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="FS" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
@@ -368,8 +366,15 @@
                             <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="FSU" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen">
+                            <TableSortButton :sortBy="sortBy" :descDirection="direction" columnName="FB" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                        </SvwsUiDataTableCell>
+
+
+                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen">
                             <button @click="sortTable('fachbezogeneBemerkungen')">FB</button>
                         </SvwsUiDataTableCell>
+
+
                     </SvwsUiDataTableRow>
                 </template>
 

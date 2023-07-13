@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import {Ref, ref} from 'vue'
     import { SvwsUiIcon } from '@svws-nrw/svws-ui';
+//TODO: some types are missing in the new functions
 
 //TODO: if finally used, add names from other tables and check they are all here
 //problem: we need string methods available here
@@ -12,9 +13,27 @@
         columnName: string
     }>()
 
+    const emit = defineEmits(['clicked'])
+    const clicked = (clickedTable: string, newDirection: boolean): void => emit('clicked', clickedTable, newDirection)
+
+    //TODO: check if needed to modify presentColumn
     const presentColumn: Ref<string> = ref(props.columnName);
     const direction = ref(props.descDirection);
     const sortByColumn: Ref<string> = ref(props.sortBy);
+
+    const needsAdjustment = (presentColumn: string) => {
+        for (let i = 1; i < presentColumn.length; i++) {
+            if (presentColumn[i] === "a") {
+            alert(presentColumn)
+            sortTable(presentColumn.toLowerCase())
+            }
+        }
+        return false
+    }
+
+    const adjustColumnName = (newSortBy: string): void => {
+  
+    } 
 
     const sortTable = (newSortBy: string): void => {
         if (props.sortBy == newSortBy) {
@@ -23,17 +42,12 @@
             direction.value = true
             sortByColumn.value = newSortBy
         }
-    clicked(newSortBy, direction.value)
-
+        clicked(newSortBy, direction.value)
     }
-
-    const emit = defineEmits(['clicked'])
-    const clicked = (clickedTable: string, newDirection: boolean): void => emit('clicked', clickedTable, newDirection)
-
 </script>
 
 <template>
-    <button  @click="sortTable(presentColumn.toLowerCase())">
+    <button  @click="needsAdjustment(presentColumn)">
         <span class="column-name">{{ presentColumn }}</span>
         <SvwsUiIcon>
             <mdi-arrow-down-thick class="sort-icon" v-if="presentColumn.toLowerCase() == props.sortBy && direction == true"></mdi-arrow-down-thick>
