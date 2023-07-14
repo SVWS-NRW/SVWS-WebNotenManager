@@ -267,16 +267,6 @@
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
     const test = () => alert(123)
 
-    //TODO: not needed anymore here once table has been adjusted to TableSortButton component
-    const sortTable = (name: string) => {
-         if (sortBy.value == name) {
-            direction.value = !direction.value
-        } else {
-            direction.value = true
-            sortBy.value = name
-        }
-    }
-
 </script>
 
 <template>
