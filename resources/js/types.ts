@@ -77,3 +77,7 @@ interface Pronoun {
 	m: string,
 	w: string,
 }
+
+export interface SortTableColumns {
+	name: 'name' | 'klasse' | 'fach' | 'kurs' | 'fachleher' | 'note' | 'mahnung' | 'fs' | 'fsu' | 'fachbezogeneBemerkungen'
+}

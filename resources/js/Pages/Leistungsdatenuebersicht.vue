@@ -6,6 +6,7 @@
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
+    import { SortTableColumns } from '../Interfaces/SortTableColumns'
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
     import TableSortButton from '../Components/TableSortButton.vue'

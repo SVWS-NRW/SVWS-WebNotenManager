@@ -1,9 +1,7 @@
 <script setup lang="ts">
     import {Ref, ref} from 'vue'
+    import {SortTableColumns} from '../types'
     import { SvwsUiIcon } from '@svws-nrw/svws-ui';
-//TODO: are all types assigned?
-
-    interface SortTableColumns { name: 'name' | 'klasse' | 'fach' | 'kurs' | 'fachleher' | 'note' | 'mahnung' | 'fs' | 'fsu' | 'fachbezogeneBemerkungen'}
 
     const props = defineProps<{
         sortBy: SortTableColumns,
