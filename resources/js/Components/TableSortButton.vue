@@ -1,42 +1,44 @@
 <script setup lang="ts">
+//TODO: use provide and inject from/to Leistungsdatenuebersicht
     import { Ref, ref, provide } from 'vue'
     import { SortTableColumns } from '../types'
     import { SvwsUiIcon } from '@svws-nrw/svws-ui';
 
     const props = defineProps<{
-        sortBy: SortTableColumns,
-        descDirection: boolean,
-        displayName: string,
-        dbName: SortTableColumns,
+        sortRef: SortTableColumns,
+        name: SortTableColumns,
     }>()
 
-    const emit = defineEmits(['clicked'])
-    const clicked = (clickedTable: SortTableColumns, newDirection: boolean): void => emit('clicked', clickedTable, newDirection)
-
-    const direction: Ref<boolean> = ref(props.descDirection);
-    const sortByColumn: Ref<SortTableColumns> = ref(props.sortBy);
-    const presentColumn: Ref<SortTableColumns> = ref(props.dbName);
+    const sortReferences: Ref<SortTableColumns> = ref(props.sortRef)
+    const presentColumn: Ref<SortTableColumns> = ref(props.name);
 
     const sortTable = (newSortBy: SortTableColumns): void => {
-        if (props.sortBy == newSortBy) {
-            direction.value = !direction.value
+        if (props.sortRef.sortBy == newSortBy.sortBy) {
+            alert("first")
+            sortReferences.value.direction = sortReferences.value.direction
         } else {
-            direction.value = true
-            sortByColumn.value = newSortBy
+            alert(newSortBy.sortBy)
+            sortReferences.value.direction = true
+            sortReferences.value.sortBy = newSortBy.sortBy
         }
-        clicked(newSortBy, direction.value)
+        clicked(sortReferences.value)
     }
+
+    const emit = defineEmits(['clicked'])
+    const clicked = (newSortRef: SortTableColumns): void => emit('clicked', newSortRef)
 
 </script>
 
 <template>
-    <button  @click="sortTable(presentColumn)">
-        <span class="column-name">{{ props.displayName }}</span>
+    <button @click="sortTable(presentColumn)">
+        <slot></slot>
+        {{ presentColumn.sortBy }}
+        {{ presentColumn.direction }}
+        <span class="column-name"></span>
         <SvwsUiIcon>
-            <!-- todo: make the comparison neat -->
-            <mdi-arrow-up-down class="sort-icon-inactive" v-if="presentColumn != props.sortBy"></mdi-arrow-up-down>
-            <mdi-arrow-down-thick class="sort-icon" v-else-if="direction"></mdi-arrow-down-thick>
-            <mdi-arrow-up-thick class="sort-icon" v-else-if="!direction"></mdi-arrow-up-thick>
+            <mdi-arrow-up-down class="sort-icon-inactive" v-if="presentColumn.sortBy != props.sortRef.sortBy"></mdi-arrow-up-down>
+            <mdi-arrow-down-thick class="sort-icon" v-else-if="sortReferences.direction"></mdi-arrow-down-thick>
+            <mdi-arrow-up-thick class="sort-icon" v-else-if="!sortReferences.direction"></mdi-arrow-up-thick>
         </SvwsUiIcon>
     </button>
 </template>
