@@ -1,16 +1,19 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, reactive, Ref, ref, watch} from 'vue'
+    import {computed, onMounted, reactive, Ref, ref, watch, nextTick, provide, VNodeRef} from 'vue'
 
     import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
-    import { Leistung } from '../Interfaces/Leistung'
+    import { Leistung } from '../types'
     import { SortTableColumns } from '../Interfaces/SortTableColumns'
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
     import TableSortButton from '../Components/TableSortButton.vue'
     import { tableCellEditable, tableCellDisabled } from '../Helpers/pages.helper'
+    import {navigateTable, Payload} from '../Helpers/tableNavigationHelper'
+
+    type CellRef = VNodeRef | undefined
 
     import {
         baseColumns,
@@ -220,6 +223,10 @@
         )
     )
 
+    const filteredLeistungenCount = computed(() => {
+      return filteredLeistungen.value.length;
+    });
+
     const multiSelectFilter = (leistung: Leistung, column: string): boolean => {
         const indexContains = (index: string): boolean => noteFilter.value.filter(
             (item: {index: string, label: string}): boolean => item.index === index
@@ -254,7 +261,7 @@
 
     const lowScore = (note: string): boolean => lowScoreArray.includes(note)
 
-    let leistungEdit = ref(false)
+    let leistungEdit = ref(true) // TODO: revert
     let lehrerCanOverrideFachlehrer = (usePage().props.value.settings.matrix['lehrer_can_override_fachlehrer'] == 1)
 
     const leistungEditToggle = () => {
@@ -266,7 +273,13 @@
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator, leistungEdit.value)
     const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => disabled(leistung.matrix[permission])
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
-    const test = () => alert(123)
+ 
+
+    const cellRefs = reactive<CellRef[]>([]);
+    provide('cellRefs', cellRefs); // provide cellRefs to all descendants
+
+
+    const navigate = (payload: Payload): Promise<void> => navigateTable(payload, cellRefs, filteredLeistungen.value)
 
 </script>
 
@@ -286,6 +299,7 @@
         </template>
 
         <template #main>
+
             <header>
                 <div id="headline">
                     <h2 class="text-headline">{{ title }}</h2>
@@ -360,7 +374,7 @@
                 </template>
 
                 <template #body="{ rows }" >
-                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index">
+                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen"  :key="index">
                         <SvwsUiDataTableCell disabled @click="select(row)">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
@@ -379,23 +393,50 @@
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_teilnoten)" v-if="toggles.teilleistungen">
                             <span class="truncate">TBD</span>
                         </SvwsUiDataTableCell>
+
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_noten)">
-                            <NoteInput :leistung="row" :key="row.id" v-if="!disabled(row.matrix.editable_noten)"></NoteInput>
-                            <strong :class="{ 'low-score' : lowScore(row.note) }" v-else>
-                                {{ row.note }}
-                            </strong>
+                            <NoteInput 
+                                :leistung="row" 
+                                :disabled="disabled(row.matrix.editable_noten)"
+                                :key="row.id"  
+                                :row-index="index"
+                                :cell-index="0"
+                                @navigate="payload => navigate(payload)"
+                            />
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen">
-                            <MahnungIndicator :leistung="row" :key="row.id" :disabled="false" v-if="!disabled(row.matrix.editable_mahnungen)"></MahnungIndicator>
+
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen" >
+                            <MahnungIndicator 
+                                :leistung="row" 
+                                :key="row.id" 
+                                :disabled="false" 
+                                v-if="!disabled(row.matrix.editable_mahnungen)"
+                            ></MahnungIndicator>
                             <MahnungIndicatorReadonly :leistung="row" :disabled="true" v-else></MahnungIndicatorReadonly>
-                        </SvwsUiDataTableCell>
+                        </SvwsUiDataTableCell>      
+    
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
-                            <FehlstundenInput :model="row" column="fs" v-if="!disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                            <strong v-else>{{ row.fs }}</strong>
+                            <FehlstundenInput 
+                                :model="row" 
+                                column="fs" 
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
+                                :row-index="index"
+                                :cell-index="1"
+                                @navigate="payload => navigate(payload)"
+                            />
                         </SvwsUiDataTableCell>
+
+
+    
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
-                            <FehlstundenInput :model="row" column="fsu" v-if="!disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                            <strong v-else>{{ row.fsu }}</strong>
+                            <FehlstundenInput 
+                                :model="row" 
+                                column="fsu" 
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
+                                :row-index="index"
+                                :cell-index="2"
+                                @navigate="payload => navigate(payload)"
+                            />
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fb)" @click="select(row)" v-if="toggles.bemerkungen">
                              <BemerkungIndicator :model="row" :bemerkung="row.fachbezogeneBemerkungen"></BemerkungIndicator>
@@ -409,69 +450,23 @@
 
 <style scoped>
 
-.truncate {
-    @apply ui-truncate
-}
+    .truncate {
+        @apply ui-truncate
+    }
 
-header {
-    @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
-}
+    header {
+        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+    }
 
-header #toggles {
-    @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
-}
+    header #toggles {
+        @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
+    }
 
-header #headline {
-    @apply ui-flex ui-items-center ui-justify-start ui-gap-6
-}
+    header #headline {
+        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+    }
 
-header #filters {
-    @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6
-}
-
-/*.editable {*/
-/*    @apply ui-bg-grey ui-w-full ui-block ui-h-full*/
-/*}*/
-
-/*.header {*/
-/*    @apply ui-flex ui-flex-col ui-gap-4 ui-p-6*/
-/*}*/
-
-/*.header__headline {*/
-/*    @apply ui-flex ui-gap-6 ui-justify-between*/
-/*}*/
-
-/*.header__headline__left {*/
-/*    @apply ui-flex ui-flex-col ui-gap-4*/
-/*}*/
-
-/*.header__toggles {*/
-/*    @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap*/
-/*}*/
-
-
-/*header #headline {*/
-/*    @apply ui-flex ui-items-center ui-justify-start ui-gap-6*/
-/*}*/
-
-/*header #filters {*/
-/*    @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6*/
-/*}*/
-
-/*header #header {*/
-/*    @apply ui-flex ui-gap-6 ui-justify-between*/
-/*}*/
-
-
-/* .low-score {*/
-/*     @apply ui-text-red-500 ui-font-bold*/
-/* }*/
-
-/* .input-override {*/
-/*     @apply ui-flex ui-gap-6 ui-justify-between ui-items-center ui-w-full*/
-/* }*/
-
-/* .input-override svg {*/
-/*     @apply ui-text-red-600*/
-/* }*/
+    header #filters {
+        @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6
+    }
 </style>
