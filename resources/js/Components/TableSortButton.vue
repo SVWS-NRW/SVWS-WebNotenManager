@@ -1,6 +1,6 @@
 <script setup lang="ts">
-    import {Ref, ref} from 'vue'
-    import {SortTableColumns} from '../types'
+    import { Ref, ref, provide } from 'vue'
+    import { SortTableColumns } from '../types'
     import { SvwsUiIcon } from '@svws-nrw/svws-ui';
 
     const props = defineProps<{
@@ -33,15 +33,20 @@
     <button  @click="sortTable(presentColumn)">
         <span class="column-name">{{ props.displayName }}</span>
         <SvwsUiIcon>
-            <mdi-arrow-down-thick class="sort-icon" v-if="presentColumn == props.sortBy && direction == true"></mdi-arrow-down-thick>
-            <mdi-arrow-up-thick class="sort-icon" v-else-if="presentColumn == props.sortBy && direction == false"></mdi-arrow-up-thick>
+            <!-- todo: make the comparison neat -->
+            <mdi-arrow-up-down class="sort-icon-inactive" v-if="presentColumn != props.sortBy"></mdi-arrow-up-down>
+            <mdi-arrow-down-thick class="sort-icon" v-else-if="direction"></mdi-arrow-down-thick>
+            <mdi-arrow-up-thick class="sort-icon" v-else-if="!direction"></mdi-arrow-up-thick>
         </SvwsUiIcon>
     </button>
 </template>
 
 <style scoped>
+    
     .sort-icon {
-        @apply
-        ui-inline ui-gap-1.5 ui-items-center ui-justify-start
+        @apply ui-inline ui-gap-1.5 ui-items-center ui-justify-start
+    }
+    .sort-icon-inactive {
+        @apply sort-icon ui-text-gray-300
     }
 </style>

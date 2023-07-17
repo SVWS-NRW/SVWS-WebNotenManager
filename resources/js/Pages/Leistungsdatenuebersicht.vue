@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, reactive, Ref, ref, watch} from 'vue'
+    import {computed, onMounted, reactive, Ref, ref, watch, provide} from 'vue'
 
     import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
@@ -324,7 +324,7 @@
                 <template #header>
                     <SvwsUiDataTableRow thead>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Klasse" dbName="klasse" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :sortRef="sortRef" displayName="Klasse" dbName="klasse" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
                             <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Name" dbName="name" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
