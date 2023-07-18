@@ -176,13 +176,18 @@
         return leistung
     })
 
-    // const direction = ref(true);
-    // const sortBy: Ref<SortTableColumns> = ref('name');
-
     const sortRef: Ref<SortTableColumns> = ref({
         direction: true,
         sortBy: 'name'
     })
+
+    provide('sortRef', sortRef)
+
+    const updateSortRef = (newSortRef: SortTableColumns) => {
+        sortRef.value.sortBy = newSortRef.sortBy
+        sortRef.value.direction =newSortRef.direction
+    }
+
 
     const filteredLeistungen = computed(() => state.leistungen
         .sort(function(a: Leistung, b: Leistung) {
@@ -330,40 +335,39 @@
             <SvwsUiDataTable clickable :noData="false">
                 <template #header>
                     <SvwsUiDataTableRow thead>
-            <!-- TODO: use provide/inject instead of specifiying it here everytime-->
             <!-- TODO: use event for return values-->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :presentColumn= "{direction:true, sortBy:'klasse'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Klasse</TableSortButton>
+                            <TableSortButton :presentColumn= "{sortBy:'klasse'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'name'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Name</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'name'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fach'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Fach</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fach'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Fach</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'kurs'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Kurs</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'kurs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Kurs</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'lehrer'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Lehrer</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'lehrer'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Lehrer</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">
                             Teilnoten
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'note'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Note</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'note'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Note</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'mahnung'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Mahnung</TableSortButton>
+                            Mahnung
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fs'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">FS</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FS</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fsu'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">FSU</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fsu'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FSU</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen">
-                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Klasse</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>

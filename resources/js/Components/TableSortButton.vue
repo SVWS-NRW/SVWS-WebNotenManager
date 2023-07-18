@@ -1,30 +1,25 @@
 <script setup lang="ts">
 //TODO: use provide and inject from/to Leistungsdatenuebersicht
-    import { Ref, ref, provide } from 'vue'
+    import { Ref, ref, inject } from 'vue'
     import { SortTableColumns } from '../types'
     import { SvwsUiIcon } from '@svws-nrw/svws-ui';
 
     const props = defineProps<{
-        sortRef: SortTableColumns,
         presentColumn: SortTableColumns,
     }>()
 
     const emit = defineEmits(['clicked'])
     const clicked = (newSortRef: SortTableColumns): void => emit('clicked', newSortRef)
 
+    const sortRef: Ref<SortTableColumns> = inject('sortRef')
     const newSortReference: Ref<SortTableColumns> = ref(props.presentColumn);
 
-    //TODO: correct type here
     const sortTable = (newSortRef: SortTableColumns): void => {
-        //alert("passed: " + props.sortRef.sortBy + " " + newSortRef.sortBy)
-        if (props.sortRef.sortBy == newSortRef.sortBy) {
-            //alert("first: " + props.sortRef.sortBy + " " + newSortRef.sortBy)
-            newSortRef.direction = !newSortRef.direction
-            //alert("new direction: " + newSortRef.direction)
-         } //else {
-        //     alert("second: " + props.sortRef.sortBy + " " + newSortRef.sortBy)
-        // TODO: when coming from inject, prolly newSortRef direction value will need to be set to true
-        // }
+        if (sortRef.value.sortBy == newSortRef.sortBy) {
+            newSortRef.direction = !sortRef.value.direction
+        } else {
+            newSortRef.direction = true
+        }
         clicked(newSortRef)
     }
 
@@ -35,15 +30,14 @@
         <slot></slot>
         <span class="column-name"></span>
         <SvwsUiIcon>
-            <mdi-arrow-up-down class="sort-icon-inactive" v-if="presentColumn.sortBy != props.sortRef.sortBy"></mdi-arrow-up-down>
-            <mdi-arrow-down-thick class="sort-icon" v-else-if="newSortReference.direction"></mdi-arrow-down-thick>
-            <mdi-arrow-up-thick class="sort-icon" v-else-if="!newSortReference.direction"></mdi-arrow-up-thick>
+            <mdi-arrow-up-down class="sort-icon-inactive" v-if="presentColumn.sortBy != sortRef.sortBy"></mdi-arrow-up-down>
+            <mdi-arrow-down-thick class="sort-icon" v-else-if="sortRef.direction"></mdi-arrow-down-thick>
+            <mdi-arrow-up-thick class="sort-icon" v-else-if="!sortRef.direction"></mdi-arrow-up-thick>
         </SvwsUiIcon>
     </button>
 </template>
 
 <style scoped>
-    
     .sort-icon {
         @apply ui-inline ui-gap-1.5 ui-items-center ui-justify-start
     }
