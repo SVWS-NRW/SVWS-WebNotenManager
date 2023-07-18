@@ -333,37 +333,37 @@
             <!-- TODO: use provide/inject instead of specifiying it here everytime-->
             <!-- TODO: use event for return values-->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :name= "{direction:true, sortBy:'klasse'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Klasse</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn= "{direction:true, sortBy:'klasse'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'name'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Name</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'name'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Name</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'fach'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Fach</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fach'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Fach</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'kurs'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Kurs</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'kurs'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Kurs</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'lehrer'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Lehrer</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'lehrer'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Lehrer</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">
                             Teilnoten
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'note'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Note</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'note'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Note</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'mahnung'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Mahnung</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'mahnung'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Mahnung</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'fs'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">FS</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fs'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">FS</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'fsu'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">FSU</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fsu'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">FSU</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen">
-                            <TableSortButton :sortRef="sortRef" :name="{direction:true, sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction = newSortRef.newDirection }">Klasse</TableSortButton>
+                            <TableSortButton :sortRef="sortRef" :presentColumn="{direction:true, sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { sortRef.sortBy = newSortRef.sortBy, sortRef.direction =newSortRef.direction }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
