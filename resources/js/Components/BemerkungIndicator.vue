@@ -1,40 +1,64 @@
 <script setup lang="ts">
     import { formatStringBasedOnGender } from '../Helpers/bemerkungen.helper'
-    import {Leistung, Schueler} from '../types'
-
+    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper';
+    import { Leistung, Schueler } from '../types'
     import { SvwsUiIcon } from '@svws-nrw/svws-ui'
 
+    interface EmitsOptions {
+        (event: 'clicked'): void,
+    }
+
     const props = defineProps<{
-        model: Schueler|Leistung,
-        bemerkung: string|null,
+        model: Schueler | Leistung,
+        bemerkung: string | null,
+        rowIndex: number,
     }>()
 
-    const emit = defineEmits(['clicked'])
+    let element: CellRef = undefined
+
+    const emit = defineEmits<EmitsOptions>()
     const clicked = (): void => emit('clicked')
+    const formattedBemerkung = (): string => formatStringBasedOnGender(props.bemerkung, props.model)
+
+    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)    
 </script>
 
-<template>
-    <button @click="clicked" class="indicator">
-        <SvwsUiIcon>
-            <mdi-checkbox-marked-outline v-if="props.bemerkung"></mdi-checkbox-marked-outline>
-            <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
-        </SvwsUiIcon>
-
-        <span class="indicator__bemerkung">
-            {{ formatStringBasedOnGender(props.bemerkung, props.model) }}
+<template>                    
+    <button 
+        @click="clicked" 
+        @keydown.up.stop.prevent="navigate('up')"
+        @keydown.down.stop.prevent="navigate('down')"
+        @keydown.enter.stop.prevent="navigate('down')"
+        @keydown.left.stop.prevent="navigate('left')"
+        @keydown.right.stop.prevent="navigate('right')"
+        @keydown.tab.stop.prevent="navigate('right')"
+        :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
+    >        
+        <span v-if="props.bemerkung" class="indicator">
+            <SvwsUiIcon>
+                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
+            </SvwsUiIcon>
+            <span class="indicator__bemerkung">
+                {{ formattedBemerkung() }}
+            </span>           
         </span>
+
+        <SvwsUiIcon v-else>
+            <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
+        </SvwsUiIcon>
     </button>
 </template>
 
 <style scoped>
+    button {
+        @apply ui-max-w-full
+    }
+
     .indicator {
-        @apply
-        ui-max-w-full
-        ui-flex ui-gap-1.5 ui-items-center ui-justify-start
+        @apply ui-flex ui-gap-1.5 ui-items-center ui-justify-start
     }
 
     .indicator__bemerkung {
-        @apply
-        ui-truncate
+        @apply ui-truncate
     }
 </style>

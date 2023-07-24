@@ -1,6 +1,8 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, reactive, Ref, ref, watch, nextTick, provide, VNodeRef} from 'vue'
+
+    import {computed, onMounted, reactive, Ref, ref, watch, VNodeRef, provide} from 'vue'
+    import { getCurrentInstance } from 'vue'
 
     import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
@@ -89,11 +91,12 @@
         fach: 0,
     })
 
-
     const noteFilter = ref();
 
 
     const columns = ref<Column[]>([])
+
+    let tableRedrawKey: number = 0
 
     const drawTable = (): void => {
         const pushTable = (pushable: boolean, array: Array<Column>): void => {
@@ -110,6 +113,8 @@
         pushTable(toggles.mahnungen, mahnungenColumns)
         pushTable(true, fehlstundenColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+
+        tableRedrawKey++;
     }
 
     watch(toggles, (): void => drawTable())
@@ -179,36 +184,48 @@
         return leistung
     })
 
-    const direction = ref(true);
-    const sortBy: Ref<SortTableColumns> = ref('name');
+    const sortRef: Ref<SortTableColumns> = ref({
+        direction: true,
+        sortBy: 'name'
+    })
+
+    provide('sortRef', sortRef)
+
+    const updateSortRef = (newSortRef: SortTableColumns) => {
+        sortRef.value.sortBy = newSortRef.sortBy
+        sortRef.value.direction =newSortRef.direction
+    }
+
 
     const filteredLeistungen = computed(() => state.leistungen
         .sort(function(a: Leistung, b: Leistung) {
-            if (a[sortBy.value] === null) {
+            const aSortRefSortBy = a[sortRef.value.sortBy]
+            const bSortRefSortBy = b[sortRef.value.sortBy]
+            if (aSortRefSortBy === null) {
                 return 1;
             }
 
-            if (a[sortBy.value] === '') {
+            if (aSortRefSortBy === '') {
                 return 1;
             }
 
-            if (b[sortBy.value] === null) {
+            if (bSortRefSortBy === null) {
                 return -1;
             }
 
-            if (b[sortBy.value] === '') {
+            if (bSortRefSortBy === '') {
                 return -1;
             }
 
-            let x: string | Number = a[sortBy.value].toString();
-            let y: string | Number = b[sortBy.value].toString();
+            let x: string | Number = aSortRefSortBy.toString();
+            let y: string | Number = bSortRefSortBy.toString();
 
             if (x > y) {
-                return direction.value ? 1 : -1;
+                return sortRef.value.direction ? 1 : -1;
             }
 
             if (x < y) {
-                return direction.value ? -1 : 1;
+                return sortRef.value.direction ? -1 : 1;
             }
 
             return 0;
@@ -261,7 +278,9 @@
 
     const lowScore = (note: string): boolean => lowScoreArray.includes(note)
 
-    let leistungEdit = ref(true) // TODO: revert
+
+    let leistungEdit = ref(false)
+
     let lehrerCanOverrideFachlehrer = (usePage().props.value.settings.matrix['lehrer_can_override_fachlehrer'] == 1)
 
     const leistungEditToggle = () => {
@@ -273,14 +292,6 @@
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator, leistungEdit.value)
     const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => disabled(leistung.matrix[permission])
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
- 
-
-    const cellRefs = reactive<CellRef[]>([]);
-    provide('cellRefs', cellRefs); // provide cellRefs to all descendants
-
-
-    const navigate = (payload: Payload): Promise<void> => navigateTable(payload, cellRefs, filteredLeistungen.value)
-
 </script>
 
 <template>
@@ -337,44 +348,45 @@
             <SvwsUiDataTable clickable :noData="false">
                 <template #header>
                     <SvwsUiDataTableRow thead>
+            <!-- TODO: use event for return values-->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Klasse" dbName="klasse" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn= "{sortBy:'klasse'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Name" dbName="name" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'name'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Fach" dbName="fach" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fach'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Fach</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                         <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Kurs" dbName="kurs" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'kurs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Kurs</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Lehrer" dbName="lehrer" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'lehrer'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Lehrer</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">
                             Teilnoten
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Note" dbName="note" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'note'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Note</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Mahnung" dbName="mahnung" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            Mahnung
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="FS" dbName="fs" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FS</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="FSU" dbName="fsu" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fsu'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FSU</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="FB" dbName="fachbezogeneBemerkungen" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
 
-                <template #body="{ rows }" >
-                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen"  :key="index">
+                <template #body="{ rows }">
+                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="tableRedrawKey">
                         <SvwsUiDataTableCell disabled @click="select(row)">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
@@ -400,46 +412,36 @@
                                 :disabled="disabled(row.matrix.editable_noten)"
                                 :key="row.id"  
                                 :row-index="index"
-                                :cell-index="0"
-                                @navigate="payload => navigate(payload)"
-                            />
-                        </SvwsUiDataTableCell>
+                            ></NoteInput>
+                        </SvwsUiDataTableCell>                        
 
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen" >
-                            <MahnungIndicator 
-                                :leistung="row" 
-                                :key="row.id" 
-                                :disabled="false" 
-                                v-if="!disabled(row.matrix.editable_mahnungen)"
-                            ></MahnungIndicator>
-                            <MahnungIndicatorReadonly :leistung="row" :disabled="true" v-else></MahnungIndicatorReadonly>
-                        </SvwsUiDataTableCell>      
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen">                                  
+                            <MahnungIndicator :disabled="disabled(row.matrix.editable_mahnungen)" :leistung="row" :row-index="index"></MahnungIndicator>
+                        </SvwsUiDataTableCell>     
     
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
                             <FehlstundenInput 
                                 :model="row" 
                                 column="fs" 
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"                             
                                 :row-index="index"
-                                :cell-index="1"
-                                @navigate="payload => navigate(payload)"
                             />
                         </SvwsUiDataTableCell>
-
-
     
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
                             <FehlstundenInput 
                                 :model="row" 
                                 column="fsu" 
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"                             
                                 :row-index="index"
-                                :cell-index="2"
-                                @navigate="payload => navigate(payload)"
                             />
-                        </SvwsUiDataTableCell>
+                        </SvwsUiDataTableCell> 
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fb)" @click="select(row)" v-if="toggles.bemerkungen">
-                             <BemerkungIndicator :model="row" :bemerkung="row.fachbezogeneBemerkungen"></BemerkungIndicator>
+                            <BemerkungIndicator 
+                                :model="row" 
+                                :bemerkung="row.fachbezogeneBemerkungen"                         
+                                :row-index="index"
+                            ></BemerkungIndicator>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>

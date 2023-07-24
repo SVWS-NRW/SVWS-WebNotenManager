@@ -1,45 +1,50 @@
-import { VNodeRef, nextTick } from 'vue'
-
-export type Payload = {
-  direction: string, 
-  rowIndex: number, 
-  cellIndex: number,
-}
+import { VNodeRef, nextTick, ref, Ref } from 'vue'
 
 export type CellRef = VNodeRef | undefined
+export type CellRefValue = Record<number, CellRef[]>
 
-const navigateTable = async (payload: Payload, cellRefs: any, data: any) => {
-  let rowIndex = payload.rowIndex
-  let cellIndex = payload.cellIndex
+const cellRefs: Ref<CellRefValue> = ref({})
 
-  const getCellRefs = (): any => cellRefs[`${rowIndex}-${cellIndex}`]
+const setCellRefs = (element: CellRef, rowIndex: number): void => {
+  if (!cellRefs.value[rowIndex]) {
+    cellRefs.value[rowIndex] = []
+  }
 
-  switch (payload.direction) {
-    case 'up':
-      rowIndex = payload.rowIndex > 0 ? payload.rowIndex - 1 : payload.rowIndex
-      break;
-    case 'down':
-      rowIndex = payload.rowIndex < data.length - 1 ? payload.rowIndex + 1 : payload.rowIndex
-      break;
-    case 'left':
-      cellIndex = payload.cellIndex > 0 ? payload.cellIndex - 1 : payload.cellIndex
-      break;
-    case 'right':
-      cellIndex = getCellRefs() !== undefined ? payload.cellIndex + 1 : payload.cellIndex
-      break;
-    default:
-      return;
+  cellRefs.value[rowIndex].push(element)
+}
+
+const navigateTable = async (direction: string, rowIndex: number, element: any): Promise<void> => {
+  let cellIndex: number = cellRefs.value[rowIndex].indexOf(element)
+
+  if (direction === 'up') {
+    rowIndex = rowIndex > 0 ? rowIndex - 1 : rowIndex
+  }
+
+  if (direction === 'down') {
+    rowIndex = rowIndex < Object.keys(cellRefs.value).length - 1 ? rowIndex + 1 : rowIndex
+  }
+
+  if (direction === 'left') {
+    cellIndex = cellIndex > 0 ? cellIndex - 1 : cellIndex
+  }
+
+  if (direction === 'right') {
+    cellIndex = Object.keys(cellRefs.value[rowIndex]).length > cellIndex ? cellIndex + 1 : cellIndex
   }
 
   await nextTick()     
 
-  let target: any = cellRefs[`${rowIndex}-${cellIndex}`]
+  let target: any = cellRefs.value[rowIndex][cellIndex]
+
 
   if (target && target.input) {
-    target.input.focus();
-  }
+    target.input.focus()
+  } else {
+    target.focus()
+  }  
 }
 
 export {
   navigateTable,
+  setCellRefs,
 }
