@@ -1,43 +1,43 @@
 <script setup lang="ts">
-    import { computed, reactive, ref } from 'vue'
-    import axios from 'axios'
-    import moment from 'moment'
-    import { usePage } from '@inertiajs/inertia-vue3'
+    import { reactive, ref } from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
-
-    import {
-        SvwsUiBadge,
-        SvwsUiButton,
-        SvwsUiCheckbox,
-        SvwsUiIcon,
-        SvwsUiModal,
-    } from '@svws-nrw/svws-ui'
+    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
+    import { SvwsUiBadge, SvwsUiButton, SvwsUiIcon, SvwsUiModal } from '@svws-nrw/svws-ui'
+    import moment from 'moment'
+    
+    let props = defineProps<{
+        leistung: Leistung
+        rowIndex: number,
+    }>()
 
     const modal = ref<any>(null)
 
-    let props = defineProps<{
-        leistung: Leistung
-        disabled: boolean,
-    }>()
-
+    let element: CellRef = undefined
     let leistung = reactive<Leistung>(props.leistung)
 
-
-
-    const istGemahnt = computed((): boolean => Boolean(leistung.istGemahnt))
     const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
-
+    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
 </script>
 
 <template>
     <div :class="{ red: leistung.istGemahnt, green: leistung.mahndatum }">
-        <button @click="modal.openModal()" v-if="leistung.mahndatum" class="modal-button">
+        <button 
+            @click="modal.openModal()" 
+            v-if="leistung.mahndatum" 
+            @keydown.up.stop.prevent="navigate('up')"
+            @keydown.down.stop.prevent="navigate('down')"
+            @keydown.enter.stop.prevent="navigate('down')"
+            @keydown.left.stop.prevent="navigate('left')"
+            @keydown.right.stop.prevent="navigate('right')"
+            @keydown.tab.stop.prevent="navigate('right')"
+            :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
+        >
             <SvwsUiIcon>
                 <mdi-checkbox-marked-outline aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></mdi-checkbox-marked-outline>
             </SvwsUiIcon>
         </button>
         <div v-else>
-            <mdi-checkbox-marked-outline v-if="istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
+            <mdi-checkbox-marked-outline v-if="leistung.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
             <mdi-checkbox-blank-outline v-else aria-hidden="true" aria-description="Ist nicht gemahnt"></mdi-checkbox-blank-outline>
         </div>
     </div>
@@ -69,7 +69,4 @@
         @apply ui-text-green-500
     }
 
-    button.modal-button {
-        @apply ui-flex ui-items-center ui-justify-center
-    }
 </style>

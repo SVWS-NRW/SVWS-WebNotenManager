@@ -4,48 +4,79 @@
     import moment from 'moment'
     import { usePage } from '@inertiajs/inertia-vue3'
     import { Leistung } from '../Interfaces/Leistung'
+    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
 
-    import {
-        SvwsUiBadge,
-        SvwsUiButton,
-        SvwsUiCheckbox,
-        SvwsUiIcon,
-        SvwsUiModal,
-    } from '@svws-nrw/svws-ui'
+    import { SvwsUiBadge, SvwsUiButton, SvwsUiIcon, SvwsUiModal } from '@svws-nrw/svws-ui'
 
     const modal = ref<any>(null)
 
     let props = defineProps<{
-        leistung: Leistung
+        leistung: Leistung,
+        rowIndex: number,
         disabled: boolean,
     }>()
 
+    let element: CellRef = undefined
     let leistung = reactive<Leistung>(props.leistung)
 
-    const updateIstGemahnt = (value: boolean): void => {
-        leistung.istGemahnt = value
+    const updateIstGemahnt = (): void => {
+        leistung.istGemahnt = !leistung.istGemahnt
         axios.post(route('api.mahnung', leistung.id), leistung)
     }
 
     const istGemahnt = computed((): boolean => Boolean(leistung.istGemahnt))
     const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
     const isDisabled = (): boolean => !!usePage().props.value.warning_entry_disabled || props.disabled
+
+    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
 </script>
 
 <template>
-    <div :class="{ red: leistung.istGemahnt, green: leistung.mahndatum }">
-        <button @click="modal.openModal()" v-if="leistung.mahndatum" class="modal-button">
-            <SvwsUiIcon>
-                <mdi-checkbox-marked-outline aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></mdi-checkbox-marked-outline>
+    <span v-if="isDisabled()">
+        <span v-if="leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
+            <SvwsUiIcon class="green" aria-hidden="true">
+                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
             </SvwsUiIcon>
-        </button>
-        <div v-else>
-            <span v-if="isDisabled()">
-                <mdi-checkbox-marked-outline v-if="istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
-            </span>
-            <SvwsUiCheckbox v-else :modelValue="istGemahnt" :value="true" @update:modelValue="updateIstGemahnt($event)"></SvwsUiCheckbox>
-        </div>
-    </div>
+        </span>
+        <span v-else-if="istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
+            <SvwsUiIcon class="red" aria-hidden="true">
+                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
+            </SvwsUiIcon>
+        </span>
+        <span v-else aria-description="Ist nicht gemahnt">
+            <SvwsUiIcon aria-hidden="true">
+                <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
+            </SvwsUiIcon>
+        </span>
+    </span>
+        
+    <button
+        v-else
+        @click="leistung.mahndatum ? modal.openModal() : updateIstGemahnt()" 
+        @keydown.up.stop.prevent="navigate('up')"
+        @keydown.down.stop.prevent="navigate('down')"
+        @keydown.enter.stop.prevent="navigate('down')"
+        @keydown.left.stop.prevent="navigate('left')"
+        @keydown.right.stop.prevent="navigate('right')"
+        @keydown.tab.stop.prevent="navigate('right')"
+        :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
+    >
+        <span v-if="leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
+            <SvwsUiIcon class="green" aria-hidden="true">
+                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
+            </SvwsUiIcon>
+        </span>
+        <span v-else-if="istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
+            <SvwsUiIcon class="red" aria-hidden="true">
+                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
+            </SvwsUiIcon>
+        </span>
+        <span v-else aria-description="Ist nicht gemahnt">
+            <SvwsUiIcon aria-hidden="true">
+                <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
+            </SvwsUiIcon>
+        </span>
+    </button>
 
     <SvwsUiModal ref="modal">
         <template #modalTitle>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, reactive, Ref, ref, watch} from 'vue'
-
+    import {computed, onMounted, reactive, Ref, ref, watch, VNodeRef} from 'vue'
+    import { getCurrentInstance } from 'vue'
     import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
@@ -11,6 +11,8 @@
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
     import TableSortButton from '../Components/TableSortButton.vue'
     import { tableCellEditable, tableCellDisabled } from '../Helpers/pages.helper'
+
+    type CellRef = VNodeRef | undefined
 
     import {
         baseColumns,
@@ -86,11 +88,12 @@
         fach: 0,
     })
 
-
     const noteFilter = ref();
 
 
     const columns = ref<Column[]>([])
+
+    let tableRedrawKey: number = 0
 
     const drawTable = (): void => {
         const pushTable = (pushable: boolean, array: Array<Column>): void => {
@@ -107,6 +110,8 @@
         pushTable(toggles.mahnungen, mahnungenColumns)
         pushTable(true, fehlstundenColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+
+        tableRedrawKey++;
     }
 
     watch(toggles, (): void => drawTable())
@@ -255,6 +260,7 @@
     const lowScore = (note: string): boolean => lowScoreArray.includes(note)
 
     let leistungEdit = ref(false)
+
     let lehrerCanOverrideFachlehrer = (usePage().props.value.settings.matrix['lehrer_can_override_fachlehrer'] == 1)
 
     const leistungEditToggle = () => {
@@ -266,8 +272,6 @@
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator, leistungEdit.value)
     const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => disabled(leistung.matrix[permission])
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
-    const test = () => alert(123)
-
 </script>
 
 <template>
@@ -320,7 +324,7 @@
                     ></SvwsUiMultiSelect>
                 </div>
             </header>
-            <SvwsUiDataTable clickable :noData="false">
+            <SvwsUiDataTable clickable :noData="true">
                 <template #header>
                     <SvwsUiDataTableRow thead>
                         <SvwsUiDataTableCell thead>
@@ -359,8 +363,9 @@
                     </SvwsUiDataTableRow>
                 </template>
 
-                <template #body="{ rows }" >
-                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index">
+                <template #body="{ rows }">
+                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="tableRedrawKey">
+
                         <SvwsUiDataTableCell disabled @click="select(row)">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
@@ -380,25 +385,43 @@
                             <span class="truncate">TBD</span>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_noten)">
-                            <NoteInput :leistung="row" :key="row.id" v-if="!disabled(row.matrix.editable_noten)"></NoteInput>
-                            <strong :class="{ 'low-score' : lowScore(row.note) }" v-else>
-                                {{ row.note }}
-                            </strong>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen">
-                            <MahnungIndicator :leistung="row" :key="row.id" :disabled="false" v-if="!disabled(row.matrix.editable_mahnungen)"></MahnungIndicator>
-                            <MahnungIndicatorReadonly :leistung="row" :disabled="true" v-else></MahnungIndicatorReadonly>
-                        </SvwsUiDataTableCell>
+                            <NoteInput 
+                                :leistung="row" 
+                                :disabled="disabled(row.matrix.editable_noten)"
+                                :key="row.id"  
+                                :row-index="index"
+                            ></NoteInput>
+                        </SvwsUiDataTableCell>                        
+
+                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen">                                  
+                            <MahnungIndicator :disabled="disabled(row.matrix.editable_mahnungen)" :leistung="row" :row-index="index"></MahnungIndicator>
+            
+                        </SvwsUiDataTableCell>     
+    
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
-                            <FehlstundenInput :model="row" column="fs" v-if="!disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                            <strong v-else>{{ row.fs }}</strong>
+                            <FehlstundenInput 
+                                :model="row" 
+                                column="fs" 
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"                             
+                                :row-index="index"
+                            />
                         </SvwsUiDataTableCell>
+    
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
-                            <FehlstundenInput :model="row" column="fsu" v-if="!disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                            <strong v-else>{{ row.fsu }}</strong>
-                        </SvwsUiDataTableCell>
+                            <FehlstundenInput 
+                                :model="row" 
+                                column="fsu" 
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"                             
+                                :row-index="index"
+                            />
+                        </SvwsUiDataTableCell> 
+
                         <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fb)" @click="select(row)" v-if="toggles.bemerkungen">
-                             <BemerkungIndicator :model="row" :bemerkung="row.fachbezogeneBemerkungen"></BemerkungIndicator>
+                            <BemerkungIndicator 
+                                :model="row" 
+                                :bemerkung="row.fachbezogeneBemerkungen"                         
+                                :row-index="index"
+                            ></BemerkungIndicator>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>

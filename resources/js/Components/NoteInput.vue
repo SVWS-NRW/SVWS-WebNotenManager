@@ -1,4 +1,4 @@
-<script setup lang="ts"> // ok
+<script setup lang="ts">
     import { watch, computed, reactive } from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
     import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios'
@@ -6,7 +6,15 @@
 
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
 
-    const props = defineProps(['leistung', 'disabled'])
+    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
+
+    let props = defineProps<{
+        leistung: Leistung,
+        disabled: boolean,
+        rowIndex: number,
+    }>()
+
+    let element: CellRef = undefined
 
     let leistung = reactive<Leistung>(props.leistung)
     let timeout: ReturnType<typeof setTimeout>
@@ -25,7 +33,10 @@
         .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))
-    const isDisabled = (): boolean => usePage().props.value.note_entry_disabled || props.disabled
+
+    const isDisabled = (): boolean => Boolean(usePage().props.value && usePage().props.value.note_entry_disabled) || props.disabled
+
+    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
 
 </script>
 
@@ -37,6 +48,14 @@
             v-model="leistung.note"
             :valid="!lowScore"
             :headless="true"
+
+            @keydown.up.stop.prevent="navigate('up')"
+            @keydown.down.stop.prevent="navigate('down')"
+            @keydown.enter.stop.prevent="navigate('down')"
+            @keydown.left.stop.prevent="navigate('left')"
+            @keydown.right.stop.prevent="navigate('right')"
+            @keydown.tab.stop.prevent="navigate('right')"
+            :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
         ></SvwsUiTextInput>
     </strong>
 </template>

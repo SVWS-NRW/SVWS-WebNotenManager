@@ -20,7 +20,7 @@ const searchFilter = (floskel: Floskel | FachbezogeneFloskel, searchTerm: string
 	return search(floskel.kuerzel) || search(floskel.text)
 }
 
-const formatStringBasedOnGender = (text: string, schueler: Schueler | Leistung): string => {
+const formatStringBasedOnGender = (text: string | null, schueler: Schueler | Leistung): string => {
 	if (!text) return ''
 
 	const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/
