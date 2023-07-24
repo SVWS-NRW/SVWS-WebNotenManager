@@ -345,7 +345,7 @@
                     ></SvwsUiMultiSelect>
                 </div>
             </header>
-            <SvwsUiDataTable clickable :noData="false">
+            <SvwsUiDataTable clickable :noData="false" :key="tableRedrawKey">
                 <template #header>
                     <SvwsUiDataTableRow thead>
             <!-- TODO: use event for return values-->
@@ -386,7 +386,7 @@
                 </template>
 
                 <template #body="{ rows }">
-                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="tableRedrawKey">
+                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index">
                         <SvwsUiDataTableCell disabled @click="select(row)">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
@@ -410,7 +410,6 @@
                             <NoteInput 
                                 :leistung="row" 
                                 :disabled="disabled(row.matrix.editable_noten)"
-                                :key="row.id"  
                                 :row-index="index"
                             ></NoteInput>
                         </SvwsUiDataTableCell>                        

@@ -1,13 +1,10 @@
 <script setup lang="ts">
     import { watch, reactive } from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
-
     import axios from 'axios'
     import { Leistung } from '../Interfaces/Leistung'
     import { Schueler } from '../Interfaces/Schueler'
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
-
-
     import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
  
 
