@@ -44,11 +44,11 @@
     <strong :class="{ 'low-score' : lowScore }" >
         <span v-if="isDisabled()">{{ leistung.note }}</span>
         <SvwsUiTextInput
+            :disabled="isDisabled()"
             v-else
             v-model="leistung.note"
             :valid="!lowScore"
             :headless="true"
-
             @keydown.up.stop.prevent="navigate('up')"
             @keydown.down.stop.prevent="navigate('down')"
             @keydown.enter.stop.prevent="navigate('down')"

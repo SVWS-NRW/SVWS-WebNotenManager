@@ -12,7 +12,7 @@
     import NoteInput from '../Components/NoteInput.vue'
     import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
     import TableSortButton from '../Components/TableSortButton.vue'
-    import { tableCellEditable, tableCellDisabled } from '../Helpers/pages.helper'
+    import { tableCellDisabled } from '../Helpers/pages.helper'
     import {navigateTable, Payload} from '../Helpers/tableNavigationHelper'
 
     type CellRef = VNodeRef | undefined
@@ -290,6 +290,7 @@
     }
 
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator, leistungEdit.value)
+
     const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => disabled(leistung.matrix[permission])
     const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
 </script>
@@ -310,7 +311,6 @@
         </template>
 
         <template #main>
-
             <header>
                 <div id="headline">
                     <h2 class="text-headline">{{ title }}</h2>
@@ -380,33 +380,33 @@
                             <TableSortButton :presentColumn="{sortBy:'fsu'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FSU</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen">
-                            <TableSortButton :presentColumn="{sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FB</TableSortButton>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
 
                 <template #body="{ rows }">
-                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index">
-                        <SvwsUiDataTableCell disabled @click="select(row)">
+                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index" >
+                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell disabled @click="select(row)">
+                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
                             <span class="truncate">{{ row.name }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell disabled @click="select(row)">
+                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
                             <strong class="truncate">{{ row.fach }}</strong>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell disabled @click="select(row)">
+                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
                             <span class="truncate">{{ row.kurs }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell disabled v-if="toggles.fachlehrer" @click="select(row)">
+                        <SvwsUiDataTableCell v-if="toggles.fachlehrer" @click="select(row)" :disabled="!leistungEdit">
                             <span class="truncate">{{ row.lehrer }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_teilnoten)" v-if="toggles.teilleistungen">
+                        <SvwsUiDataTableCell v-if="toggles.teilleistungen" :disabled="!leistungEdit">
                             <span class="truncate">TBD</span>
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_noten)">
+                        <SvwsUiDataTableCell :disabled="!leistungEdit">
                             <NoteInput 
                                 :leistung="row" 
                                 :disabled="disabled(row.matrix.editable_noten)"
@@ -414,11 +414,11 @@
                             ></NoteInput>
                         </SvwsUiDataTableCell>                        
 
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_mahnungen)" v-if="toggles.mahnungen">                                  
+                        <SvwsUiDataTableCell v-if="toggles.mahnungen" :disabled="!leistungEdit">                                  
                             <MahnungIndicator :disabled="disabled(row.matrix.editable_mahnungen)" :leistung="row" :row-index="index"></MahnungIndicator>
                         </SvwsUiDataTableCell>     
     
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
+                        <SvwsUiDataTableCell :disabled="!leistungEdit">
                             <FehlstundenInput 
                                 :model="row" 
                                 column="fs" 
@@ -427,7 +427,7 @@
                             />
                         </SvwsUiDataTableCell>
     
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)">
+                        <SvwsUiDataTableCell :disabled="!leistungEdit">
                             <FehlstundenInput 
                                 :model="row" 
                                 column="fsu" 
@@ -435,7 +435,8 @@
                                 :row-index="index"
                             />
                         </SvwsUiDataTableCell> 
-                        <SvwsUiDataTableCell :disabled="disabled(row.matrix.editable_fb)" @click="select(row)" v-if="toggles.bemerkungen">
+
+                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" :disabled="!leistungEdit">
                             <BemerkungIndicator 
                                 :model="row" 
                                 :bemerkung="row.fachbezogeneBemerkungen"                         
@@ -450,7 +451,6 @@
 </template>
 
 <style scoped>
-
     .truncate {
         @apply ui-truncate
     }
