@@ -1,7 +1,8 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, reactive, Ref, ref, watch, VNodeRef} from 'vue'
+    import {computed, onMounted, reactive, Ref, ref, watch, VNodeRef, provide} from 'vue'
     import { getCurrentInstance } from 'vue'
+
     import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
@@ -181,36 +182,48 @@
         return leistung
     })
 
-    const direction = ref(true);
-    const sortBy: Ref<SortTableColumns> = ref('name');
+    const sortRef: Ref<SortTableColumns> = ref({
+        direction: true,
+        sortBy: 'name'
+    })
+
+    provide('sortRef', sortRef)
+
+    const updateSortRef = (newSortRef: SortTableColumns) => {
+        sortRef.value.sortBy = newSortRef.sortBy
+        sortRef.value.direction =newSortRef.direction
+    }
+
 
     const filteredLeistungen = computed(() => state.leistungen
         .sort(function(a: Leistung, b: Leistung) {
-            if (a[sortBy.value] === null) {
+            const aSortRefSortBy = a[sortRef.value.sortBy]
+            const bSortRefSortBy = b[sortRef.value.sortBy]
+            if (aSortRefSortBy === null) {
                 return 1;
             }
 
-            if (a[sortBy.value] === '') {
+            if (aSortRefSortBy === '') {
                 return 1;
             }
 
-            if (b[sortBy.value] === null) {
+            if (bSortRefSortBy === null) {
                 return -1;
             }
 
-            if (b[sortBy.value] === '') {
+            if (bSortRefSortBy === '') {
                 return -1;
             }
 
-            let x: string | Number = a[sortBy.value].toString();
-            let y: string | Number = b[sortBy.value].toString();
+            let x: string | Number = aSortRefSortBy.toString();
+            let y: string | Number = bSortRefSortBy.toString();
 
             if (x > y) {
-                return direction.value ? 1 : -1;
+                return sortRef.value.direction ? 1 : -1;
             }
 
             if (x < y) {
-                return direction.value ? -1 : 1;
+                return sortRef.value.direction ? -1 : 1;
             }
 
             return 0;
@@ -324,41 +337,42 @@
                     ></SvwsUiMultiSelect>
                 </div>
             </header>
-            <SvwsUiDataTable clickable :noData="true">
+            <SvwsUiDataTable clickable :noData="false">
                 <template #header>
                     <SvwsUiDataTableRow thead>
+            <!-- TODO: use event for return values-->
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Klasse" dbName="klasse" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn= "{sortBy:'klasse'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Name" dbName="name" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'name'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Fach" dbName="fach" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fach'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Fach</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                         <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Kurs" dbName="kurs" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'kurs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Kurs</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Lehrer" dbName="lehrer" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'lehrer'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Lehrer</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">
                             Teilnoten
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead>
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Note" dbName="note" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'note'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Note</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="Mahnung" dbName="mahnung" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            Mahnung
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="FS" dbName="fs" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FS</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="FSU" dbName="fsu" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fsu'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FSU</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen">
-                            <TableSortButton :sortBy="sortBy" :descDirection="direction" displayName="FB" dbName="fachbezogeneBemerkungen" @clicked="(clickedTable, newDirection) => { sortBy = clickedTable, direction = newDirection }"></TableSortButton>
+                            <TableSortButton :presentColumn="{sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
