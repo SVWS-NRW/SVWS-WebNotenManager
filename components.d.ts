@@ -7,10 +7,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    MdiArrowDown: typeof import('~icons/mdi/arrow-down')['default']
     MdiArrowDownThick: typeof import('~icons/mdi/arrow-down-thick')['default']
     MdiArrowUpDown: typeof import('~icons/mdi/arrow-up-down')['default']
-    MdiArrowUpDownBoldOutline: typeof import('~icons/mdi/arrow-up-down-bold-outline')['default']
     MdiArrowUpThick: typeof import('~icons/mdi/arrow-up-thick')['default']
     MdiBookOpenOutline: typeof import('~icons/mdi/book-open-outline')['default']
     MdiCheckboxBlankOutline: typeof import('~icons/mdi/checkbox-blank-outline')['default']

@@ -19,7 +19,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 		->prefix('einstellungen')
 		->name('settings.')
 		->group(function () {
-			Route::inertia('/', 'Settings/Index')->name('index');
+			Route::inertia('/', 'Settings/Matrix')->name('index');
 			Route::inertia('schule', 'Settings/School')->name('school');
 			Route::inertia('filter', 'Settings/Filter')->name('filter');
 			Route::inertia('matrix', 'Settings/Matrix')->name('matrix');
