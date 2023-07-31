@@ -52,7 +52,8 @@
                     <p>verarbeitet im Auftrag zu diesem Zweck die unten genannten Daten.</p>
 
                     <h3 class="headline-3">Speicherung</h3>
-                    <p>Welche Daten werden verarbeitet? Sofern nicht anders angegeben, werden nachfolgend erläuterte Daten bei gespeichert:</p>
+                    <p>Welche Daten werden verarbeitet?</p>
+                    <p>Sofern nicht anders angegeben, werden nachfolgend erläuterte Daten bei gespeichert:</p>
 
                     <h3 class="headline-3">Log-Dateien</h3>
                     <p>Bei jedem Zugriff auf Inhalte des Internetangebotes werden dort vorübergehend Daten in so genannten Log-Dateien gespeichert, die möglicherweise eine Identifizierung zulassen. Die folgenden Daten werden bei jedem Aufruf der Internetseite erhoben:</p>
