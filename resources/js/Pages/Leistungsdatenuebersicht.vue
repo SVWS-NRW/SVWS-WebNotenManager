@@ -342,7 +342,6 @@
             <SvwsUiDataTable clickable :noData="false" :key="tableRedrawKey">
                 <template #header>
                     <SvwsUiDataTableRow thead>
-            <!-- TODO: use event for return values-->
                         <SvwsUiDataTableCell thead>
                             <TableSortButton :presentColumn= "{sortBy:'klasse'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
