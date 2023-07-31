@@ -19,80 +19,79 @@ use App\Http\Controllers\SecureTransferController;
 use App\Services\DataImportService;
 use Illuminate\Support\Facades\Route;
 
-//Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
-
-
-
 Route::middleware('auth:sanctum')->group(function () {
 	Route::controller(KlassenMatrix::class)
 		->prefix('matrix')
+		->middleware('administrator')
 		->name('api.matrix.')
 		->group(function () {
-			Route::get(uri: 'index', action: 'index')->name(name: 'index');
-			Route::put(uri: 'update/{klasse}', action: 'update')->name(name: 'update');
-		}); // TODO: Admin middleware
+			Route::get('index', 'index')->name('index');
+			Route::put('update', 'update')->name('update');
+		}); 
 
 	Route::controller(SettingController::class)
 		->prefix('settings')
 		->name('api.settings.')
+		->middleware('administrator')
 		->group(function () {
-			Route::get(uri: 'index/{group}', action: 'index')->name(name: 'index');
-			Route::put(uri: 'update/{group}', action: 'update')->name(name: 'update');
-			Route::put(uri: 'bulk-update/{group}', action: 'bulkUpdate')->name(name: 'bulk_update');
-		}); // TODO: Admin middleware
+			Route::get('index/{group}', 'index')->name('index');
+			Route::put('update/{group}', 'update')->name('update');
+			Route::put('bulk/{group}', 'bulk')->name('bulk');
+			Route::put('bulk-update/{group}', 'bulkUpdate')->name('bulk_update');
+		}); 
 
 	Route::controller(Fehlstunden::class)
 		->name('api.fehlstunden.')
 		->prefix('fehlstunden.')
 		->group(function(): void {
-			Route::post(uri: 'fs/{leistung}', action: 'fs')->name(name: 'fs');
-			Route::post(uri: 'fsu/{leistung}', action: 'fsu')->name(name: 'fsu');
-			Route::post(uri: 'gfs/{schueler}', action: 'gfs')->name(name: 'gfs');
-			Route::post(uri: 'gfsu/{schueler}', action: 'gfsu')->name(name: 'gfsu');
+			Route::post('fs/{leistung}', 'fs')->name('fs');
+			Route::post('fsu/{leistung}', 'fsu')->name('fsu');
+			Route::post('gfs/{schueler}', 'gfs')->name('gfs');
+			Route::post('gfsu/{schueler}', 'gfsu')->name('gfsu');
 		});
 
-    Route::post(uri: 'fachbezogene-bemerkung/{leistung}', action: FachbezogeneBemerkung::class)
-		->name(name: 'api.fachbezogene_bemerkung');
+    Route::post('fachbezogene-bemerkung/{leistung}', FachbezogeneBemerkung::class)
+		->name('api.fachbezogene_bemerkung');
 
-    Route::post(uri: 'mahnung/{leistung}', action: Mahnungen::class)
-		->name(name: 'api.mahnung');
+    Route::post('mahnung/{leistung}', Mahnungen::class)
+		->name('api.mahnung');
 
-	Route::post(uri: 'noten/{leistung}', action: Noten::class)
-		->name(name: 'api.noten');
+	Route::post('noten/{leistung}', Noten::class)
+		->name('api.noten');
 
-	Route::post(uri: 'schueler-bemerkung/{schueler}', action: SchuelerBemerkung::class)
-		->name(name: 'api.schueler_bemerkung');
+	Route::post('schueler-bemerkung/{schueler}', SchuelerBemerkung::class)
+		->name('api.schueler_bemerkung');
 
-    Route::get(uri: 'floskeln/{floskelgruppe}', action: Floskeln::class)
-		->name(name: 'api.floskeln');
+    Route::get('floskeln/{floskelgruppe}', Floskeln::class)
+		->name('api.floskeln');
 
-    Route::get(uri: 'fachbezogene-floskeln/{fach}', action: FachbezogeneFloskeln::class)
-		->name(name: 'api.fachbezogene_floskeln');
+    Route::get('fachbezogene-floskeln/{fach}', FachbezogeneFloskeln::class)
+		->name('api.fachbezogene_floskeln');
 
-	Route::get(uri: 'leistungsdatenuebersicht', action: Leistungsdatenuebersicht::class)
-		->name(name: 'api.leistungsdatenuebersicht');
+	Route::get('leistungsdatenuebersicht', Leistungsdatenuebersicht::class)
+		->name('api.leistungsdatenuebersicht');
 
-	Route::get(uri: 'mein-unterricht', action: MeinUnterricht::class)
-		->name(name:'api.mein_unterricht');
+	Route::get('mein-unterricht', MeinUnterricht::class)
+		->name('api.mein_unterricht');
 
-    Route::get(uri: 'klassenleitung', action: Klassenleitung::class)
-		->name(name: 'api.klassenleitung');
+    Route::get('klassenleitung', Klassenleitung::class)
+		->name('api.klassenleitung');
 });
 
 
 // TODO: To be removed, temporary testing route
 // TODO: Testing
-Route::get(uri: 'export', action: ExportController::class)->name('api.export'); // Rename namespace?
-Route::get(uri: 'import/gzip', action: [ImportController::class, 'gzipEnm']);
-Route::post(uri: 'import/gzip', action: [ImportController::class, 'gzip']);
-Route::post(uri: 'import', action: [ImportController::class, 'request']);
-Route::get(uri: 'import', action: [ImportController::class, 'curl']);
-Route::get(uri: 'truncate', action: [DataImportService::class, 'truncate']);
+Route::get('export', ExportController::class)->name('api.export'); // Rename namespace?
+Route::get('import/gzip', [ImportController::class, 'gzipEnm']);
+Route::post('import/gzip', [ImportController::class, 'gzip']);
+Route::post('import', [ImportController::class, 'request']);
+Route::get('import', [ImportController::class, 'curl']);
+Route::get('truncate', [DataImportService::class, 'truncate']);
 
 Route::get('import/aes', AesController::class);
 
 Route::controller(SecureTransferController::class)->prefix('secure')->group(function(): void {
-	Route::post(uri: 'import', action: 'import');
-	Route::get(uri: 'export', action: 'export');
+	Route::post('import', 'import');
+	Route::get('export', 'export');
 });
 

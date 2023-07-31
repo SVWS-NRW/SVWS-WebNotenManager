@@ -63,13 +63,11 @@ class Jahrgang extends Model
 	public static function orderedWithKlassenOrdered(string $direction = 'asc'): Collection
 	{
 		return self::query()
-			->with(
-				relations: 'klassen',
-				callback: fn (HasMany $related): HasMany =>
-					$related->orderBy(column: 'sortierung', direction: $direction
-				)
+			->whereHas('klassen')
+			->with('klassen', fn (HasMany $klassen): HasMany =>
+				$klassen->orderBy('sortierung', $direction)
 			)
-			->orderBy(column: 'sortierung', direction: $direction)
+			->orderBy('sortierung', $direction)
 			->get();
 	}
 

@@ -11,27 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SettingController extends Controller
 {
-    public function index(string $group): JsonResponse // TODO: Test
+    public function index(string $group): JsonResponse 
 	{
-		abort_unless(
-			boolean: auth()->check() && auth()->user()->isAdministrator(),
-			code: Response::HTTP_FORBIDDEN,
-		);
-
-		return response()->json(
-			data: $this->getSetting(group: $group)
-		);
+		return response()->json($this->getSetting($group));
 	}
 
     public function update(string $group): JsonResponse
 	{
-
-		abort_unless(
-			boolean: auth()->check() && auth()->user()->isAdministrator(),
-			code: Response::HTTP_FORBIDDEN,
-		);
-
-		$setting = $this->getSetting(group: $group);
+		$setting = $this->getSetting($group);
 		$setting->{request()->column} = request()->value;
 		$setting->save();
 
@@ -40,24 +27,21 @@ class SettingController extends Controller
 
     public function bulkUpdate(string $group): JsonResponse
 	{
-		abort_unless(
-			boolean: auth()->check() && auth()->user()->isAdministrator(),
-			code: Response::HTTP_FORBIDDEN,
+		$setting = $this->getSetting($group);
+
+		collect(request()->settings)->each(
+			fn ($value, $key): string => $setting->$key = $value
 		);
-
-		$setting = $this->getSetting(group: $group);
-
-		collect(value: request()->settings['_value'])
-			->each(callback: fn ($value, $key): string => $setting->$key = $value);
 
 		$setting->save();
 
 		return response()->json(status: Response::HTTP_NO_CONTENT);
 	}
 
-	private function getSetting(string $group): FilterSettings|MatrixSettings|GeneralSettings
-	{
-		return app(abstract: match ($group) {
+	private function getSetting(
+		string $group
+	): FilterSettings | MatrixSettings | GeneralSettings {
+		return app(match ($group) {
 			'filter' => FilterSettings::class,
 			'matrix' => MatrixSettings::class,
 			default => GeneralSettings::class,

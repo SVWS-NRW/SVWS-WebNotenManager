@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -92,14 +93,21 @@ class Klasse extends Model
 
 	public $timestamps = false;
 
+
+
+	public function jahrgang(): BelongsTo
+	{
+		return $this->belongsTo(Jahrgang::class, 'idJahrgang');
+	}
+
 	public function lerngruppen(): HasMany
 	{
-		return $this->hasMany(related: Lerngruppe::class);
+		return $this->hasMany(Lerngruppe::class);
 	}
 
     public function klassenlehrer(): BelongsToMany
     {
-        return $this->belongsToMany(related: User::class, table: 'klasse_user');
+        return $this->belongsToMany(User::class, 'klasse_user');
     }
 
 	public static function notBelongingToJahrgangOrdered(string $direction = 'asc'): Collection

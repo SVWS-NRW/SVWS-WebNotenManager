@@ -8,31 +8,44 @@ use App\Http\Resources\Matrix\KlasseResource;
 use App\Models\Jahrgang;
 use App\Models\Klasse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\Response;
 
 class KlassenMatrix extends Controller
 {
     public function index(): JsonResponse
 	{
-		$jahrgaenge =  JahrgangResource::collection(resource: Jahrgang::orderedWithKlassenOrdered())
-			->collection
-			->groupBy(groupBy: 'stufe');
+		$jahrgaenge = JahrgangResource::collection(
+			Jahrgang::orderedWithKlassenOrdered()
+		)->collection->groupBy('stufe');
 
-		$klassen = KlasseResource::collection(resource: Klasse::notBelongingToJahrgangOrdered());
+		$klassen = KlasseResource::collection(
+			Klasse::notBelongingToJahrgangOrdered()
+		);
 
-		return response()->json(data: [
-			'jahrgaenge' => $jahrgaenge,
-			'klassen' => $klassen,
-		]);
+		return response()->json(
+			['jahrgaenge' => $jahrgaenge, 'klassen' => $klassen], 
+			Response::HTTP_OK
+		);
 	}
 
-	public function update(Klasse $klasse): JsonResponse
+	public function update(): JsonResponse
 	{
-		$klasse->update(attributes: [
-			request()->key => request()->value
-		]);
+		$only = [
+			'editable_teilnoten',
+			'editable_noten',
+			'editable_mahnungen',
+			'editable_fehlstunden',
+			'toggleable_fehlstunden',
+			'editable_fb',
+			'editable_asv',
+			'editable_aue',
+			'editable_zb',
+		];
+
+		collect(request()->klassen)->each(fn (array $klasse) => 
+			Klasse::find($klasse['id'])->update(Arr::only($klasse, $only))
+		);
 
 		return response()->json(status: Response::HTTP_NO_CONTENT);
 	}

@@ -135,8 +135,6 @@
         filterOptions.faecher = setFilters(state.leistungen, 'fach')
     }
 
-
-
     const setFilters = (data, column: string, hasEmptyValue: boolean = true, hasAllValue: boolean = true): {
         label: string, index: string | null | number
     }[] => {
@@ -176,13 +174,9 @@
 
     const getLeistungen = (): AxiosPromise => axios
         .get(route('api.leistungsdatenuebersicht'))
-        .then((response: AxiosResponse): AxiosResponse => state.leistungen = mapLeistungen(response.data))
+        .then((response: AxiosResponse): AxiosResponse => state.leistungen = response.data)
         .finally(() => getFilters())
 
-    const mapLeistungen = (data) => data.map((leistung: Leistung): Leistung => {
-        leistung.name = `${leistung.nachname}, ${leistung.vorname}`
-        return leistung
-    })
 
     const sortRef: Ref<SortTableColumns> = ref({
         direction: true,

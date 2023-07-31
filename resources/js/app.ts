@@ -8,6 +8,8 @@ import { createApp, h, Plugin } from 'vue'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createInertiaApp, InertiaApp, InertiaAppProps } from '@inertiajs/inertia-vue3'
 import { createPinia } from 'pinia'
+import eventBus from '@/event-bus'
+
 
 const pinia = createPinia()
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel'
@@ -18,14 +20,16 @@ if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.match
 	document.documentElement.classList.remove('dark', 'theme-dark')
 }
 
+
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({el, app, props, plugin}: { el: Element, app: InertiaApp, props: InertiaAppProps, plugin: Plugin }): void | any {
         return createApp({render: () => h(app, props)})
-            // .use(SvwsUiPlugin)
             .use(plugin)
             .use(createPinia())
+            .provide('$eventBus', eventBus) 
             .mixin({ methods: {route}})
             .mount(el);
     },

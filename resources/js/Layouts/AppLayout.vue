@@ -3,6 +3,7 @@
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
     import { Auth } from '../Interfaces/Auth'
+    import Toast from '@/Components/Toast.vue';
 
     import {
         SvwsUiAppLayout,
@@ -48,6 +49,7 @@
                 </template>
 
                 <template #default>
+
                     <SvwsUiMenuItem
                         v-if="visible('mein_unterricht')"
                         :active="activePage('mein_unterricht')"
@@ -97,6 +99,7 @@
         </template>
 
         <template #main>
+            <toast />
             <slot name="main" />
         </template>
 

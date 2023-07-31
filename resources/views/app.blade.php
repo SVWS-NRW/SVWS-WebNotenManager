@@ -3,14 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
-        <link rel="icon" href="../../favicon.svg">
         @vite('resources/js/app.ts')
         @routes
         @inertiaHead
     </head>
-    <body class="ui-font-sans ui-antialiased">
+    <body class="ui-font-sans ui-antialiased relative">
         @inertia
     </body>
 </html>
