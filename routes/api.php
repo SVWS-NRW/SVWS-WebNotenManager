@@ -36,7 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
 		->group(function () {
 			Route::get('index/{group}', 'index')->name('index');
 			Route::put('update/{group}', 'update')->name('update');
-			Route::put('bulk/{group}', 'bulk')->name('bulk');
 			Route::put('bulk-update/{group}', 'bulkUpdate')->name('bulk_update');
 		}); 
 

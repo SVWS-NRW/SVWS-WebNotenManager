@@ -99,7 +99,7 @@
     }
 
     const saveSettings = (): Promise<void> => axios
-        .put(route('api.settings.bulk', {group: 'matrix'}), {settings: settings.value})
+        .put(route('api.settings.bulk_update', {group: 'matrix'}), {settings: settings.value})
         .then((): void => apiSuccess())
         .catch((error: any): void => apiError(error))  
         
@@ -114,8 +114,7 @@
         'editable_asv',
         'editable_aue',
         'editable_zb',
-    ]    
-
+    ]   
 
     const toggleKlasse = (klasse: Klasse) => toggleable.forEach(
         (item: ToggleableKeys): boolean => klasse[item] = !klasse[item]
@@ -134,9 +133,6 @@
 
     const toggleGroupColumn = (jahrgaenge: Jahrgang[], column: ToggleableKeys) => 
         jahrgaenge.forEach((jahrgang: Jahrgang): void => toggleJahrgangColumn(jahrgang, column))
-
-
-
 </script>
 
 <template>
