@@ -167,7 +167,7 @@
                                 <SvwsUiDataTableCell thead tooltip="Fehlstunden">FS</SvwsUiDataTableCell>
                                 <SvwsUiDataTableCell thead tooltip="Fehlstunden/Gesamtfehlstunden">FS/GFS</SvwsUiDataTableCell>
                                 <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen">FB</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Arbeits und Sozialverhalten">ASV</SvwsUiDataTableCell>
+                                <SvwsUiDataTableCell thead tooltip="Arbeits- und Sozialverhalten">ASV</SvwsUiDataTableCell>
                                 <SvwsUiDataTableCell thead tooltip="Außerunterrichtliches Engagement">AUE</SvwsUiDataTableCell>
                                 <SvwsUiDataTableCell thead tooltip="Zeugnisbemerkung">ZB</SvwsUiDataTableCell>
                             </SvwsUiDataTableRow>

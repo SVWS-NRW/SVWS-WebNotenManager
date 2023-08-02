@@ -42,7 +42,7 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
     ])
 
     const types: { asv: string, aue: string, zb: string } = {
-        asv: 'Arbeits und Sozialverhalten',
+        asv: 'Arbeits- und Sozialverhalten',
         aue: 'Außerunterrichtliches Engagement',
         zb: 'Zeugnisbemerkung',
     }

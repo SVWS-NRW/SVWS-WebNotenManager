@@ -363,8 +363,8 @@
                         <SvwsUiDataTableCell thead>
                             <TableSortButton :presentColumn="{sortBy:'note'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Note</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead v-if="toggles.mahnungen">
-                            Mahnung
+                        <SvwsUiDataTableCell thead tooltip="Mahnung" v-if="toggles.mahnungen">
+                            M
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
                             <TableSortButton :presentColumn="{sortBy:'fs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FS</TableSortButton>
