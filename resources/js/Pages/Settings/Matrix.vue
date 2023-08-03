@@ -149,7 +149,7 @@
                         <SvwsUiTooltip>
                             Die Klassenleitung darf alle Leistungsdaten bearbeiten.
                             <template #content>
-                                "Die Klassenleitung darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten, 
+                                Die Klassenleitung darf als Vertretung einer Fachlehrkraft auch die Noten, Teilnoten, 
                                 usw. der Fachlehrkraft editieren. Der Button zum Editieren damit für alle Klassenleitungen sichtbar.
                             </template>
                         </SvwsUiTooltip>
