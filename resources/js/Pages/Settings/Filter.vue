@@ -1,15 +1,10 @@
 <script setup lang="ts">
     import { Ref, ref } from 'vue'
-    import AppLayout from '../../Layouts/AppLayout.vue'
+    import AppLayout from '@/Layouts/AppLayout.vue'
     import axios, { AxiosResponse } from 'axios'
-    import SettingsMenu from '../../Components/SettingsMenu.vue'
-
-    import {
-        SvwsUiTextInput,
-        SvwsUiButton,
-        SvwsUiCheckbox,
-    } from '@svws-nrw/svws-ui'
-
+    import { apiError, apiSuccess } from '@/Helpers/api.helper'
+    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui'
+    import SettingsMenu from '@/Components/SettingsMenu.vue'
 
     let props = defineProps({
         auth: Object,
@@ -30,7 +25,12 @@
         .then((response: AxiosResponse) => settings.value = response.data)
 
     const saveSettings = () => axios
-        .put(route('api.settings.bulk_update', {group: 'filter'}),  {settings: settings})
+        .put(route('api.settings.bulk_update', {group: 'filter'}),  {settings: settings.value})
+        .then((): void => apiSuccess())
+        .catch((error: any): void => apiError(
+            error,
+            'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'
+        ))
 </script>
 
 <template>

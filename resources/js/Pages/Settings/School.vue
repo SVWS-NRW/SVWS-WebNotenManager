@@ -1,10 +1,10 @@
 <script setup lang="ts">
     import { ref } from 'vue'
-    import AppLayout from '../../Layouts/AppLayout.vue'
+    import AppLayout from '@/Layouts/AppLayout.vue'
     import axios, {AxiosResponse} from 'axios'
-    import SettingsMenu from '../../Components/SettingsMenu.vue'
-
-    import { SvwsUiTextInput, SvwsUiButton, SvwsUiCheckbox} from '@svws-nrw/svws-ui'
+    import SettingsMenu from '@/Components/SettingsMenu.vue'
+    import { apiError, apiSuccess } from '@/Helpers/api.helper';
+    import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui'
 
     let props = defineProps({
         auth: Object,
@@ -16,7 +16,12 @@
         .then((response: AxiosResponse) => settings.value = response.data)
 
     const saveSettings = () => axios
-        .put(route('api.settings.bulk_update', {group: 'general'}),  {settings: settings})
+        .put(route('api.settings.bulk_update', {group: 'general'}),  { settings: settings.value })
+        .then((): void => apiSuccess())
+        .catch((error: any): void => apiError(
+            error,
+            'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'
+        ))
 </script>
 
 <template>
@@ -39,6 +44,7 @@
                     <h3 class="headline-3">Schulleitung</h3>
                     <SvwsUiTextInput v-model="settings.management_name" placeholder="Name Schulleitung"></SvwsUiTextInput>
                     <SvwsUiTextInput v-model="settings.management_telephone" placeholder="Sekretariat"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.management_email" placeholder="E-Mail-Adresse"></SvwsUiTextInput>
                 </div>
 
                 <div>
