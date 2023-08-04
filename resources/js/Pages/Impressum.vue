@@ -22,7 +22,7 @@
             <template #main>
                 <main>
                     <h1 class="headline-1">Impressum</h1>
-                    <p>{{ settings.general.name }} <br> {{ settings.general.address }}</p>
+                    <p>{{ settings.general.name }} <br> {{ settings.general.address }} <br> {{ settings.general.email }}</p>
 
                     <h2 class="headline-2">Schulleitung</h2>
                     <p>{{ settings.general.management_name }} <br> Telefon-Nr.: {{ settings.general.management_telephone }} <br> E-Mail: {{ settings.general.management_email }}</p>
