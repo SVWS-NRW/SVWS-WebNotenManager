@@ -1,8 +1,7 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
+    import { computed, onMounted, reactive, Ref, ref, watch, VNodeRef, provide } from 'vue'
 
-    import {computed, onMounted, reactive, Ref, ref, watch, VNodeRef, provide} from 'vue'
-    import { getCurrentInstance } from 'vue'
 
     import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
@@ -401,39 +400,39 @@
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell :disabled="!leistungEdit">
-                            <NoteInput 
-                                :leistung="row" 
+                            <NoteInput
+                                :leistung="row"
                                 :disabled="disabled(row.matrix.editable_noten)"
                                 :row-index="index"
                             ></NoteInput>
-                        </SvwsUiDataTableCell>                        
+                        </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell v-if="toggles.mahnungen" :disabled="!leistungEdit">                                  
+                        <SvwsUiDataTableCell v-if="toggles.mahnungen" :disabled="!leistungEdit">
                             <MahnungIndicator :disabled="disabled(row.matrix.editable_mahnungen)" :leistung="row" :row-index="index"></MahnungIndicator>
-                        </SvwsUiDataTableCell>     
-    
+                        </SvwsUiDataTableCell>
+
                         <SvwsUiDataTableCell :disabled="!leistungEdit">
-                            <FehlstundenInput 
-                                :model="row" 
-                                column="fs" 
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"                             
+                            <FehlstundenInput
+                                :model="row"
+                                column="fs"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                                 :row-index="index"
                             />
                         </SvwsUiDataTableCell>
-    
+
                         <SvwsUiDataTableCell :disabled="!leistungEdit">
-                            <FehlstundenInput 
-                                :model="row" 
-                                column="fsu" 
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"                             
+                            <FehlstundenInput
+                                :model="row"
+                                column="fsu"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                                 :row-index="index"
                             />
-                        </SvwsUiDataTableCell> 
+                        </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" :disabled="!leistungEdit">
-                            <BemerkungIndicator 
-                                :model="row" 
-                                :bemerkung="row.fachbezogeneBemerkungen"                         
+                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" :disabled="!leistungEdit" @click="select(row)">
+                            <BemerkungIndicator
+                                :model="row"
+                                :bemerkung="row.fachbezogeneBemerkungen"
                                 :row-index="index"
                             ></BemerkungIndicator>
                         </SvwsUiDataTableCell>

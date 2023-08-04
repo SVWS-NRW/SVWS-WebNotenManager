@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {computed, onMounted, Ref, ref, watch} from 'vue'
+    import {computed, onMounted, Ref, ref, watch} from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
-    import { Floskel, TableColumn, Leistung, FachbezogeneFloskel } from '../types'
+    import { TableColumn, Leistung, FachbezogeneFloskel } from '@/types'
 
     import {
         addSelectedFloskelnToBemerkung,
@@ -11,7 +11,7 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
         searchFilter,
         selectFloskeln,
         tableFilter,
-    } from '../Helpers/bemerkungen.helper'
+    } from '@/Helpers/bemerkungen.helper'
 
     import {
         SvwsUiTextareaInput,
@@ -79,7 +79,7 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
 
     const computedBemerkung = computed((): string | void => {
         isDirty.value = bemerkung.value != storedBemerkung.value
-        if (!bemerkung.value) return
+        // if (!bemerkung.value) return
         return formatStringBasedOnGender(bemerkung.value, props.leistung)
     })
 
@@ -99,9 +99,9 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
         <h1 class="text-headline-xl text-primary">{{ props.leistung.name }}</h1>
 
         <SvwsUiTextareaInput
-            :modelValue="computedBemerkung"
+            v-model="computedBemerkung"
             @update:modelValue="bemerkung = $event"
-            autoresize
+            :autoresize="false"
             :disabled="props.readonly"
         ></SvwsUiTextareaInput>
 
