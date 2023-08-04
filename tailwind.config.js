@@ -22,6 +22,7 @@ module.exports = {
             },
 			colors: {
 				grey: '#f5f5f5',
+                sortingblue: '#329cd5',
 			},
         },
     },

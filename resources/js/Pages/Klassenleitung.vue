@@ -161,7 +161,7 @@
                     <SvwsUiTooltip>
                         ASV
                         <template #content>
-                            Arbeits und Sozialverhalten
+                            Arbeits- und Sozialverhalten
                         </template>
                     </SvwsUiTooltip>
                 </template>

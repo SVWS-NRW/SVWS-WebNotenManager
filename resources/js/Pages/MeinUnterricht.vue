@@ -234,7 +234,7 @@
                     <SvwsUiTooltip>
                         M
                         <template #content>
-                            Mahnungen
+                            Mahnung
                         </template>
                     </SvwsUiTooltip>
                 </template>

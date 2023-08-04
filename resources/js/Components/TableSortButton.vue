@@ -1,5 +1,4 @@
 <script setup lang="ts">
-//TODO: use provide and inject from/to Leistungsdatenuebersicht
     import { Ref, ref, inject } from 'vue'
     import { SortTableColumns } from '../types'
     import { SvwsUiIcon } from '@svws-nrw/svws-ui';
@@ -11,9 +10,8 @@
     const emit = defineEmits(['clicked'])
     const clicked = (newSortRef: SortTableColumns): void => emit('clicked', newSortRef)
 
-    
     const sortRef: Ref<SortTableColumns> = inject('sortRef')
-      
+
     const newSortReference: Ref<SortTableColumns> = ref(props.presentColumn);
 
     const sortTable = (newSortRef: SortTableColumns): void => {
@@ -25,25 +23,50 @@
         clicked(newSortRef)
     }
 
+    const updateIconColor = (directionAsc: boolean): string => {
+        return sortRef.value.sortBy == newSortReference.value.sortBy && directionAsc != sortRef.value.direction ? '#329cd5' : 'silver'
+    }
+
 </script>
 
 <template>
-    <button @click="sortTable(newSortReference)">
+    <button @click="sortTable(newSortReference)" class="sorting-button"
+        :class="{ 'sort-icon__active': sortRef.sortBy == newSortReference.sortBy }">
         <slot></slot>
         <span class="column-name"></span>
         <SvwsUiIcon>
-            <mdi-arrow-up-down class="sort-icon-inactive" v-if="presentColumn.sortBy != sortRef.sortBy"></mdi-arrow-up-down>
-            <mdi-arrow-down-thick class="sort-icon" v-else-if="sortRef.direction"></mdi-arrow-down-thick>
-            <mdi-arrow-up-thick class="sort-icon" v-else-if="!sortRef.direction"></mdi-arrow-up-thick>
+            <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" class="sort-icon-up">
+                <path :fill="updateIconColor(true)"
+                    d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
+                </path>
+            </svg>
+            <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" transform="rotate(180)" class="sort-icon-down">
+                <path :fill="updateIconColor(false)"
+                    d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
+                </path>
+            </svg>
         </SvwsUiIcon>
     </button>
 </template>
 
 <style scoped>
+    .sorting-button {
+        @apply ui-pl-1 hover:ui-bg-gray-100 ui-rounded-md hover:ui-p-1
+    }
+
     .sort-icon {
         @apply ui-inline ui-gap-1.5 ui-items-center ui-justify-start
     }
-    .sort-icon-inactive {
-        @apply sort-icon ui-text-gray-300
+
+    .sort-icon-up {
+        @apply sort-icon ui-pl-1
+    }
+
+    .sort-icon-down {
+        @apply ui-inline ui-pl-1 -ui-ml-3
+    }
+
+    .sort-icon__active {
+        @apply ui-text-sortingblue ui-bg-blue-200/10 hover:ui-bg-blue-200/10 ui-p-1
     }
 </style>
