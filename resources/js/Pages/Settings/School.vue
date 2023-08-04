@@ -16,7 +16,7 @@
         .then((response: AxiosResponse) => settings.value = response.data)
 
     const saveSettings = () => axios
-        .put(route('api.settings.bulk_update', {group: 'general'}),  { settings: settings.value })
+        .put(route('api.settings.bulk_update', { group: 'general' }),  { settings: settings.value })
         .then((): void => apiSuccess())
         .catch((error: any): void => apiError(
             error,
