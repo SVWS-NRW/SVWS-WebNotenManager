@@ -379,56 +379,53 @@
 
                 <template #body="{ rows }">
                     <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index" >
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)">
                             <span class="truncate">{{ row.name }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)">
                             <strong class="truncate">{{ row.fach }}</strong>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)">
                             <span class="truncate">{{ row.kurs }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell v-if="toggles.fachlehrer" @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell v-if="toggles.fachlehrer" @click="select(row)">
                             <span class="truncate">{{ row.lehrer }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell v-if="toggles.teilleistungen" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell v-if="toggles.teilleistungen">
                             <span class="truncate">TBD</span>
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell>
                             <NoteInput
                                 :leistung="row"
-                                :disabled="disabled(row.matrix.editable_noten)"
                                 :row-index="index"
                             ></NoteInput>
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell v-if="toggles.mahnungen" :disabled="!leistungEdit">
-                            <MahnungIndicator :disabled="disabled(row.matrix.editable_mahnungen)" :leistung="row" :row-index="index"></MahnungIndicator>
+                        <SvwsUiDataTableCell v-if="toggles.mahnungen">
+                            <MahnungIndicator :leistung="row" :row-index="index"></MahnungIndicator>
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell>
                             <FehlstundenInput
                                 :model="row"
                                 column="fs"
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                                 :row-index="index"
                             />
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell>
                             <FehlstundenInput
                                 :model="row"
                                 column="fsu"
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                                 :row-index="index"
                             />
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" :disabled="!leistungEdit" @click="select(row)">
+                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" @click="select(row)">
                             <BemerkungIndicator
                                 :model="row"
                                 :bemerkung="row.fachbezogeneBemerkungen"
