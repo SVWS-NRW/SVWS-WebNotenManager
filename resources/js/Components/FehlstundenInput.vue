@@ -37,7 +37,6 @@
 </script>
 
 <template>
-    <strong>
         <span v-if="isDisabled()">{{ props.model[props.column] }}</span>
 
         <SvwsUiTextInput
@@ -52,5 +51,4 @@
             @keydown.tab.stop.prevent="navigate('right')"
             :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
         ></SvwsUiTextInput>
-    </strong>
 </template>
