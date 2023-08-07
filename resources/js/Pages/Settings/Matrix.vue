@@ -128,29 +128,6 @@
         'editable_zb',
     ]
 
-    const toggleKlasse = (klasse: Klasse) => toggleable.forEach(
-        (column: ToggleableKeys): boolean => klasse[column] = klassenToggle.value[klasse.id] === true
-    )
-
-    const toggleAllKlassen = (): void =>
-        klassen.value.forEach((klasse: Klasse): void =>
-            toggleable.forEach((column: ToggleableKeys): boolean =>
-                klasse[column] = klassenGlobalToggle.value === true
-            )
-        )
-
-    const toggleKlassenColumn = (column: ToggleableKeys) =>
-        klassen.value.forEach((klasse: Klasse): boolean =>
-            klasse[column] = klassenColumnsToggle.value[column] === true
-        )
-
-    const checkState = (count: number, total: number): ToggleColumnType => {
-        if (count == total) return true
-        if (count == 0) return false
-        return 'indeterminate'
-    }
-
-
     const klassenGlobalToggle = ref<ToggleColumnType>(true)
     const klassenToggle: Ref<{[key: number]: ToggleColumnType}> = ref({})
     const klassenColumnsToggle = ref<ToggleColumns>({
@@ -165,61 +142,121 @@
         editable_zb: false,
     })
 
+    const jahrgangKlassenToggle: Ref<{[key: number]: ToggleColumnType}> = ref({})
+    const jahrgangsKlassenColumnsToggle: Ref<{[key: number]: {[key: string]: ToggleColumnType}}> = ref({})
+    const jahrgangsGroupsColumnsToggle: Ref<{[key: string]: {[key: string]: ToggleColumnType}}> = ref({})
+    const jahrgangToggle: Ref<{[key: number]:  ToggleColumnType}> = ref({})
+    const jahrgangGroupToggle: Ref<{[key: string]: ToggleColumnType}> = ref({})
+
     watch(klassen, (): void => {
-        toggleKlassenRow(klassen.value, klassenToggle)
+        updateKlassenToggleState(klassen.value, klassenToggle)
 
         toggleable.forEach((column: ToggleableKeys): ToggleColumnType =>
-            klassenColumnsToggle.value[column] = checkState(
-                klassen.value.filter((klasse: Klasse): boolean => klasse[column]).length,
-                klassen.value.length
-            )
+            updateColumnToggleState(klassenColumnsToggle.value, klassen.value, column)
         )
 
         klassenGlobalToggle.value = checkState(
             Object.values(klassen.value).reduce((count: number, klasse: Klasse) => {
-                return count + toggleable.filter((item: ToggleableKeys): boolean => klasse[item]).length
+                return count + toggleable.filter((column: ToggleableKeys): boolean => klasse[column]).length
             }, 0),
             toggleable.length * klassen.value.length,
         )
     }, { deep: true })
 
-
-
-
-    const jahrgangKlassenToggle: Ref<{[key: number]: ToggleColumnType}> = ref({})
-
-
-
-    const toggleJahrgangKlasse = (klasse: Klasse) => toggleable.forEach(
-        (column: ToggleableKeys): boolean => klasse[column] =
-            jahrgangKlassenToggle.value[klasse.id] === true
-    )
-
-
     watch(jahrgaenge, (): void => {
-        Object.values(jahrgaenge.value).forEach((jahrgangArray: Jahrgang[]): void => {
-            jahrgangArray.forEach((jahrgang: Jahrgang): void => {
+        Object.entries(jahrgaenge.value).forEach(([key, jahrgangGroup]: [string, Jahrgang[]]): void => {
+            jahrgangsGroupsColumnsToggle.value[key] = {}
+            toggleable.forEach((column: ToggleableKeys): any =>
+                jahrgangsGroupsColumnsToggle.value[key][column] = checkState(
+                    jahrgangGroup.reduce((count: number, jahrgang: Jahrgang) => {
+                        return count + jahrgang.klassen.filter((klasse: Klasse): boolean => klasse[column]).length
+                    }, 0),
+                    jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number => {
+                        return count + jahrgang.klassen.length
+                    }, 0),
+                )
+            )
 
-                // toggleable.forEach((column: ToggleableKeys): ToggleColumnType =>
-                //     jahrgangKlassenColumnsToggle.value[jahrgang.id][column] = checkState(
-                //         jahrgang.klassen.filter((klasse: Klasse): boolean => klasse[column]).length,
-                //         jahrgang.klassen.length
-                //     )
-                // )
+            jahrgangGroupToggle.value[key] = checkState(
+                jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number => {
+                    return count + jahrgang.klassen.reduce((count: number, klasse: Klasse): number => {
+                        return count + toggleable.filter((column: ToggleableKeys): boolean => klasse[column]).length
+                    }, 0)
+                }, 0),
+                jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number => {
+                    return count + jahrgang.klassen.length
+                }, 0) * toggleable.length
+            )
 
+            jahrgangGroup.forEach((jahrgang: Jahrgang): void => {
+                jahrgangToggle.value[jahrgang.id] = checkState(
+                    jahrgang.klassen.reduce((count: number, klasse: Klasse): number => {
+                        return count + toggleable.filter((column: ToggleableKeys): boolean => klasse[column]).length
+                    }, 0),
+                jahrgang.klassen.length * toggleable.length,
+                )
 
-                toggleKlassenRow(jahrgang.klassen, jahrgangKlassenToggle)
-            });
-        });
+                jahrgangsKlassenColumnsToggle.value[jahrgang.id] = {}
+                toggleable.forEach((column: ToggleableKeys): ToggleColumnType =>
+                    updateColumnToggleState(jahrgangsKlassenColumnsToggle.value[jahrgang.id], jahrgang.klassen, column)
+                )
 
-
-
-
-
-
+                updateKlassenToggleState(jahrgang.klassen, jahrgangKlassenToggle)
+            })
+        })
     }, { deep: true })
 
-    const toggleKlassenRow = (klassen: Klasse[], toggle: any) =>
+    const toggleAllKlassen = (): void =>
+        klassen.value.forEach((klasse: Klasse): void =>
+            toggleable.forEach((column: ToggleableKeys): boolean =>
+                klasse[column] = klassenGlobalToggle.value === true
+            )
+        )
+
+    const toggleKlasse = (klasse: Klasse): void => toggleable.forEach(
+        (column: ToggleableKeys): boolean =>
+            klasse[column] = klassenToggle.value[klasse.id] === true
+    )
+
+    const toggleKlassenColumn = (column: ToggleableKeys): void =>
+        klassen.value.forEach((klasse: Klasse): boolean =>
+            klasse[column] = klassenColumnsToggle.value[column] === true
+        )
+
+    const toggleJahrgangsColumn = (jahrgang: Jahrgang, column: ToggleableKeys): void =>
+        jahrgang.klassen.forEach((klasse: Klasse): boolean =>
+             klasse[column] = jahrgangsKlassenColumnsToggle.value[jahrgang.id][column] === true
+        )
+
+    const toggleJahrgangsKlassenRow = (klasse: Klasse): void =>
+        toggleable.forEach((column: ToggleableKeys): boolean =>
+            klasse[column] = jahrgangKlassenToggle.value[klasse.id] === true
+        )
+
+    const toggleGroupColumn = (groupedJahrgaenge: Jahrgang[], column: ToggleableKeys, key: string) =>
+        groupedJahrgaenge.forEach((jahrgang: Jahrgang): void =>
+            jahrgang.klassen.forEach((klasse: Klasse): boolean =>
+                klasse[column] = jahrgangsGroupsColumnsToggle.value[key][column] === true
+            )
+        )
+
+    const toggleJahrgangGroup = (jahrgaenge: Jahrgang[], key: string): void =>
+        jahrgaenge.forEach((jahrgang: Jahrgang): void =>
+            jahrgang.klassen.forEach((klasse: Klasse): void =>
+                toggleable.forEach((column: ToggleableKeys) =>
+                    klasse[column] = jahrgangGroupToggle.value[key] === true
+                )
+            )
+        )
+
+    const toggleJahrgang = (jahrgang: Jahrgang): void =>
+        jahrgang.klassen.forEach((klasse: Klasse) =>
+            toggleable.forEach((column: ToggleableKeys): boolean | string =>
+                klasse[column] = jahrgangToggle.value[jahrgang.id] === true
+        )
+    )
+
+    const updateKlassenToggleState = (klassen: Klasse[], toggle: any): void =>
         klassen.forEach((klasse: Klasse): ToggleColumnType =>
             toggle.value[klasse.id] = checkState(
                 toggleable.filter((item: ToggleableKeys): boolean => klasse[item]).length,
@@ -227,6 +264,20 @@
             )
         )
 
+    const updateColumnToggleState = (
+        toggleObject: any,
+        items: Klasse[],
+        column: ToggleableKeys
+    ): ToggleColumnType => toggleObject[column] = checkState(
+        items.filter((item: Klasse): boolean => item[column]).length,
+        items.length
+    )
+
+    const checkState = (count: number, total: number): ToggleColumnType => {
+        if (count == total) return true
+        if (count == 0) return false
+        return 'indeterminate'
+    }
 </script>
 
 <template>
@@ -249,7 +300,7 @@
                         </SvwsUiTooltip>
                     </SvwsUiCheckbox>
 
-                    {{ klassenColumnsToggle }}
+                    {{ jahrgangGroupToggle }}
 
                     <SvwsUiDataTable collapsible :noData="false" v-if="Object.entries(jahrgaenge).length || klassen.length">
                         <template #header>
@@ -436,66 +487,77 @@
                                             </SvwsUiButton>
                                             {{ key }}
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangGroup(groupedJahrgaenge)"
+                                                v-model="jahrgangGroupToggle[key]"
+                                                @update:modelValue="toggleJahrgangGroup(groupedJahrgaenge, key)"
                                                 :value="true"
                                             />
                                         </div>
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_teilnoten')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_teilnoten']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_teilnoten', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_noten')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_noten']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_noten', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_mahnungen')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_mahnungen']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_mahnungen', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_fehlstunden')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_fehlstunden']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_fehlstunden', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiRadioOption
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'toggleable_fehlstunden')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['toggleable_fehlstunden']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'toggleable_fehlstunden', key)"
                                             :value="true"
                                         >FS</SvwsUiRadioOption>
                                         <SvwsUiRadioOption
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'toggleable_fehlstunden')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['toggleable_fehlstunden']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'toggleable_fehlstunden', key)"
                                             :value="false"
                                         >GFS</SvwsUiRadioOption>
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_fb')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_fb']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_fb', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_asv')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_asv']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_asv', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_aue')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_aue']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_aue', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
                                         <SvwsUiCheckbox
-                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_zb')"
+                                            v-model="jahrgangsGroupsColumnsToggle[key]['editable_zb']"
+                                            @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_zb', key)"
                                             :value="true"
                                         />
                                     </SvwsUiDataTableCell>
@@ -521,6 +583,7 @@
                                                     {{ jahrgang.kuerzel }}
                                                 </span>
                                                 <SvwsUiCheckbox
+                                                    v-model="jahrgangToggle[jahrgang.id]"
                                                     @update:modelValue="toggleJahrgang(jahrgang)"
                                                     :value="true"
                                                 />
@@ -528,59 +591,69 @@
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_teilnoten')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_teilnoten']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_teilnoten')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_noten')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_noten']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_noten')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_mahnungen')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_mahnungen']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_mahnungen')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_fehlstunden')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fehlstunden']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_fehlstunden')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiRadioOption
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'toggleable_fehlstunden')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['toggleable_fehlstunden']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'toggleable_fehlstunden')"
                                                 :value="true"
                                             >FS</SvwsUiRadioOption>
                                             <SvwsUiRadioOption
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'toggleable_fehlstunden')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['toggleable_fehlstunden']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'toggleable_fehlstunden')"
                                                 :value="false"
                                             >GFS</SvwsUiRadioOption>
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_fb')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fb']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_fb')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_asv')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_asv']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_asv')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_aue')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_aue']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_aue')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
                                             <SvwsUiCheckbox
-                                                @update:modelValue="toggleJahrgangColumn(jahrgang, 'editable_zb')"
+                                                v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_zb']"
+                                                @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_zb')"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
@@ -593,10 +666,10 @@
                                         v-for="klasse in jahrgang.klassen"
                                     >
                                         <SvwsUiDataTableCell>
-                                            {{ klasse.kuerzel }} {{ klasse.id }}
+                                            {{ klasse.kuerzel }}
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangKlassenToggle[klasse.id]"
-                                                @update:modelValue="toggleJahrgangKlasse(klasse)"
+                                                @update:modelValue="toggleJahrgangsKlassenRow(klasse)"
                                                 :value="true"
                                             />
                                         </SvwsUiDataTableCell>
