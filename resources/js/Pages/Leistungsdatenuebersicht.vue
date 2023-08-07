@@ -341,37 +341,37 @@
             <SvwsUiDataTable clickable :noData="false" :key="tableRedrawKey">
                 <template #header>
                     <SvwsUiDataTableRow thead>
-                        <SvwsUiDataTableCell thead>
+                        <SvwsUiDataTableCell thead span="1" minWidth="6">
                             <TableSortButton :presentColumn= "{sortBy:'klasse'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>
+                        <SvwsUiDataTableCell thead span="3" minWidth="10">
                             <TableSortButton :presentColumn="{sortBy:'name'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>
+                        <SvwsUiDataTableCell thead span="1" minWidth="5">
                             <TableSortButton :presentColumn="{sortBy:'fach'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Fach</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>
+                        <SvwsUiDataTableCell thead span="2" minWidth="5">
                             <TableSortButton :presentColumn="{sortBy:'kurs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Kurs</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead v-if="toggles.fachlehrer">
+                        <SvwsUiDataTableCell thead v-if="toggles.fachlehrer" span="2" minWidth="6">
                             <TableSortButton :presentColumn="{sortBy:'lehrer'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Lehrer</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead v-if="toggles.teilleistungen">
+                        <SvwsUiDataTableCell thead v-if="toggles.teilleistungen" span="5" minWidth="15">
                             Teilnoten
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead>
+                        <SvwsUiDataTableCell thead span="1" minWidth="5">
                             <TableSortButton :presentColumn="{sortBy:'note'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Note</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Mahnung" v-if="toggles.mahnungen">
+                        <SvwsUiDataTableCell thead tooltip="Mahnung" v-if="toggles.mahnungen" span="1" minWidth="4">
                             M
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden">
+                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden" span="1" minWidth="6">
                             <TableSortButton :presentColumn="{sortBy:'fs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FS</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden">
+                        <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden" span="1" minWidth="6">
                             <TableSortButton :presentColumn="{sortBy:'fsu'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FSU</TableSortButton>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen">
+                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen" span="12" minWidth="4">
                             <TableSortButton :presentColumn="{sortBy:'fachbezogeneBemerkungen'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FB</TableSortButton>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
@@ -379,56 +379,53 @@
 
                 <template #body="{ rows }">
                     <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index" >
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="6">
                             <span class="truncate">{{ row.klasse }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)" span="3" minWidth="10">
                             <span class="truncate">{{ row.name }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="5">
                             <strong class="truncate">{{ row.fach }}</strong>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
                             <span class="truncate">{{ row.kurs }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell v-if="toggles.fachlehrer" @click="select(row)" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell v-if="toggles.fachlehrer" @click="select(row)" span="2" minWidth="6">
                             <span class="truncate">{{ row.lehrer }}</span>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell v-if="toggles.teilleistungen" :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell v-if="toggles.teilleistungen" span="5" minWidth="15">
                             <span class="truncate">TBD</span>
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell span="1" minWidth="5">
                             <NoteInput
                                 :leistung="row"
-                                :disabled="disabled(row.matrix.editable_noten)"
                                 :row-index="index"
                             ></NoteInput>
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell v-if="toggles.mahnungen" :disabled="!leistungEdit">
-                            <MahnungIndicator :disabled="disabled(row.matrix.editable_mahnungen)" :leistung="row" :row-index="index"></MahnungIndicator>
+                        <SvwsUiDataTableCell v-if="toggles.mahnungen" span="1" minWidth="4">
+                            <MahnungIndicator :leistung="row" :row-index="index"></MahnungIndicator>
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell span="1" minWidth="6">
                             <FehlstundenInput
                                 :model="row"
                                 column="fs"
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                                 :row-index="index"
                             />
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell :disabled="!leistungEdit">
+                        <SvwsUiDataTableCell span="1" minWidth="6">
                             <FehlstundenInput
                                 :model="row"
                                 column="fsu"
-                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                                 :row-index="index"
                             />
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" :disabled="!leistungEdit" @click="select(row)">
+                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" @click="select(row)" span="12" minWidth="4">
                             <BemerkungIndicator
                                 :model="row"
                                 :bemerkung="row.fachbezogeneBemerkungen"
