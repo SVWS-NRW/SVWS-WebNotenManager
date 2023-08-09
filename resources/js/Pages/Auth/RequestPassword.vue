@@ -91,9 +91,10 @@
                             v-on:keyup.enter="submit"
                             :valid="!hasErrors('email')"
                             :disabled="data.processing"
-                            type="text"
-                            placeholder="Lehrkraftkürzel"
+                            type="email"
+                            placeholder="E-Mail-Adresse"
                             required
+                            autocomplete="email"
                         ></SvwsUiTextInput>
 
                         <span v-if="hasErrors('email')" class="error">
