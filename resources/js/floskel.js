@@ -7,8 +7,6 @@ export const floskelStore = defineStore('main', {
         progress: 0,
     }),
     actions: {
-        test() {
-            alert(123)
-        },
+        
     },
 })
