@@ -16,8 +16,6 @@ const setCellRefs = (element: CellRef, rowIndex: number): void => {
 const navigateTable = async (direction: string, rowIndex: number, element: any): Promise<void> => {
   let cellIndex: number = cellRefs.value[rowIndex].indexOf(element)
 
-console.log(cellRefs.value[rowIndex])
-
   if (direction === 'up') {
     rowIndex = rowIndex > 0 ? rowIndex - 1 : rowIndex
   }
@@ -40,14 +38,17 @@ console.log(cellRefs.value[rowIndex])
 
   if (target) {
     if (target.input) {
-      target.input.focus()
+      target.input.select()
     } else {
       target.focus()
     }  
   }
 }
 
+const selectItem = (event: MouseEvent): void => (event.target as HTMLInputElement).select()
+
 export {
   navigateTable,
   setCellRefs,
+  selectItem,
 }

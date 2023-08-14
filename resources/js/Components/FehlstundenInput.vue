@@ -5,7 +5,7 @@
     import { Leistung } from '../Interfaces/Leistung'
     import { Schueler } from '../Interfaces/Schueler'
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
-    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
+    import { CellRef, setCellRefs, navigateTable, selectItem } from '../Helpers/tableNavigationHelper'
  
 
     let props = defineProps<{
@@ -34,6 +34,7 @@
 
     const isDisabled = (): boolean => Boolean(usePage().props.value && usePage().props.value.note_entry_disabled) || props.disabled    
     const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
+    const selectClickedItem = (event: MouseEvent): void => selectItem(event) 
 </script>
 
 <template>
@@ -43,6 +44,7 @@
             v-else 
             v-model="model[props.column]" 
             :headless="true"
+            @click="selectClickedItem($event)"
             @keydown.up.stop.prevent="navigate('up')"
             @keydown.down.stop.prevent="navigate('down')"
             @keydown.enter.stop.prevent="navigate('down')"
