@@ -156,10 +156,10 @@
         )
 
         klassenGlobalToggle.value = checkState(
-            Object.values(klassen.value).reduce((count: number, klasse: Klasse) => {
-                return count + toggleable.filter((column: ToggleableKeys): boolean => klasse[column]).length
-            }, 0),
-            toggleable.length * klassen.value.length,
+            Object.values(klassen.value).reduce((count: number, klasse: Klasse): number =>
+                 count + checkboxes().filter((column: ToggleableKeys): boolean => klasse[column]).length
+            , 0),
+            checkboxes().length * klassen.value.length,
         )
     }, { deep: true })
 
@@ -168,32 +168,32 @@
             jahrgangsGroupsColumnsToggle.value[key] = {}
             toggleable.forEach((column: ToggleableKeys): any =>
                 jahrgangsGroupsColumnsToggle.value[key][column] = checkState(
-                    jahrgangGroup.reduce((count: number, jahrgang: Jahrgang) => {
-                        return count + jahrgang.klassen.filter((klasse: Klasse): boolean => klasse[column]).length
-                    }, 0),
-                    jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number => {
-                        return count + jahrgang.klassen.length
-                    }, 0),
+                    jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number =>
+                        count + jahrgang.klassen.filter((klasse: Klasse): boolean => klasse[column]).length,
+                    0),
+                    jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number =>
+                        count + jahrgang.klassen.length,
+                    0),
                 )
             )
 
             jahrgangGroupToggle.value[key] = checkState(
-                jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number => {
-                    return count + jahrgang.klassen.reduce((count: number, klasse: Klasse): number => {
-                        return count + toggleable.filter((column: ToggleableKeys): boolean => klasse[column]).length
-                    }, 0)
-                }, 0),
-                jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number => {
-                    return count + jahrgang.klassen.length
-                }, 0) * toggleable.length
+                jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number =>
+                    count + jahrgang.klassen.reduce((count: number, klasse: Klasse): number =>
+                        count + checkboxes().filter((column: ToggleableKeys): boolean => klasse[column]).length
+                    , 0)
+                , 0),
+                jahrgangGroup.reduce((count: number, jahrgang: Jahrgang): number =>
+                    count + jahrgang.klassen.length
+                , 0) * checkboxes().length
             )
 
             jahrgangGroup.forEach((jahrgang: Jahrgang): void => {
                 jahrgangToggle.value[jahrgang.id] = checkState(
                     jahrgang.klassen.reduce((count: number, klasse: Klasse): number => {
-                        return count + toggleable.filter((column: ToggleableKeys): boolean => klasse[column]).length
+                        return count + checkboxes().filter((column: ToggleableKeys): boolean => klasse[column]).length
                     }, 0),
-                jahrgang.klassen.length * toggleable.length,
+                jahrgang.klassen.length * checkboxes().length,
                 )
 
                 jahrgangsKlassenColumnsToggle.value[jahrgang.id] = {}
@@ -206,17 +206,12 @@
         })
     }, { deep: true })
 
-    const toggleAllKlassen = (): void =>
-        klassen.value.forEach((klasse: Klasse): void =>
-            toggleable.forEach((column: ToggleableKeys): boolean =>
-                klasse[column] = klassenGlobalToggle.value === true
-            )
-        )
-
-    const toggleKlasse = (klasse: Klasse): void => toggleable.forEach(
-        (column: ToggleableKeys): boolean =>
-            klasse[column] = klassenToggle.value[klasse.id] === true
+    const toggleAllKlassen = (): void => klassen.value.forEach((klasse: Klasse): void =>
+        checkboxes().forEach((column: ToggleableKeys): boolean => klasse[column] = klassenGlobalToggle.value === true)
     )
+
+    const toggleKlasse = (klasse: Klasse): void => checkboxes().forEach((column: ToggleableKeys): boolean =>
+        klasse[column] = klassenToggle.value[klasse.id] === true)
 
     const toggleKlassenColumn = (column: ToggleableKeys): void =>
         klassen.value.forEach((klasse: Klasse): boolean =>
@@ -228,10 +223,9 @@
              klasse[column] = jahrgangsKlassenColumnsToggle.value[jahrgang.id][column] === true
         )
 
-    const toggleJahrgangsKlassenRow = (klasse: Klasse): void =>
-        toggleable.forEach((column: ToggleableKeys): boolean =>
-            klasse[column] = jahrgangKlassenToggle.value[klasse.id] === true
-        )
+    const toggleJahrgangsKlassenRow = (klasse: Klasse): void => checkboxes().forEach((column: ToggleableKeys): boolean =>
+        klasse[column] = jahrgangKlassenToggle.value[klasse.id] === true
+    )
 
     const toggleGroupColumn = (groupedJahrgaenge: Jahrgang[], column: ToggleableKeys, key: string) =>
         groupedJahrgaenge.forEach((jahrgang: Jahrgang): void =>
@@ -242,42 +236,34 @@
 
     const toggleJahrgangGroup = (jahrgaenge: Jahrgang[], key: string): void =>
         jahrgaenge.forEach((jahrgang: Jahrgang): void =>
-            jahrgang.klassen.forEach((klasse: Klasse): void =>
-                toggleable.forEach((column: ToggleableKeys) =>
-                    klasse[column] = jahrgangGroupToggle.value[key] === true
-                )
+            jahrgang.klassen.forEach((klasse: Klasse): void => checkboxes().forEach((column: ToggleableKeys) =>
+                klasse[column] = jahrgangGroupToggle.value[key] === true)
             )
         )
 
     const toggleJahrgang = (jahrgang: Jahrgang): void =>
-        jahrgang.klassen.forEach((klasse: Klasse) =>
-            toggleable.forEach((column: ToggleableKeys): boolean | string =>
-                klasse[column] = jahrgangToggle.value[jahrgang.id] === true
-        )
-    )
+        jahrgang.klassen.forEach((klasse: Klasse) => checkboxes().forEach((column: ToggleableKeys): boolean | string =>
+            klasse[column] = jahrgangToggle.value[jahrgang.id] === true
+        ))
 
     const updateKlassenToggleState = (klassen: Klasse[], toggle: any): void =>
         klassen.forEach((klasse: Klasse): ToggleColumnType =>
             toggle.value[klasse.id] = checkState(
-                toggleable.filter((item: ToggleableKeys): boolean => klasse[item]).length,
-                toggleable.length,
+                checkboxes().filter((item: ToggleableKeys): boolean => klasse[item]).length,
+                checkboxes().length,
             )
         )
 
-    const updateColumnToggleState = (
-        toggleObject: any,
-        items: Klasse[],
-        column: ToggleableKeys
-    ): ToggleColumnType => toggleObject[column] = checkState(
-        items.filter((item: Klasse): boolean => item[column]).length,
-        items.length
-    )
+    const updateColumnToggleState = (toggleObject: any, items: Klasse[], column: ToggleableKeys): ToggleColumnType =>
+        toggleObject[column] = checkState(items.filter((item: Klasse): boolean => item[column]).length, items.length)
 
     const checkState = (count: number, total: number): ToggleColumnType => {
         if (count == total) return true
         if (count == 0) return false
         return 'indeterminate'
     }
+
+    const checkboxes = (): ToggleableKeys[] => toggleable.filter((column: ToggleableKeys): boolean => column !== 'toggleable_fehlstunden')
 </script>
 
 <template>
@@ -299,8 +285,6 @@
                             </template>
                         </SvwsUiTooltip>
                     </SvwsUiCheckbox>
-
-                    {{ jahrgangGroupToggle }}
 
                     <SvwsUiDataTable collapsible :noData="false" v-if="Object.entries(jahrgaenge).length || klassen.length">
                         <template #header>

@@ -402,11 +402,16 @@
                             <NoteInput
                                 :leistung="row"
                                 :row-index="index"
+                                :disabled="disabled(row.matrix.editable_noten)"
                             ></NoteInput>
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell v-if="toggles.mahnungen" span="1" minWidth="4">
-                            <MahnungIndicator :leistung="row" :row-index="index"></MahnungIndicator>
+                            <MahnungIndicator
+                                :leistung="row"
+                                :row-index="index"
+                                :disabled="disabled(row.matrix.editable_mahnungen)"
+                            ></MahnungIndicator>
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell span="1" minWidth="6">
@@ -414,6 +419,7 @@
                                 :model="row"
                                 column="fs"
                                 :row-index="index"
+                                :disabled="disabled(row.matrix.editable_fehlstunden)"
                             />
                         </SvwsUiDataTableCell>
 
@@ -422,6 +428,7 @@
                                 :model="row"
                                 column="fsu"
                                 :row-index="index"
+                                :disabled="disabled(row.matrix.editable_fehlstunden)"
                             />
                         </SvwsUiDataTableCell>
 
@@ -430,6 +437,7 @@
                                 :model="row"
                                 :bemerkung="row.fachbezogeneBemerkungen"
                                 :row-index="index"
+                                :disabled="disabled(row.matrix.editable_fb)"
                             ></BemerkungIndicator>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
