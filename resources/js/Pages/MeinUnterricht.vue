@@ -1,8 +1,10 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import { onMounted, reactive, computed, ref, watch, PropType, Ref } from 'vue'
+    import { onMounted, reactive, computed, ref, watch, PropType, Ref, provide } from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
+    import { SortTableColumns } from '../Interfaces/SortTableColumns'
+    import TableSortButton from '../Components/TableSortButton.vue'
     import { Column } from '../Interfaces/Column'
     import { usePage } from '@inertiajs/inertia-vue3'
     import axios, { AxiosResponse } from 'axios'
@@ -26,9 +28,13 @@
         SvwsUiCheckbox,
         SvwsUiSelectInput,
         SvwsUiDataTable,
+        SvwsUiButton,
         SvwsUiTextInput,
         SvwsUiIcon,
         SvwsUiTooltip,
+        SvwsUiMultiSelect,
+        SvwsUiDataTableCell,
+        SvwsUiDataTableRow,
     } from '@svws-nrw/svws-ui'
 
     import FehlstundenInput from '../Components/FehlstundenInput.vue'
@@ -96,6 +102,8 @@
 
     const columns = ref<Column[]>([])
 
+    let tableRedrawKey: number = 0
+
     const drawTable = (): void => {
         const pushTable = (pushable: boolean, array: Array<Column>): void => {
             if (pushable) array.forEach((column: Column): number => columns.value.push(column))
@@ -109,6 +117,8 @@
         pushTable(toggles.mahnungen, mahnungenColumns)
         pushTable(toggles.fehlstunden, fehlstundenColumns)
         pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
+
+        tableRedrawKey++;
     }
 
     onMounted((): void => {
@@ -137,17 +147,17 @@
         let set = [
             ...new Set(data.map((item: any): string => item[column]))
         ]
-        .filter((item: string): boolean => {
-            if (['', null].includes(item)) {
-                hasEmpty = hasEmptyValue
-                return false
-            }
+            .filter((item: string): boolean => {
+                if (['', null].includes(item)) {
+                    hasEmpty = hasEmptyValue
+                    return false
+                }
 
-            return true
-        })
-        .map((item: string): { label: string, index: string | null | number } => {
-            return { label: item, index: item }
-        })
+                return true
+            })
+            .map((item: string): { label: string, index: string | null | number } => {
+                return { label: item, index: item }
+            })
 
         set.sort(function(a, b) {
             let textA = a.label.toUpperCase()
@@ -163,7 +173,51 @@
         return set;
     }
 
+    const sortRef: Ref<SortTableColumns> = ref({
+        direction: true,
+        sortBy: 'klasse'
+    })
+
+    provide('sortRef', sortRef)
+
+    const updateSortRef = (newSortRef: SortTableColumns) => {
+        sortRef.value.sortBy = newSortRef.sortBy
+        sortRef.value.direction =newSortRef.direction
+    }
+
     const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
+        .sort(function(a: Leistung, b: Leistung) {
+            const aSortRefSortBy = a[sortRef.value.sortBy]
+            const bSortRefSortBy = b[sortRef.value.sortBy]
+            if (aSortRefSortBy === null) {
+                return 1;
+            }
+
+            if (aSortRefSortBy === '') {
+                return 1;
+            }
+
+            if (bSortRefSortBy === null) {
+                return -1;
+            }
+
+            if (bSortRefSortBy === '') {
+                return -1;
+            }
+
+            let x: string | Number = aSortRefSortBy.toString();
+            let y: string | Number = bSortRefSortBy.toString();
+
+            if (x > y) {
+                return sortRef.value.direction ? 1 : -1;
+            }
+
+            if (x < y) {
+                return sortRef.value.direction ? -1 : 1;
+            }
+
+            return 0;
+        })
         .filter((leistung: Leistung): boolean =>
             searchFilter(leistung)
             && tableFilter(leistung, 'kurs')
@@ -196,7 +250,7 @@
     <Head>
         <title>{{ title }}</title>
     </Head>
-    <AppLayout title="Mein Unterricht">
+    <AppLayout>
         <template v-slot:aside v-if="selectedFbLeistung">
             <FbEditor
                 :leistung="selectedFbLeistung"
@@ -228,123 +282,96 @@
             </header>
 
             <h3 class="text-headline-sm ui-mx-6" v-if="filteredLeistungen.length === 0">Keine Einträge gefunden!</h3>
-
-            <SvwsUiDataTable v-else :items="filteredLeistungen" :columns="columns" clickable>
-                <template #header(istGemahnt)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        M
-                        <template #content>
-                            Mahnung
-                        </template>
-                    </SvwsUiTooltip>
+            <SvwsUiDataTable v-else clickable :noData="false" :key="tableRedrawKey">
+                <!-- TODO: was istGemahn relevant? <template #header(istGemahnt)="{ column: { label } }"> -->
+                <template #header>
+                    <SvwsUiDataTableRow thead>
+                        <SvwsUiDataTableCell thead span="1" minWidth="6">
+                            <TableSortButton :presentColumn="{ sortBy: 'klasse' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead span="3" minWidth="10">
+                            <TableSortButton :presentColumn="{ sortBy: 'name' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name, Vorname</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead span="1" minWidth="5">
+                            <TableSortButton :presentColumn="{ sortBy: 'fach' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Fach</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead span="2" minWidth="5">
+                            <TableSortButton :presentColumn="{ sortBy: 'kurs' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Kurs</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead v-if="toggles.teilleistungen" span="5" minWidth="15">
+                            Teilnoten
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead span="1" minWidth="5">
+                            <TableSortButton :presentColumn="{ sortBy: 'note' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Note</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead tooltip="Mahnung" v-if="toggles.mahnungen" span="1" minWidth="4">
+                            <TableSortButton :presentColumn="{sortBy:'mahnung'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">M</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden" v-if="toggles.fehlstunden" span="1" minWidth="6">
+                            <TableSortButton :presentColumn="{ sortBy: 'fs' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FS</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead tooltip="Unentschuldigte fachbezogene Fehlstunden" v-if="toggles.fehlstunden" span="1" minWidth="6">
+                            <TableSortButton :presentColumn="{ sortBy: 'fsu' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FSU</TableSortButton>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen" v-if="toggles.bemerkungen" span="12" minWidth="4">
+                            <TableSortButton :presentColumn="{ sortBy: 'fachbezogeneBemerkungen' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FB</TableSortButton>
+                        </SvwsUiDataTableCell>
+                    </SvwsUiDataTableRow>
                 </template>
+                <template #body="{ rows }">
+                    <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index" >
+                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="6">
+                            <button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.klasse }}</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell @click="select(row)" span="3" minWidth="10">
+                            <button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.name }}</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="5">
+                            <strong><button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.fach }}</button></strong>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
+                            <button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.kurs }}</button>
+                        </SvwsUiDataTableCell>
+                        <SvwsUiDataTableCell v-if="toggles.teilleistungen" span="5" minWidth="15">
+                            <span class="truncate">TBD</span>
+                        </SvwsUiDataTableCell>
 
-                <template #header(fs)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        FS
-                        <template #content>
-                            Fachbezogene Fehlstunden
-                        </template>
-                    </SvwsUiTooltip>
-                </template>
+                        <SvwsUiDataTableCell span="1" minWidth="5">
+                            <NoteInput
+                                :leistung="row"
+                                :row-index="index"
+                            ></NoteInput>
+                        </SvwsUiDataTableCell>
 
-                <template #header(fsu)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        FSU
-                        <template #content>
-                            Unentschuldigte fachbezogene Fehlstunden
-                        </template>
-                    </SvwsUiTooltip>
-                </template>
+                        <SvwsUiDataTableCell v-if="toggles.mahnungen" span="1" minWidth="4">
+                            <MahnungIndicator :leistung="row" :row-index="index"></MahnungIndicator>
+                        </SvwsUiDataTableCell>
 
-                <template #header(fachbezogeneBemerkungen)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        FB
-                        <template #content>
-                            Fachbezogene Bemerkungen
-                        </template>
-                    </SvwsUiTooltip>
-                </template>
+                        <SvwsUiDataTableCell v-if="toggles.fehlstunden" span="1" minWidth="6">
+                            <FehlstundenInput
+                                :model="row"
+                                column="fs"
+                                :row-index="index"
+                            />
+                        </SvwsUiDataTableCell>
 
-                <template #cell(note)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_noten) }">
-                        <NoteInput
-                            :leistung="rowData"
-                            :key="rowData.id"
-                            v-if="editable(rowData.matrix.editable_noten)"
-                            @next="nextNote(rowData.id, filteredLeistungen)"
-                        ></NoteInput>
-                        <strong v-else>
-                            {{ rowData.note }}
-                        </strong>
-                    </div>
-                </template>
+                        <SvwsUiDataTableCell v-if="toggles.fehlstunden" span="1" minWidth="6">
+                            <FehlstundenInput
+                                :model="row"
+                                column="fsu"
+                                :row-index="index"
+                            />
+                        </SvwsUiDataTableCell>
 
-                <template #cell(teilnoten)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_teilnoten) }">
-                        TBD
-                    </div>
-                </template>
-
-                <template #cell(klasse)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
-                        {{ rowData.klasse }}
-                    </button>
-                </template>
-
-                <template #cell(kurs)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
-                        {{ rowData.kurs }}
-                    </button>
-                </template>
-
-                <template #cell(name)="{ rowData }">
-                    <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
-                        {{ rowData.name }}
-                    </button>
-                </template>
-
-                <template #cell(fach)="{ rowData }">
-                    <strong>
-                        <button type="button" @click="selectedFbLeistung = rowData" class="truncate">
-                            {{ rowData.fach }}
-                        </button>
-                    </strong>
-                </template>
-
-                <template #cell(fs)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="fs" v-if="editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                        <strong v-else>
-                            {{ rowData.fs }}
-                        </strong>
-                    </div>
-                </template>
-
-                <template #cell(fsu)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="fsu" v-if="editable(rowData.matrix.editable_fehlstunden && rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                        <strong v-else>
-                            {{ rowData.fsu }}
-                        </strong>
-                    </div>
-                </template>
-
-                <template #cell(istGemahnt)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_mahnungen) }">
-                        <MahnungIndicator :leistung="rowData" :key="rowData.id" :disabled="false" v-if="editable(rowData.matrix.editable_mahnungen)"></MahnungIndicator>
-                        <MahnungIndicatorReadonly v-else :leistung="rowData" :key="rowData.id" :disabled="true"></MahnungIndicatorReadonly>
-                    </div>
-                </template>
-
-                <template #cell(fachbezogeneBemerkungen)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fb) }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData.fachbezogeneBemerkungen"
-                            @clicked="selectedFbLeistung = rowData"
-                        ></BemerkungIndicator>
-                    </div>
+                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" @click="select(row)" span="12" minWidth="4">
+                            <BemerkungIndicator
+                                :model="row"
+                                :bemerkung="row.fachbezogeneBemerkungen"
+                                :row-index="index"
+                                @clicked="selectedFbLeistung = row"
+                            ></BemerkungIndicator>
+                        </SvwsUiDataTableCell>
+                    </SvwsUiDataTableRow>
                 </template>
             </SvwsUiDataTable>
         </template>
@@ -354,14 +381,14 @@
 <style scoped>
 
     .truncate {
-        @apply ui-truncate
+            @apply ui-truncate
     }
 
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+            @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
 
-    header #toggles {
+        header #toggles {
         @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
     }
 
