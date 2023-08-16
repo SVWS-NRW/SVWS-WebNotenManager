@@ -20,7 +20,7 @@
     const getError = (column: string): string => data.errors[column]
     const hasErrors = (column: string): boolean => column in data.errors
 
-    const submit = (): void => Inertia.post(route('request_password'), data.form, {
+    const submit = (): void => Inertia.post(route('request_password.execute'), data.form, {
         onSuccess: (): boolean => data.successMessage = true,
         onError: (error: Errors): Errors => data.errors = error,
         onFinish: (): boolean => data.processing = false

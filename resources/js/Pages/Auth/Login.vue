@@ -28,7 +28,7 @@ let data: Login = reactive({
 const getError = (column: string): string => data.errors[column][0]
 const hasErrors = (column: string): boolean => column in data.errors
 
-const requestPassword = (): void => Inertia.get(route('request_password'))
+const requestPassword = (): void => Inertia.get(route('request_password.index'))
 
 const submit = (): void => {
     data.processing = true

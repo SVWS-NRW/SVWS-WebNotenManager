@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\RequestPasswordController;
+use App\Http\Controllers\Auth\PasswordController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Response as InertiaResponse;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 	Route::inertia(uri: '/', component: 'MeinUnterricht')
@@ -35,13 +36,17 @@ Route::inertia(uri: 'datenschutz', component: 'Datenschutz')
 Route::inertia(uri: 'barrierefreiheit', component: 'Barrierefreiheit')
 	->name(name: 'barrierefreiheit');
 
-Route::controller(RequestPasswordController::class)
+Route::controller(PasswordController::class)
 	->middleware('guest')
-	->name('request_password')
+	->name('request_password.')
 	->group(function () {
-		Route::inertia(uri: 'passwort-anfordern', component: 'Auth/RequestPassword');
-		Route::post(uri:'passwort-anfordern', action: 'store');
+		Route::get('passwort-anfordern', 'index')->name('index');
+		Route::post('passwort-anfordern', 'execute')->name('execute');
+		Route::get('passwort-aendern/{token}', 'reset_form')->name('reset_form');
+        Route::post('passwort-aendern', 'update')->name('update');
 	});
 
 
+
+//Route::post('password-reset', ResetPasswordController::class)->name('password_reset');
 

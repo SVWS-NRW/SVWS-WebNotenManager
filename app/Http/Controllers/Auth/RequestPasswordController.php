@@ -10,23 +10,22 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 
 class RequestPasswordController extends Controller
 {
-	public function store(FirstLoginRequest $request): void // TODO: Has to be reworked.
-	{
-		try {
+	public function execute(FirstLoginRequest $request): void
+    {
+        if ($request->get('schulnummer') !== config('wenom.schulnummer')) {
+            return;
+        }
+
+        try {
 			$user = User::query()
-				->where(column: $request->only(keys: ['email', 'kuerzel']))
-				->whereHas(
-					relation: 'daten',
-					callback: fn ($daten) => $daten->where(
-						column: 'schulnummer', operator: '=', value: (int) $request->schulnummer
-					)
-				)
-				->firstOrFail();
+                ->where(column: $request->only(keys: ['email', 'kuerzel']))
+                ->firstOrFail();
 
 			$token = app(abstract: PasswordBroker::class)->createToken(user: $user);
-			$user->notify(instance: new RequestPasswordNotification(token: $token));
+            $user->notify(instance: new RequestPasswordNotification(token: $token));
 		} finally {
-			return;
-		}
-	}
+            return;
+        }
+    }
 }
+
