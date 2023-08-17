@@ -23,8 +23,8 @@
         clicked(newSortRef)
     }
 
-    const updateIconColor = (directionAsc: boolean): string => {
-        return sortRef.value.sortBy == newSortReference.value.sortBy && directionAsc != sortRef.value.direction ? '#329cd5' : 'silver'
+    const updateIconColor = (directionDesc: boolean): string => {
+        return sortRef.value.sortBy == newSortReference.value.sortBy && directionDesc != sortRef.value.direction ? '#329cd5' : 'silver'
     }
 
 </script>
@@ -36,12 +36,12 @@
         <span class="column-name"></span>
         <SvwsUiIcon>
             <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" class="sort-icon-up">
-                <path :fill="updateIconColor(true)"
+                <path :fill="updateIconColor(false)"
                     d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
                 </path>
             </svg>
             <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" transform="rotate(180)" class="sort-icon-down">
-                <path :fill="updateIconColor(false)"
+                <path :fill="updateIconColor(true)"
                     d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
                 </path>
             </svg>

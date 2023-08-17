@@ -210,54 +210,6 @@
             </header>
 
             <SvwsUiDataTable v-if="filteredSchueler.length" :noData="false" :key="tableRedrawKey" clickable>
-                <!-- <template #header(ASV)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        ASV
-                        <template #content>
-                            Arbeits- und Sozialverhalten
-                        </template>
-                    </SvwsUiTooltip>
-                </template>
-
-                <template #header(AUE)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        AUE
-                        <template #content>
-                            Außerunterrichtliches Engagement
-                        </template>
-                    </SvwsUiTooltip>
-                </template>
-
-                <template #header(ZB)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        ZB
-                        <template #content>
-                            Zeugnisbemerkung
-                        </template>
-                    </SvwsUiTooltip>
-                </template>
-
-                <template #header(gfs)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        GFS
-                        <template #content>
-                            Gesamtfehlstunden
-                        </template>
-                    </SvwsUiTooltip>
-                </template>
-
-                <template #header(gfsu)="{ column: { label } }">
-                    <SvwsUiTooltip>
-                        GFSU
-                        <template #content>
-                            Unentschuldigte Gesamtfehlstunden
-                        </template>
-                    </SvwsUiTooltip>
-                </template> -->
-
-
-<!-- TODO: add tooltips accordingly -->
-<!-- TODO: make selectable work -->
                 <template #header>
                     <SvwsUiDataTableRow thead>
                         <SvwsUiDataTableCell thead span="1" minWidth="6">
@@ -324,65 +276,6 @@
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
-
-                <!-- <template #cell(name)="{ rowData }">
-                    <button @click="selectSchueler(rowData)" class="truncate">
-                        {{ rowData.name }}
-                    </button>
-                </template>
-
-                <template #cell(klasse)="{ rowData }">
-                    <button @click="selectSchueler(rowData)"  class="truncate">
-                        {{ rowData.klasse }}
-                    </button>
-                </template>
-
-                <template #cell(gfs)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="gfs" v-if="editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                        <strong v-else>
-                            {{ rowData.gfs }}
-                        </strong>
-                    </div>
-                </template> -->
-                <!-- <template #cell(gfsu)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden) }">
-                        <FehlstundenInput :model="rowData" column="gfsu" v-if="editable(rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden)"></FehlstundenInput>
-                        <strong v-else>
-                            {{ rowData.gfsu }}
-                        </strong>
-                    </div>
-                </template>
-
-                <template #cell(ASV)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_asv) }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['ASV']"
-                            @clicked="selectSchueler(rowData, 'asv')"
-                        ></BemerkungIndicator>
-                   </div>
-                </template>
-
-                <template #cell(AUE)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_aue) }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['AUE']"
-                            @clicked="selectSchueler(rowData, 'aue')"
-                        ></BemerkungIndicator>
-                   </div>
-                </template>
-
-                <template #cell(ZB)="{ rowData }">
-                    <div class="cell cell__input" :class="{ 'cell--editable': editable(rowData.matrix.editable_zb) }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['ZB']"
-                            @clicked="selectSchueler(rowData, 'zb')"
-                        ></BemerkungIndicator>
-                    </div>
-                </template> -->
             </SvwsUiDataTable>
 
             <h3 class="text-headline-sm ui-mx-6" v-else>Keine Einträge gefunden!</h3>

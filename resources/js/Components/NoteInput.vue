@@ -43,7 +43,7 @@
 
 <template>
     <strong :class="{ 'low-score' : lowScore }" >
-        <span v-if="isDisabled()">{{ leistung.note }}</span>
+        <span v-if="isDisabled()">{{ props.leistung.note }}</span>
         <SvwsUiTextInput
             :disabled="isDisabled()"
             v-else
