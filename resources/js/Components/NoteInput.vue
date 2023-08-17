@@ -47,7 +47,7 @@
         <SvwsUiTextInput
             :disabled="isDisabled()"
             v-else
-            v-model="leistung.note"
+            v-model="props.leistung.note"
             :valid="!lowScore"
             :headless="true"
             @click="selectClickedItem($event)"

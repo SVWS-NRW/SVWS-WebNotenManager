@@ -42,7 +42,7 @@
 
         <SvwsUiTextInput
             v-else 
-            v-model="model[props.column]" 
+            v-model="props.model[props.column]" 
             :headless="true"
             @click="selectClickedItem($event)"
             @keydown.up.stop.prevent="navigate('up')"

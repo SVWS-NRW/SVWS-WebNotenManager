@@ -305,7 +305,7 @@
                             <TableSortButton :presentColumn="{ sortBy: 'note' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Note</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Mahnung" v-if="toggles.mahnungen" span="1" minWidth="4">
-                            <TableSortButton :presentColumn="{sortBy:'mahnung'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">M</TableSortButton>
+                            M
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead tooltip="Fachbezogene Fehlstunden" v-if="toggles.fehlstunden" span="1" minWidth="6">
                             <TableSortButton :presentColumn="{ sortBy: 'fs' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">FS</TableSortButton>
@@ -353,6 +353,7 @@
                                 column="fs"
                                 :row-index="index"
                             />
+                            t{{ row.fs }}
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell v-if="toggles.fehlstunden" span="1" minWidth="6">
@@ -361,6 +362,7 @@
                                 column="fsu"
                                 :row-index="index"
                             />
+                            t{{ row.fsu }}
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell v-if="toggles.bemerkungen" @click="select(row)" span="12" minWidth="4">

@@ -189,8 +189,7 @@
         sortRef.value.direction =newSortRef.direction
     }
 
-
-    const filteredLeistungen = computed(() => state.leistungen
+    const filteredLeistungen = computed((): Array<Leistung> => state.leistungen
         .sort(function(a: Leistung, b: Leistung) {
             const aSortRefSortBy = a[sortRef.value.sortBy]
             const bSortRefSortBy = b[sortRef.value.sortBy]
