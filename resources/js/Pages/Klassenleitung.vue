@@ -17,7 +17,6 @@
         SvwsUiSelectInput,
         SvwsUiDataTable,
         SvwsUiTextInput,
-        SvwsUiIcon,
         SvwsUiContentCard,
         SvwsUiTooltip,
         SvwsUiButton,
@@ -70,7 +69,7 @@
             { key: 'ASV', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
             { key: 'AUE', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
             { key: 'ZB', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
-        ]        
+        ]
         tableRedrawKey++;
     }
 
@@ -205,7 +204,7 @@
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
-                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>
+<!--                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>-->
                 </div>
             </header>
 

@@ -30,7 +30,6 @@
         SvwsUiCheckbox,
         SvwsUiTextInput,
         SvwsUiSelectInput,
-        SvwsUiIcon,
         SvwsUiDataTable,
         SvwsUiButton,
         SvwsUiTooltip,
@@ -314,17 +313,15 @@
                     <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
 
                     <SvwsUiButton @click="leistungEditToggle()" v-if="lehrerCanOverrideFachlehrer" :type="leistungEdit ? 'primary' : 'secondary'" size="big">
-                        <SvwsUiIcon>
-                            <mdi-pencil></mdi-pencil>
-                        </SvwsUiIcon>
+                        <mdi-pencil></mdi-pencil>
                     </SvwsUiButton>
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
-                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>
-                    <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>
-                    <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" :options="filterOptions.faecher"></SvwsUiSelectInput>
-                    <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" :options="filterOptions.kurse"></SvwsUiSelectInput>
+<!--                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>-->
+<!--                    <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>-->
+<!--                    <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" :options="filterOptions.faecher"></SvwsUiSelectInput>-->
+<!--                    <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" :options="filterOptions.kurse"></SvwsUiSelectInput>-->
                     <SvwsUiMultiSelect
                         v-model="noteFilter"
                         title="Note"

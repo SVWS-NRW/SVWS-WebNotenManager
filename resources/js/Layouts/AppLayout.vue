@@ -2,7 +2,7 @@
     import { ref, useSlots } from 'vue';
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import { Auth } from '../Interfaces/Auth'
+    import { Auth } from '@/Interfaces/Auth'
     import Toast from '@/Components/Toast.vue';
 
     import {
@@ -10,7 +10,6 @@
         SvwsUiMenu,
         SvwsUiMenuHeader,
         SvwsUiMenuItem,
-        SvwsUiIcon,
     } from '@svws-nrw/svws-ui'
 
     const modal = ref<any>(null);
@@ -38,18 +37,14 @@
 </script>
 
 <template>
-    <SvwsUiAppLayout :fullwidthContent="true" v-cloak>
+    <SvwsUiAppLayout>
         <template #sidebar>
             <SvwsUiMenu>
                 <template #header>
-                    <SvwsUiMenuHeader
-                        :user="currentUser()"
-                        :schule="usePage().props.value.schoolName"
-                    />
+                    <SvwsUiMenuHeader :user="currentUser()" :schule="usePage().props.value.schoolName"/>
                 </template>
 
                 <template #default>
-
                     <SvwsUiMenuItem
                         v-if="visible('mein_unterricht')"
                         :active="activePage('mein_unterricht')"
@@ -82,12 +77,14 @@
                         v-if="visible('settings')"
                         @click="navigate('settings.index')"
                     >
-                        <template #icon><mdi-cog-outline /></template>
+                        <template #icon>
+                           <mdi-cog-outline />
+                        </template>
                         <template #label>Einstellungen</template>
                     </SvwsUiMenuItem>
 
                     <SvwsUiMenuItem @click="logout()">
-                        <template #icon><mdi-logout /></template>
+                       <template #icon><mdi-logout /></template>
                         <template #label>Abmelden</template>
                     </SvwsUiMenuItem>
                 </template>

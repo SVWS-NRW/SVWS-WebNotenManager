@@ -7,7 +7,7 @@
 
     import {
         SvwsUiButton, SvwsUiCheckbox, SvwsUiTooltip, SvwsUiRadioOption,
-        SvwsUiDataTable, SvwsUiDataTableRow, SvwsUiDataTableCell, SvwsUiIcon,
+        SvwsUiDataTable, SvwsUiDataTableRow, SvwsUiDataTableCell,
     } from '@svws-nrw/svws-ui'
 
     const defaultCollapsed: boolean = false
@@ -313,10 +313,8 @@
                                                 size="small"
                                                 @click="klassenCollapsed = !klassenCollapsed"
                                             >
-                                                <SvwsUiIcon>
-                                                    <mdi-chevron-down v-if="klassenCollapsed" />
-                                                    <mdi-chevron-up v-else />
-                                                </SvwsUiIcon>
+                                            <mdi-chevron-down v-if="klassenCollapsed" />
+                                            <mdi-chevron-up v-else />
                                             </SvwsUiButton>
                                             Klassen
                                             <SvwsUiCheckbox
@@ -464,17 +462,15 @@
                                                 size="small"
                                                 @click="jahgraengeCollapsed[key][0] = !jahgraengeCollapsed[key][0]"
                                             >
-                                                <SvwsUiIcon>
-                                                    <mdi-chevron-down v-if="jahgraengeCollapsed[key][0]" />
-                                                    <mdi-chevron-up v-else />
-                                                </SvwsUiIcon>
+                                                <mdi-chevron-down v-if="jahgraengeCollapsed[key][0]" />
+                                                <mdi-chevron-up v-else />
                                             </SvwsUiButton>
-                                            {{ key }}
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangGroupToggle[key]"
                                                 @update:modelValue="toggleJahrgangGroup(groupedJahrgaenge, key)"
                                                 :value="true"
                                             />
+                                            {{ key }}
                                         </div>
                                     </SvwsUiDataTableCell>
                                     <SvwsUiDataTableCell>
@@ -555,22 +551,20 @@
                                     >
                                         <SvwsUiDataTableCell>
                                             <div class="flex items-center gap-1 justify-between">
-                                                <span class="flex items-center gap-1">
-                                                    <SvwsUiButton
-                                                        type="icon"
-                                                        size="small"
-                                                        @click="jahgraengeCollapsed[key][1][index] = !jahgraengeCollapsed[key][1][index]"
-                                                    >
-                                                        <mdi-chevron-down v-if="jahgraengeCollapsed[key][1][index]" />
-                                                        <mdi-chevron-up v-else />
-                                                    </SvwsUiButton>
-                                                    {{ jahrgang.kuerzel }}
-                                                </span>
+                                                <SvwsUiButton
+                                                    type="icon"
+                                                    size="small"
+                                                    @click="jahgraengeCollapsed[key][1][index] = !jahgraengeCollapsed[key][1][index]"
+                                                >
+                                                    <mdi-chevron-down v-if="jahgraengeCollapsed[key][1][index]" />
+                                                    <mdi-chevron-up v-else />
+                                                </SvwsUiButton>
                                                 <SvwsUiCheckbox
                                                     v-model="jahrgangToggle[jahrgang.id]"
                                                     @update:modelValue="toggleJahrgang(jahrgang)"
                                                     :value="true"
                                                 />
+                                                {{ jahrgang.kuerzel }}
                                             </div>
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell>
@@ -650,12 +644,14 @@
                                         v-for="klasse in jahrgang.klassen"
                                     >
                                         <SvwsUiDataTableCell>
-                                            {{ klasse.kuerzel }}
-                                            <SvwsUiCheckbox
-                                                v-model="jahrgangKlassenToggle[klasse.id]"
-                                                @update:modelValue="toggleJahrgangsKlassenRow(klasse)"
-                                                :value="true"
-                                            />
+                                            <div class="flex items-center gap-1">
+                                                <SvwsUiCheckbox
+                                                    v-model="jahrgangKlassenToggle[klasse.id]"
+                                                    @update:modelValue="toggleJahrgangsKlassenRow(klasse)"
+                                                    :value="true"
+                                                />
+                                                {{ klasse.kuerzel }}
+                                            </div>
                                         </SvwsUiDataTableCell>
                                         <SvwsUiDataTableCell :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_teilnoten" />

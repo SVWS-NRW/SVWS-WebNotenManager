@@ -2,9 +2,10 @@
     import { reactive, ref } from 'vue'
     import { Leistung } from '../Interfaces/Leistung'
     import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
-    import { SvwsUiBadge, SvwsUiButton, SvwsUiIcon, SvwsUiModal } from '@svws-nrw/svws-ui'
+    import { SvwsUiBadge, SvwsUiButton,
+        SvwsUiModal } from '@svws-nrw/svws-ui'
     import moment from 'moment'
-    
+
     let props = defineProps<{
         leistung: Leistung
         rowIndex: number,
@@ -21,9 +22,9 @@
 
 <template>
     <div :class="{ red: leistung.istGemahnt, green: leistung.mahndatum }">
-        <button 
-            @click="modal.openModal()" 
-            v-if="leistung.mahndatum" 
+        <button
+            @click="modal.openModal()"
+            v-if="leistung.mahndatum"
             @keydown.up.stop.prevent="navigate('up')"
             @keydown.down.stop.prevent="navigate('down')"
             @keydown.enter.stop.prevent="navigate('down')"
@@ -32,13 +33,15 @@
             @keydown.tab.stop.prevent="navigate('right')"
             :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
         >
-            <SvwsUiIcon>
-                <mdi-checkbox-marked-outline aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></mdi-checkbox-marked-outline>
-            </SvwsUiIcon>
+            <span class="icon">
+               <mdi-checkbox-marked-outline aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></mdi-checkbox-marked-outline>
+            </span>
         </button>
         <div v-else>
-            <mdi-checkbox-marked-outline v-if="leistung.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
-            <mdi-checkbox-blank-outline v-else aria-hidden="true" aria-description="Ist nicht gemahnt"></mdi-checkbox-blank-outline>
+            <span class="icon">
+                <mdi-checkbox-marked-outline v-if="leistung.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
+                <mdi-checkbox-blank-outline v-else aria-hidden="true" aria-description="Ist nicht gemahnt"></mdi-checkbox-blank-outline>
+            </span>
         </div>
     </div>
 

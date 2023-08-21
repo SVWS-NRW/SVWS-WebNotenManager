@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import { Ref, ref, inject } from 'vue'
     import { SortTableColumns } from '../types'
-    import { SvwsUiIcon } from '@svws-nrw/svws-ui';
 
     const props = defineProps<{
         presentColumn: SortTableColumns,
@@ -34,7 +33,7 @@
         :class="{ 'sort-icon__active': sortRef.sortBy == newSortReference.sortBy }">
         <slot></slot>
         <span class="column-name"></span>
-        <SvwsUiIcon>
+        <span class="icon">
             <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" class="sort-icon-up">
                 <path :fill="updateIconColor(false)"
                     d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
@@ -45,7 +44,7 @@
                     d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
                 </path>
             </svg>
-        </SvwsUiIcon>
+        </span>
     </button>
 </template>
 

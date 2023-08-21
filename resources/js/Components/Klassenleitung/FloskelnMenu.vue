@@ -117,10 +117,10 @@
             </div>
 
             <SvwsUiButton @click="close" type="transparent">
-                <SvwsUiIcon>
-                    <span class="sr-only">Schließen</span>
-                    <i-ri-close-line aria-hidden="true"></i-ri-close-line>
-                </SvwsUiIcon>
+                <span class="icon">
+                   <span class="sr-only">Schließen</span>
+                   <i-ri-close-line aria-hidden="true"></i-ri-close-line>
+                </span>
             </SvwsUiButton>
         </header>
         <div class="flex flex-col gap-12">

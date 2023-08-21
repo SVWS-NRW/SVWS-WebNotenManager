@@ -107,14 +107,12 @@
             </TopMenu>
             <div id="filter-menu">
                 <SvwsUiTextInput type="search" v-model="state.filters.search" placeholder="Suche"></SvwsUiTextInput>
-                <SvwsUiSelectInput placeholder="Klasse" v-model="state.klasse" @update:value="(klasse: Number) => state.filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>
-                <SvwsUiSelectInput placeholder="Jahrgang" v-model="state.jahrgang" @update:value="(jahrgang: Number) => state.filters.jahrgang = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput>
-                <SvwsUiSelectInput placeholder="Kurs" v-model="state.kurs" @update:value="(kurs: Number) => state.filters.kurs = kurs" :options="state.filterValues.kurse"></SvwsUiSelectInput>
-                <SvwsUiSelectInput placeholder="Note" v-model="state.note" @update:value="(note: Number) => state.filters.note = note" :options="state.filterValues.noten"></SvwsUiSelectInput>
+<!--                <SvwsUiSelectInput placeholder="Klasse" v-model="state.klasse" @update:value="(klasse: Number) => state.filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>-->
+<!--                <SvwsUiSelectInput placeholder="Jahrgang" v-model="state.jahrgang" @update:value="(jahrgang: Number) => state.filters.jahrgang = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput>-->
+<!--                <SvwsUiSelectInput placeholder="Kurs" v-model="state.kurs" @update:value="(kurs: Number) => state.filters.kurs = kurs" :options="state.filterValues.kurse"></SvwsUiSelectInput>-->
+<!--                <SvwsUiSelectInput placeholder="Note" v-model="state.note" @update:value="(note: Number) => state.filters.note = note" :options="state.filterValues.noten"></SvwsUiSelectInput>-->
                 <SvwsUiButton type="secondary">
-                    <SvwsUiIcon>
-                        <i-ri-filter-3-line aria-hidden="true"></i-ri-filter-3-line>
-                    </SvwsUiIcon>
+                    <i-ri-filter-3-line aria-hidden="true"></i-ri-filter-3-line>
                     Erweiterte Filter
                 </SvwsUiButton>
             </div>

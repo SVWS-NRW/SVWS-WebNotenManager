@@ -27,10 +27,10 @@
         <a :href="route('barrierefreiheit')" title="Barrierefreiheit" target="_blank">Barrierefreiheit</a>
         <a href="https://schulverwaltungsinfos.nrw.de/svws/wiki/index.php?title=WeNoM:Handbuch" target="_blank" title="Hilfe">Hilfe</a>
         <button @click="darkMode">
-            <SvwsUiIcon>
+            <span class="icon">
                 <i-ri-sun-line aria-hidden="true" v-if="store.darkmode"></i-ri-sun-line>
                 <i-ri-moon-line aria-hidden="true" v-else></i-ri-moon-line>
-            </SvwsUiIcon>
+            </span>
         </button>
     </div>
 </template>

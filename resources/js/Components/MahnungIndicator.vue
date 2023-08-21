@@ -6,7 +6,8 @@
     import { Leistung } from '../Interfaces/Leistung'
     import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
 
-    import { SvwsUiBadge, SvwsUiButton, SvwsUiIcon, SvwsUiModal } from '@svws-nrw/svws-ui'
+    import { SvwsUiBadge, SvwsUiButton,
+        SvwsUiModal } from '@svws-nrw/svws-ui'
 
     const modal = ref<any>(null)
 
@@ -34,25 +35,25 @@
 <template>
     <span v-if="isDisabled()">
         <span v-if="leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-            <SvwsUiIcon class="green" aria-hidden="true">
+            <span class="icon green" aria-hidden="true">
                 <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
-            </SvwsUiIcon>
+            </span>
         </span>
         <span v-else-if="istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <SvwsUiIcon class="red" aria-hidden="true">
+            <span class="icon red" aria-hidden="true">
                 <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
-            </SvwsUiIcon>
+            </span>
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
-            <SvwsUiIcon aria-hidden="true">
+            <span class="icon" aria-hidden="true">
                 <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
-            </SvwsUiIcon>
+            </span>
         </span>
     </span>
-        
+
     <button
         v-else
-        @click="leistung.mahndatum ? modal.openModal() : updateIstGemahnt()" 
+        @click="leistung.mahndatum ? modal.openModal() : updateIstGemahnt()"
         @keydown.up.stop.prevent="navigate('up')"
         @keydown.down.stop.prevent="navigate('down')"
         @keydown.enter.stop.prevent="navigate('down')"
@@ -62,19 +63,19 @@
         :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
     >
         <span v-if="leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-            <SvwsUiIcon class="green" aria-hidden="true">
+           <span class="icon green" aria-hidden="true">
                 <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
-            </SvwsUiIcon>
+           </span>
         </span>
         <span v-else-if="istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <SvwsUiIcon class="red" aria-hidden="true">
-                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
-            </SvwsUiIcon>
+            <span class="icon red" aria-hidden="true">
+               <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
+           </span>
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
-            <SvwsUiIcon aria-hidden="true">
-                <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
-            </SvwsUiIcon>
+           <span class="icon" aria-hidden="true">
+               <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
+           </span>
         </span>
     </button>
 

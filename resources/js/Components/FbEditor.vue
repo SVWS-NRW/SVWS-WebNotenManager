@@ -18,7 +18,7 @@
         SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiButton,
-        SvwsUiSelectInput,
+        // SvwsUiSelectInput,
     } from '@svws-nrw/svws-ui'
 
     const emit = defineEmits(['close', 'updated'])
@@ -147,17 +147,17 @@
             </template>
 
             <template #filter>
-                <SvwsUiSelectInput
-                    placeholder="Niveau"
-                    v-model="niveauFilter"
-                    :options="niveauOptions"
-                ></SvwsUiSelectInput>
+<!--                <SvwsUiSelectInput-->
+<!--                    placeholder="Niveau"-->
+<!--                    v-model="niveauFilter"-->
+<!--                    :options="niveauOptions"-->
+<!--                ></SvwsUiSelectInput>-->
 
-                <SvwsUiSelectInput
-                    placeholder="Jahrgang"
-                    v-model="jahrgangFilter"
-                    :options="jahrgaengeOptions"
-                ></SvwsUiSelectInput>
+<!--                <SvwsUiSelectInput-->
+<!--                    placeholder="Jahrgang"-->
+<!--                    v-model="jahrgangFilter"-->
+<!--                    :options="jahrgaengeOptions"-->
+<!--                ></SvwsUiSelectInput>-->
             </template>
         </SvwsUiDataTable>
     </div>
