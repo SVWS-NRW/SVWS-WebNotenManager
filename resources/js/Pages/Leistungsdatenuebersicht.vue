@@ -186,6 +186,7 @@
     const updateSortRef = (newSortRef: SortTableColumns) => {
         sortRef.value.sortBy = newSortRef.sortBy
         sortRef.value.direction =newSortRef.direction
+        drawTable()
     }
 
     const filteredLeistungen = computed((): Array<Leistung> => state.leistungen

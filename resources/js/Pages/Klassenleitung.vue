@@ -107,6 +107,7 @@
     const updateSortRef = (newSortRef: SortTableColumns) => {
         sortRef.value.sortBy = newSortRef.sortBy
         sortRef.value.direction =newSortRef.direction
+        drawTable()
     }
 
     const filteredSchueler = computed((): Array<Schueler> => state.schueler
