@@ -70,7 +70,7 @@
             { key: 'ASV', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
             { key: 'AUE', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
             { key: 'ZB', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
-        ]        
+        ]
         tableRedrawKey++;
     }
 
@@ -108,6 +108,7 @@
     const updateSortRef = (newSortRef: SortTableColumns) => {
         sortRef.value.sortBy = newSortRef.sortBy
         sortRef.value.direction =newSortRef.direction
+        drawTable()
     }
 
     const filteredSchueler = computed((): Array<Schueler> => state.schueler
