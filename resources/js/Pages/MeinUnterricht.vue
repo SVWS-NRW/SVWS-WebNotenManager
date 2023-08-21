@@ -353,7 +353,6 @@
                                 column="fs"
                                 :row-index="index"
                             />
-                            t{{ row.fs }}
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell v-if="toggles.fehlstunden" span="1" minWidth="6">
@@ -362,7 +361,6 @@
                                 column="fsu"
                                 :row-index="index"
                             />
-                            t{{ row.fsu }}
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell v-if="toggles.bemerkungen" @click="select(row)" span="12" minWidth="4">
