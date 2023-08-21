@@ -94,7 +94,7 @@
 
     // Creates the collapsed boolean table to switch the table toggles
     const setTableCollapseValues = (obj: Record<string, any[]>): void => Object.keys(obj).forEach((key: string) =>
-        jahgraengeCollapsed.value[key] = [defaultCollapsed, Array(obj[key].length).fill(defaultCollapsed)]
+        jahgraengeCollapsed.value[key] = [defaultCollapsed, Array(obj[key].length).fill(true)]
     )
 
     const save = (): void => {
@@ -727,4 +727,10 @@
     .button {
         @apply ui-self-start
     }
+
+    /* testing here */
+    .checkbox--checked:not(.checkbox--bw) .icon, .checkbox--indeterminate:not(.checkbox--bw) .icon {
+    --tw-text-opacity: 1;
+    @apply ui-bg-black !important;
+}
 </style>
