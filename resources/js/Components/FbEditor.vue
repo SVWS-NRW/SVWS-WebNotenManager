@@ -101,7 +101,7 @@
         <SvwsUiTextareaInput
             v-model="computedBemerkung"
             @update:modelValue="bemerkung = $event"
-            :autoresize="false"
+            :autoresize="true"
             :disabled="props.readonly"
         ></SvwsUiTextareaInput>
 
