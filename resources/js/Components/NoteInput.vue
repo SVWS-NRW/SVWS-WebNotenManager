@@ -23,14 +23,22 @@
         '6', '5-', '5', '5+', '4-',
     ]
 
+    let stored: number = props.leistung.note
+
     watch((): string => leistung.note, (): void => {
         clearTimeout(timeout)
         timeout = setTimeout((): AxiosPromise => saveNote(), 500)
     })
 
-    const saveNote = (): AxiosPromise => axios
-        .post(route('api.noten', leistung), { note: leistung.note })
-        .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
+    //present version
+    // const saveNote = (): AxiosPromise => axios
+    //     .post(route('api.noten', leistung), { note: leistung.note })
+    //     .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
+
+    // const saveNote = (): AxiosPromise => axios
+    //     .post(route('api.noten', leistung), { note: leistung.note })
+    //     .then((): Number => stored = leistung.note)
+    //     .catch((): Number => props.leistung.note = stored)
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))
 
