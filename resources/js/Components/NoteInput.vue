@@ -30,15 +30,11 @@
         timeout = setTimeout((): AxiosPromise => saveNote(), 500)
     })
 
-    //present version
-    // const saveNote = (): AxiosPromise => axios
-    //     .post(route('api.noten', leistung), { note: leistung.note })
-    //     .catch((error: AxiosError): AxiosResponse => leistung.note = error.response.data.note)
 
-    // const saveNote = (): AxiosPromise => axios
-    //     .post(route('api.noten', leistung), { note: leistung.note })
-    //     .then((): Number => stored = leistung.note)
-    //     .catch((): Number => props.leistung.note = stored)
+    const saveNote = (): AxiosPromise => axios
+        .post(route('api.noten', leistung), { note: leistung.note })
+        .then((): string => stored = leistung.note)
+        .catch((): string => leistung.note = stored)
 
     const lowScore: ReturnType<typeof computed> = computed((): boolean => lowScoreArray.includes(leistung.note))
 
