@@ -17,6 +17,7 @@
         SvwsUiSelectInput,
         SvwsUiDataTable,
         SvwsUiTextInput,
+        SvwsUiMultiSelect,
         SvwsUiContentCard,
         SvwsUiTooltip,
         SvwsUiButton,
@@ -56,6 +57,8 @@
         search: '',
         klasse: 0,
     })
+
+    const klasseFilter = ref();
 
     const columns = ref<Column[]>([])
 
@@ -144,7 +147,8 @@
             return 0;
         })
         .filter((schueler: Schueler): boolean =>
-            searchFilter(schueler) && tableFilter(schueler, 'klasse', true)
+            searchFilter(schueler)
+            && tableFilter(schueler, 'klasse', true)
         )
     )
 
@@ -154,11 +158,26 @@
         return search(schueler.vorname) || search(schueler.nachname)
     }
 
+    //TODO: is this deprecated too with multiselect?
     const tableFilter = (schueler: Schueler, column: string, withOnlyEmptyOption: boolean = false): boolean => {
         if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return schueler[column] == null
-        if (filters[column] == 0) return true
-        return schueler[column] == filters[column]
+        if (filters[column] == 0 || filters[column]['index'] == 0) return true
+        return schueler[column] == filters[column]['index']
+        //was valid for deprecated SelectInput
+        //return schueler[column] == filters[column]
     }
+
+    //testing here
+    //not ready
+    const multiSelectFilter = (items: Iterable<Schueler[column]>, search: string) => {
+		const list = [];
+		for (const i of items)
+			if (i.index.includes(search.toLocaleLowerCase()))
+				list.push(i);
+		return list;
+	}
+
+
 
     const fetchSchueler = (): AxiosPromise => axios
         .get(route('api.klassenleitung'))
@@ -205,7 +224,16 @@
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
-<!--                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>-->
+                    <SvwsUiMultiSelect
+                        title="Klasse"
+                        v-model="filters.klasse"
+                        :items="filterOptions.klassen"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        
+                        :item-filter="multiSelectFilter"
+                        :removable="true"
+                    ></SvwsUiMultiSelect>
                 </div>
             </header>
 
