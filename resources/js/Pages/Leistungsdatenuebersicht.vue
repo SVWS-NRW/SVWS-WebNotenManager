@@ -284,7 +284,11 @@
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator, leistungEdit.value)
 
     const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => disabled(leistung.matrix[permission])
-    const select = (row: Leistung): Leistung => selectedFbLeistung.value = row
+    const select = (row: Leistung, always: boolean = false): void => {
+        if (always || selectedFbLeistung.value !== null) {
+            selectedFbLeistung.value = row
+        }
+    }
 </script>
 
 <template>
@@ -376,23 +380,33 @@
 
                 <template #body="{ rows }">
                     <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index" >
-                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="6">
-                            <span class="truncate">{{ row.klasse }}</span>
+                        <SvwsUiDataTableCell span="1" minWidth="6">
+                            <button @click="select(row)" class="truncate">
+                                {{ row.klasse }}
+                            </button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="3" minWidth="10">
-                            <span class="truncate">{{ row.name }}</span>
+                        <SvwsUiDataTableCell span="3" minWidth="10">
+                            <button @click="select(row)" class="truncate">
+                                {{ row.name }}
+                            </button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="5">
-                            <strong class="truncate">{{ row.fach }}</strong>
+                        <SvwsUiDataTableCell span="1" minWidth="5">
+                            <button @click="select(row)" class="truncate font-bold">
+                                {{ row.fach }}
+                            </button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
-                            <span class="truncate">{{ row.kurs }}</span>
+                        <SvwsUiDataTableCell span="2" minWidth="5">
+                            <button @click="select(row)" class="truncate">
+                                {{ row.kurs }}
+                            </button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell v-if="toggles.fachlehrer" @click="select(row)" span="2" minWidth="6">
-                            <span class="truncate">{{ row.lehrer }}</span>
+                        <SvwsUiDataTableCell v-if="toggles.fachlehrer" span="2" minWidth="6">
+                            <button @click="select(row)" class="truncate">
+                                {{ row.lehrer }}
+                            </button>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell v-if="toggles.teilleistungen" span="5" minWidth="15">
-                            <span class="truncate">TBD</span>
+                            <button @click="select(row)" class="truncate">TBD</button>
                         </SvwsUiDataTableCell>
 
                         <SvwsUiDataTableCell span="1" minWidth="5">
@@ -429,12 +443,12 @@
                             />
                         </SvwsUiDataTableCell>
 
-                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" @click="select(row)" span="12" minWidth="4">
+                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" span="12" minWidth="4">
                             <BemerkungIndicator
                                 :model="row"
                                 :bemerkung="row.fachbezogeneBemerkungen"
                                 :row-index="index"
-                                :disabled="disabled(row.matrix.editable_fb)"
+                                @clicked="select(row, true)"
                             ></BemerkungIndicator>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>

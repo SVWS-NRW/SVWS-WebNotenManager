@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import {computed, onMounted, Ref, ref, watch} from 'vue'
+    import { computed, onMounted, Ref, ref, watch } from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
     import { TableColumn, Leistung, FachbezogeneFloskel } from '@/types'
 
@@ -18,17 +18,18 @@
         SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiButton,
-        // SvwsUiSelectInput,
+        // SvwsUiSelectInput, // TODO: Missing UI Component
     } from '@svws-nrw/svws-ui'
 
     const emit = defineEmits(['close', 'updated'])
+
     const props = defineProps<{
         leistung: Leistung,
         readonly: boolean,
     }>()
 
-    const bemerkung: Ref<string> = ref(props.leistung.fachbezogeneBemerkungen)
-    const storedBemerkung: Ref<string> = ref(props.leistung.fachbezogeneBemerkungen)
+    const bemerkung: Ref<string|null> = ref(null)
+    const storedBemerkung: Ref<string|null> = ref(null)
     const isDirty: Ref<bool> = ref(false)
 
     const searchTerm: Ref<string> = ref('')
@@ -52,13 +53,18 @@
         'jahrgaenge': [],
     })
 
-    watch(() => props.leistung, (): void =>
-        bemerkung.value = storedBemerkung.value = props.schueler[props.leistung.fachbezogeneBemerkungen]
-    )
+    const redrawBemerkungen = (): string | null =>
+        bemerkung.value
+            = storedBemerkung.value
+            = props.leistung.fachbezogeneBemerkungen
+
+    watch(() => props.leistung, (): string | null => redrawBemerkungen())
 
     onMounted((): void => {
+        redrawBemerkungen()
+
         axios.get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
-            .then((response: AxiosResponse): AxiosResponse => {
+            .then((response: AxiosResponse): void => {
                 floskeln.value = response.data?.data || []
                 niveauOptions.value = response.data?.niveau || []
                 jahrgaengeOptions.value = response.data?.jahrgaenge || []
@@ -83,14 +89,14 @@
         return formatStringBasedOnGender(bemerkung.value, props.leistung)
     })
 
-    const save = (): void => saveBemerkung('api.fachbezogene_bemerkung', props.leistung.id,
+    const save = (): Promise<void> => saveBemerkung('api.fachbezogene_bemerkung', props.leistung.id,
         { bemerkung: bemerkung.value }, bemerkung, storedBemerkung, isDirty,
         (): void => emit('updated', bemerkung.value)
     )
 
     const addSelected = (): void => addSelectedFloskelnToBemerkung(bemerkung, selectedFloskeln)
     const select = (floskeln: FachbezogeneFloskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
-    const close = (): void => closeEditor(isDirty, () => emit('close'))
+    const close = (): void => closeEditor(isDirty, (): void => emit('close'))
 </script>
 
 <template>
@@ -106,26 +112,15 @@
         ></SvwsUiTextareaInput>
 
         <div class="buttons">
-            <SvwsUiButton
-                v-if="!readonly"
-                @click="addSelected"
-                :disabled="selectedFloskeln.length === 0"
-            >
+            <SvwsUiButton v-if="!readonly" @click="addSelected" :disabled="selectedFloskeln.length === 0">
                 Zuweisen
             </SvwsUiButton>
 
-            <SvwsUiButton
-                v-if="!readonly"
-                @click="save"
-                :disabled="!isDirty"
-            >
+            <SvwsUiButton v-if="!readonly" @click="save" :disabled="!isDirty">
                 Speichern
             </SvwsUiButton>
 
-            <SvwsUiButton
-                @click="close"
-                :type="isDirty ? 'danger' : 'secondary'"
-            >
+            <SvwsUiButton @click="close" :type="isDirty ? 'danger' : 'secondary'">
                 Schließen
             </SvwsUiButton>
         </div>
@@ -139,14 +134,11 @@
             v-if="!readonly"
         >
             <template #search>
-                <SvwsUiTextInput
-                    type="search"
-                    v-model="searchTerm"
-                    placeholder="Suche"
-                ></SvwsUiTextInput>
+                <SvwsUiTextInput type="search" v-model="searchTerm" placeholder="Suche"></SvwsUiTextInput>
             </template>
 
             <template #filter>
+<!--                // TODO: Missing UI Component-->
 <!--                <SvwsUiSelectInput-->
 <!--                    placeholder="Niveau"-->
 <!--                    v-model="niveauFilter"-->

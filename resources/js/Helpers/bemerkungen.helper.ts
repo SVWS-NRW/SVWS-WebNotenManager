@@ -57,7 +57,7 @@ const tableFilter = (floskel: FachbezogeneFloskel, column: string, value: Ref<Nu
 	return floskel[column] == value.value
 }
 
-const closeEditor = (isDirty: Ref<boolean>, callback: void) => {
+const closeEditor = (isDirty: Ref<boolean>, callback: any) => {
 	const changesNotSavedWarning: string = 'Achtung die Änderungen sind noch nicht gespeichert! ' +
 		'Diese gehen verloren, wenn Sie fortfahren.'
 
@@ -68,7 +68,7 @@ const closeEditor = (isDirty: Ref<boolean>, callback: void) => {
 	}
 }
 
-const addSelectedFloskelnToBemerkung = (bemerkung: Ref<string>, selectedFloskeln: Ref<Floskel[]>): void => {
+const addSelectedFloskelnToBemerkung = (bemerkung: Ref<string|null>, selectedFloskeln: Ref<Floskel[]>): void => {
 	let floskeln: string = selectedFloskeln.value.map(
 		(selected: Floskel): string => selected.text
 	).join(' ')
@@ -86,8 +86,8 @@ const saveBemerkung = (
 	routeName: string,
 	id: number,
 	data: Object,
-	bemerkung: Ref<string>,
-	storedBemerkung: Ref<string>,
+	bemerkung: Ref<string|null>,
+	storedBemerkung: Ref<string|null>,
 	isDirty: Ref<boolean>,
 	callback: any,
 ) => axios

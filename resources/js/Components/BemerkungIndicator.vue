@@ -24,7 +24,7 @@
 
 <template>
     <button
-        @click="clicked"
+        @click="clicked()"
         @keydown.up.stop.prevent="navigate('up')"
         @keydown.down.stop.prevent="navigate('down')"
         @keydown.enter.stop.prevent="navigate('down')"

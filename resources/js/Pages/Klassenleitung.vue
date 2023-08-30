@@ -27,7 +27,7 @@
     import {Leistung} from '../Interfaces/Leistung'
     import BemerkungEditor from '../Components/BemerkungEditor.vue'
     import {Auth} from '../Interfaces/Auth'
-    import {tableCellEditable} from '../Helpers/pages.helper'
+    import {tableCellDisabled, tableCellEditable} from '../Helpers/pages.helper'
 
     let props = defineProps({
         settings: {
@@ -187,19 +187,21 @@
     const selectedSchueler: Ref<Schueler | null> = ref(null)
     const selectedFloskelgruppe: Ref<string> = ref('asv')
 
-    const selectSchueler = (schueler: Schueler, floskelgruppe?: string): void => {
-        selectedSchueler.value = null
-        selectedSchueler.value = schueler
+    const selectSchueler = (schueler: Schueler, floskelgruppe: string | null = null): void => {
 
-        if (floskelgruppe) {
-            selectedFloskelgruppe.value = floskelgruppe
+        if (floskelgruppe || selectedSchueler.value != null) {
+            selectedSchueler.value = schueler
+
+            if (floskelgruppe) {
+                selectedFloskelgruppe.value = floskelgruppe
+            }
         }
     }
 
-    const valueReadonly = (schueler: Schueler, permission: 'editable_fb'): boolean => !schueler.matrix[permission]
 
 
-    const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator) // ok
+    const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator) // ok
+
 </script>
 
 <template>
@@ -230,7 +232,7 @@
                         :items="filterOptions.klassen"
                         :item-text="item => item?.label || ''"
                         autocomplete
-                        
+
                         :item-filter="multiSelectFilter"
                         :removable="true"
                     ></SvwsUiMultiSelect>
@@ -263,44 +265,58 @@
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>
-<!-- TODO: are span and minwidth here ok or old? -->
+<!-- TODO: are span and minwidth here ok or old? Karol: still to be determined if the ui will be updated or not and how -->
                 <template #body="{ rows }">
                     <SvwsUiDataTableRow v-for="(row, index) in filteredSchueler" :key="index" >
-                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="6">
+                        <SvwsUiDataTableCell span="1" minWidth="6">
                             <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.klasse }}</button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="3" minWidth="10">
+                        <SvwsUiDataTableCell span="3" minWidth="10">
                             <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.name }}</button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="5">
-                            <strong><button type="button" @click="selectSchueler(row)" class="truncate">{{ row.gfs }}</button></strong>
+
+
+                        <SvwsUiDataTableCell span="1" minWidth="6">
+                            <FehlstundenInput
+                                :model="row"
+                                column="gfs"
+                                :row-index="index"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && !row.matrix.toggleable_fehlstunden)"
+                            />
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
-                            <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.gfsu }}</button>
+                        <SvwsUiDataTableCell span="1" minWidth="6">
+                            <FehlstundenInput
+                                :model="row"
+                                column="gfsu"
+                                :row-index="index"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && !row.matrix.toggleable_fehlstunden)"
+                            />
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
+
+
+                        <SvwsUiDataTableCell span="2" minWidth="5">
                             <BemerkungIndicator
-                            :model="row"
-                            :bemerkung="row['ASV']"
-                            @clicked="selectSchueler(row, 'asv')"
-                        ></BemerkungIndicator>
-                            <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.ASV }}</button>
+                                :model="row"
+                                :bemerkung="row['ASV']"
+                                @clicked="selectSchueler(row, 'asv')"
+                                :row-index="index"
+                            />
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
+                        <SvwsUiDataTableCell span="2" minWidth="5">
                             <BemerkungIndicator
-                            :model="row"
-                            :bemerkung="row['AUE']"
-                            @clicked="selectSchueler(row, 'aue')"
-                        ></BemerkungIndicator>
-                            <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.AUE }}</button>
+                                :model="row"
+                                :bemerkung="row['AUE']"
+                                @clicked="selectSchueler(row, 'aue')"
+                                :row-index="index"
+                            />
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
+                        <SvwsUiDataTableCell span="2" minWidth="5">
                             <BemerkungIndicator
-                            :model="row"
-                            :bemerkung="row['ZB']"
-                            @clicked="selectSchueler(row, 'zb')"
-                        ></BemerkungIndicator>
-                            <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.ZB }}</button>
+                                :model="row"
+                                :bemerkung="row['ZB']"
+                                @clicked="selectSchueler(row, 'zb')"
+                                :row-index="index"
+                            />
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
                 </template>

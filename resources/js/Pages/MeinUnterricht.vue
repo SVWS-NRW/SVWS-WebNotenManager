@@ -40,7 +40,7 @@
     import {Settings} from '../Interfaces/Settings'
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import {Auth} from '../Interfaces/Auth'
-    import {tableCellEditable, nextNote} from '../Helpers/pages.helper'
+    import {tableCellEditable, nextNote, tableCellDisabled} from '../Helpers/pages.helper'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -241,9 +241,13 @@
 
 
 
-    const editable = (condition: boolean): boolean => tableCellEditable(condition, auth.administrator) // ok
+    const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator) // ok
 
-
+    const select = (row: Leistung, always: boolean = false): void => {
+        if (always || selectedFbLeistung.value !== null) {
+            selectedFbLeistung.value = row
+        }
+    }
 </script>
 
 <template>
@@ -285,7 +289,7 @@
                         :items="filterOptions.klassen"
                         :item-text="item => item?.label || ''"
                         autocomplete
-                        
+
                     ></SvwsUiMultiSelect> -->
 
                 </div>
@@ -330,55 +334,65 @@
                 </template>
                 <template #body="{ rows }">
                     <SvwsUiDataTableRow v-for="(row, index) in filteredLeistungen" :key="index" >
-                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="6">
-                            <button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.klasse }}</button>
+                        <SvwsUiDataTableCell span="1" minWidth="6">
+                            <button type="button" @click="select(row)" class="truncate">
+                                {{ row.klasse }}
+                            </button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="3" minWidth="10">
-                            <button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.name }}</button>
+                        <SvwsUiDataTableCell span="3" minWidth="10">
+                            <button type="button" @click="select(row)" class="truncate">
+                                {{ row.name }}
+                            </button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="1" minWidth="5">
-                            <strong><button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.fach }}</button></strong>
+                        <SvwsUiDataTableCell span="1" minWidth="5">
+                            <button type="button" @click="select(row)" class="truncate font-bold">
+                                {{ row.fach }}
+                            </button>
                         </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell @click="select(row)" span="2" minWidth="5">
-                            <button type="button" @click="selectedFbLeistung = row" class="truncate">{{ row.kurs }}</button>
+                        <SvwsUiDataTableCell span="2" minWidth="5">
+                            <button type="button" @click="select(row)" class="truncate">
+                                {{ row.kurs }}
+                            </button>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell v-if="toggles.teilleistungen" span="5" minWidth="15">
                             <span class="truncate">TBD</span>
                         </SvwsUiDataTableCell>
-
                         <SvwsUiDataTableCell span="1" minWidth="5">
                             <NoteInput
                                 :leistung="row"
                                 :row-index="index"
+                                :disabled="disabled(row.matrix.editable_noten)"
                             ></NoteInput>
                         </SvwsUiDataTableCell>
-
                         <SvwsUiDataTableCell v-if="toggles.mahnungen" span="1" minWidth="4">
-                            <MahnungIndicator :leistung="row" :row-index="index"></MahnungIndicator>
+                            <MahnungIndicator
+                                :leistung="row"
+                                :row-index="index"
+                                :disabled="disabled(row.matrix.editable_mahnungen)"
+                            ></MahnungIndicator>
                         </SvwsUiDataTableCell>
-
                         <SvwsUiDataTableCell v-if="toggles.fehlstunden" span="1" minWidth="6">
                             <FehlstundenInput
                                 :model="row"
                                 column="fs"
                                 :row-index="index"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                             />
                         </SvwsUiDataTableCell>
-
                         <SvwsUiDataTableCell v-if="toggles.fehlstunden" span="1" minWidth="6">
                             <FehlstundenInput
                                 :model="row"
                                 column="fsu"
                                 :row-index="index"
+                                :disabled="disabled(row.matrix.editable_fehlstunden && row.matrix.toggleable_fehlstunden)"
                             />
                         </SvwsUiDataTableCell>
-
-                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" @click="select(row)" span="12" minWidth="4">
+                        <SvwsUiDataTableCell v-if="toggles.bemerkungen" span="12" minWidth="4">
                             <BemerkungIndicator
                                 :model="row"
                                 :bemerkung="row.fachbezogeneBemerkungen"
                                 :row-index="index"
-                                @clicked="selectedFbLeistung = row"
+                                @click="select(row, true)"
                             ></BemerkungIndicator>
                         </SvwsUiDataTableCell>
                     </SvwsUiDataTableRow>
