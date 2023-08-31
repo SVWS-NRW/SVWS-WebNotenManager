@@ -26,7 +26,6 @@
 
     import {
         SvwsUiCheckbox,
-        // SvwsUiSelectInput,
         SvwsUiDataTable,
         SvwsUiButton,
         SvwsUiTextInput,
@@ -98,6 +97,8 @@
         fach: '0',
         note: 0,
     })
+
+    const noteFilter = ref<string[]>([]);
 
     const columns = ref<Column[]>([])
 
@@ -223,10 +224,41 @@
             && tableFilter(leistung, 'kurs')
             && tableFilter(leistung, 'klasse')
             && tableFilter(leistung, 'jahrgang')
-            && tableFilter(leistung, 'note')
             && tableFilter(leistung, 'fach')
+            && multiSelectFilter(leistung, 'note')
         )
     )
+
+    const multiSelectFilter = (leistung: Leistung, column: string): boolean => {
+        console.log("fufis " + JSON.stringify(noteFilter.value))
+        const indexContains = (index: string): boolean => noteFilter.value.filter(
+            (item: {index: string, label: string}): boolean => item.index === index
+        ).length > 0
+
+        const displayAll = (): boolean => {
+            let optionAllSelected: boolean = false
+            if (noteFilter.value.length > 0) { // at least one item selected
+                noteFilter.value.forEach((item) => {
+                    if (item.index === '0') {
+                        optionAllSelected = true
+                        return
+                    }
+                })
+            }
+            return optionAllSelected
+        }
+
+        if (noteFilter.value.length === 0) { // No item selected or everything just unselected
+            return true
+        } 
+        
+        return noteFilter.value.filter(
+            (item: {index: string, label: string}): boolean =>
+                item.label === leistung.note
+                || (indexContains('') && [null, ''].includes(leistung.note))
+                || displayAll()
+        ).length > 0
+    }
 
     const searchFilter = (leistung: Leistung): boolean => {
         if (filters.search === '') return true
@@ -235,11 +267,10 @@
     }
 
     const tableFilter = (leistung: Leistung, column: string): boolean => {
-        if (filters[column] == '0') return true
-        return leistung[column] == filters[column]
+        if ((filters[column] == 0 || filters[column]['index'] == 0) && filters[column]['index'] !== '') return true
+        if (filters[column]['index'] === "") return (leistung[column] == null)
+        return leistung[column] == filters[column]['index']
     }
-
-
 
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator) // ok
 
@@ -277,21 +308,48 @@
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
-                    <!-- deprecated -->
-<!-- <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput> -->
-<!--                    <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>-->
-<!--                    <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" :options="filterOptions.faecher"></SvwsUiSelectInput>-->
-<!--                    <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" :options="filterOptions.kurse"></SvwsUiSelectInput>-->
-<!--                    <SvwsUiSelectInput placeholder="Note" v-model="filters.note" :options="filterOptions.noten"></SvwsUiSelectInput>-->
-                    <!-- <SvwsUiMultiSelect
+                    <SvwsUiMultiSelect
                         title="Klasse"
                         v-model="filters.klasse"
                         :items="filterOptions.klassen"
                         :item-text="item => item?.label || ''"
                         autocomplete
-
-                    ></SvwsUiMultiSelect> -->
-
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                    <SvwsUiMultiSelect
+                        title="Jahrgang"
+                        v-model="filters.jahrgang"
+                        :items="filterOptions.jahrgaenge"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                    <SvwsUiMultiSelect
+                        title="Fach"
+                        v-model="filters.fach"
+                        :items="filterOptions.faecher"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                    <SvwsUiMultiSelect
+                        title="Kurs"
+                        v-model="filters.kurs"
+                        :items="filterOptions.kurse"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                    <SvwsUiMultiSelect
+                        title="Note"
+                        v-model="noteFilter"
+                        :item-text="item => item?.label || ''"
+                        :items="filterOptions.noten"
+                        autocomplete
+                        tags
+                        :item-filter="(items: {index: Number, label: String}, search: String) => items.filter((i: any) => i.label.includes(search))"
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
                 </div>
             </header>
 
@@ -405,14 +463,14 @@
 <style scoped>
 
     .truncate {
-            @apply ui-truncate
+        @apply ui-truncate
     }
 
     header {
-            @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
 
-        header #toggles {
+    header #toggles {
         @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
     }
 

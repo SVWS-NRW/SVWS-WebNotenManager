@@ -18,7 +18,9 @@
         SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiButton,
-        // SvwsUiSelectInput, // TODO: Missing UI Component
+        //deprecated
+        //SvwsUiSelectInput, 
+        SvwsUiMultiSelect,
     } from '@svws-nrw/svws-ui'
 
     const emit = defineEmits(['close', 'updated'])
@@ -139,17 +141,25 @@
 
             <template #filter>
 <!--                // TODO: Missing UI Component-->
-<!--                <SvwsUiSelectInput-->
-<!--                    placeholder="Niveau"-->
-<!--                    v-model="niveauFilter"-->
-<!--                    :options="niveauOptions"-->
-<!--                ></SvwsUiSelectInput>-->
-
-<!--                <SvwsUiSelectInput-->
-<!--                    placeholder="Jahrgang"-->
-<!--                    v-model="jahrgangFilter"-->
-<!--                    :options="jahrgaengeOptions"-->
-<!--                ></SvwsUiSelectInput>-->
+               <SvwsUiMultiSelect
+                        title="Niveau"
+                        placeholder="Niveau"
+                        v-model="niveauFilter"
+                        :items="niveauOptions"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                ></SvwsUiMultiSelect>
+                <!-- breaks the whole filter if active but wasn't working with SvwsUiSelectInput anyway -->
+                <!-- <SvwsUiMultiSelect
+                        title="Jahrgang"
+                        placeholder="Jahrgang"
+                        v-model="jahrgangFilter"
+                        :items="jahrgangOptions"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                ></SvwsUiMultiSelect> -->
             </template>
         </SvwsUiDataTable>
     </div>

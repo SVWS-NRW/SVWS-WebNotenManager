@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // TODO: TBR
+// TODO: Check if this file is still being used (it seems it isn't)
     import { computed, onMounted, reactive } from 'vue'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
 
@@ -74,8 +75,8 @@
     <div class="pb-0">
         <div class="grid grid-cols-3 gap-3">
             <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
-<!--            <SvwsUiSelectInput placeholder="Niveau" v-model="filters.niveau" @update:value="(niveau: Number) => filters.niveau = niveau" :options="state.filterValues.niveau"></SvwsUiSelectInput>-->
-<!--            <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang_id" @update:value="(jahrgang: Number) => filters.jahrgang_id = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput>-->
+            <!-- <SvwsUiSelectInput placeholder="Niveau" v-model="filters.niveau" @update:value="(niveau: Number) => filters.niveau = niveau" :options="state.filterValues.niveau"></SvwsUiSelectInput> -->
+            <!-- <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang_id" @update:value="(jahrgang: Number) => filters.jahrgang_id = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput> -->
         </div>
     </div>
 

@@ -29,7 +29,6 @@
     import {
         SvwsUiCheckbox,
         SvwsUiTextInput,
-        SvwsUiSelectInput,
         SvwsUiDataTable,
         SvwsUiButton,
         SvwsUiTooltip,
@@ -89,8 +88,7 @@
         fach: 0,
     })
 
-    const noteFilter = ref();
-
+    const noteFilter = ref<string[]>([]);
 
     const columns = ref<Column[]>([])
 
@@ -127,7 +125,7 @@
 
     const getFilters = (): void => {
         filterOptions.kurse = setFilters(state.leistungen, 'kurs', false)
-        filterOptions.noten = setFilters(state.leistungen, 'note', true, false)
+        filterOptions.noten = setFilters(state.leistungen, 'note')
         filterOptions.jahrgaenge = setFilters(state.leistungen, 'jahrgang')
         filterOptions.klassen = setFilters(state.leistungen, 'klasse')
         filterOptions.faecher = setFilters(state.leistungen, 'fach')
@@ -237,18 +235,33 @@
     });
 
     const multiSelectFilter = (leistung: Leistung, column: string): boolean => {
+        console.log("fufis " + JSON.stringify(noteFilter.value))
         const indexContains = (index: string): boolean => noteFilter.value.filter(
             (item: {index: string, label: string}): boolean => item.index === index
         ).length > 0
 
-        if (noteFilter.value === undefined) { // No item selected
-            return true
+        const displayAll = (): boolean => {
+            let optionAllSelected: boolean = false
+            if (noteFilter.value.length > 0) { // at least one item selected
+                noteFilter.value.forEach((item) => {
+                    if (item.index === '0') {
+                        optionAllSelected = true
+                        return
+                    }
+                })
+            }
+            return optionAllSelected
         }
 
+        if (noteFilter.value.length === 0) { // No item selected or everything just unselected
+            return true
+        } 
+        
         return noteFilter.value.filter(
             (item: {index: string, label: string}): boolean =>
                 item.label === leistung.note
                 || (indexContains('') && [null, ''].includes(leistung.note))
+                || displayAll()
         ).length > 0
     }
 
@@ -259,9 +272,9 @@
     }
 
     const tableFilter = (leistung: Leistung, column: string, containsOnlyEmptyOption: boolean = false): boolean => {
-        if (containsOnlyEmptyOption && [null, ''].includes(filters[column])) return leistung[column] == null
-        if (filters[column] == 0) return true
-        return leistung[column] == filters[column]
+        if ((filters[column] == 0 || filters[column]['index'] == 0) && filters[column]['index'] !== '') return true
+        if (containsOnlyEmptyOption && [null, ''].includes(filters[column]['index'])) return leistung[column] == null
+        return leistung[column] == filters[column]['index']
     }
 
     let lowScoreArray: Array<string> = [ // TODO: Create a helper
@@ -323,11 +336,39 @@
                 </div>
                 <div id="filters">
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
-<!--                    <SvwsUiSelectInput placeholder="Klasse" v-model="filters.klasse" :options="filterOptions.klassen"></SvwsUiSelectInput>-->
-<!--                    <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang" :options="filterOptions.jahrgaenge"></SvwsUiSelectInput>-->
-<!--                    <SvwsUiSelectInput placeholder="Fach" v-model="filters.fach" :options="filterOptions.faecher"></SvwsUiSelectInput>-->
-<!--                    <SvwsUiSelectInput placeholder="Kurs" v-model="filters.kurs" :options="filterOptions.kurse"></SvwsUiSelectInput>-->
                     <SvwsUiMultiSelect
+                        title="Klasse"
+                        v-model="filters.klasse"
+                        :items="filterOptions.klassen"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                    <SvwsUiMultiSelect
+                        title="Jahrgang"
+                        v-model="filters.jahrgang"
+                        :items="filterOptions.jahrgaenge"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                    <SvwsUiMultiSelect
+                        title="Fach"
+                        v-model="filters.fach"
+                        :items="filterOptions.faecher"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                    <SvwsUiMultiSelect
+                        title="Kurs"
+                        v-model="filters.kurs"
+                        :items="filterOptions.kurse"
+                        :item-text="item => item?.label || ''"
+                        autocomplete
+                        :removable="false"
+                    ></SvwsUiMultiSelect>
+                        <SvwsUiMultiSelect
                         v-model="noteFilter"
                         title="Note"
                         :item-text="item => item?.label || ''"
@@ -335,7 +376,7 @@
                         autocomplete
                         tags
                         :item-filter="(items: {index: Number, label: String}, search: String) => items.filter((i: any) => i.label.includes(search))"
-                        :removable="true"
+                        :removable="false"
                     ></SvwsUiMultiSelect>
                 </div>
             </header>
