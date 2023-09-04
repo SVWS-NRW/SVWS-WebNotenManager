@@ -14,7 +14,6 @@
 
     import {
         SvwsUiCheckbox,
-        SvwsUiSelectInput,
         SvwsUiDataTable,
         SvwsUiTextInput,
         SvwsUiMultiSelect,
@@ -163,8 +162,6 @@
         if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return schueler[column] == null
         if (filters[column] == 0 || filters[column]['index'] == 0) return true
         return schueler[column] == filters[column]['index']
-        //was valid for deprecated SelectInput
-        //return schueler[column] == filters[column]
     }
 
     //testing here
@@ -232,9 +229,7 @@
                         :items="filterOptions.klassen"
                         :item-text="item => item?.label || ''"
                         autocomplete
-
-                        :item-filter="multiSelectFilter"
-                        :removable="true"
+                        :removable="false"
                     ></SvwsUiMultiSelect>
                 </div>
             </header>

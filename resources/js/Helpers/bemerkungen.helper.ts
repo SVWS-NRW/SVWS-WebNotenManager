@@ -79,9 +79,10 @@ const formatStringBasedOnGender = (text: string | null, schueler: Schueler | Lei
 }
 
 const tableFilter = (floskel: FachbezogeneFloskel, column: string, value: Ref<Number>, containsOnlyEmptyOption: boolean = false): boolean => {
+	console.log("funky: " + value.value['index'])
 	if (containsOnlyEmptyOption && value.value == null) return floskel[column] == null
 	if (value.value == 0) return true
-	return floskel[column] == value.value
+	return floskel[column] == value.value['index']
 }
 
 const closeEditor = (isDirty: Ref<boolean>, callback: any) => {
