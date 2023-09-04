@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {computed, onMounted, Ref, ref, watch} from 'vue'
+    import { computed, onMounted, Ref, ref, watch, nextTick } from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
-    import { Floskel, TableColumn, Schueler } from '../types'
+    import { Floskel, TableColumn, Schueler } from '@/types'
 
     import {
         searchFilter,
@@ -10,7 +10,8 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
         addSelectedFloskelnToBemerkung,
         selectFloskeln,
         saveBemerkung,
-    } from '../Helpers/bemerkungen.helper'
+        floskelPasteShortcut,
+    } from '@/Helpers/bemerkungen.helper'
 
     import {
         SvwsUiTextareaInput,
@@ -27,9 +28,8 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
 
     const bemerkung: Ref<string> = ref(props.schueler[props.floskelgruppe.toUpperCase()])
     const storedBemerkung: Ref<string> = ref(props.schueler[props.floskelgruppe.toUpperCase()])
-    const isDirty: Ref<bool> = ref(false)
-    const readonly: Ref<bool> = ref(!props.schueler.matrix['editable_' + props.floskelgruppe])
-
+    const isDirty: Ref<boolean> = ref(false)
+    const readonly: Ref<boolean> = ref(!props.schueler.matrix['editable_' + props.floskelgruppe])
     const searchTerm: Ref<string> = ref('')
 
     const floskeln: Ref<Floskel[]> = ref([])
@@ -83,14 +83,15 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
         floskeln.value.filter((floskel: Floskel): boolean => searchFilter(floskel, searchTerm.value))
     )
 
-    const save = (): void => saveBemerkung('api.schueler_bemerkung', props.schueler.id,
+    const save = (): Promise<void> => saveBemerkung('api.schueler_bemerkung', props.schueler.id,
         { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value }, bemerkung, storedBemerkung, isDirty,
         (): void => emit('updated', bemerkung.value)
     )
 
     const addSelected = (): void => addSelectedFloskelnToBemerkung(bemerkung, selectedFloskeln)
-    const select = (floskeln: Floskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
     const close = (): void => closeEditor(isDirty, () => emit('close'))
+    const select = (floskeln: Floskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
+    const onKeyDown = (event: KeyboardEvent): void => floskelPasteShortcut(event, bemerkung, floskeln)
 </script>
 
 <template>
@@ -99,10 +100,12 @@ import {computed, onMounted, Ref, ref, watch} from 'vue'
         <h1 class="text-headline-xl text-primary">{{ props.schueler.name }}</h1>
 
         <SvwsUiTextareaInput
-            :modelValue="computedBemerkung"
+            v-model="computedBemerkung"
             @update:modelValue="bemerkung = $event"
             autoresize
             :disabled="readonly"
+            ref="textareaContent"
+            @keydown="onKeyDown"
         ></SvwsUiTextareaInput>
 
         <div class="buttons">

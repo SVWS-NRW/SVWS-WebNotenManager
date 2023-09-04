@@ -10,6 +10,33 @@ import {
 	Pronoun,
 } from '../types'
 
+const floskelPasteShortcut = (
+    event: KeyboardEvent,
+    bemerkung: Ref<string | null>,
+    floskeln: Ref<any[]>
+): void => {
+    if (event.key === 'Enter') {
+        const target: HTMLTextAreaElement = event.target as HTMLTextAreaElement
+        const currentCursorPosition: number = target.selectionStart
+
+        const valueUpToCursor: string = target.value.substring(0, currentCursorPosition)
+        const lastSpaceIndex: number = valueUpToCursor.lastIndexOf(' ')
+console.log(target.value)
+        const shortcut: string = lastSpaceIndex !== -1
+            ? valueUpToCursor.substring(lastSpaceIndex + 1, currentCursorPosition)
+            : valueUpToCursor
+
+        const floskelFound: Floskel | undefined = floskeln.value.find(
+            (floskel: Floskel): boolean => floskel.kuerzel === shortcut
+        )
+
+        if (floskelFound) {
+            event.preventDefault()
+            bemerkung.value = bemerkung.value?.replace(shortcut, floskelFound.text) ?? null
+        }
+    }
+}
+
 const searchFilter = (floskel: Floskel | FachbezogeneFloskel, searchTerm: string): boolean => {
 	if (searchTerm === '') {
 		return true
@@ -77,9 +104,9 @@ const addSelectedFloskelnToBemerkung = (bemerkung: Ref<string|null>, selectedFlo
 	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim()
 }
 
-const selectFloskeln = (floskeln: Floskel[], selectedFloskeln: Ref<Floskel[]>): void => {
+const selectFloskeln = (floskeln: Floskel[] | FachbezogeneFloskel[], selectedFloskeln: Ref<Floskel[]>): void => {
 	selectedFloskeln.value = []
-	floskeln.forEach((floskel: Floskel): Number => selectedFloskeln.value.push(floskel))
+	floskeln.forEach((floskel: any): Number => selectedFloskeln.value.push(floskel))
 }
 
 const saveBemerkung = (
@@ -111,5 +138,6 @@ export {
 	closeEditor,
 	addSelectedFloskelnToBemerkung,
 	selectFloskeln,
-	saveBemerkung
+	saveBemerkung,
+    floskelPasteShortcut
 }
