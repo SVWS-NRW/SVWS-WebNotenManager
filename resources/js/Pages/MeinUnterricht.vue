@@ -230,7 +230,6 @@
     )
 
     const multiSelectFilter = (leistung: Leistung, column: string): boolean => {
-        console.log("fufis " + JSON.stringify(noteFilter.value))
         const indexContains = (index: string): boolean => noteFilter.value.filter(
             (item: {index: string, label: string}): boolean => item.index === index
         ).length > 0
