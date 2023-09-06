@@ -454,7 +454,7 @@
                                 v-for="(groupedJahrgaenge, key) in jahrgaenge"
                                 v-if="Object.entries(jahrgaenge).length"
                             >
-                                <SvwsUiDataTableRow>
+                                <SvwsUiDataTableRow v-show="false">
                                     <SvwsUiDataTableCell>
                                         <div class="flex items-center gap-1">
                                             <SvwsUiButton
