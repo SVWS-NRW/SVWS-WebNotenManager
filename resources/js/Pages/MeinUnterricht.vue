@@ -361,7 +361,7 @@
                             <TableSortButton :presentColumn="{ sortBy: 'klasse' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead span="3" minWidth="10">
-                            <TableSortButton :presentColumn="{ sortBy: 'name' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name, Vorname</TableSortButton>
+                            <TableSortButton :presentColumn="{ sortBy: 'name' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name</TableSortButton>
                         </SvwsUiDataTableCell>
                         <SvwsUiDataTableCell thead span="1" minWidth="5">
                             <TableSortButton :presentColumn="{ sortBy: 'fach' }" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Fach</TableSortButton>
