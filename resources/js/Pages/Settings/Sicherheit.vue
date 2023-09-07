@@ -10,11 +10,18 @@
         auth: Object,
     })
 
-    let settings: Ref<{}> = ref({})
+    //TODO: is false ok? on the other hand: check type, interface, usw.
+    let settings: Ref<boolean> = ref(false)
 
     //TODO: this is a dummy so far
     axios.get(route('api.settings.index', 'sicherheit'))
         .then((response: AxiosResponse) => settings.value = response.data)
+
+//sthg like this with two-factor.enable)  
+        //axios.post(route('two-factor.enable'), data.form)
+        // .then((): void => Inertia.get(route('xxx')))
+        // .catch((error: any): AxiosError => data.errors = error.response.data.errors)
+        // .finally((): boolean => data.processing = false)
 
     const saveSettings = () => axios
         .put(route('api.settings.bulk_update', {group: 'sicherheit'}),  {settings: settings.value})
@@ -32,6 +39,7 @@
                 <h2 class="text-headline">Einstellungen - Sicherheit</h2>
 
                 <div>
+                    <h3 class="text-headline-md">Mein Unterricht</h3>
                     <SvwsUiCheckbox v-model="settings.xxx" :value="true">Zweifaktor Authentisierung anschalten</SvwsUiCheckbox>
                 </div>
 
