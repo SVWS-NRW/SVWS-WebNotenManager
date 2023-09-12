@@ -4,7 +4,7 @@ namespace App\Settings;
 
 use Spatie\LaravelSettings\Settings;
 
-class FilterSettings extends Settings
+class SicherheitSettings extends Settings
 {
 	public bool $zwei_faktor_authentisierung;
 
