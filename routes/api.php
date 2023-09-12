@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\KlassenMatrix;
 use App\Http\Controllers\Api\Noten;
 use App\Http\Controllers\Api\Mahnungen;
 use App\Http\Controllers\Api\SchuelerBemerkung;
+use App\Http\Controllers\Api\TwoFAAuthentication;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\SecureTransferController;
@@ -37,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::get('index/{group}', 'index')->name('index');
 			Route::put('update/{group}', 'update')->name('update');
 			Route::put('bulk-update/{group}', 'bulkUpdate')->name('bulk_update');
-		}); 
+		});
 
 	Route::controller(Fehlstunden::class)
 		->name('api.fehlstunden.')
@@ -77,6 +78,12 @@ Route::middleware('auth:sanctum')->group(function () {
 		->name('api.klassenleitung');
 });
 
+//testing 2fa here
+Route::controller(TwoFAAuthentication::class)
+	->group(function(): void {
+		Route::post('activate2FA', 'activate2FA')->name('activate2FA');;
+		Route::delete('deactivate2FA', 'deactivate2FA')->name('deactivate2FA');;
+});
 
 // TODO: To be removed, temporary testing route
 // TODO: Testing

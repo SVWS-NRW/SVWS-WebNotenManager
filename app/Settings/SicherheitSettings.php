@@ -1,5 +1,7 @@
 <?php
 
+//TODO: check if this file is somehow necessary or should be removed
+
 namespace App\Settings;
 
 use Spatie\LaravelSettings\Settings;

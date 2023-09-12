@@ -45,6 +45,7 @@ class SettingController extends Controller
 		return app(match ($group) {
 			'filter' => FilterSettings::class,
 			'matrix' => MatrixSettings::class,
+//TODO:check if this makes sense here
 			'sicherheit' => SicherheitSettings::class,
 			default => GeneralSettings::class,
 		});
