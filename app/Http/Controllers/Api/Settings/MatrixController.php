@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Matrix\JahrgangResource;
@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\Response;
 
-class KlassenMatrix extends Controller
+class MatrixController extends Controller
 {
     public function index(): JsonResponse
 	{
@@ -23,10 +23,7 @@ class KlassenMatrix extends Controller
 			Klasse::notBelongingToJahrgangOrdered()
 		);
 
-		return response()->json(
-			['jahrgaenge' => $jahrgaenge, 'klassen' => $klassen], 
-			Response::HTTP_OK
-		);
+		return response()->json(['jahrgaenge' => $jahrgaenge, 'klassen' => $klassen], Response::HTTP_OK);
 	}
 
 	public function update(): JsonResponse
@@ -43,7 +40,7 @@ class KlassenMatrix extends Controller
 			'editable_zb',
 		];
 
-		collect(request()->klassen)->each(fn (array $klasse) => 
+		collect(request()->klassen)->each(fn (array $klasse) =>
 			Klasse::find($klasse['id'])->update(Arr::only($klasse, $only))
 		);
 
