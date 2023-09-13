@@ -16,6 +16,6 @@ class RedirectIfKlassenleitung
         	return $next($request);
 		}
 
-		return redirect()->route(route: 'mein_unterricht');
+		return redirect()->route(route: 'two_fa');
     }
 }

@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Response as InertiaResponse;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+	//testing 2FA here still
+	Route::inertia(uri: '/two-factor-authentication', component: 'TwoFactorAuthentication')
+		->name(name: 'two_fa')
+		->middleware(middleware: 'two.fa');
+
 	Route::inertia(uri: '/', component: 'MeinUnterricht')
 		->name(name: 'mein_unterricht')
 		->middleware(middleware: 'mein.unterricht');

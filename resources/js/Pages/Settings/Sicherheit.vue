@@ -19,7 +19,8 @@
     const submit = (): void => {
         if (enabled.value) {
         axios.post(route('activate2FA'))
-        .then((): void => apiSuccess())
+        //.then((): void => apiSuccess())
+        .then((): void => alert())
         .catch((error: any): void => apiError(
             error,
             'Ein Problem ist aufgetreten.'

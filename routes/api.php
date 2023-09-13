@@ -21,6 +21,14 @@ use App\Services\DataImportService;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
+//testing 2fa here
+//should probably be up there (let's think about it)
+	Route::controller(TwoFAAuthentication::class)
+		->group(function(): void {
+			Route::post('activate2FA', 'activate2FA')->name('api.activate2FA');;
+			Route::delete('deactivate2FA', 'deactivate2FA')->name('api.deactivate2FA');;
+	});
+
 	Route::controller(KlassenMatrix::class)
 		->prefix('matrix')
 		->middleware('administrator')
@@ -76,13 +84,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('klassenleitung', Klassenleitung::class)
 		->name('api.klassenleitung');
-});
-
-//testing 2fa here
-Route::controller(TwoFAAuthentication::class)
-	->group(function(): void {
-		Route::post('activate2FA', 'activate2FA')->name('activate2FA');;
-		Route::delete('deactivate2FA', 'deactivate2FA')->name('deactivate2FA');;
 });
 
 // TODO: To be removed, temporary testing route
