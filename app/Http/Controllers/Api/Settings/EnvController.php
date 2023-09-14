@@ -26,5 +26,5 @@ class EnvController extends Controller
         }
 
         return response()->json(status: Response::HTTP_NO_CONTENT);
-    }
+     }
 }
