@@ -25,8 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
 //should probably be up there (let's think about it)
 	Route::controller(TwoFAAuthentication::class)
 		->group(function(): void {
-			Route::post('activate2FA', 'activate2FA')->name('api.activate2FA');;
-			Route::delete('deactivate2FA', 'deactivate2FA')->name('api.deactivate2FA');;
+			Route::post('activate2FA', 'activate2FA')->name('activate2FA');;
+			Route::delete('deactivate2FA', 'deactivate2FA')->name('deactivate2FA');;
 	});
 
 	Route::controller(KlassenMatrix::class)

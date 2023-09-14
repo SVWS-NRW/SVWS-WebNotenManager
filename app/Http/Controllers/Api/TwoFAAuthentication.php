@@ -10,9 +10,20 @@ use Illuminate\Support\Collection;
 use Laravel\Fortify\Events\RecoveryCodesGenerated;
 use Laravel\Fortify\RecoveryCode;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Session;
 
 class TWoFAAuthentication extends Controller
 {
+
+//TODO: make this dynamic from DB if so
+	//would normally be  public function __invoke(): JsonResponse
+    public function __invoke()
+	    {
+            echo "<script>alert('called 2faController' );</script>";
+
+        }
+
+
     public function activate2FA(): JsonResponse
     {
         $user = User::query()

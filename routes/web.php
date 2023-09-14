@@ -5,11 +5,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Response as InertiaResponse;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-	//testing 2FA here still
-	Route::inertia(uri: '/two-factor-authentication', component: 'TwoFactorAuthentication')
-		->name(name: 'two_fa')
-		->middleware(middleware: 'two.fa');
 
+	//testing 2FA here
+// Route::inertia(uri: 'two-factor.login', component: 'TwoFactorAuthentication')
+// 	->name(name: 'two-factor.login')
+// 	->middleware(middleware: 'two.fa');
 	Route::inertia(uri: '/', component: 'MeinUnterricht')
 		->name(name: 'mein_unterricht')
 		->middleware(middleware: 'mein.unterricht');
@@ -43,7 +43,7 @@ Route::inertia(uri: 'barrierefreiheit', component: 'Barrierefreiheit')
 	->name(name: 'barrierefreiheit');
 
 Route::controller(PasswordController::class)
-	->middleware('guest')
+	//->middleware('guest')
 	->name('request_password.')
 	->group(function () {
 		Route::get('passwort-anfordern', 'index')->name('index');
@@ -51,8 +51,6 @@ Route::controller(PasswordController::class)
 		Route::get('passwort-aendern/{token}', 'reset_form')->name('reset_form');
         Route::post('passwort-aendern', 'update')->name('update');
 	});
-
-
 
 //Route::post('password-reset', ResetPasswordController::class)->name('password_reset');
 

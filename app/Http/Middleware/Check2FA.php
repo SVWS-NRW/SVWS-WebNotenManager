@@ -17,12 +17,16 @@ class Check2FA
      */
     public function handle(Request $request, Closure $next)
     {
-        // if (!Session::has('user_2fa')) {
-        //     return redirect()->route('two_fa');
-        // }
+        //dummy so far
+        // if (enabled)) {
+        //     echo "<script>console.log('is enabled' );</script>";
+        // 	return $next($request);
+		// }
+
+		// return redirect()->route(route: 'mein_unterricht');
 
         //return $next($request);
-        return $next($request);
-
+        echo "<script>console.log('Reached redirection to twofactor login' );</script>";
+        return redirect()->route(route: 'two-factor.login');
     }
 }
