@@ -11,17 +11,6 @@
     })
 
     let settings = ref({})
-    // const myKeys = [
-    //     MAIL_MAILER = "",
-    //     MAIL_HOST = "",
-    //     MAIL_PORT = "",
-    //         MAIL_USERNAME = "",
-    //         MAIL_PASSWORD = "",
-    //         MAIL_ENCRYPTION = "",
-    //         MAIL_FROM_ADDRESS = "",
-    //         MAIL_FROM_NAME = "",
-    //         ]
-
     //TODO: fetch 2FA data from backend
     const enabled = ref(false);
 
