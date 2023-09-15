@@ -10,17 +10,36 @@
         auth: Object,
     })
 
-    //[]?
     let settings = ref({})
-    //TODO: fetch this data
+    // const myKeys = [
+    //     MAIL_MAILER = "",
+    //     MAIL_HOST = "",
+    //     MAIL_PORT = "",
+    //         MAIL_USERNAME = "",
+    //         MAIL_PASSWORD = "",
+    //         MAIL_ENCRYPTION = "",
+    //         MAIL_FROM_ADDRESS = "",
+    //         MAIL_FROM_NAME = "",
+    //         ]
+
+    //TODO: fetch 2FA data from backend
     const enabled = ref(false);
 
     axios.get(route('api.settings.mail_send_credentials'))
         .then((response: AxiosResponse) => settings.value = response.data)
 
-    //TODO: save enabled.value too
+    //TODO: save 2FA data too
     const saveSettings = () => axios
-        .put(route('api.settings.mail_send_credentials'), { settings: settings.value })
+        .put(route('api.settings.mail_send_credentials'), {
+            'MAIL_MAILER': settings.value.mailer,
+            'MAIL_HOST': settings.value.host,
+            'MAIL_PORT': settings.value.port,
+            'MAIL_USERNAME': settings.value.username,
+            'MAIL_PASSWORD': settings.value.password,
+            'MAIL_ENCRYPTION': settings.value.encryption,
+            'MAIL_FROM_ADDRESS': settings.value.from_address,
+            'MAIL_FROM_NAME': settings.value.from_name,
+        })
         .then((): void => apiSuccess())
         .catch((error: any): void => apiError(
             error,

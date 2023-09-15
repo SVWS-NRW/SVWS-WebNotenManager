@@ -30,7 +30,7 @@ class EnvService
      * @return bool
      * @throws FileNotFoundException
      */
-    public function update(string $key, string $value): bool
+    public function update(string $key, string $value): void
     {
         $path = base_path('.env');
 
