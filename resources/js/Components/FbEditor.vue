@@ -115,6 +115,7 @@
             :disabled="props.readonly"
             ref="textareaContent"
             @keydown="onKeyDown"
+            :autoresize="true"
         ></SvwsUiTextareaInput>
 
         <div class="buttons">
