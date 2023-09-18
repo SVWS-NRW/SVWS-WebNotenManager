@@ -41,4 +41,5 @@ Route::controller(PasswordController::class)
         Route::post('passwort-aendern', 'update')->name('update');
 	});
 
-
+//TODO: this is just to test what the 2fa window looks like
+Route::inertia('/2fa', 'Auth/TwoFactorAuthentication');
