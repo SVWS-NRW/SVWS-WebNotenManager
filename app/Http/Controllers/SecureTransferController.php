@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\Export\SchuelerResource;
 use App\Models\Schueler;
 use App\Services\AesService;
-use App\Services\GzipService;
+use App\Services\EnvService;
 use App\Services\DataImportService;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,10 +15,10 @@ use Symfony\Component\HttpFoundation\Response as Status;
 class SecureTransferController extends Controller
 {
     public function import(
-		Request           $request,
-		GzipService       $gzipService,
-		AesService        $aesService,
-		DataImportService $importService,
+        Request           $request,
+        EnvService        $gzipService,
+        AesService        $aesService,
+        DataImportService $importService,
 	): Response {
 		if ($request->missing(key: 'file')) {
 			return response(content: 'File not found.', status: Status::HTTP_UNPROCESSABLE_ENTITY);
@@ -47,7 +47,7 @@ class SecureTransferController extends Controller
 		return response(content: 'Import successful', status: Status::HTTP_OK);
 	}
 
-    public function export(AesService $aesService, GzipService $gzipService): Response
+    public function export(AesService $aesService, EnvService $gzipService): Response
 	{
 		$data = SchuelerResource::collection(
 			resource: Schueler::exportCollection()

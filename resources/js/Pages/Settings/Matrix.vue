@@ -79,7 +79,7 @@
     const klassenCollapsed: Ref<boolean> = ref(defaultCollapsed)
 
     onBeforeMount((): void => {
-        axios.get(route('api.matrix.index'))
+        axios.get(route('api.settings.matrix.index'))
             .then((response: AxiosResponse): void => {
                 jahrgaenge.value = response.data.jahrgaenge
                 klassen.value = response.data.klassen
@@ -104,7 +104,7 @@
             .flat()
             .concat(klassen.value)
 
-        axios.put(route('api.matrix.update'), {klassen: klassenArray})
+        axios.put(route('api.settings.matrix.update'), {klassen: klassenArray})
             .then((): void => apiSuccess())
             .catch((error: any): void => apiError(error, 'Ein Problem ist aufgetreten bei Speichern von der Matrix'))
 

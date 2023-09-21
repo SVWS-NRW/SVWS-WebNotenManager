@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Settings\FilterSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\MatrixSettings;
+use App\Settings\SicherheitSettings;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class SettingController extends Controller
+class SettingsController extends Controller
 {
-    public function index(string $group): JsonResponse 
+    public function index(string $group): JsonResponse
 	{
 		return response()->json($this->getSetting($group));
 	}
@@ -38,12 +39,17 @@ class SettingController extends Controller
 		return response()->json(status: Response::HTTP_NO_CONTENT);
 	}
 
-	private function getSetting(
-		string $group
-	): FilterSettings | MatrixSettings | GeneralSettings {
+    public function test()
+    {
+return 123;
+    }
+
+	private function getSetting(string $group): FilterSettings | MatrixSettings | SicherheitSettings | GeneralSettings
+    {
 		return app(match ($group) {
 			'filter' => FilterSettings::class,
 			'matrix' => MatrixSettings::class,
+			'sicherheit' => SicherheitSettings::class,
 			default => GeneralSettings::class,
 		});
 	}
