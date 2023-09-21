@@ -26,11 +26,11 @@ class EnvService
      * Updates the .env with key/value pair
      *
      * @param string $key
-     * @param string $value
-     * @return bool
+     * @param string|bool $value
+     * @return void
      * @throws FileNotFoundException
      */
-    public function update(string $key, string $value): void
+    public function update(string $key, string|bool $value): void
     {
         $path = base_path('.env');
 
@@ -41,11 +41,27 @@ class EnvService
         $currentContent = file_get_contents($path);
 
         if (str_contains($currentContent, $key . '=')) {
-            $newContent = preg_replace('/' . $key . '=(.*)/', $key . '=' . sprintf('"%s"', $value), $currentContent);
+            $newContent = preg_replace('/' . $key . '=(.*)/', $key . '=' . $this->wrapValue($value), $currentContent);
         } else {
-            $newContent = $currentContent . PHP_EOL . $key . '=' . sprintf('"%s"', $value);
+            $newContent = $currentContent . PHP_EOL . $key . '=' . $this->wrapValue($value);
         }
 
         file_put_contents($path, $newContent);
+    }
+
+    /**
+     * Casts booleans to env boolean values
+     * Wraps strings into quotation marks
+     *
+     * @param string|bool $value
+     * @return string
+     */
+    private function wrapValue(string|bool $value): string
+    {
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        return sprintf('"%s"', $value);
     }
 }

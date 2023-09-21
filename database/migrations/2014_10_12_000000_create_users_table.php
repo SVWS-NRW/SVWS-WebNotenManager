@@ -22,10 +22,10 @@ return new class extends Migration
 			$table->rememberToken();
 			$table->foreignId(column: 'current_team_id')->nullable();
 			$table->string(column: 'profile_photo_path', length: 2048)->nullable();
-			$table->timestamps();
+            $table->timestamps();
         });
     }
-    
+
     public function down(): void
     {
         Schema::dropIfExists(table: 'users');

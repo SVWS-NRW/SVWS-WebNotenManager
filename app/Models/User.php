@@ -102,6 +102,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
 		'administrator' => 'boolean',
+        'settings' => 'object',
     ];
 
     protected $appends = [
@@ -138,4 +139,9 @@ class User extends Authenticatable
 	{
 		return ! $this->isAdministrator();
 	}
+
+    public function settings(): HasOne
+    {
+        return $this->hasOne(UserSetting::class);
+    }
 }
