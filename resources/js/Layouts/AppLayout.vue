@@ -41,7 +41,7 @@
         <template #sidebar>
             <SvwsUiMenu>
                 <template #header>
-                    <SvwsUiMenuHeader :user="currentUser()" :schule="usePage().props.value.schoolName"/>
+                    <SvwsUiMenuHeader :user="currentUser()" :schule="usePage().props.value.schoolName" @click="navigate('user_settings.filter')"/>
                 </template>
 
                 <template #default>

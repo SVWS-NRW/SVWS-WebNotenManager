@@ -1,0 +1,31 @@
+<script setup lang="ts">
+    import { Inertia } from "@inertiajs/inertia";
+
+    import {
+        SvwsUiSecondaryMenu,
+        SvwsUiMenuItem,
+    } from '@svws-nrw/svws-ui'
+
+    const navigate = (routeName: string): void => Inertia.get(route(routeName))
+</script>
+
+<template>
+    <SvwsUiSecondaryMenu>
+        <template #headline>
+            Persönliche Einstellungen
+        </template>
+        <template #content>
+            <div class="container">
+                <SvwsUiMenuItem @click="navigate('user_settings.filter')" :active="route().current('user_settings.filter')">
+                    <template #label>Filter bearbeiten</template>
+                </SvwsUiMenuItem>
+            </div>
+        </template>
+    </SvwsUiSecondaryMenu>
+</template>
+
+<style scoped>
+    .container {
+        @apply ui-flex ui-flex-col ui-gap-3
+    }
+</style>

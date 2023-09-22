@@ -19,10 +19,10 @@ class FilterValidationRequest extends FormRequest
             'filters_leistungsdatenuebersicht.bemerkungen' => ['required', 'boolean'],
             'filters_leistungsdatenuebersicht.teilleistungen' => ['required', 'boolean'],
 
-            'filters_mein_unterricht.mahnungen' => ['required', 'boolean'],
-            'filters_mein_unterricht.bemerkungen' => ['required', 'boolean'],
-            'filters_mein_unterricht.fehlstunden' => ['required', 'boolean'],
-            'filters_mein_unterricht.teilleistungen' => ['required', 'boolean'],
+            'filters_meinunterricht.mahnungen' => ['required', 'boolean'],
+            'filters_meinunterricht.bemerkungen' => ['required', 'boolean'],
+            'filters_meinunterricht.fehlstunden' => ['required', 'boolean'],
+            'filters_meinunterricht.teilleistungen' => ['required', 'boolean'],
         ];
     }
 
@@ -34,10 +34,10 @@ class FilterValidationRequest extends FormRequest
             'filters_leistungsdatenuebersicht.bemerkungen' => 'Leistungsdatenuebersicht Bemerkungen',
             'filters_leistungsdatenuebersicht.teilleistungen' => 'Leistungsdatenuebersicht Teilleistungen',
 
-            'filters_mein_unterricht.mahnungen' => 'Mein Unterricht Mahnungen',
-            'filters_mein_unterricht.bemerkungen' => 'Mein Unterricht Bemerkungen',
-            'filters_mein_unterricht.fehlstunden' => 'Mein Unterricht Fehlstunden',
-            'filters_mein_unterricht.teilleistungen' => 'Mein Unterricht Teilleistungen',
+            'filters_meinunterricht.mahnungen' => 'Mein Unterricht Mahnungen',
+            'filters_meinunterricht.bemerkungen' => 'Mein Unterricht Bemerkungen',
+            'filters_meinunterricht.fehlstunden' => 'Mein Unterricht Fehlstunden',
+            'filters_meinunterricht.teilleistungen' => 'Mein Unterricht Teilleistungen',
         ];
     }
 }

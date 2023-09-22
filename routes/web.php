@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Api\Settings\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('impressum', 'Impressum')->name('impressum');
@@ -29,6 +30,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 			Route::inertia('matrix', 'Settings/Matrix')->name('matrix');
 			Route::inertia('sicherheit', 'Settings/Sicherheit')->name('sicherheit');
 		});
+
+	Route::inertia('/filter', 'UserSettings/UserSettingsFilter')
+		->prefix('benutzereinstellungen')
+		->name('user_settings.filter');
 });
 
 Route::controller(PasswordController::class)
