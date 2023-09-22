@@ -19,7 +19,7 @@ class UserSettingsController extends Controller
     {
         $data = [
             'filters_leistungsdatenuebersicht' => config('wenom.filters.leistungsdatenuebersicht'),
-            'filters_meinunterricht' => config('wenom.filters.mein_unterricht'),
+            'filters_meinunterricht' => config('wenom.filters.meinunterricht'),
         ];
 
         return response()->json(

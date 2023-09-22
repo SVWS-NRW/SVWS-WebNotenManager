@@ -11,25 +11,42 @@
     })
 
     let settings: Ref<{
-        mein_unterricht_teilleistungen?: boolean,
-        mein_unterricht_mahnungen?: boolean,
-        mein_unterricht_fehlstunden?: boolean,
-        mein_unterricht_bemerkungen?: boolean,
-        leistungdatenuebersicht_teilleistungen?: boolean,
-        leistungdatenuebersicht_fachlehrer?: boolean,
-        leistungdatenuebersicht_mahnungen?: boolean,
-        leistungdatenuebersicht_bemerkungen?: boolean,
+        meinunterricht?: {
+            teilleistungen?: boolean,
+            mahnungen?: boolean,
+            fehlstunden?: boolean,
+            bemerkungen?: boolean,
+        }
+        leistungsdatenuebersicht?: {
+            teilleistungen?: boolean,
+            fachlehrer?: boolean,
+            mahnungen?: boolean,
+            bemerkungen?: boolean,
+        }
     }> = ref({})
 
-    axios.get(route('api.settings.index', 'filter'))
+    axios.get(route('api.settings.filters'))
         .then((response: AxiosResponse) => settings.value = response.data)
 
     const saveSettings = () => axios
-        .put(route('api.settings.bulk_update', {group: 'filter'}),  {settings: settings.value})
+        .post(route('api.settings.filters'),  {
+            'filters_leistungsdatenuebersicht': {
+                'mahnungen': settings.value.leistungsdatenuebersicht.mahnungen,
+                'fachlehrer': settings.value.leistungsdatenuebersicht.fachlehrer,
+                'bemerkungen': settings.value.leistungsdatenuebersicht.bemerkungen,
+                'teilleistungen': settings.value.leistungsdatenuebersicht.teilleistungen,
+            },
+            'filters_meinunterricht': {
+                'mahnungen': settings.value.meinunterricht.mahnungen,
+                'bemerkungen': settings.value.meinunterricht.bemerkungen,
+                'fehlstunden': settings.value.meinunterricht.fehlstunden,
+                'teilleistungen': settings.value.meinunterricht.teilleistungen,
+            },
+        })
         .then((): void => apiSuccess())
         .catch((error: any): void => apiError(
             error,
-            'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'
+            'Ein Problem ist aufgetreten bei Speichern von Filtern'
         ))
 </script>
 
@@ -41,18 +58,18 @@
 
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="settings.mein_unterricht_teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.mein_unterricht_mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.mein_unterricht_fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.mein_unterricht_bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.meinunterricht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.meinunterricht.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.meinunterricht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                 </div>
 
                 <div>
                     <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
-                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>

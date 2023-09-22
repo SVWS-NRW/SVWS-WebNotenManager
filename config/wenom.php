@@ -17,17 +17,17 @@ return [
         'from_name' => env('MAIL_FROM_NAME'),
     ],
     'filters' => [
-        'mein_unterricht' => [
-            'teilleistungen' => env('FILTERS_MEIN_UNTERRICHT_TEILLEISTUNGEN', false),
-            'mahnungen' => env('FILTERS_MEIN_UNTERRICHT_MAHNUNGEN', true),
-            'fehlstunden' => env('FILTERS_MEIN_UNTERRICHT_FEHLSTUNDEN', false),
-            'bemerkungen' => env('FILTERS_MEIN_UNTERRICHT_BEMERKUNGEN', true),
+        'meinunterricht' => [
+            'teilleistungen' => env('FILTERS_MEINUNTERRICHT_TEILLEISTUNGEN', false),
+            'mahnungen' => env('FILTERS_MEINUNTERRICHT_MAHNUNGEN', true),
+            'fehlstunden' => env('FILTERS_MEINUNTERRICHT_FEHLSTUNDEN', false),
+            'bemerkungen' => env('FILTERS_MEINUNTERRICHT_BEMERKUNGEN', true),
         ],
         'leistungsdatenuebersicht' => [
-            'teilleistungen' => env('FILTERS_LEISTUNGESDATENUEBERSICHT_TEILLEISTUNGEN', false),
-            'fachlehrer' => env('FILTERS_LEISTUNGESDATENUEBERSICHTT_FACHLEHRER', true),
-            'mahnungen' => env('FILTERS_LEISTUNGESDATENUEBERSICHT_MAHNUNGEN', false),
-            'bemerkungen' => env('FILTERS_LEISTUNGESDATENUEBERSICHT_BEMERKUNGEN', true),
+            'teilleistungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_TEILLEISTUNGEN', false),
+            'fachlehrer' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FACHLEHRER', true),
+            'mahnungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_MAHNUNGEN', false),
+            'bemerkungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_BEMERKUNGEN', true),
         ],
     ],
 ];

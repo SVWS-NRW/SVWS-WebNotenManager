@@ -13,13 +13,13 @@
     //TODO: solve errors
     //let user_settings: Ref<{}> = ref({})
     let user_settings: Ref<{
-        filters_leistungsdatenuebersicht: {
+        filters_leistungsdatenuebersicht?: {
             teilleistungen?: boolean,
             fachlehrer?: boolean,
             mahnungen?: boolean,
             bemerkungen?: boolean,
         }
-        filters_meinunterricht: {
+        filters_meinunterricht?: {
             teilleistungen?: boolean,
             mahnungen?: boolean,
             fehlstunden?: boolean,
@@ -35,16 +35,16 @@
     const saveSettings = () => axios
         .post(route('user_settings.set_filters'),  {
             'filters_leistungsdatenuebersicht': {
-                'mahnungen': user_settings.value.filters_leistungsdatenuebersicht.mahnungen,
-                'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht.fachlehrer,
-                'bemerkungen': user_settings.value.filters_leistungsdatenuebersicht.bemerkungen,
-                'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht.teilleistungen,
+                'mahnungen': user_settings.value.filters_leistungsdatenuebersicht?.mahnungen,
+                'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht?.fachlehrer,
+                'bemerkungen': user_settings.value.filters_leistungsdatenuebersicht?.bemerkungen,
+                'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht?.teilleistungen,
             },
             'filters_meinunterricht': {
-                'mahnungen': user_settings.value.filters_meinunterricht.mahnungen,
-                'bemerkungen': user_settings.value.filters_meinunterricht.bemerkungen,
-                'fehlstunden': user_settings.value.filters_meinunterricht.fehlstunden,
-                'teilleistungen': user_settings.value.filters_meinunterricht.teilleistungen,
+                'mahnungen': user_settings.value.filters_meinunterricht?.mahnungen,
+                'bemerkungen': user_settings.value.filters_meinunterricht?.bemerkungen,
+                'fehlstunden': user_settings.value.filters_meinunterricht?.fehlstunden,
+                'teilleistungen': user_settings.value.filters_meinunterricht?.teilleistungen,
             },
         })
         .then((): void => apiSuccess())
