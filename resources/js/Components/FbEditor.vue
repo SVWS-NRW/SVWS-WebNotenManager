@@ -100,7 +100,7 @@
     const addSelected = (): void => addSelectedFloskelnToBemerkung(bemerkung, selectedFloskeln)
     const select = (floskeln: FachbezogeneFloskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
     const close = (): void => closeEditor(isDirty, (): void => emit('close'))
-    const onKeyDown = (event: KeyboardEvent): string|void => bemerkung.value = floskelPasteShortcut(event, bemerkung, floskeln)
+    const onKeyDown = (event: KeyboardEvent): string|null => bemerkung.value = floskelPasteShortcut(event, bemerkung, floskeln)
 
 </script>
 
