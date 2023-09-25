@@ -6,35 +6,34 @@ import {
 	FachbezogeneFloskel,
 	Schueler,
 	Leistung,
-	Occurrence,
-	Pronoun,
 } from '../types'
+
+import {Occurrence} from "@/Interfaces/Occurrence";
+import {Pronoun} from "@/Interfaces/Pronoun";
 
 const floskelPasteShortcut = (
     event: KeyboardEvent,
     bemerkung: Ref<string | null>,
     floskeln: Ref<any[]>
-): void => {
-    if (event.key === 'Enter') {
-        const target: HTMLTextAreaElement = event.target as HTMLTextAreaElement
-        const currentCursorPosition: number = target.selectionStart
+): string|null => {
+    if (event.key === 'Enter' && bemerkung.value) {
+        let replacedBemerkung: string = bemerkung.value
+        event.preventDefault()
 
-        const valueUpToCursor: string = target.value.substring(0, currentCursorPosition)
-        const lastSpaceIndex: number = valueUpToCursor.lastIndexOf(' ')
-console.log(target.value)
-        const shortcut: string = lastSpaceIndex !== -1
-            ? valueUpToCursor.substring(lastSpaceIndex + 1, currentCursorPosition)
-            : valueUpToCursor
+        let matches: RegExpMatchArray | null = bemerkung.value.match(/#[^\s]+/g)
 
-        const floskelFound: Floskel | undefined = floskeln.value.find(
-            (floskel: Floskel): boolean => floskel.kuerzel === shortcut
+        let matchedFloskeln: Floskel[] = floskeln.value.filter(
+            (item: Floskel): boolean | null => matches && matches.includes(item.kuerzel)
         )
 
-        if (floskelFound) {
-            event.preventDefault()
-            bemerkung.value = bemerkung.value?.replace(shortcut, floskelFound.text) ?? null
-        }
+        matchedFloskeln.forEach((floskel: Floskel): string =>
+            replacedBemerkung = replacedBemerkung.replace(new RegExp(floskel.kuerzel, 'g'), floskel.text)
+        )
+
+        return replacedBemerkung
     }
+
+    return bemerkung.value
 }
 
 const searchFilter = (floskel: Floskel | FachbezogeneFloskel, searchTerm: string): boolean => {

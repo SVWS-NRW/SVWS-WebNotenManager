@@ -20,7 +20,7 @@
         SvwsUiTextInput,
         SvwsUiButton,
         //deprecated
-        //SvwsUiSelectInput, 
+        //SvwsUiSelectInput,
         SvwsUiMultiSelect,
     } from '@svws-nrw/svws-ui'
 
@@ -100,12 +100,12 @@
     const addSelected = (): void => addSelectedFloskelnToBemerkung(bemerkung, selectedFloskeln)
     const select = (floskeln: FachbezogeneFloskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
     const close = (): void => closeEditor(isDirty, (): void => emit('close'))
-    const onKeyDown = (event: KeyboardEvent): void => floskelPasteShortcut(event, bemerkung, floskeln)
+    const onKeyDown = (event: KeyboardEvent): string|void => bemerkung.value = floskelPasteShortcut(event, bemerkung, floskeln)
 
 </script>
 
 <template>
-    <div class="container">
+    <div class="container">q
         <h2 class="text-headline">{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
         <h1 class="text-headline-xl text-primary">{{ props.leistung.name }}</h1>
 
