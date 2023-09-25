@@ -40,7 +40,6 @@ class EnvController extends Controller
         collect($request->all())->each(fn (array $item, string $key) =>
             collect($item)->each(fn ($value, string $itemKey) =>
                 $service->update(
-                    // sprintf('filters_%s_%s', strtoupper($key), strtoupper($itemKey)), $value
                     sprintf('%s_%s', strtoupper($key), strtoupper($itemKey)), $value
                 )
             )

@@ -57,7 +57,8 @@
 
     const selectedFbLeistung: Ref<Leistung | null> = ref(null)
 
-    const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
+    //coming from 'user_settings..' now
+    //const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
 
     let toggles = <{
         teilleistungen: boolean,
@@ -65,11 +66,10 @@
         bemerkungen: boolean,
         fehlstunden: boolean
     }>reactive({
-        teilleistungen: getToggleValue('mein_unterricht_teilleistungen'),
-        mahnungen: getToggleValue('mein_unterricht_mahnungen'),
-        bemerkungen: getToggleValue('mein_unterricht_bemerkungen'),
-        fehlstunden: getToggleValue('mein_unterricht_fehlstunden'),
     })
+
+    axios.get(route('user_settings.get_filters', 'meinunterricht'))
+        .then((response: AxiosResponse) => toggles = response.data.filters_meinunterricht)
 
     let props = defineProps({
         settings: {

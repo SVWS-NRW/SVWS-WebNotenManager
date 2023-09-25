@@ -45,22 +45,21 @@
 
     const title = 'Notenmanager - Leistungsdatenübersicht'
 
-    const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
+    //coming from 'user_settings...' now
+    //const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
 
     const selectedFbLeistung: Ref<Leistung | null> = ref(null)
     const selectedColumn: Ref<Leistung | null> = ref(null)
 
     let toggles = <{
-        fachlehrer: boolean,
+        fachlehrer: any,
         bemerkungen: boolean,
         mahnungen: boolean,
         teilleistungen: boolean,
-    }>reactive({
-        fachlehrer: getToggleValue('leistungdatenuebersicht_teilleistungen'),
-        bemerkungen: getToggleValue('leistungdatenuebersicht_fachlehrer'),
-        mahnungen: getToggleValue('leistungdatenuebersicht_mahnungen'),
-        teilleistungen: getToggleValue('leistungdatenuebersicht_bemerkungen'),
-    })
+    }>reactive({})
+
+    axios.get(route('user_settings.get_filters', 'leistungsdatenuebersicht'))
+        .then((response: AxiosResponse) => toggles = response.data.filters_leistungsdatenuebersicht)
 
     let state = reactive({
         leistungen: <Leistung[]> [],
