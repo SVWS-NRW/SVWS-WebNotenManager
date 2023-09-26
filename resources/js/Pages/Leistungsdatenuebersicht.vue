@@ -58,8 +58,11 @@
         teilleistungen: boolean,
     }>reactive({})
 
-    axios.get(route('user_settings.get_filters', 'leistungsdatenuebersicht'))
+    //TODO: use get_filters instead; for now it breaks the data record on creation
+
+    axios.get(route('user_settings.get_all_filters'))
         .then((response: AxiosResponse) => toggles = response.data.filters_leistungsdatenuebersicht)
+
 
     let state = reactive({
         leistungen: <Leistung[]> [],

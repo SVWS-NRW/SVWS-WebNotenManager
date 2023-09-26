@@ -10,7 +10,7 @@
         auth: Object,
     })
 
-    //TODO: solve errors
+    //TODO: solve errors from line 66
     //let user_settings: Ref<{}> = ref({})
     let user_settings: Ref<{
         filters_leistungsdatenuebersicht?: {

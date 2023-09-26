@@ -68,7 +68,8 @@
     }>reactive({
     })
 
-    axios.get(route('user_settings.get_filters', 'meinunterricht'))
+    //TODO: use get_filters instead; for now it breaks the data record on creation
+    axios.get(route('user_settings.get_all_filters'))
         .then((response: AxiosResponse) => toggles = response.data.filters_meinunterricht)
 
     let props = defineProps({
