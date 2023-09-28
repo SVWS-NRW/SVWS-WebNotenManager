@@ -28,7 +28,6 @@
 
      }> = ref({})
 
-    //TODO: if no databank exists? check
     axios.get(route('user_settings.get_all_filters'))
         .then((response: AxiosResponse) => user_settings.value = response.data)
         

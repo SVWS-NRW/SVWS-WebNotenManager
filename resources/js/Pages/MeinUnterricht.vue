@@ -7,7 +7,7 @@
     import TableSortButton from '../Components/TableSortButton.vue'
     import { Column } from '../Interfaces/Column'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import axios, { AxiosResponse } from 'axios'
+    import axios, { AxiosError, AxiosResponse, AxiosPromise } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
     import NoteInput from '../Components/NoteInput.vue'
 
@@ -57,21 +57,18 @@
 
     const selectedFbLeistung: Ref<Leistung | null> = ref(null)
 
-    //coming from 'user_settings..' now
-    //const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
+    let toggles: Ref<{
+        teilleistungen?: boolean,
+        mahnungen?: boolean,
+        bemerkungen?: boolean,
+        fehlstunden?: boolean
+    }> = ref({})
 
-    let toggles = <{
-        teilleistungen: boolean,
-        mahnungen: boolean,
-        bemerkungen: boolean,
-        fehlstunden: boolean
-    }>reactive({
-    })
-
-    //TODO: use get_filters instead; for now it breaks the data record on creation
+    //TODO: replace this with user_settings.get_filters when problem solved
     axios.get(route('user_settings.get_all_filters'))
-        .then((response: AxiosResponse) => toggles = response.data.filters_meinunterricht)
-
+        .then((response: AxiosResponse) => toggles.value = response.data.filters_meinunterricht)
+        .catch((error: any): void => console.log(error.response.data.errors))
+    
     let props = defineProps({
         settings: {
             type: Object as PropType<Settings>,

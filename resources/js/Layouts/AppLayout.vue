@@ -109,3 +109,10 @@
         </template>
     </SvwsUiAppLayout>
 </template>
+
+<style scoped>
+    #header {
+        @apply hover:ui-cursor-pointer
+    }
+
+</style>
