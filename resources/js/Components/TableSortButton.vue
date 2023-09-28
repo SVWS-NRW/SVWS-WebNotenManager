@@ -36,12 +36,12 @@
         <span class="icon">
             <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" class="sort-icon-up">
                 <path :fill="updateIconColor(false)"
-                    d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
+                    d="m11.95 7.95-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364 2.05 7.95 7 3">
                 </path>
             </svg>
             <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" transform="rotate(180)" class="sort-icon-down">
                 <path :fill="updateIconColor(true)"
-                    d="m11.95 7.95l-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364L2.05 7.95L7 3l4.95">
+                    d="m11.95 7.95-1.414 1.414L8 6.828V20H6V6.828L3.466 9.364 2.05 7.95 7 3">
                 </path>
             </svg>
         </span>
