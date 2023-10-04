@@ -37,6 +37,10 @@ const submit = (): void => {
         .catch((error: any): AxiosError => data.errors = error.response.data.errors)
         .finally((): boolean => data.processing = false)
 }
+
+const processEnter = (): void => {
+    setTimeout(() => submit(), 1000)
+}
 </script>
 
 <template>
@@ -63,7 +67,7 @@ const submit = (): void => {
                     <div class="form-control">
                         <SvwsUiTextInput
                             v-model="data.form.email"
-                            v-on:keyup.enter="submit"
+                            v-on:keyup.enter="processEnter"
                             :valid="!hasErrors('email')"
                             :disabled="data.processing"
                             type="email"
@@ -80,7 +84,7 @@ const submit = (): void => {
                     <div class="form-control">
                         <SvwsUiTextInput
                             v-model="data.form.password"
-                            v-on:keyup.enter="submit"
+                            v-on:keyup.enter="processEnter"
                             :valid="!hasErrors('password')"
                             :disabled="data.processing"
                             type="password"
