@@ -3,42 +3,37 @@
 namespace App\Services;
 
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 class AesService
 {
-	const ENCRYPT_CIPHER = 'aes-256-cbc';
-	const DECRYPT_CIPHER = 'aes-256-cbc-hmac-sha256';
-	const OPTIONS = OPENSSL_NO_PADDING;
+	private string $encryptCipher = 'aes-256-cbc';
+    private string $decryptCipher = 'aes-256-cbc-hmac-sha256';
+	private int $options = OPENSSL_NO_PADDING;
 
 	/**
 	 * @throws Exception
 	 */
 	public function encrypt($data): string
 	{
+        if (!in_array($this->encryptCipher, openssl_get_cipher_methods())) {
+            throw (new Exception($this->encryptCipher .' wird von Ihrer OpenSSL-Version unterstützt.'));
+        }
+
 		$initializationVector = $this->generateInitializationVector();
 
 		$encryptedData = openssl_encrypt(
-			data: $this->pad(plainText: $data),
-			cipher_algo: self::ENCRYPT_CIPHER,
+			data: $this->pad($data),
+			cipher_algo: $this->encryptCipher,
 			passphrase: $this->getPassphrase(),
-			options: self::OPTIONS,
+			options: $this->options,
 			iv: $initializationVector,
 		);
 
 		if ($encryptedData === false) {
-			throw (
-				new Exception(
-					message: "AES Encryption error: {openssl_error_string()}",
-					code: Response::HTTP_BAD_REQUEST,
-				)
-			);
+			throw (new Exception(error_get_last()));
 		}
 
-		return $this->prependInitializationVector(
-			string: base64_encode(string: $encryptedData),
-			initializationVector: $initializationVector,
-		);
+		return $this->prependInitializationVector(base64_encode($encryptedData), $initializationVector);
 	}
 
 	/**
@@ -46,32 +41,26 @@ class AesService
 	 */
 	public function decrypt(string $data): string
 	{
-		$decodedData = base64_decode(string: $data, strict: true);
+        if (!in_array($this->decryptCipher, openssl_get_cipher_methods())) {
+            throw (new Exception($this->decryptCipher .' wird von Ihrer OpenSSL-Version unterstützt.'));
+        }
+
+		$decodedData = base64_decode($data, true);
 
 		if ($decodedData === false) {
-			throw (
-				new Exception(
-					message: 'Base64 decryption error',
-					code: Response::HTTP_BAD_REQUEST,
-				)
-			);
+			throw (new Exception(error_get_last()));
 		}
 
 		$decryptedData = openssl_decrypt(
-			data: $this->dataWithOutInitializationVector(data: $decodedData),
-			cipher_algo: self::DECRYPT_CIPHER,
+			data: $this->dataWithOutInitializationVector($decodedData),
+			cipher_algo: $this->decryptCipher,
 			passphrase: $this->getPassphrase(),
-			options: self::OPTIONS,
-			iv: $this->extractInitializationVector(string: $decodedData)
+			options: $this->options,
+			iv: $this->extractInitializationVector($decodedData)
 		);
 
 		if ($decryptedData === false) {
-			throw (
-				new Exception(
-					message: 'AES Decryption error',
-					code: Response::HTTP_BAD_REQUEST,
-				)
-			);
+			throw (new Exception('Ein Fehler ist beim AES-CBC Entschlüsseln aufgetreten: '. error_get_last()));
 		}
 
 		return $decryptedData;
@@ -81,8 +70,8 @@ class AesService
 	{
 		return hash_pbkdf2(
 			algo: 'sha256',
-			password: config(key: 'wenom.aes_password'),
-			salt: config(key: 'wenom.aes_salt'),
+			password: config('wenom.aes_password'),
+			salt: config('wenom.aes_salt'),
 			iterations: 65536,
 			length: 32,
 			binary: true
@@ -91,34 +80,30 @@ class AesService
 
 	private function generateInitializationVector(): string
 	{
-		return openssl_random_pseudo_bytes(length: openssl_cipher_iv_length(cipher_algo: self::ENCRYPT_CIPHER));
+		return openssl_random_pseudo_bytes(openssl_cipher_iv_length($this->encryptCipher));
 	}
 
 	private function extractInitializationVector(string $string): string
 	{
-		return substr(string: $string, offset: 0, length: 16);
+		return substr($string, 0, 16);
 	}
 
 	private function prependInitializationVector(string $string, string $initializationVector): string
 	{
-		return substr_replace(string: $string, replace: $initializationVector, offset: 0, length: 0);
+		return substr_replace($string, $initializationVector, 0, 0);
 	}
 
 	private function dataWithOutInitializationVector(string $data): string
 	{
-		return substr(string: $data, offset: 16);
+		return substr($data, 16);
 	}
 
 	private function pad(string $plainText): string
 	{
-		if (strlen(string: $plainText) % 16 == 0) {
+		if (strlen($plainText) % 16 == 0) {
 			return $plainText;
 		}
 
-		return str_pad(
-			string: $plainText,
-			length: strlen(string: $plainText) + 16 - strlen(string: $plainText) % 16,
-			pad_string: "\0",
-		);
+		return str_pad($plainText, strlen($plainText) + 16 - strlen($plainText) % 16, "\0");
 	}
 }
