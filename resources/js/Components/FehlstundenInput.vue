@@ -6,13 +6,13 @@
     import { Schueler } from '../Interfaces/Schueler'
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
     import { CellRef, setCellRefs, navigateTable, selectItem } from '../Helpers/tableNavigationHelper'
- 
+
 
     let props = defineProps<{
         model: Leistung | Schueler,
         column: 'fs'|'fsu'|'gfs'|'gfsu',
         disabled: boolean,
-        rowIndex: number,
+
 
     }>()
 
@@ -32,17 +32,17 @@
         .catch((): Number => model[props.column] = stored)
 
 
-    const isDisabled = (): boolean => Boolean(usePage().props.value && usePage().props.value.note_entry_disabled) || props.disabled    
+    const isDisabled = (): boolean => Boolean(usePage().props.value && usePage().props.value.note_entry_disabled) || props.disabled
     const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
-    const selectClickedItem = (event: MouseEvent): void => selectItem(event) 
+    const selectClickedItem = (event: MouseEvent): void => selectItem(event)
 </script>
 
 <template>
         <span v-if="isDisabled()">{{ props.model[props.column] }}</span>
 
         <SvwsUiTextInput
-            v-else 
-            v-model="props.model[props.column]" 
+            v-else
+            v-model="props.model[props.column]"
             :headless="true"
             @click="selectClickedItem($event)"
             @keydown.up.stop.prevent="navigate('up')"

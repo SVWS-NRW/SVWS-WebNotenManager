@@ -1,191 +1,50 @@
 <script setup lang="ts">
-    import AppLayout from '../Layouts/AppLayout.vue'
-    import {computed, onMounted, PropType, reactive, Ref, ref, watch, provide} from 'vue'
+    import AppLayout from '@/Layouts/AppLayout.vue'
+    import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
-    import {Head, usePage} from '@inertiajs/inertia-vue3'
-    import { Column } from '../Interfaces/Column'
-    import { Schueler } from '../Interfaces/Schueler'
-    import { Settings } from '../Interfaces/Settings'
-    import { SortTableColumns } from '../Interfaces/SortTableColumns'
-    import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
-    import TableSortButton from '../Components/TableSortButton.vue'
-    import BemerkungenIndicatorReadonly from '../Components/BemerkungenIndicatorReadonly.vue'
-    import FehlstundenInput from '../Components/FehlstundenInput.vue'
+    import { computed, onMounted, Ref, ref } from 'vue'
+    import { tableCellDisabled } from '@/Helpers/pages.helper'
+    import { usePage } from '@inertiajs/inertia-vue3'
+    import FehlstundenInput from '@/Components/FehlstundenInput.vue'
+    import BemerkungIndicator from '@/Components/BemerkungIndicator.vue'
+    import { Schueler } from '@/Interfaces/Schueler'
+    import BemerkungEditor from '@/Components/BemerkungEditor.vue'
 
-    import {
-        SvwsUiCheckbox,
-        SvwsUiDataTable,
-        SvwsUiTextInput,
-        SvwsUiMultiSelect,
-        SvwsUiContentCard,
-        SvwsUiTooltip,
-        SvwsUiButton,
-        SvwsUiDataTableCell,
-        SvwsUiDataTableRow,
-    } from '@svws-nrw/svws-ui'
-    import {Leistung} from '../Interfaces/Leistung'
-    import BemerkungEditor from '../Components/BemerkungEditor.vue'
-    import {Auth} from '../Interfaces/Auth'
-    import {tableCellDisabled, tableCellEditable} from '../Helpers/pages.helper'
-
-    let props = defineProps({
-        settings: {
-            type: Object as PropType<Settings>,
-            required: true,
-        }
-    })
-
-    const title = 'Notenmanager - Klassenleitung'
-
-    let state = reactive({
-        schueler: <Schueler[]> [],
-    })
-
-
-
-    const auth: Auth = usePage().props.value.auth
-
-    let filterOptions = <any>reactive({
-        'klassen': [],
-    })
-
-    let filters = <{
-        search: string,
-        klasse: Number | string
-    }>reactive({
-        search: '',
-        klasse: 0,
-    })
-
-    const klasseFilter = ref();
-
-    const columns = ref<Column[]>([])
-
-    let tableRedrawKey: number = 0
-
-    const drawTable = (): Column[] => { columns.value = [
-            { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: true  },
-            { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: true , },
-            { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6, },
-            { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6, },
-            { key: 'ASV', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
-            { key: 'AUE', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
-            { key: 'ZB', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
-        ]
-        tableRedrawKey++;
-    }
-
-    onMounted((): void => {
-        drawTable()
-        fetchSchueler()
-    })
-
-    const getFilters = (): void => {
-        filterOptions.klassen = setFilters(state.schueler, 'klasse')
-    }
-
-    const setFilters = (data, column: string): { label: string, index: string | null | number }[] => {
-        let set = [
-            ...new Set(data.map((item: any): string => item[column]))
-        ].map((item: string): {
-            label: string, index: string | null | number
-        } => {
-            return { label: item ?? 'Leer', index: item }
-        })
-
-        set.unshift({ label: 'Alle', index: '0' })
-
-        return set
-    }
-
-// TODO: make this work (add sort by under filteredSchueler, I guess)
-    const sortRef: Ref<SortTableColumns> = ref({
-        direction: true,
-        sortBy: 'klasse'
-    })
-
-    provide('sortRef', sortRef)
-
-    const updateSortRef = (newSortRef: SortTableColumns) => {
-        sortRef.value.sortBy = newSortRef.sortBy
-        sortRef.value.direction =newSortRef.direction
-        drawTable()
-    }
-
-    const filteredSchueler = computed((): Array<Schueler> => state.schueler
-        .sort(function(a: Leistung, b: Leistung) {
-            const aSortRefSortBy = a[sortRef.value.sortBy]
-            const bSortRefSortBy = b[sortRef.value.sortBy]
-            if (aSortRefSortBy === null) {
-                return 1;
-            }
-
-            if (aSortRefSortBy === '') {
-                return 1;
-            }
-
-            if (bSortRefSortBy === null) {
-                return -1;
-            }
-
-            if (bSortRefSortBy === '') {
-                return -1;
-            }
-
-            let x: string | Number = aSortRefSortBy.toString();
-            let y: string | Number = bSortRefSortBy.toString();
-
-            if (x > y) {
-                return sortRef.value.direction ? 1 : -1;
-            }
-
-            if (x < y) {
-                return sortRef.value.direction ? -1 : 1;
-            }
-
-            return 0;
-        })
-        .filter((schueler: Schueler): boolean =>
-            searchFilter(schueler)
-            && tableFilter(schueler, 'klasse', true)
-        )
-    )
-
-    const searchFilter = (schueler: Schueler): boolean => {
-        if (filters.search === '') return true
-        const search = (search: string) => search.toLowerCase().includes(filters.search.toLowerCase())
-        return search(schueler.vorname) || search(schueler.nachname)
-    }
-
-    //TODO: is this deprecated too with multiselect?
-    const tableFilter = (schueler: Schueler, column: string, withOnlyEmptyOption: boolean = false): boolean => {
-        if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return schueler[column] == null
-        if (filters[column] == 0 || filters[column]['index'] == 0) return true
-        return schueler[column] == filters[column]['index']
-    }
-
-    //testing here
-    //not ready
-    const multiSelectFilter = (items: Iterable<Schueler[column]>, search: string) => {
-		const list = [];
-		for (const i of items)
-			if (i.index.includes(search.toLocaleLowerCase()))
-				list.push(i);
-		return list;
-	}
-
-
-
-    const fetchSchueler = (): AxiosPromise => axios
-        .get(route('api.klassenleitung'))
-        .then((response: AxiosResponse): AxiosResponse => state.schueler = response.data)
-        .finally((): void => getFilters())
+    const auth: any = usePage().props.value.auth
+    const rows: Ref<Schueler[]> = ref([])
 
     const selectedSchueler: Ref<Schueler | null> = ref(null)
     const selectedFloskelgruppe: Ref<string> = ref('asv')
+    const floskelgruppen: any = {
+        'asv': 'Arbeits- und Sozialverhalten',
+        'aue': 'Außerunterrichtliches Engagement',
+        'zb': 'Zeugnisbemerkung',
+    }
 
-    const selectSchueler = (schueler: Schueler, floskelgruppe: string | null = null): void => {
+    const columns = ref([
+        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, },
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
+        { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6, },
+        { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6, },
+        { key: 'asv', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
+        { key: 'aue', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
+        { key: 'zb', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
+    ]) as Ref<DataTableColumn[]>
+    const klasseFilter: Ref <string[]> = ref([])
+    const searchFilter: Ref<string|null> = ref(null)
+    const klasseItems: Ref<string[]> = ref([]);
 
+    onMounted((): AxiosPromise => axios
+        .get(route('api.klassenleitung'))
+        .then((response: AxiosResponse): AxiosResponse => rows.value = response.data)
+        .finally((): string[] => klasseItems.value = mapKlassen())
+    )
+
+    const mapKlassen = (): string[] => rows.value
+        .map((schueler: Schueler): string => schueler.klasse)
+        .filter((value: string, index:number, self: string[]): boolean => self.indexOf(value) === index)
+
+    const selectSchueler = (schueler: Schueler, floskelgruppe: 'asv'|'aue'|'zb'|null = null): void => {
         if (floskelgruppe || selectedSchueler.value != null) {
             selectedSchueler.value = schueler
 
@@ -195,146 +54,132 @@
         }
     }
 
+    const inputDisabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator)
 
+    const bemerkungButtonAriaLabel = (schueler: Schueler): string =>
+        `Wechseln zu ${floskelgruppen[selectedFloskelgruppe.value]} für ${schueler.vorname} ${schueler.nachname}`
 
-    const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator) // ok
+    const fehlstundenDisabled = (rowData: any): boolean =>
+        rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden
+
+    const search = (schueler: Schueler, column: 'nachname'|'vorname'|'klasse'): boolean =>
+        schueler[column].toLocaleLowerCase().includes(searchFilter.value?.toLocaleLowerCase() ?? '')
+
+    const rowsFiltered = computed(() =>
+        rows.value.filter((schueler: Schueler): boolean => {
+            if (klasseFilter.value.length > 0) {
+                return klasseFilter.value.includes(schueler.klasse)
+            }
+
+            if (searchFilter.value !== null) {
+                return search(schueler, 'nachname')
+                    || search(schueler, 'vorname')
+                    || search(schueler, 'klasse')
+            }
+
+            return true
+        })
+    )
+
+    const filterReset = (): void => {
+        klasseFilter.value = []
+        searchFilter.value = null
+    }
+
+    const filtered = (): boolean => klasseFilter.value.length > 0 || searchFilter.value !== null
 
 </script>
 
 <template>
-    <Head>
-        <title>{{ title }}</title>
-    </Head>
-
     <AppLayout title="Klassenleitung">
+        <template #main>
+            <svws-ui-table
+                :items="rowsFiltered.values()"
+                :columns="columns"
+                :clickable="true"
+                :count="true"
+                :filtered="filtered()"
+                :filterReset="filterReset"
+            >
+                <template #filterAdvanced>
+                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                    <SvwsUiMultiSelect
+                        label="Klasse"
+                        :items="klasseItems"
+                        :item-text="item => item"
+                        v-model="klasseFilter"
+                    />
+                </template>
+
+                <template #cell(klasse)="{value, rowData}">
+                    <button
+                        v-if="selectedSchueler"
+                        type="button"
+                        @click="selectSchueler(rowData)"
+                        :aria-label="bemerkungButtonAriaLabel(rowData)"
+                    >{{ value }}</button>
+                    <span v-else>{{ value }}</span>
+                </template>
+                <template #cell(name)="{value, rowData}">
+                    <button
+                        v-if="selectedSchueler"
+                        type="button"
+                        @click="selectSchueler(rowData)"
+                        :aria-label="bemerkungButtonAriaLabel(rowData)"
+                    >{{ value }}</button>
+                    <span v-else>{{ value }}</span>
+                </template>
+                <template #cell(gfs)="{value, rowData}">
+                    <FehlstundenInput
+                        column="gfs"
+                        :model="rowData"
+                        :disabled="fehlstundenDisabled(rowData)"
+                    />
+                </template>
+                <template #cell(gfsu)="{value, rowData}">
+                    <FehlstundenInput
+                        column="gfsu"
+                        :model="rowData"
+                        :disabled="fehlstundenDisabled(rowData)"
+                    />
+                </template>
+                <template #cell(asv)="{value, rowData}">
+                    <BemerkungIndicator
+                        :model="rowData"
+                        :bemerkung="rowData['ASV']"
+                        @clicked="selectSchueler(rowData, 'asv')"
+                        :disabled="inputDisabled(rowData.matrix.editable_asv)"
+                        floskelgruppe="asv"
+                    />
+                </template>
+                <template #cell(aue)="{value, rowData}">
+                    <BemerkungIndicator
+                        :model="rowData"
+                        :bemerkung="rowData['AUE']"
+                        @clicked="selectSchueler(rowData, 'aue')"
+                        :disabled="inputDisabled(rowData.matrix.editable_aue)"
+                        floskelgruppe="aue"
+                    />
+                </template>
+                <template #cell(zb)="{value, rowData}">
+                    <BemerkungIndicator
+                        :model="rowData"
+                        :bemerkung="rowData['ZB']"
+                        @clicked="selectSchueler(rowData, 'zb')"
+                        :disabled="inputDisabled(rowData.matrix.editable_zb)"
+                        floskelgruppe="zb"
+                    />
+                </template>
+            </svws-ui-table>
+        </template>
+
         <template v-slot:aside v-if="selectedSchueler">
             <BemerkungEditor
                 :schueler="selectedSchueler"
                 :floskelgruppe="selectedFloskelgruppe"
                 @close="selectedSchueler = null"
-                @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event; drawTable()"
+                @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event;"
             ></BemerkungEditor>
-        </template>
-
-        <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
-                </div>
-                <div id="filters">
-                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="filters.search"></SvwsUiTextInput>
-                    <SvwsUiMultiSelect
-                        title="Klasse"
-                        v-model="filters.klasse"
-                        :items="filterOptions.klassen"
-                        :item-text="item => item?.label || ''"
-                        autocomplete
-                        :removable="false"
-                    ></SvwsUiMultiSelect>
-                </div>
-            </header>
-
-            <SvwsUiDataTable v-if="filteredSchueler.length" :noData="false" :key="tableRedrawKey" clickable>
-                <template #header>
-                    <SvwsUiDataTableRow thead>
-                        <SvwsUiDataTableCell thead span="1" minWidth="6">
-                            <TableSortButton :presentColumn= "{sortBy:'klasse'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Klasse</TableSortButton>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead span="3" minWidth="10">
-                            <TableSortButton :presentColumn= "{sortBy:'name'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">Name</TableSortButton>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Gesamtfehlstunden" span="1" minWidth="6">
-                            <TableSortButton :presentColumn= "{sortBy:'gfs'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">GFS</TableSortButton>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Unentschuldigte Gesamtfehlstunden" span="1" minWidth="6">
-                            <TableSortButton :presentColumn= "{sortBy:'gfsu'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">GFSU</TableSortButton>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Arbeits- und Sozialverhalten" span="8" minWidth="5">
-                            <TableSortButton :presentColumn= "{sortBy:'ASV'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">ASV</TableSortButton>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Außerunterrichtliches Engagement" span="8" minWidth="5">
-                            <TableSortButton :presentColumn= "{sortBy:'AUE'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">AUE</TableSortButton>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell thead tooltip="Zeugnisbemerkung" span="8" minWidth="5">
-                            <TableSortButton :presentColumn= "{sortBy:'ZB'}" @clicked="(newSortRef) => { updateSortRef(newSortRef) }">ZB</TableSortButton>
-                        </SvwsUiDataTableCell>
-                    </SvwsUiDataTableRow>
-                </template>
-<!-- TODO: are span and minwidth here ok or old? Karol: still to be determined if the ui will be updated or not and how -->
-                <template #body="{ rows }">
-                    <SvwsUiDataTableRow v-for="(row, index) in filteredSchueler" :key="index" >
-                        <SvwsUiDataTableCell span="1" minWidth="6">
-                            <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.klasse }}</button>
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell span="3" minWidth="10">
-                            <button type="button" @click="selectSchueler(row)" class="truncate">{{ row.name }}</button>
-                        </SvwsUiDataTableCell>
-
-
-                        <SvwsUiDataTableCell span="1" minWidth="6">
-                            <FehlstundenInput
-                                :model="row"
-                                column="gfs"
-                                :row-index="index"
-                                :disabled="disabled(row.matrix.editable_fehlstunden && !row.matrix.toggleable_fehlstunden)"
-                            />
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell span="1" minWidth="6">
-                            <FehlstundenInput
-                                :model="row"
-                                column="gfsu"
-                                :row-index="index"
-                                :disabled="disabled(row.matrix.editable_fehlstunden && !row.matrix.toggleable_fehlstunden)"
-                            />
-                        </SvwsUiDataTableCell>
-
-
-                        <SvwsUiDataTableCell span="2" minWidth="5">
-                            <BemerkungIndicator
-                                :model="row"
-                                :bemerkung="row['ASV']"
-                                @clicked="selectSchueler(row, 'asv')"
-                                :row-index="index"
-                            />
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell span="2" minWidth="5">
-                            <BemerkungIndicator
-                                :model="row"
-                                :bemerkung="row['AUE']"
-                                @clicked="selectSchueler(row, 'aue')"
-                                :row-index="index"
-                            />
-                        </SvwsUiDataTableCell>
-                        <SvwsUiDataTableCell span="2" minWidth="5">
-                            <BemerkungIndicator
-                                :model="row"
-                                :bemerkung="row['ZB']"
-                                @clicked="selectSchueler(row, 'zb')"
-                                :row-index="index"
-                            />
-                        </SvwsUiDataTableCell>
-                    </SvwsUiDataTableRow>
-                </template>
-            </SvwsUiDataTable>
-
-            <h3 class="text-headline-sm ui-mx-6" v-else>Keine Einträge gefunden!</h3>
         </template>
     </AppLayout>
 </template>
-
-<style scoped>
-.truncate {
-    @apply ui-truncate
-}
-    header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
-    }
-
-    header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
-    }
-
-    header #filters {
-        @apply ui-grid sm:ui-grid-cols-2 md:ui-grid-cols-3 lg:ui-grid-cols-6 ui-gap-6
-    }
-</style>

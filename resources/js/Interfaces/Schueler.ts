@@ -4,6 +4,7 @@ export interface Schueler {
 	nachname: string,
 	name: string,
 	geschlecht: string,
+	klasse: string,
 	bemerkung: object,
 	fachbezogeneBemerkungen: string,
 	asv: string | null,

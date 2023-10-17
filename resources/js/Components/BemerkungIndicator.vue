@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { formatStringBasedOnGender } from '../Helpers/bemerkungen.helper'
-    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper';
-    import { Leistung, Schueler } from '../types'
+    import { formatStringBasedOnGender } from '@/Helpers/bemerkungen.helper'
+    import { Schueler } from '@/Interfaces/Schueler'
+    import { Leistung } from '@/Interfaces/Leistung'
 
     interface EmitsOptions {
         (event: 'clicked'): void,
@@ -10,54 +10,45 @@
     const props = defineProps<{
         model: Schueler | Leistung,
         bemerkung: string | null,
-        rowIndex: number,
+        floskelgruppe: 'asv' | 'aue' | 'zb',
+        disabled: boolean,
     }>()
 
-    let element: CellRef = undefined
+    const floskelgruppen: any = {
+        'asv': 'Arbeits- und Sozialverhalten',
+        'aue': 'Außerunterrichtliches Engagement',
+        'zb': 'Zeugnisbemerkung',
+    }
+
+    const bemerkungButtonAriaLabel = (schueler: Schueler): string =>
+        `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`
 
     const emit = defineEmits<EmitsOptions>()
-    const clicked = (): void => emit('clicked')
-    const formattedBemerkung = (): string => formatStringBasedOnGender(props.bemerkung, props.model)
-
-    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
 </script>
 
 <template>
-    <button
-        @click="clicked()"
-        @keydown.up.stop.prevent="navigate('up')"
-        @keydown.down.stop.prevent="navigate('down')"
-        @keydown.enter.stop.prevent="navigate('down')"
-        @keydown.left.stop.prevent="navigate('left')"
-        @keydown.right.stop.prevent="navigate('right')"
-        @keydown.tab.stop.prevent="navigate('right')"
-        :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
-    >
-        <span v-if="props.bemerkung" class="indicator">
-            <span class="icon">
-                   <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
-            </span>
-            <span class="indicator__bemerkung">
-                {{ formattedBemerkung() }}
-            </span>
+    <span class="bemerkung" v-if="props.disabled">
+        {{ formatStringBasedOnGender(props.bemerkung, props.model) }}
+    </span>
+
+    <button v-else type="button" @click="emit('clicked')"  :aria-label="bemerkungButtonAriaLabel">
+        <span>
+            <mdi-checkbox-marked-outline v-if="props.bemerkung"></mdi-checkbox-marked-outline>
+            <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
         </span>
 
-        <span class="icon" v-else>
-           <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
+        <span class="bemerkung">
+            {{ formatStringBasedOnGender(props.bemerkung, props.model) }}
         </span>
     </button>
 </template>
 
 <style scoped>
     button {
-        @apply ui-max-w-full
+        @apply ui-max-w-full ui-flex ui-gap-1.5 ui-items-center ui-justify-start
     }
 
-    .indicator {
-        @apply ui-flex ui-gap-1.5 ui-items-center ui-justify-start
-    }
-
-    .indicator__bemerkung {
+    .bemerkung {
         @apply ui-truncate
     }
 </style>

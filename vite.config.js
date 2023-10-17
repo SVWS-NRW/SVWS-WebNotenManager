@@ -14,11 +14,15 @@ export default defineConfig({
 		minifySyntax: false
 	},
     server: {
-        https: false,
-        // host: true,
-		host: process.env.LARAVEL_SAIL ? Object.values(os.networkInterfaces()).flat().find(info => info?.internal === false)?.address : undefined,
-
-	},
+        host: '0.0.0.0',
+        port: 5173
+    },
+    // server: {
+    //     https: false,
+    //     // host: true,
+	// 	host: process.env.LARAVEL_SAIL ? Object.values(os.networkInterfaces()).flat().find(info => info?.internal === false)?.address : undefined,
+    //
+	// },
 
     plugins: [
         laravel([

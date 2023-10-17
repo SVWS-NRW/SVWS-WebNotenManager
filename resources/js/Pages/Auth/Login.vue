@@ -68,7 +68,7 @@ const processEnter = (): void => {
                         <SvwsUiTextInput
                             v-model="data.form.email"
                             v-on:keyup.enter="processEnter"
-                            :valid="!hasErrors('email')"
+                            :valid="() => !hasErrors('email')"
                             :disabled="data.processing"
                             type="email"
                             placeholder="E-Mail-Adresse"
@@ -85,7 +85,7 @@ const processEnter = (): void => {
                         <SvwsUiTextInput
                             v-model="data.form.password"
                             v-on:keyup.enter="processEnter"
-                            :valid="!hasErrors('password')"
+                            :valid="() => !hasErrors('password')"
                             :disabled="data.processing"
                             type="password"
                             placeholder="Passwort"

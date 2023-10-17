@@ -41,8 +41,8 @@
     const isDisabled = (): boolean => Boolean(usePage().props.value && usePage().props.value.note_entry_disabled) || props.disabled
 
     const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
-    
-    const selectClickedItem = (event: MouseEvent): void => selectItem(event) 
+
+    const selectClickedItem = (event: MouseEvent): void => selectItem(event)
 </script>
 
 <template>
@@ -52,7 +52,7 @@
             :disabled="isDisabled()"
             v-else
             v-model="props.leistung.note"
-            :valid="!lowScore"
+            :valid="() => !lowScore"
             :headless="true"
             @click="selectClickedItem($event)"
             @keydown.up.stop.prevent="navigate('up')"
