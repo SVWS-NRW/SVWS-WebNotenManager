@@ -10,6 +10,8 @@
     import { Schueler } from '@/Interfaces/Schueler'
     import BemerkungEditor from '@/Components/BemerkungEditor.vue'
 
+    const title = 'Notenmanager - Klassenleitung'
+
     const auth: any = usePage().props.value.auth
     const rows: Ref<Schueler[]> = ref([])
 
@@ -93,84 +95,94 @@
 <template>
     <AppLayout title="Klassenleitung">
         <template #main>
-            <svws-ui-table
-                :items="rowsFiltered.values()"
-                :columns="columns"
-                :clickable="true"
-                :count="true"
-                :filtered="filtered()"
-                :filterReset="filterReset"
-            >
-                <template #filterAdvanced>
-                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                    <SvwsUiMultiSelect
-                        label="Klasse"
-                        :items="klasseItems"
-                        :item-text="item => item"
-                        v-model="klasseFilter"
-                    />
-                </template>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">{{ title }}</h2>
+                </div>
+            </header>
 
-                <template #cell(klasse)="{value, rowData}">
-                    <button
-                        v-if="selectedSchueler"
-                        type="button"
-                        @click="selectSchueler(rowData)"
-                        :aria-label="bemerkungButtonAriaLabel(rowData)"
-                    >{{ value }}</button>
-                    <span v-else>{{ value }}</span>
-                </template>
-                <template #cell(name)="{value, rowData}">
-                    <button
-                        v-if="selectedSchueler"
-                        type="button"
-                        @click="selectSchueler(rowData)"
-                        :aria-label="bemerkungButtonAriaLabel(rowData)"
-                    >{{ value }}</button>
-                    <span v-else>{{ value }}</span>
-                </template>
-                <template #cell(gfs)="{value, rowData}">
-                    <FehlstundenInput
-                        column="gfs"
-                        :model="rowData"
-                        :disabled="fehlstundenDisabled(rowData)"
-                    />
-                </template>
-                <template #cell(gfsu)="{value, rowData}">
-                    <FehlstundenInput
-                        column="gfsu"
-                        :model="rowData"
-                        :disabled="fehlstundenDisabled(rowData)"
-                    />
-                </template>
-                <template #cell(asv)="{value, rowData}">
-                    <BemerkungIndicator
-                        :model="rowData"
-                        :bemerkung="rowData['ASV']"
-                        @clicked="selectSchueler(rowData, 'asv')"
-                        :disabled="inputDisabled(rowData.matrix.editable_asv)"
-                        floskelgruppe="asv"
-                    />
-                </template>
-                <template #cell(aue)="{value, rowData}">
-                    <BemerkungIndicator
-                        :model="rowData"
-                        :bemerkung="rowData['AUE']"
-                        @clicked="selectSchueler(rowData, 'aue')"
-                        :disabled="inputDisabled(rowData.matrix.editable_aue)"
-                        floskelgruppe="aue"
-                    />
-                </template>
-                <template #cell(zb)="{value, rowData}">
-                    <BemerkungIndicator
-                        :model="rowData"
-                        :bemerkung="rowData['ZB']"
-                        @clicked="selectSchueler(rowData, 'zb')"
-                        :disabled="inputDisabled(rowData.matrix.editable_zb)"
-                        floskelgruppe="zb"
-                    />
-                </template>
-            </svws-ui-table>
+            <div class="content-area">
+
+                <SvwsUiTable
+                    :items="rowsFiltered.values()"
+                    :columns="columns"
+                    :clickable="true"
+                    :count="true"
+                    :filtered="filtered()"
+                    :filterReset="filterReset"
+                >
+                    <template #filterAdvanced>
+                        <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                        <SvwsUiMultiSelect
+                            label="Klasse"
+                            :items="klasseItems"
+                            :item-text="item => item"
+                            v-model="klasseFilter"
+                        />
+                    </template>
+                    <template #cell(klasse)="{ value, rowData }">
+                        <button
+                            v-if="selectedSchueler"
+                            type="button"
+                            @click="selectSchueler(rowData)"
+                            :aria-label="bemerkungButtonAriaLabel(rowData)"
+                        >{{ value }}</button>
+                        <span v-else>{{ value }}</span>
+                    </template>
+                    <template #cell(name)="{ value, rowData }">
+                        <button
+                            v-if="selectedSchueler"
+                            type="button"
+                            @click="selectSchueler(rowData)"
+                            :aria-label="bemerkungButtonAriaLabel(rowData)"
+                        >{{ value }}</button>
+                        <span v-else>{{ value }}</span>
+                    </template>
+                    <template #cell(gfs)="{ value, rowData }">
+                        <FehlstundenInput
+                            column="gfs"
+                            :model="rowData"
+                            :disabled="fehlstundenDisabled(rowData)"
+                        />
+                    </template>
+                    <template #cell(gfsu)="{ value, rowData }">
+                        <FehlstundenInput
+                            column="gfsu"
+                            :model="rowData"
+                            :disabled="fehlstundenDisabled(rowData)"
+                        />
+                    </template>
+                    <template #cell(asv)="{ value, rowData }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData['ASV']"
+                            @clicked="selectSchueler(rowData, 'asv')"
+                            :disabled="inputDisabled(rowData.matrix.editable_asv)"
+                            floskelgruppe="asv"
+                        />
+                    </template>
+                    <template #cell(aue)="{ value, rowData }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData['AUE']"
+                            @clicked="selectSchueler(rowData, 'aue')"
+                            :disabled="inputDisabled(rowData.matrix.editable_aue)"
+                            floskelgruppe="aue"
+                        />
+                    </template>
+                    <template #cell(zb)="{ value, rowData }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData['ZB']"
+                            @clicked="selectSchueler(rowData, 'zb')"
+                            :disabled="inputDisabled(rowData.matrix.editable_zb)"
+                            floskelgruppe="zb"
+                        />
+                    </template>
+
+                </SvwsUiTable>
+
+            </div>
         </template>
 
         <template v-slot:aside v-if="selectedSchueler">
@@ -183,3 +195,16 @@
         </template>
     </AppLayout>
 </template>
+
+<style scoped>
+
+    header {
+        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+    }
+
+    .content-area {
+        @apply ui-mx-4
+    }
+
+</style>
+
