@@ -102,7 +102,6 @@
             </header>
 
             <div class="content-area">
-
                 <SvwsUiTable
                     :items="rowsFiltered.values()"
                     :columns="columns"
@@ -179,9 +178,7 @@
                             floskelgruppe="zb"
                         />
                     </template>
-
                 </SvwsUiTable>
-
             </div>
         </template>
 

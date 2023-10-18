@@ -68,9 +68,15 @@
                         <h2 class="headline-4">Passwort anfordern</h2>
 
                         <div class="form-control">
-                            <SvwsUiTextInput v-model="data.form.schulnummer" v-on:keyup.enter="submit"
-                                :valid="!hasErrors('schulnummer')" :disabled="data.processing" type="text"
-                                placeholder="Schulnummer" required></SvwsUiTextInput>
+                            <SvwsUiTextInput
+                                v-model="data.form.schulnummer"
+                                v-on:keyup.enter="submit"
+                                :valid="() => !hasErrors('schulnummer')"
+                                :disabled="data.processing"
+                                type="text"
+                                placeholder="Schulnummer"
+                                required>
+                            </SvwsUiTextInput>
 
                             <span v-if="hasErrors('schulnummer')" class="error">
                                 {{ getError('schulnummer') }}
@@ -78,9 +84,15 @@
                         </div>
 
                         <div class="form-control">
-                            <SvwsUiTextInput v-model="data.form.kuerzel" v-on:keyup.enter="submit"
-                                :valid="!hasErrors('kuerzel')" :disabled="data.processing" type="text"
-                                placeholder="Lehrkraftkürzel" required></SvwsUiTextInput>
+                            <SvwsUiTextInput
+                                v-model="data.form.kuerzel"
+                                v-on:keyup.enter="submit"
+                                :valid="() => !hasErrors('kuerzel')"
+                                :disabled="data.processing"
+                                type="text"
+                                placeholder="Lehrkraftkürzel"
+                                required>
+                            </SvwsUiTextInput>
 
                             <span v-if="hasErrors('kuerzel')" class="error">
                                 {{ getError('kuerzel') }}
@@ -88,9 +100,16 @@
                         </div>
 
                         <div class="form-control">
-                            <SvwsUiTextInput v-model="data.form.email" v-on:keyup.enter="submit"
-                                :valid="!hasErrors('email')" :disabled="data.processing" type="email"
-                                placeholder="E-Mail-Adresse" required autocomplete="email"></SvwsUiTextInput>
+                            <SvwsUiTextInput
+                                v-model="data.form.email"
+                                v-on:keyup.enter="submit"
+                                :valid="() => !hasErrors('email')"
+                                :disabled="data.processing"
+                                type="email"
+                                placeholder="E-Mail-Adresse"
+                                required
+                                autocomplete="email">
+                            </SvwsUiTextInput>
 
                             <span v-if="hasErrors('email')" class="error">
                                 {{ getError('email') }}
