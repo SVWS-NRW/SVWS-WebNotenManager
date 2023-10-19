@@ -76,16 +76,16 @@
 
     let filters = <{
         search: string,
-        klasse: Number | string,
-        jahrgang: Number | string,
-        kurs: Number | string,
-        fach: Number | string
+        klasse: [Number | string],
+        jahrgang: [Number | string],
+        kurs: [Number | string],
+        fach: [Number | string],
     }>reactive({
         search: '',
-        klasse: 0,
-        jahrgang: 0,
-        kurs: 0,
-        fach: 0,
+        klasse: [0],
+        jahrgang: [0],
+        kurs: [0],
+        fach: [0],
     })
 
     const noteFilter = ref<string[]>([]);
