@@ -7,9 +7,9 @@
     import TableSortButton from '../Components/TableSortButton.vue'
     import { Column } from '../Interfaces/Column'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import axios, { AxiosResponse } from 'axios'
+    import axios, { AxiosResponse, AxiosPromise } from 'axios'
     import MahnungIndicator from '../Components/MahnungIndicator.vue'
-    //TODO: add functionality?
+    //TODO: add functionalities after refactoring uitable
     import NoteInput from '../Components/NoteInput.vue'
 
     import FbEditor from '../Components/FbEditor.vue'
@@ -28,6 +28,7 @@
     import {
         SvwsUiCheckbox,
         SvwsUiTable,
+        //deprecated
         SvwsUiDataTable,
         SvwsUiButton,
         SvwsUiTextInput,
@@ -42,6 +43,7 @@
     import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
     import {Auth} from '../Interfaces/Auth'
     import {tableCellEditable, nextNote, tableCellDisabled} from '../Helpers/pages.helper'
+import { IndexKind } from 'typescript'
 
     const title = 'Notenmanager - mein Unterricht'
 
@@ -68,21 +70,21 @@
 
     watch(toggles, (): void => drawTable())
 
-    //TODO: note not working
-    const columns = ref<Column[]>([])
     const klasseFilter: Ref <string[]> = ref([])
     const jahrgangFilter: Ref <string[]> = ref([])
     const fachFilter: Ref <string[]> = ref([])
     const kursFilter: Ref <string[]> = ref([])
-    const noteFilter: Ref <string|number[]> = ref([])
+    const noteFilter: Ref<string[]> = ref([])
     const searchFilter: Ref<string|null> = ref(null)
-    const klasseItems: Ref<string[]> = ref([]);
-    const jahrgangItems: Ref<string[]> = ref([]);
-    const fachItems: Ref<string[]> = ref([]);
-    const kursItems: Ref<string[]> = ref([]);
-    const noteItems: Ref<string[]> = ref([]);
+    const noteItems: Ref<string[]> = ref([])
+    const klasseItems: Ref<string[]> = ref([])
+    const jahrgangItems: Ref<string[]> = ref([])
+    const fachItems: Ref<string[]> = ref([])
+    const kursItems: Ref<string[]> = ref([])
 
     let tableRedrawKey: number = 0
+
+    const columns = ref<Column[]>([])
 
     //TODO: remove 'cause unnecessary to use this with uitable
     const drawTable = (): void => {
@@ -102,11 +104,6 @@
         tableRedrawKey++;
     }
 
-    onMounted((): void => {
-        getLeistungen()
-        drawTable()
-    })
-
     const getLeistungen = (): Promise<any> => axios
         .get(route('api.mein_unterricht'))
         .then((response: AxiosResponse): void => rows.value = response.data)
@@ -116,12 +113,19 @@
         .then((): string[] => kursItems.value = mapItems("kurs"))
         .then((): string[] => noteItems.value = mapItems("note"))
 
-        //TODO: something's wrong with note
+    //TODO: should empty be an option too? if so, null should be transformed
     const mapItems = (column: string): string[] => rows.value
         .map((leistung: Leistung): string => leistung[column])
-        .filter((value: string, index:number, self: string[]): boolean => self.indexOf(value) === index)
+        .filter((value: string, index:number, self: string[]): boolean => self.indexOf(value) === index && value !== null)
 
-    //TODO: shall we keep these two?
+    onMounted((): void => {
+        getLeistungen()
+        drawTable()
+    })
+
+    const inputDisabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator)
+
+    //TODO: shall we keep this one
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator) // ok
 
     const select = (row: Leistung, always: boolean = false): void => {
@@ -129,6 +133,10 @@
             selectedFbLeistung.value = row
         }
     }
+        
+
+    const fehlstundenDisabled = (rowData: any): boolean =>
+        rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden
 
     const search = (leistung: Leistung, column: 'nachname'|'vorname'|'klasse'): boolean =>
         leistung[column].toLocaleLowerCase().includes(searchFilter.value?.toLocaleLowerCase() ?? '')
@@ -206,9 +214,9 @@
                 </div>
             </header>
 
-
 <!-- TODO: some buttons with functionality still missing (see other TODOs) -->
-<div class="content-area">
+<!-- TODO: alphabetic sorting is not taking place; itemSort not working for now -->
+            <div class="content-area">
                 <SvwsUiTable
                     :items="rowsFiltered.values()"
                     :columns="columns"
@@ -219,99 +227,106 @@
                 >
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter"></SvwsUiTextInput>
-                    <SvwsUiMultiSelect
-                        label="Klasse"
-                        v-model="klasseFilter"
-                        :items="klasseItems"
-                        :item-text="item => item"
-                    ></SvwsUiMultiSelect>
-                    <SvwsUiMultiSelect
-                        label="Jahrgang"
-                        v-model="jahrgangFilter"
-                        :items="jahrgangItems"
-                        :item-text="item => item"
-                    ></SvwsUiMultiSelect>
-                    <SvwsUiMultiSelect
-                        label="Fach"
-                        v-model="fachFilter"
-                        :items="fachItems"
-                        :item-text="item => item"
-                    ></SvwsUiMultiSelect>
-                    <SvwsUiMultiSelect
-                        label="Kurs"
-                        v-model="kursFilter"
-                        :items="kursItems"
-                        :item-text="item => item"
-                    ></SvwsUiMultiSelect>
-                    <SvwsUiMultiSelect
-                        label="Note"
-                        v-model="noteFilter"
-                        :items="noteItems"
-                        :item-text="item => item"
-                    ></SvwsUiMultiSelect>
+                        <SvwsUiMultiSelect
+                            label="Klasse"
+                            v-model="klasseFilter"
+                            :items="klasseItems"
+                            :item-text="item => item"
+                        ></SvwsUiMultiSelect>
+                            <SvwsUiMultiSelect
+                            label="Jahrgang"
+                            v-model="jahrgangFilter"
+                            :items="jahrgangItems"
+                            :item-text="item => item"
+                        ></SvwsUiMultiSelect>
+                        <SvwsUiMultiSelect
+                            label="Fach"
+                            v-model="fachFilter"
+                            :items="fachItems"
+                            :item-text="item => item"
+                        ></SvwsUiMultiSelect>
+                        <SvwsUiMultiSelect
+                            label="Kurs"
+                            v-model="kursFilter"
+                            :items="kursItems"
+                            :item-text="item => item"
+                        ></SvwsUiMultiSelect>
+                        <SvwsUiMultiSelect
+                            label="Note"
+                            v-model="noteFilter"
+                            :items="noteItems"
+                            :item-text="item => item"
+                            ></SvwsUiMultiSelect>
                     </template>
+                    <!-- TODO: check functionalities here (if selected schuler not used) -->
                     <template #cell(klasse)="{ value, rowData }">
-                        <button
-                            v-if="selectedSchueler"
-                            type="button"
-                            @click="selectSchueler(rowData)"
-                            :aria-label="bemerkungButtonAriaLabel(rowData)"
-                        >{{ value }}</button>
-                        <span v-else>{{ value }}</span>
+                        <button type="button" @click="select(rowData)" class="truncate">
+                                {{ value }}
+                        </button>
                     </template>
                     <template #cell(name)="{ value, rowData }">
-                        <button
-                            v-if="selectedSchueler"
-                            type="button"
-                            @click="selectSchueler(rowData)"
-                            :aria-label="bemerkungButtonAriaLabel(rowData)"
-                        >{{ value }}</button>
-                        <span v-else>{{ value }}</span>
+                        <button type="button" @click="select(rowData)" class="truncate">
+                                {{ value }}
+                        </button>
                     </template>
-                    <template #cell(gfs)="{ value, rowData }">
+                    <template #cell(fach)="{ value, rowData }">
+                        <button type="button" @click="select(rowData)" class="truncate">
+                                {{ value }}
+                        </button>
+                    </template>
+                    <template #cell(kurs)="{ value, rowData }">
+                        <button type="button" @click="select(rowData)" class="truncate">
+                                {{ value }}
+                        </button>
+                    </template>
+                    <template #cell(teilnoten)>
+                        <button type="button" class="truncate">
+                            TBD
+                        </button>
+                    </template>
+                    <!-- TODO: keyboard navigation not working properly, index is undefined, right? get it somewhere, dummy for now -->
+                    <template #cell(note)="{ value, rowData, rowIndex}">
+                        <NoteInput
+                                :leistung="rowData"
+                                :row-index="rowIndex"
+                                :disabled="disabled(rowData.matrix.editable_noten)"
+                        ></NoteInput>
+                    </template>
+                    <!-- TODO: correct because it is breaking the page right now -->
+                        <!-- <template #cell(istGemahnt)="{ value, rowData, rowIndex}">
+                            <MahnungIndicator
+                                    :leistung="rowData"
+                                    :row-index="rowIndex"
+                                    :disabled="disabled(rowData.matrix.editable_mahnungen)"
+                            ></MahnungIndicator>
+                        </template> -->
+                    <template #cell(fs)="{ value, rowData, rowIndex }">
                         <FehlstundenInput
-                            column="gfs"
                             :model="rowData"
+                            :row-index="rowIndex"
+                            column="fs"
                             :disabled="fehlstundenDisabled(rowData)"
                         />
                     </template>
-                    <template #cell(gfsu)="{ value, rowData }">
+                    <template #cell(fsu)="{ value, rowData, rowIndex  }">
                         <FehlstundenInput
-                            column="gfsu"
                             :model="rowData"
+                            :row-index="rowIndex"
+                            column="fsu"
                             :disabled="fehlstundenDisabled(rowData)"
                         />
                     </template>
-                    <template #cell(asv)="{ value, rowData }">
+                    <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
                         <BemerkungIndicator
                             :model="rowData"
-                            :bemerkung="rowData['ASV']"
-                            @clicked="selectSchueler(rowData, 'asv')"
-                            :disabled="inputDisabled(rowData.matrix.editable_asv)"
-                            floskelgruppe="asv"
-                        />
-                    </template>
-                    <template #cell(aue)="{ value, rowData }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['AUE']"
-                            @clicked="selectSchueler(rowData, 'aue')"
-                            :disabled="inputDisabled(rowData.matrix.editable_aue)"
-                            floskelgruppe="aue"
-                        />
-                    </template>
-                    <template #cell(zb)="{ value, rowData }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['ZB']"
-                            @clicked="selectSchueler(rowData, 'zb')"
-                            :disabled="inputDisabled(rowData.matrix.editable_zb)"
+                            :bemerkung="rowData.fachbezogeneBemerkungen"
+                            @clicked="select(rowData, 'FB')"
+                            :disabled="inputDisabled(rowData.matrix.editable_fb)"
                             floskelgruppe="zb"
                         />
                     </template>
                 </SvwsUiTable>
             </div>
-
         </template>
     </AppLayout>
 </template>
@@ -332,9 +347,6 @@
 
     header #headline {
         @apply ui-flex ui-items-center ui-justify-start ui-gap-6
-    }
-    header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
 
     .content-area {
