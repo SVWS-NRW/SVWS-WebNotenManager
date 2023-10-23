@@ -162,7 +162,7 @@
         fachFilter.value = []
         kursFilter.value = []
         noteFilter.value = []
-        searchFilter.value = null
+        searchFilter.value = ""
     }
 
     const filtered = (): boolean => klasseFilter.value.length > 0 ||

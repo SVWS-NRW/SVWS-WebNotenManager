@@ -84,8 +84,9 @@
     )
 
     const filterReset = (): void => {
+        console.log("resetfilter")
         klasseFilter.value = []
-        searchFilter.value = null
+        searchFilter.value = ""
     }
 
     const filtered = (): boolean => klasseFilter.value.length > 0 || searchFilter.value !== null

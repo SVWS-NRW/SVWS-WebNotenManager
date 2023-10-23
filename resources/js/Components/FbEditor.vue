@@ -105,7 +105,7 @@
 </script>
 
 <template>
-    <div class="container">q
+    <div class="container">
         <h2 class="text-headline">{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
         <h1 class="text-headline-xl text-primary">{{ props.leistung.name }}</h1>
 

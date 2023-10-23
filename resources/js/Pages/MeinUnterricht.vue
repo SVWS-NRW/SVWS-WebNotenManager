@@ -175,7 +175,7 @@ import { IndexKind } from 'typescript'
         fachFilter.value = []
         kursFilter.value = []
         noteFilter.value = []
-        searchFilter.value = null
+        searchFilter.value = ""
     }
 
     const filtered = (): boolean => klasseFilter.value.length > 0 ||
@@ -186,7 +186,7 @@ import { IndexKind } from 'typescript'
                                     searchFilter.value !== null
     
 </script>
-
+""
 <template>
     <Head>
         <title>{{ title }}</title>
