@@ -64,23 +64,26 @@
     const fehlstundenDisabled = (rowData: any): boolean =>
         rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden
 
-    const search = (schueler: Schueler, column: 'nachname'|'vorname'|'klasse'): boolean =>
-        schueler[column].toLocaleLowerCase().includes(searchFilter.value?.toLocaleLowerCase() ?? '')
+    const searchInput = (schueler: Schueler): boolean =>
+    {
+        const search = (search: string) => search.toLocaleLowerCase().includes(searchFilter.value?.toLocaleLowerCase() ?? '')
+        return search(schueler.nachname)
+        || search(schueler.vorname)
+        || search(schueler.klasse)
+    }
+
+    const multiSelectFilter = (schueler: Schueler,): boolean => {
+        if (klasseFilter.value.length > 0) {
+            return klasseFilter.value.includes(schueler.klasse)
+        }
+        return true
+    }
 
     const rowsFiltered = computed(() =>
-        rows.value.filter((schueler: Schueler): boolean => {
-            if (klasseFilter.value.length > 0) {
-                return klasseFilter.value.includes(schueler.klasse)
-            }
-
-            if (searchFilter.value !== null) {
-                return search(schueler, 'nachname')
-                    || search(schueler, 'vorname')
-                    || search(schueler, 'klasse')
-            }
-
-            return true
-        })
+        rows.value.filter((schueler: Schueler): boolean => 
+        searchInput(schueler)
+        && multiSelectFilter(schueler)
+        )
     )
 
     const filterReset = (): void => {
