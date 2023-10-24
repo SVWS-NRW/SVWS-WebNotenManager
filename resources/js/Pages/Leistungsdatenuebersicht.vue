@@ -126,34 +126,49 @@
         drawTable()
     })
 
-    const search = (leistung: Leistung, column: 'nachname'|'vorname'): boolean =>
-        leistung[column].toLocaleLowerCase().includes(searchFilter.value?.toLocaleLowerCase() ?? '')
+    const searchInput = (leistung: Leistung): boolean => {
+        const search = (search: string) => search.toLocaleLowerCase().includes(searchFilter.value?.toLocaleLowerCase() ?? '')
+        return search(leistung.nachname)
+            || search(leistung.vorname)
+            || search(leistung.klasse)
+    }
+
+    const multiSelectFilter = (leistung: Leistung, search: string): boolean => {
+        switch (search) {
+            case "klasse":
+                if (klasseFilter.value.length > 0) {
+                    return klasseFilter.value.includes(leistung.klasse)
+                }
+            case "jahrgang":
+                if (jahrgangFilter.value.length > 0) {
+                    return jahrgangFilter.value.includes(leistung.jahrgang)
+                }
+            case "fach":
+                if (fachFilter.value.length > 0) {
+                    return fachFilter.value.includes(leistung.fach)
+                }
+            case "kurs":
+                if (kursFilter.value.length > 0) {
+                    return kursFilter.value.includes(leistung.kurs)
+                }
+            case "note":
+                if (noteFilter.value.length > 0) {
+                    return noteFilter.value.includes(leistung.note)
+                }
+            default:
+                return true
+        }
+    }
 
     const rowsFiltered = computed(() =>
-        rows.value.filter((leistung: Leistung): boolean => {
-            if (klasseFilter.value.length > 0) {
-                return klasseFilter.value.includes(leistung.klasse)
-            }
-            if (jahrgangFilter.value.length > 0) {
-                return jahrgangFilter.value.includes(leistung.jahrgang)
-            }
-            if (fachFilter.value.length > 0) {
-                return fachFilter.value.includes(leistung.fach)
-            }
-            if (kursFilter.value.length > 0) {
-                return kursFilter.value.includes(leistung.kurs)
-            }
-            if (noteFilter.value.length > 0) {
-                return noteFilter.value.includes(leistung.note)
-            }
-
-            if (searchFilter.value !== null) {
-                return search(leistung, 'nachname')
-                    || search(leistung, 'vorname')
-            }
-
-            return true
-        })
+        rows.value.filter((leistung: Leistung): boolean =>
+            searchInput(leistung)
+            && multiSelectFilter(leistung, "klasse")
+            && multiSelectFilter(leistung, "jahrgang")
+            && multiSelectFilter(leistung, "fach")
+            && multiSelectFilter(leistung, "kurs")
+            && multiSelectFilter(leistung, "note")
+        )
     )
 
     const filterReset = (): void => {
@@ -192,7 +207,7 @@
 
     const inputDisabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator)
 
-    //TODO: shall we keep this one
+    //TODO: check if working as expected
     const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator, leistungEdit.value)
 
     const readonly = (leistung: Leistung, permission: 'editable_fb'): boolean => disabled(leistung.matrix[permission])
