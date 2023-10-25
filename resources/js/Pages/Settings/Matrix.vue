@@ -8,9 +8,11 @@
     import {
         SvwsUiButton, SvwsUiCheckbox, SvwsUiTooltip, SvwsUiRadioOption,
         SvwsUiDataTable, SvwsUiDataTableRow, SvwsUiDataTableCell,
+        SvwsUiTable, DataTableColumn
     } from '@svws-nrw/svws-ui'
 
-    const defaultCollapsed: boolean = false
+    //TODO: check if still needed, seems to have no effect so far
+    const defaultCollapsed: boolean = true
 
     const cellTooltip: string = `
         Durch Setzen des Hakens wird für diese Gruppe der zugehörige Bereich in
@@ -73,6 +75,20 @@
         lehrer_can_override_fachlehrer: false,
     })
 
+    //testing here
+    const columns = ref([
+        { key: 'gruppierung', label: 'Gruppierung'},
+        { key: 'teilnoten', label: 'Teilnoten'},
+        { key: 'noten', label: 'Noten'},
+        { key: 'mahnung', label: 'M', tooltip: "Mahnung"},
+        { key: 'klasse', label: 'FS', tooltip: "Fehlstunden"},
+        { key: 'klasse', label: 'GS/GFS', tooltip: "Fehlstunden/Gesamtfehlstunden"},
+        { key: 'klasse', label: 'FB',  tooltip: "Fachbezogene Bemerkungen"},
+        { key: 'klasse', label: 'ASV', tooltip: "Arbeits- und Sozialverhalten"},
+        { key: 'klasse', label: 'AUE', tooltip: "Außerunterrichtliches Engagement"},
+        { key: 'klasse', label: 'ZB', tooltip: "Zeugnisbemerkung"},
+    ]) as Ref<DataTableColumn[]>
+
     const jahrgaenge: Ref<JahrgangStructure> = ref({})
     const klassen: Ref<Klasse[]> = ref([])
     const jahgraengeCollapsed: Ref<CollapseReference> = ref({})
@@ -93,8 +109,9 @@
     })
 
     // Creates the collapsed boolean table to switch the table toggles
+    // with false, it is collapsed
     const setTableCollapseValues = (obj: Record<string, any[]>): void => Object.keys(obj).forEach((key: string) =>
-        jahgraengeCollapsed.value[key] = [defaultCollapsed, Array(obj[key].length).fill(true)]
+        jahgraengeCollapsed.value[key] = [defaultCollapsed, Array(obj[key].length).fill(false)]
     )
 
     const save = (): void => {
@@ -285,28 +302,15 @@
                             </template>
                         </SvwsUiTooltip>
                     </SvwsUiCheckbox>
-
-                    <SvwsUiDataTable collapsible :noData="false" v-if="Object.entries(jahrgaenge).length || klassen.length">
-                        <template #header>
-                            <SvwsUiDataTableRow thead>
-                                <SvwsUiDataTableCell thead>Gruppierung</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead>Teilnoten</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead>Noten</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Mahnung">M</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Fehlstunden">FS</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Fehlstunden/Gesamtfehlstunden">FS/GFS</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Fachbezogene Bemerkungen">FB</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Arbeits- und Sozialverhalten">ASV</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Außerunterrichtliches Engagement">AUE</SvwsUiDataTableCell>
-                                <SvwsUiDataTableCell thead tooltip="Zeugnisbemerkung">ZB</SvwsUiDataTableCell>
-                            </SvwsUiDataTableRow>
-                        </template>
-
+                <div class="content-area">
+                    <!-- INFO: collapsible is not a valid attribute as it was for SvwsUiTable -->
+                    <SvwsUiTable :columns="columns" :noData="false" v-if="Object.entries(jahrgaenge).length || klassen.length">
                         <template #body>
+                            <!-- TODO: apply here what was applied to Klassen mit Jahrgaenge -->
                             <!-- Klassen ohne Jahrgaenge -->
                             <span v-if="klassen.length">
-                                <SvwsUiDataTableRow>
-                                    <SvwsUiDataTableCell>
+                                <div class="svws-ui-tr" role="row">
+                                    <div class="svws-ui-td" role="cell">
                                         <div class="flex items-center gap-1">
                                             <SvwsUiButton
                                                 type="icon"
@@ -323,36 +327,36 @@
                                                 :value="true"
                                             />
                                         </div>
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_teilnoten']"
                                             @update:modelValue="toggleKlassenColumn('editable_teilnoten')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_noten']"
                                             @update:modelValue="toggleKlassenColumn('editable_noten')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_mahnungen']"
                                             @update:modelValue="toggleKlassenColumn('editable_mahnungen')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_fehlstunden']"
                                             @update:modelValue="toggleKlassenColumn('editable_fehlstunden')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiRadioOption
                                             v-model="klassenColumnsToggle['toggleable_fehlstunden']"
                                             @update:modelValue="toggleKlassenColumn('toggleable_fehlstunden')"
@@ -367,64 +371,61 @@
                                         >
                                             GFS
                                         </SvwsUiRadioOption>
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_fb']"
                                             @update:modelValue="toggleKlassenColumn('editable_fb')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_asv']"
                                             @update:modelValue="toggleKlassenColumn('editable_asv')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_aue']"
                                             @update:modelValue="toggleKlassenColumn('editable_aue')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_zb']"
                                             @update:modelValue="toggleKlassenColumn('editable_zb')"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                </SvwsUiDataTableRow>
-
-                                <SvwsUiDataTableRow
+                                    </div>
+                                </div>
+                                <div class="svws-ui-tr" role="row"
                                     :depth="2"
-                                    :collapsed="klassenCollapsed"
-                                    :expanded="!klassenCollapsed"
                                     v-for="klasse in klassen"
                                 >
-                                    <SvwsUiDataTableCell>
+                                    <div class="svws-ui-td" role="cell">
                                         {{ klasse.kuerzel }}
                                         <SvwsUiCheckbox
                                             v-model="klassenToggle[klasse.id]"
                                             @update:modelValue="toggleKlasse(klasse)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_teilnoten" />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_noten" />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_mahnungen" />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiRadioOption
                                             v-model="klasse.toggleable_fehlstunden"
                                             :value="true"
@@ -433,20 +434,20 @@
                                             v-model="klasse.toggleable_fehlstunden"
                                             :value="false"
                                         >GFS</SvwsUiRadioOption>
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_fb" />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_asv" />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_aue" />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                         <SvwsUiCheckbox v-model="klasse.editable_zb" />
-                                    </SvwsUiDataTableCell>
-                                </SvwsUiDataTableRow>
+                                    </div>
+                                </div>
                             </span>
 
                             <!-- Klassen mit Jahrgaenge -->
@@ -454,8 +455,8 @@
                                 v-for="(groupedJahrgaenge, key) in jahrgaenge"
                                 v-if="Object.entries(jahrgaenge).length"
                             >
-                                <SvwsUiDataTableRow v-show="false">
-                                    <SvwsUiDataTableCell>
+                                <div class="svws-ui-tr" role="row" v-show="false">
+                                    <div class="svws-ui-td" role="cell">
                                         <div class="flex items-center gap-1">
                                             <SvwsUiButton
                                                 type="icon"
@@ -472,36 +473,36 @@
                                             />
                                             {{ key }}
                                         </div>
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_teilnoten']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_teilnoten', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_noten']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_noten', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_mahnungen']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_mahnungen', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_fehlstunden']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_fehlstunden', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiRadioOption
                                             v-model="jahrgangsGroupsColumnsToggle[key]['toggleable_fehlstunden']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'toggleable_fehlstunden', key)"
@@ -512,44 +513,44 @@
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'toggleable_fehlstunden', key)"
                                             :value="false"
                                         >GFS</SvwsUiRadioOption>
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_fb']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_fb', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_asv']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_asv', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_aue']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_aue', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                    <SvwsUiDataTableCell>
+                                    </div>
+                                    <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox
                                             v-model="jahrgangsGroupsColumnsToggle[key]['editable_zb']"
                                             @update:modelValue="toggleGroupColumn(groupedJahrgaenge, 'editable_zb', key)"
                                             :value="true"
                                         />
-                                    </SvwsUiDataTableCell>
-                                </SvwsUiDataTableRow>
+                                    </div>
+                                </div>
 
                                 <span v-for="(jahrgang, index) in groupedJahrgaenge">
-                                    <SvwsUiDataTableRow
+                                    <div class="svws-ui-tr" role="row"
                                         :depth="1"
                                         :collapsed="jahgraengeCollapsed[key][0]"
                                         :expanded="!jahgraengeCollapsed[key][0]"
                                     >
-                                        <SvwsUiDataTableCell>
+                                        <div class="svws-ui-td" role="cell">
                                             <div class="flex items-center gap-1 justify-between">
                                                 <SvwsUiButton
                                                     type="icon"
@@ -566,36 +567,36 @@
                                                 />
                                                 {{ jahrgang.kuerzel }}
                                             </div>
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_teilnoten']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_teilnoten')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_noten']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_noten')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_mahnungen']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_mahnungen')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fehlstunden']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_fehlstunden')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiRadioOption
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['toggleable_fehlstunden']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'toggleable_fehlstunden')"
@@ -606,44 +607,44 @@
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'toggleable_fehlstunden')"
                                                 :value="false"
                                             >GFS</SvwsUiRadioOption>
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fb']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_fb')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_asv']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_asv')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_aue']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_aue')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell>
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" >
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_zb']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_zb')"
                                                 :value="true"
                                             />
-                                        </SvwsUiDataTableCell>
-                                    </SvwsUiDataTableRow>
-
-                                    <SvwsUiDataTableRow
+                                        </div>
+                                    </div>
+<!-- testing here -->
+                                    <div class="svws-ui-tr" role="row"
                                         :depth="2"
                                         :collapsed="jahgraengeCollapsed[key][0] || jahgraengeCollapsed[key][1][index]"
                                         :expanded="!jahgraengeCollapsed[key][1][index]"
-                                        v-for="klasse in jahrgang.klassen"
+                                        v-for="klasse in jahrgang.klassen" v-show="jahgraengeCollapsed[key][1][index]"
                                     >
-                                        <SvwsUiDataTableCell>
+                                        <div class="svws-ui-td" role="cell">
                                             <div class="flex items-center gap-1">
                                                 <SvwsUiCheckbox
                                                     v-model="jahrgangKlassenToggle[klasse.id]"
@@ -652,20 +653,20 @@
                                                 />
                                                 {{ klasse.kuerzel }}
                                             </div>
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_teilnoten" />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_noten" />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_mahnungen" />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiRadioOption
                                                 v-model="klasse.toggleable_fehlstunden"
                                                 :value="true"
@@ -674,25 +675,25 @@
                                                 v-model="klasse.toggleable_fehlstunden"
                                                 :value="false"
                                             >GFS</SvwsUiRadioOption>
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_fb" />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_asv" />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_aue" />
-                                        </SvwsUiDataTableCell>
-                                        <SvwsUiDataTableCell :tooltip="cellTooltip">
+                                        </div>
+                                        <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiCheckbox v-model="klasse.editable_zb" />
-                                        </SvwsUiDataTableCell>
-                                    </SvwsUiDataTableRow>
+                                        </div>
+                                    </div>
                                 </span>
                             </span>
                         </template>
-                    </SvwsUiDataTable>
-
+                    </SvwsUiTable>
+                </div>
                     <SvwsUiButton @click="save()">Speichern</SvwsUiButton>
                 </section>
             </div>
@@ -708,6 +709,7 @@
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
 
+/* TODO: adjust for it to take effect */
     header #headline {
         @apply ui-flex ui-items-center ui-justify-start ui-gap-6
     }
@@ -724,13 +726,17 @@
         @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-items-start ui-w-full
     }
 
+    .content-area {
+        @apply ui-mx-8 ui-w-4/6
+    }
+
     .button {
         @apply ui-self-start
     }
 
-    /* testing here */
+    /* testing here; no effect
     .checkbox--checked:not(.checkbox--bw) .icon, .checkbox--indeterminate:not(.checkbox--bw) .icon {
     --tw-text-opacity: 1;
     @apply ui-bg-black !important;
-}
+} */
 </style>

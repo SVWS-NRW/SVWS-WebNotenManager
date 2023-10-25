@@ -17,6 +17,9 @@
         disabled: boolean,
     }>()
 
+    //TODO: use this dynamically to open/close modal (which is also not working at the moment)
+    const defaultShowModal: boolean = false
+
     let element: CellRef = undefined
     let leistung = reactive<Leistung>(props.leistung)
 
@@ -29,6 +32,7 @@
     const istGemahnt = computed((): boolean => Boolean(leistung.istGemahnt))
     const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
     const isDisabled = (): boolean => !!usePage().props.value.warning_entry_disabled || props.disabled
+    const showModal = () => ref<boolean>(defaultShowModal)
 
     const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
 </script>
@@ -54,7 +58,7 @@
 
     <button
         v-else
-        @click="leistung.mahndatum ? modal.openModal() : updateIstGemahnt()"
+        @click="leistung.mahndatum ? !showModal : updateIstGemahnt()"
         @keydown.up.stop.prevent="navigate('up')"
         @keydown.down.stop.prevent="navigate('down')"
         @keydown.enter.stop.prevent="navigate('down')"
@@ -79,8 +83,7 @@
            </span>
         </span>
     </button>
-
-    <SvwsUiModal ref="modal">
+    <SvwsUiModal ref="modal" :show="showModal">
         <template #modalTitle>
             {{ leistung.vorname }} {{ leistung.nachname }}
             <SvwsUiBadge variant="primary">

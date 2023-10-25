@@ -38,7 +38,9 @@
 
     onMounted((): AxiosPromise => axios
         .get(route('api.klassenleitung'))
-        .then((response: AxiosResponse): AxiosResponse => rows.value = response.data)
+        .then((response: AxiosResponse): AxiosResponse => {
+        return rows.value = response.data
+    })
         .finally((): string[] => klasseItems.value = mapKlassen())
     )
 

@@ -230,6 +230,8 @@ import { IndexKind } from 'typescript'
 <!-- TODO: some buttons with functionality still missing (see other TODOs) -->
             <div class="content-area">
                 <SvwsUiTable
+                    :noData="false"
+                    :key="tableRedrawKey"
                     :items="rowsFiltered.values()"
                     :columns="columns"
                     :clickable="true"
@@ -304,14 +306,13 @@ import { IndexKind } from 'typescript'
                                 :disabled="disabled(rowData.matrix.editable_noten)"
                         ></NoteInput>
                     </template>
-                    <!-- TODO: correct because it is breaking the page right now -->
-                        <!-- <template #cell(istGemahnt)="{ value, rowData, rowIndex}">
-                            <MahnungIndicator
-                                    :leistung="rowData"
-                                    :row-index="rowIndex"
-                                    :disabled="disabled(rowData.matrix.editable_mahnungen)"
-                            ></MahnungIndicator>
-                        </template> -->
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex}">
+                        <MahnungIndicator
+                                :leistung="rowData"
+                                :row-index="rowIndex"
+                                :disabled="disabled(rowData.matrix.editable_mahnungen)"
+                        ></MahnungIndicator>
+                    </template>
                     <template #cell(fs)="{ value, rowData, rowIndex }">
                         <FehlstundenInput
                             :model="rowData"

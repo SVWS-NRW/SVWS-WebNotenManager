@@ -253,9 +253,10 @@
                     </SvwsUiButton>
                 </div>
             </header>
-            <!-- TODO: keep :noData="false":key="tableRedrawKey"? -->
             <div class="content-area">
                 <SvwsUiTable
+                    :noData="false"
+                    :key="tableRedrawKey"
                     :items="rowsFiltered.values()"
                     :columns="columns"
                     :clickable="true"
@@ -335,14 +336,14 @@
                                 :disabled="disabled(rowData.matrix.editable_noten)"
                         ></NoteInput>
                     </template>
-                    <!-- TODO: correct because it is breaking the page right now -->
-                        <!-- <template #cell(istGemahnt)="{ value, rowData, rowIndex}">
-                            <MahnungIndicator
-                                    :leistung="rowData"
-                                    :row-index="rowIndex"
-                                    :disabled="disabled(rowData.matrix.editable_mahnungen)"
-                            ></MahnungIndicator>
-                        </template> -->
+                    <!-- TODO: check SvwsUiModal on Mahnungindicator; inactive right now -->
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex}">
+                        <MahnungIndicator
+                                :leistung="rowData"
+                                :row-index="rowIndex"
+                                :disabled="disabled(rowData.matrix.editable_mahnungen)"
+                        ></MahnungIndicator>
+                    </template>
                     <template #cell(fs)="{ value, rowData, rowIndex }">
                         <FehlstundenInput
                             :model="rowData"
