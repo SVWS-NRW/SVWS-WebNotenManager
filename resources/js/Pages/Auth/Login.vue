@@ -37,10 +37,6 @@ const submit = (): void => {
         .catch((error: any): AxiosError => data.errors = error.response.data.errors)
         .finally((): boolean => data.processing = false)
 }
-
-const processEnter = (): void => {
-    setTimeout(() => submit(), 1000)
-}
 </script>
 
 <template>
@@ -67,7 +63,7 @@ const processEnter = (): void => {
                     <div class="form-control">
                         <SvwsUiTextInput
                             v-model="data.form.email"
-                            v-on:keyup.enter="processEnter"
+                            v-on:keyup.enter="submit"
                             :valid="() => !hasErrors('email')"
                             :disabled="data.processing"
                             type="email"
@@ -84,7 +80,7 @@ const processEnter = (): void => {
                     <div class="form-control">
                         <SvwsUiTextInput
                             v-model="data.form.password"
-                            v-on:keyup.enter="processEnter"
+                            v-on:keyup.enter="submit"
                             :valid="() => !hasErrors('password')"
                             :disabled="data.processing"
                             type="password"
@@ -97,7 +93,7 @@ const processEnter = (): void => {
                         </span>
                     </div>
 
-                    <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing">
+                    <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing" v-on:keyup.enter="submit">
                         Angemeldet bleiben
                     </SvwsUiCheckbox>
 
