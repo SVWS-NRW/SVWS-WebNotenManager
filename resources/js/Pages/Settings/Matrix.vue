@@ -726,10 +726,6 @@
         @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-items-start ui-w-full
     }
 
-    .content-area {
-        @apply ui-mx-8 ui-w-4/6
-    }
-
     .button {
         @apply ui-self-start
     }
