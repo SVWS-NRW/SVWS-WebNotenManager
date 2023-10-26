@@ -57,15 +57,15 @@
     const selectedFbLeistung: Ref<Leistung | null> = ref(null)
 
     let toggles = <{
-        fachlehrer: boolean,
-        bemerkungen: boolean,
-        mahnungen: boolean,
         teilleistungen: boolean,
+        fachlehrer: boolean,
+        mahnungen: boolean,
+        bemerkungen: boolean,
     }>reactive({
-        fachlehrer: getToggleValue('leistungdatenuebersicht_teilleistungen'),
-        bemerkungen: getToggleValue('leistungdatenuebersicht_fachlehrer'),
+        teilleistungen: getToggleValue('leistungdatenuebersicht_teilleistungen'),
+        fachlehrer: getToggleValue('leistungdatenuebersicht_fachlehrer'),
         mahnungen: getToggleValue('leistungdatenuebersicht_mahnungen'),
-        teilleistungen: getToggleValue('leistungdatenuebersicht_bemerkungen'),
+        bemerkungen: getToggleValue('leistungdatenuebersicht_bemerkungen'),
     })
 
     const columns = ref<Column[]>([])
