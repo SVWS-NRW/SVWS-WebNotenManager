@@ -32,6 +32,7 @@
         { key: 'aue', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
         { key: 'zb', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
     ]) as Ref<DataTableColumn[]>
+
     const klasseFilter: Ref <string[]> = ref([])
     const searchFilter: Ref<string|null> = ref(null)
     const klasseItems: Ref<string[]> = ref([]);
@@ -82,7 +83,7 @@
     }
 
     const rowsFiltered = computed(() =>
-        rows.value.filter((schueler: Schueler): boolean => 
+        rows.value.filter((schueler: Schueler): boolean =>
         searchInput(schueler)
         && multiSelectFilter(schueler)
         )
@@ -162,7 +163,6 @@
                             :model="rowData"
                             :bemerkung="rowData['ASV']"
                             @clicked="selectSchueler(rowData, 'asv')"
-                            :disabled="inputDisabled(rowData.matrix.editable_asv)"
                             floskelgruppe="asv"
                         />
                     </template>
@@ -171,7 +171,6 @@
                             :model="rowData"
                             :bemerkung="rowData['AUE']"
                             @clicked="selectSchueler(rowData, 'aue')"
-                            :disabled="inputDisabled(rowData.matrix.editable_aue)"
                             floskelgruppe="aue"
                         />
                     </template>
@@ -180,7 +179,6 @@
                             :model="rowData"
                             :bemerkung="rowData['ZB']"
                             @clicked="selectSchueler(rowData, 'zb')"
-                            :disabled="inputDisabled(rowData.matrix.editable_zb)"
                             floskelgruppe="zb"
                         />
                     </template>
@@ -192,8 +190,9 @@
             <BemerkungEditor
                 :schueler="selectedSchueler"
                 :floskelgruppe="selectedFloskelgruppe"
-                @close="selectedSchueler = null"
+                :bemerkung="selectedSchueler[selectedFloskelgruppe.toUpperCase()]"
                 @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event;"
+                @close="selectedSchueler = null"
             ></BemerkungEditor>
         </template>
     </AppLayout>

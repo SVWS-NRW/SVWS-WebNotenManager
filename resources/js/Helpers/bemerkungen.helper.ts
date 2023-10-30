@@ -1,8 +1,9 @@
 import { Ref } from 'vue'
 import axios, { AxiosError } from 'axios'
 
+
 import {
-	Floskel,
+
 	FachbezogeneFloskel,
 	Schueler,
 	Leistung,
@@ -10,12 +11,13 @@ import {
 
 import {Occurrence} from "@/Interfaces/Occurrence";
 import {Pronoun} from "@/Interfaces/Pronoun";
+import {Floskel} from "@/Interfaces/Floskel";
 
-const floskelPasteShortcut = (
+const pasteShortcut = (
     event: KeyboardEvent,
     bemerkung: Ref<string | null>,
     floskeln: Ref<any[]>
-): string|null => {
+): void => {
     if (event.key === 'Enter' && bemerkung.value) {
         let replacedBemerkung: string = bemerkung.value
         event.preventDefault()
@@ -30,23 +32,19 @@ const floskelPasteShortcut = (
             replacedBemerkung = replacedBemerkung.replace(new RegExp(floskel.kuerzel, 'g'), floskel.text)
         )
 
-        return replacedBemerkung
+        bemerkung.value = replacedBemerkung
     }
 
-    return bemerkung.value
+
 }
 
-const searchFilter = (floskel: Floskel | FachbezogeneFloskel, searchTerm: string): boolean => {
-	if (searchTerm === '') {
-		return true
-	}
+const search = (searchFilter: Ref<string>, search: string): boolean =>
+    search.toLocaleLowerCase().includes(
+        searchFilter.value?.toLocaleLowerCase() ?? ''
+    )
 
-	const search = (search: string): boolean => search.toLowerCase().includes(searchTerm.toLowerCase())
 
-	return search(floskel.kuerzel) || search(floskel.text)
-}
-
-const formatStringBasedOnGender = (text: string | null, schueler: Schueler | Leistung): string => {
+const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): string => {
 	if (!text) return ''
 
 	const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/
@@ -56,19 +54,19 @@ const formatStringBasedOnGender = (text: string | null, schueler: Schueler | Lei
 		w: 'Sie',
 	}
 
-	let pronoun: string | null = pronouns[schueler.geschlecht] !== undefined
-		? pronouns[schueler.geschlecht]
+	let pronoun: string | null = pronouns[model.geschlecht] !== undefined
+		? pronouns[model.geschlecht]
 		: null;
 
 	let initialOccurrence: Occurrence = {
-		"$vorname$ $nachname$": [schueler.vorname, schueler.nachname].join(' '),
-		"$vorname$": schueler.vorname,
-		"$nachname$": schueler.nachname,
+		"$vorname$ $nachname$": [model.vorname, model.nachname].join(' '),
+		"$vorname$": model.vorname,
+		"$nachname$": model.nachname,
 	};
 
 	let succeedingOccurrences: Occurrence = {
-		"$vorname$ $nachname$": pronoun ?? schueler.vorname,
-		"$vorname$": pronoun ?? schueler.vorname,
+		"$vorname$ $nachname$": pronoun ?? model.vorname,
+		"$vorname$": pronoun ?? model.vorname,
 		"$nachname$": null
 	};
 
@@ -83,9 +81,9 @@ const tableFilter = (floskel: FachbezogeneFloskel, column: string, value: Ref<Nu
 	return floskel[column] == value.value['index']
 }
 
-const closeEditor = (isDirty: Ref<boolean>, callback: any) => {
-	const changesNotSavedWarning: string = 'Achtung die Änderungen sind noch nicht gespeichert! ' +
-		'Diese gehen verloren, wenn Sie fortfahren.'
+const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
+	const changesNotSavedWarning: string =
+        'Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren.'
 
 	if (isDirty.value ? confirm(changesNotSavedWarning) : true) {
 		if (typeof callback === 'function') {
@@ -94,10 +92,8 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any) => {
 	}
 }
 
-const addSelectedFloskelnToBemerkung = (bemerkung: Ref<string|null>, selectedFloskeln: Ref<Floskel[]>): void => {
-	let floskeln: string = selectedFloskeln.value.map(
-		(selected: Floskel): string => selected.text
-	).join(' ')
+const addSelectedToBemerkung = (bemerkung: Ref<string|null>, selectedFloskeln: Ref<Floskel[]>): void => {
+	let floskeln: string = selectedFloskeln.value.map((selected: Floskel): string => selected.text).join(' ')
 
 	selectedFloskeln.value = []
 	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim()
@@ -131,12 +127,12 @@ const saveBemerkung = (
 	})
 
 export {
-	searchFilter,
+    search,
 	tableFilter,
-	formatStringBasedOnGender,
+    formatBasedOnGender,
 	closeEditor,
-	addSelectedFloskelnToBemerkung,
+    addSelectedToBemerkung,
 	selectFloskeln,
 	saveBemerkung,
-    floskelPasteShortcut
+    pasteShortcut,
 }

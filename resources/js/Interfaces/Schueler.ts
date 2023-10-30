@@ -1,5 +1,7 @@
+import { Matrix } from "@/Interfaces/Matrix";
+
 export interface Schueler {
-	id: Number,
+	id: number,
 	vorname: string,
 	nachname: string,
 	name: string,
@@ -12,4 +14,5 @@ export interface Schueler {
 	zb: string | null,
 	gfs: Number,
 	gfsu: Number,
+    matrix: Matrix,
 }
