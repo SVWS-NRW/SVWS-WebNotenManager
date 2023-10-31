@@ -6,7 +6,7 @@
     import { Head, usePage } from '@inertiajs/inertia-vue3'
     import { Column } from '../Interfaces/Column'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
-    import { Leistung } from '../types'
+    import {Leistung} from "@/Interfaces/Leistung";
     import { SortTableColumns } from '../Interfaces/SortTableColumns'
     //TODO: add functionalities after refactoring uitable
     import NoteInput from '../Components/NoteInput.vue'
@@ -231,10 +231,10 @@
         <template v-slot:aside v-if="selectedFbLeistung">
             <FbEditor
                 :leistung="selectedFbLeistung"
-                :readonly="readonly(selectedFbLeistung, 'editable_fb')"
                 @close="selectedFbLeistung = null"
-                @updated="selectedFbLeistung.fachbezogeneBemerkungen = $event; drawTable()"
+                @updated="selectedFbLeistung.fachbezogeneBemerkungen = $event"
             ></FbEditor>
+<!--                :readonly="readonly(selectedFbLeistung, 'editable_fb')"-->
         </template>
 
         <template #main>

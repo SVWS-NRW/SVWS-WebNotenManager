@@ -43,6 +43,9 @@ const search = (searchFilter: Ref<string>, search: string): boolean =>
         searchFilter.value?.toLocaleLowerCase() ?? ''
     )
 
+const multiselect = (filter: Ref<string[]>, column: string): boolean =>
+    filter.value.length > 0 ? filter.value.includes(column) : true
+
 
 const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): string => {
 	if (!text) return ''
@@ -92,8 +95,8 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 	}
 }
 
-const addSelectedToBemerkung = (bemerkung: Ref<string|null>, selectedFloskeln: Ref<Floskel[]>): void => {
-	let floskeln: string = selectedFloskeln.value.map((selected: Floskel): string => selected.text).join(' ')
+const addSelectedToBemerkung = (bemerkung: Ref<string|null>, selectedFloskeln: Ref<Floskel[]|FachbezogeneFloskel[]>): void => {
+	let floskeln: string = selectedFloskeln.value.map((selected: Floskel|FachbezogeneFloskel): string => selected.text).join(' ')
 
 	selectedFloskeln.value = []
 	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim()
@@ -135,4 +138,5 @@ export {
 	selectFloskeln,
 	saveBemerkung,
     pasteShortcut,
+    multiselect,
 }

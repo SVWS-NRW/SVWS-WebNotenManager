@@ -35,7 +35,7 @@
 
     const klasseFilter: Ref <string[]> = ref([])
     const searchFilter: Ref<string|null> = ref(null)
-    const klasseItems: Ref<string[]> = ref([]);
+    const klasseItems: Ref<string[]> = ref([])
 
     onMounted((): AxiosPromise => axios
         .get(route('api.klassenleitung'))

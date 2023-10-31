@@ -2,10 +2,14 @@
     import { computed, onMounted, Ref, ref, watch } from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
     import { Floskel } from '@/Interfaces/Floskel'
-    import { floskelgruppen } from '@/Interfaces/Floskelgruppe'
     import { Schueler } from '@/Interfaces/Schueler'
-    import { SvwsUiTextareaInput, SvwsUiTextInput, SvwsUiButton, SvwsUiTable, DataTableColumn } from '@svws-nrw/svws-ui'
-    import { formatBasedOnGender, closeEditor, addSelectedToBemerkung, pasteShortcut, search } from '@/Helpers/bemerkungen.helper'
+    import { floskelgruppen } from '@/Interfaces/Floskelgruppe'
+    import {
+        SvwsUiTextareaInput, SvwsUiTextInput, SvwsUiButton, SvwsUiTable, DataTableColumn,
+    } from '@svws-nrw/svws-ui'
+    import {
+        formatBasedOnGender, closeEditor, addSelectedToBemerkung, pasteShortcut, search,
+    } from '@/Helpers/bemerkungen.helper'
 
     const props = defineProps<{
         schueler: Schueler,
@@ -18,22 +22,21 @@
         (event: 'updated', value: string|null): void;
     }>()
 
+    const rows: Ref<Floskel[]> = ref([])
+    const selectedRows: Ref<Floskel[]> = ref([])
     const columns: Ref<DataTableColumn[]> = ref([
         { key: 'id', label: 'ID', sortable: true },
         { key: 'kuerzel', label: 'Kuerzel', sortable: true },
         { key: 'text', label: 'Text', sortable: true, span: 5 },
     ])
 
-    const rows: Ref<Floskel[]> = ref([])
-    const selectedRows: Ref<Floskel[]> = ref([])
-
-    const searchFilter: Ref<string> = ref('')
     const bemerkung: Ref<string|null> = ref(props.bemerkung)
     const storedBemerkung: Ref<string|null> = ref(props.bemerkung)
 
     const isDirty: Ref<boolean> = ref(false)
     const isEditable: Ref<boolean> = ref(true)
 
+    // Watchers
     onMounted((): Promise<AxiosResponse | void> => fetchFloskeln())
 
     watch((): string => props.floskelgruppe, (): Promise<AxiosResponse | void> => fetchFloskeln())
@@ -60,7 +63,8 @@
             console.log(error)
         })
 
-    // Table filtering options
+    // Filters
+    const searchFilter: Ref<string> = ref('')
     const filterReset = (): string => searchFilter.value = ''
     const filtered = (): boolean => '' !== searchFilter.value
 

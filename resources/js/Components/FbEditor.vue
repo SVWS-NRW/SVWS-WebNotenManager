@@ -1,180 +1,182 @@
 <script setup lang="ts">
-    import { computed, onMounted, Ref, ref, watch, nextTick } from 'vue'
+    import { computed, onMounted, ref, Ref, watch } from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
-    import { TableColumn, Leistung, FachbezogeneFloskel } from '@/types'
-
+    import { Leistung } from '@/Interfaces/Leistung'
+    import { FachbezogeneFloskel } from '@/Interfaces/FachbezogeneFloskel'
     import {
-        addSelectedFloskelnToBemerkung,
-        closeEditor,
-        formatStringBasedOnGender,
-        saveBemerkung,
-        searchFilter,
-        selectFloskeln,
-        tableFilter,
-        floskelPasteShortcut,
-    } from '@/Helpers/bemerkungen.helper'
-
-    import {
-        SvwsUiTextareaInput,
-        SvwsUiDataTable,
-        SvwsUiTextInput,
-        SvwsUiButton,
-        //deprecated
-        //SvwsUiSelectInput,
-        SvwsUiMultiSelect,
+        DataTableColumn, SvwsUiButton, SvwsUiMultiSelect, SvwsUiTable, SvwsUiTextareaInput, SvwsUiTextInput,
     } from '@svws-nrw/svws-ui'
-
-    const emit = defineEmits(['close', 'updated'])
+    import {
+        addSelectedToBemerkung, closeEditor, formatBasedOnGender, pasteShortcut, search, multiselect,
+    } from '@/Helpers/bemerkungen.helper'
 
     const props = defineProps<{
         leistung: Leistung,
-        readonly: boolean,
     }>()
 
-    const bemerkung: Ref<string | null> = ref(null)
-    const storedBemerkung: Ref<string | null> = ref(null)
-    const isDirty: Ref<boolean> = ref(false)
-    const searchTerm: Ref<string> = ref('')
+    const emit = defineEmits<{
+        (event: 'close'): void;
+        (event: 'updated', value: string|null): void;
+    }>()
 
-    const floskeln: Ref<FachbezogeneFloskel[]> = ref([])
-    const selectedFloskeln: Ref<FachbezogeneFloskel[]> = ref([])
-
-    const columns: Ref<TableColumn[]> = ref([
+    const rows: Ref<FachbezogeneFloskel[]> = ref([])
+    const selectedRows: Ref<FachbezogeneFloskel[]> = ref([])
+    const columns: Ref<DataTableColumn[]> = ref([
         { key: 'kuerzel', label: 'Kürzel', sortable: true, minWidth: 6 },
         { key: 'text', label: 'Text', sortable: true, span: 5 },
         { key: 'niveau', label: 'Niveau', sortable: true, minWidth: 6 },
         { key: 'jahrgang', label: 'Jahrgang', sortable: true, minWidth: 8 },
     ])
 
-    const niveauOptions: Ref<{ index: Number, label: Number | string | null }> = ref([])
-    const jahrgaengeOptions: Ref<{ index: Number, label: Number | string | null }> =  ref([])
-    const niveauFilter: Ref<Number> = ref(0)
-    const jahrgangFilter: Ref<Number> = ref(0)
+    const bemerkung: Ref<string|null> = ref(props.leistung.fachbezogeneBemerkungen)
+    const storedBemerkung: Ref<string|null> = ref(props.leistung.fachbezogeneBemerkungen)
 
-    let filterOptions = ref({
-        'niveau': [],
-        'jahrgaenge': [],
+    const isDirty: Ref<boolean> = ref(false)
+    const isEditable: Ref<boolean> = ref(true)
+
+    // Watchers
+    onMounted((): Promise<void> => fetch())
+
+    watch((): string|null => bemerkung.value, (): void => {
+        isDirty.value = storedBemerkung.value !== bemerkung.value
+        bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung)
     })
 
-    const redrawBemerkungen = (): string | null =>
-        bemerkung.value
-            = storedBemerkung.value
-            = props.leistung.fachbezogeneBemerkungen
-
-    watch(() => props.leistung, (): string | null => redrawBemerkungen())
-
-    onMounted((): void => {
-        redrawBemerkungen()
-
-        axios.get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
-            .then((response: AxiosResponse): void => {
-                floskeln.value = response.data?.data || []
-                niveauOptions.value = response.data?.niveau || []
-                jahrgaengeOptions.value = response.data?.jahrgaenge || []
-            })
-            .catch((error: AxiosError): void => {
-                alert('Ein Fehler ist aufgetreten.')
-                console.log(error)
-            })
+    watch((): Leistung => props.leistung, (): void => {
+        fetch()
+        isDirty.value = false
+        isEditable.value = props.leistung.matrix['editable_fb']
     })
 
-    const computedBemerkung = computed((): string | void => {
-        isDirty.value = bemerkung.value != storedBemerkung.value
-        if (!bemerkung.value) return
-        return formatStringBasedOnGender(bemerkung.value, props.leistung)
-    })
+    const fetch = (): Promise<void> => axios
+        .get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
+        .then((response: AxiosResponse): void => rows.value = response.data?.data || null)
+        .catch((error: AxiosError): void => {
+            alert('Ein Fehler ist aufgetreten.')
+            console.log(error)
+        })
+        .finally((): void => {
+            niveauItems.value = mapFilterOptions('niveau')
+            jahrgangItems.value = mapFilterOptions('jahrgang')
+        })
 
-    const computedFloskeln = computed((): Array<FachbezogeneFloskel> =>
-        floskeln.value.filter((floskel: FachbezogeneFloskel): boolean =>
-            searchFilter(floskel, searchTerm.value)
-                && tableFilter(floskel, 'niveau', niveauFilter, true)
-                && tableFilter(floskel, 'jahrgang', jahrgangFilter, true)
-        )
-    )
+    // Filters
+    const searchFilter: Ref<string> = ref('')
+    const jahrgangFilter: Ref <string[]> = ref([])
+    const niveauFilter: Ref <string[]> = ref([])
 
-    const save = (): Promise<void> => saveBemerkung('api.fachbezogene_bemerkung', props.leistung.id,
-        { bemerkung: bemerkung.value }, bemerkung, storedBemerkung, isDirty,
-        (): void => emit('updated', bemerkung.value)
-    )
+    const jahrgangItems: Ref<string[]> = ref([])
+    const niveauItems: Ref<string[]> = ref([])
 
-    const addSelected = (): void => addSelectedFloskelnToBemerkung(bemerkung, selectedFloskeln)
-    const select = (floskeln: FachbezogeneFloskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
+    const filterReset = (): any => {
+        searchFilter.value = ''
+        niveauFilter.value = []
+        jahrgangFilter.value = []
+    }
+    const filtered = (): boolean =>
+        jahrgangFilter.value.length > 0
+        || niveauFilter.value.length > 0
+        || searchFilter.value !== ''
+
+    const mapFilterOptions = (column: keyof FachbezogeneFloskel): string[] => rows.value
+        .map((item: FachbezogeneFloskel): string => item[column])
+        .filter((value: string, index: number, self: string[]): boolean => self.indexOf(value) === index)
+
+    const rowsFiltered = computed((): FachbezogeneFloskel[] => rows.value.filter((floskel: FachbezogeneFloskel): boolean =>
+        (search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text))
+        && multiselect(niveauFilter, floskel.niveau)
+        && multiselect(jahrgangFilter, floskel.jahrgang)
+    ))
+
+
+
+
+
+    // Button actions
+    const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows)
     const close = (): void => closeEditor(isDirty, (): void => emit('close'))
-    const onKeyDown = (event: KeyboardEvent): string|null => bemerkung.value = floskelPasteShortcut(event, bemerkung, floskeln)
+    const save = (): Promise<void> => axios
+        .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: bemerkung.value })
+        .then((): void => {
+            storedBemerkung.value = bemerkung.value
+            isDirty.value = false
+            emit('updated', bemerkung.value)
+        }).catch((error: AxiosError): void => {
+            alert('Ein Fehler ist aufgetreten.')
+            console.log(error)
+        })
 
+    // Textarea actions
+    const onChange = (text: string): string => bemerkung.value = text
+    const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows)
 </script>
 
 <template>
-    <div class="container">
-        <h2 class="text-headline">{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
-        <h1 class="text-headline-xl text-primary">{{ props.leistung.name }}</h1>
+    <h2>{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
+    <h1>{{ props.leistung.name }}</h1>
 
-        <SvwsUiTextareaInput
-            v-model="computedBemerkung"
-            @update:modelValue="bemerkung = $event"
-            :disabled="props.readonly"
-            ref="textareaContent"
-            @keydown="onKeyDown"
-        ></SvwsUiTextareaInput>
+    <SvwsUiTextareaInput
+        v-model="bemerkung"
+        placeholder="Bemerkung"
+        resizeable="vertical"
+        :disabled="!isEditable"
+        @change="onChange"
+        @keydown="onKeyDown"
+    />
 
-        <div class="buttons">
-            <SvwsUiButton v-if="!readonly" @click="addSelected" :disabled="selectedFloskeln.length === 0">
-                Zuweisen
-            </SvwsUiButton>
+    <SvwsUiButton
+        v-if="isEditable"
+        @click="add"
+        :disabled="selectedRows.length === 0"
+    >Zuweisen</SvwsUiButton>
 
-            <SvwsUiButton v-if="!readonly" @click="save" :disabled="!isDirty">
-                Speichern
-            </SvwsUiButton>
+    <SvwsUiButton
+        v-if="isEditable"
+        :disabled="!isDirty"
+        @click="save"
+    >Speichern</SvwsUiButton>
 
-            <SvwsUiButton @click="close" :type="isDirty ? 'danger' : 'secondary'">
-                Schließen
-            </SvwsUiButton>
-        </div>
+    <SvwsUiButton
+        @click="close"
+        :type="isDirty && isEditable ? 'danger' : 'secondary'"
+    >Schließen</SvwsUiButton>
 
-        <SvwsUiDataTable
-            :modelValue="selectedFloskeln"
-            :items="computedFloskeln"
-            :columns="columns"
-            :selectable="true"
-            @update:modelValue="select($event)"
-            v-if="!readonly"
-        >
-            <template #search>
-                <SvwsUiTextInput type="search" v-model="searchTerm" placeholder="Suche"></SvwsUiTextInput>
-            </template>
+    <SvwsUiTable
+        v-model="selectedRows"
+        :items="rowsFiltered"
+        :columns="columns"
+        :clickable="true"
+        :selectable="isEditable"
+        :count="true"
+        :filtered="filtered()"
+        :filterReset="filterReset"
+    >
+        <template #filterAdvanced>
+            <SvwsUiTextInput
+                type="search"
+                placeholder="Suche"
+                v-model="searchFilter"
+            />
 
-            <template #filter>
-<!--                // TODO: Missing UI Component-->
-               <SvwsUiMultiSelect
-                        title="Niveau"
-                        placeholder="Niveau"
-                        v-model="niveauFilter"
-                        :items="niveauOptions"
-                        :item-text="item => item?.label || ''"
-                        autocomplete
-                        :removable="false"
-                ></SvwsUiMultiSelect>
-                <!-- breaks the whole filter if active but wasn't working with SvwsUiSelectInput anyway -->
-                <!-- <SvwsUiMultiSelect
-                        title="Jahrgang"
-                        placeholder="Jahrgang"
-                        v-model="jahrgangFilter"
-                        :items="jahrgangOptions"
-                        :item-text="item => item?.label || ''"
-                        autocomplete
-                        :removable="false"
-                ></SvwsUiMultiSelect> -->
-            </template>
-        </SvwsUiDataTable>
-    </div>
+            <SvwsUiMultiSelect
+                v-if="niveauItems.length"
+                label="Niveau"
+                :items="niveauItems"
+                :item-text="item => item"
+                v-model="niveauFilter"
+            />
+
+            <SvwsUiMultiSelect
+                v-if="jahrgangItems.length"
+                label="Jahrgang"
+                :items="jahrgangItems"
+                :item-text="item => item"
+                v-model="jahrgangFilter"
+            />
+        </template>
+    </SvwsUiTable>
 </template>
 
 <style scoped>
-    .container {
-        @apply ui-p-6 ui-flex ui-flex-col ui-gap-6
-    }
 
-    .buttons {
-        @apply ui-flex ui-justify-end ui-gap-3
-    }
 </style>
