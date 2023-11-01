@@ -88,7 +88,6 @@
     })
 
     // Textarea actions
-    const onChange = (text: string): string => bemerkung.value = text
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows)
 
 </script>
@@ -103,7 +102,7 @@
             placeholder="Bemerkung"
             resizeable="vertical"
             :disabled="!isEditable"
-            @change="onChange"
+            @input="bemerkung = $event.target.value"
             @keydown="onKeyDown"
         />
     <div class="buttons">
