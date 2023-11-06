@@ -5,23 +5,18 @@
     import SettingsMenu from '@/Components/SettingsMenu.vue'
     import SynchronisationPopup from '@/Components/SynchronisationPopup.vue'
     import { apiError, apiSuccess } from '@/Helpers/api.helper'
-    import { SvwsUiButton } from '@svws-nrw/svws-ui'
+    import { SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui'
 
     //TODO: do we need this?
     let props = defineProps({
         auth: Object,
     })
 
-    //TODO: needed variables (this is default/dummy so far)
-    let settings = ref({})
+    const showModal: Ref<boolean> = ref(false)
 
-    //TODO: use this dynamically to open/close popup
-    const defaultShowModal: Ref<boolean> = ref(false)
+    const displayModal = () => showModal.value = true
+    const hideModal = () => showModal.value = false
 
-    //const displayConfirmPopup = () => 
-    // {hide or show}
-
-    //TODO: call from popup
     //TODO: api method does not exist yet
     const saveSettings = () => axios
         .post(route('api.settings.synchronisation'), {
@@ -44,21 +39,31 @@
             </header>
             <div class="content">
                 Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.
-                <SvwsUiButton @click="displayConfirmPopup()" type="secondary">
+                <SvwsUiButton @click="displayModal()" type="secondary">
                     Generieren
                 </SvwsUiButton>
-                <!-- dummy -->
-                <SynchronisationPopup v-if="defaultShowModal" ref="modal" :show="displayConfirmPopup">
-                    <template #modalActions>
-                        <SvwsUiButton @click="xxx" type="secondary">Schließen</SvwsUiButton>
-                    </template>
-                </SynchronisationPopup>
+                <!-- <SynchronisationPopup :show="defaultShowModal">
+                </SynchronisationPopup> -->
             </div>
         </template>
         <template #secondaryMenu>
             <SettingsMenu></SettingsMenu>
         </template>
     </AppLayout>
+    <!-- TODO: decide if SvwsUiModal is fine -->
+    <SvwsUiModal ref="modal" :show="() => ref<boolean>(showModal)">
+        <template #modalTitle>
+            Wahrnung
+        </template>
+        <template #modalContent>
+            <p>Es müssen die Einstellungen im zugehörigen SVWS-Server angepasste werden</p>
+        </template>
+
+        <template #modalActions>
+            <SvwsUiButton @click="hideModal()" type="secondary">Abrechen</SvwsUiButton>
+            <SvwsUiButton @click="xxx" type="secondary">OK</SvwsUiButton>
+        </template>
+    </SvwsUiModal>
 </template>
 
 <style scoped>
