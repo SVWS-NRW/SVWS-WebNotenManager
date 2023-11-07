@@ -18,7 +18,7 @@
     }>()
 
     //TODO: use this dynamically to open/close modal (which is also not working at the moment)
-    const defaultShowModal: boolean = false
+    let defaultShowModal: boolean = false
 
     let element: CellRef = undefined
     let leistung = reactive<Leistung>(props.leistung)
@@ -58,7 +58,7 @@
 
     <button
         v-else
-        @click="leistung.mahndatum ? !showModal : updateIstGemahnt()"
+        @click="leistung.mahndatum ? defaultShowModal = true : updateIstGemahnt()"
         @keydown.up.stop.prevent="navigate('up')"
         @keydown.down.stop.prevent="navigate('down')"
         @keydown.enter.stop.prevent="navigate('down')"
