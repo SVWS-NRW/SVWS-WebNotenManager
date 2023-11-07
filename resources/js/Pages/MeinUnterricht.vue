@@ -84,7 +84,7 @@ import { IndexKind } from 'typescript'
 
     const columns = ref<Column[]>([])
 
-    //TODO: remove 'cause unnecessary to use this with uitable
+    //TODO: remove 'cause unnecessary to use this with uitable?
     const drawTable = (): void => {
         const pushTable = (pushable: boolean, array: Array<Column>): void => {
             if (pushable) array.forEach((column: Column): number => columns.value.push(column))
