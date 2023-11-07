@@ -11,6 +11,8 @@ declare module '@vue/runtime-core' {
     MdiCheckboxBlankOutline: typeof import('~icons/mdi/checkbox-blank-outline')['default']
     MdiCheckboxMarkedOutline: typeof import('~icons/mdi/checkbox-marked-outline')['default']
     MdiChevronDown: typeof import('~icons/mdi/chevron-down')['default']
+    MdiChevronLeft: typeof import('~icons/mdi/chevron-left')['default']
+    MdiChevronRight: typeof import('~icons/mdi/chevron-right')['default']
     MdiChevronUp: typeof import('~icons/mdi/chevron-up')['default']
     MdiCogOutline: typeof import('~icons/mdi/cog-outline')['default']
     MdiHomeOutline: typeof import('~icons/mdi/home-outline')['default']

@@ -306,7 +306,7 @@
                     <!-- INFO: collapsible is not a valid attribute as it was for SvwsUiTable -->
                     <SvwsUiTable :columns="columns" :noData="false" v-if="Object.entries(jahrgaenge).length || klassen.length">
                         <template #body>
-                            <!-- TODO: apply here what was applied to Klassen mit Jahrgaenge -->
+                            <!-- TODO: check if there is sthg to apply here which was applied to Klassen mit Jahrgaenge -->
                             <!-- Klassen ohne Jahrgaenge -->
                             <span v-if="klassen.length">
                                 <div class="svws-ui-tr" role="row">
@@ -318,7 +318,7 @@
                                                 @click="klassenCollapsed = !klassenCollapsed"
                                             >
                                             <mdi-chevron-down v-if="klassenCollapsed" />
-                                            <mdi-chevron-up v-else />
+                                            <mdi-chevron-right v-else />
                                             </SvwsUiButton>
                                             Klassen
                                             <SvwsUiCheckbox
@@ -457,14 +457,14 @@
                             >
                                 <div class="svws-ui-tr" role="row" v-show="false">
                                     <div class="svws-ui-td" role="cell">
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-y-4">
                                             <SvwsUiButton
                                                 type="icon"
                                                 size="small"
                                                 @click="jahgraengeCollapsed[key][0] = !jahgraengeCollapsed[key][0]"
                                             >
                                                 <mdi-chevron-down v-if="jahgraengeCollapsed[key][0]" />
-                                                <mdi-chevron-up v-else />
+                                                <mdi-chevron-right v-else />
                                             </SvwsUiButton>
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangGroupToggle[key]"
@@ -558,7 +558,7 @@
                                                     @click="jahgraengeCollapsed[key][1][index] = !jahgraengeCollapsed[key][1][index]"
                                                 >
                                                     <mdi-chevron-down v-if="jahgraengeCollapsed[key][1][index]" />
-                                                    <mdi-chevron-up v-else />
+                                                    <mdi-chevron-right v-else />
                                                 </SvwsUiButton>
                                                 <SvwsUiCheckbox
                                                     v-model="jahrgangToggle[jahrgang.id]"
@@ -645,7 +645,7 @@
                                         v-for="klasse in jahrgang.klassen" v-show="jahgraengeCollapsed[key][1][index]"
                                     >
                                         <div class="svws-ui-td" role="cell">
-                                            <div class="flex items-center gap-1">
+                                            <div class="flex items-center gap-1 ml-8">
                                                 <SvwsUiCheckbox
                                                     v-model="jahrgangKlassenToggle[klasse.id]"
                                                     @update:modelValue="toggleJahrgangsKlassenRow(klasse)"
@@ -730,9 +730,4 @@
         @apply ui-self-start
     }
 
-    /* testing here; no effect
-    .checkbox--checked:not(.checkbox--bw) .icon, .checkbox--indeterminate:not(.checkbox--bw) .icon {
-    --tw-text-opacity: 1;
-    @apply ui-bg-black !important;
-} */
 </style>
