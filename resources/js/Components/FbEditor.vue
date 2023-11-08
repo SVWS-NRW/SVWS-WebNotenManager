@@ -108,71 +108,81 @@
 </script>
 
 <template>
-    <h2>{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
-    <h1>{{ props.leistung.name }}</h1>
+    <div class="content">
+        <h2>{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
+        <h1>{{ props.leistung.name }}</h1>
 
-    <SvwsUiTextareaInput
-        v-model="bemerkung"
-        placeholder="Bemerkung"
-        resizeable="vertical"
-        :disabled="!isEditable"
-        @change="onChange"
-        @keydown="onKeyDown"
-    />
+        <SvwsUiTextareaInput
+            v-model="bemerkung"
+            placeholder="Bemerkung"
+            resizeable="vertical"
+            :disabled="!isEditable"
+            @change="onChange"
+            @keydown="onKeyDown"
+        />
 
-    <SvwsUiButton
-        v-if="isEditable"
-        @click="add"
-        :disabled="selectedRows.length === 0"
-    >Zuweisen</SvwsUiButton>
+        <div class="buttons">
+            <SvwsUiButton
+                v-if="isEditable"
+                @click="add"
+                :disabled="selectedRows.length === 0"
+            >Zuweisen</SvwsUiButton>
 
-    <SvwsUiButton
-        v-if="isEditable"
-        :disabled="!isDirty"
-        @click="save"
-    >Speichern</SvwsUiButton>
+            <SvwsUiButton
+                v-if="isEditable"
+                :disabled="!isDirty"
+                @click="save"
+            >Speichern</SvwsUiButton>
 
-    <SvwsUiButton
-        @click="close"
-        :type="isDirty && isEditable ? 'danger' : 'secondary'"
-    >Schließen</SvwsUiButton>
+            <SvwsUiButton
+                @click="close"
+                :type="isDirty && isEditable ? 'danger' : 'secondary'"
+            >Schließen</SvwsUiButton>
+        </div>
 
-    <SvwsUiTable
-        v-model="selectedRows"
-        :items="rowsFiltered"
-        :columns="columns"
-        :clickable="true"
-        :selectable="isEditable"
-        :count="true"
-        :filtered="filtered()"
-        :filterReset="filterReset"
-    >
-        <template #filterAdvanced>
-            <SvwsUiTextInput
-                type="search"
-                placeholder="Suche"
-                v-model="searchFilter"
-            />
+        <SvwsUiTable
+            v-model="selectedRows"
+            :items="rowsFiltered"
+            :columns="columns"
+            :clickable="true"
+            :selectable="isEditable"
+            :count="true"
+            :filtered="filtered()"
+            :filterReset="filterReset"
+        >
+            <template #filterAdvanced>
+                <SvwsUiTextInput
+                    type="search"
+                    placeholder="Suche"
+                    v-model="searchFilter"
+                />
 
-            <SvwsUiMultiSelect
-                v-if="niveauItems.length"
-                label="Niveau"
-                :items="niveauItems"
-                :item-text="item => item"
-                v-model="niveauFilter"
-            />
+                <SvwsUiMultiSelect
+                    v-if="niveauItems.length"
+                    label="Niveau"
+                    :items="niveauItems"
+                    :item-text="item => item"
+                    v-model="niveauFilter"
+                />
 
-            <SvwsUiMultiSelect
-                v-if="jahrgangItems.length"
-                label="Jahrgang"
-                :items="jahrgangItems"
-                :item-text="item => item"
-                v-model="jahrgangFilter"
-            />
+                <SvwsUiMultiSelect
+                    v-if="jahrgangItems.length"
+                    label="Jahrgang"
+                    :items="jahrgangItems"
+                    :item-text="item => item"
+                    v-model="jahrgangFilter"
+                />
         </template>
     </SvwsUiTable>
+</div>
 </template>
 
 <style scoped>
-
+    .content {
+        @apply ui-p-6 ui-flex ui-flex-col ui-gap-6
+    }
+    
+    .buttons {
+        @apply ui-flex ui-justify-end ui-gap-3
+    }
 </style>
