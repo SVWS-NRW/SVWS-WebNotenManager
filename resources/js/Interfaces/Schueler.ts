@@ -14,5 +14,10 @@ export interface Schueler {
 	zb: string | null,
 	gfs: Number,
 	gfsu: Number,
-    matrix: Matrix,
+	editable: {
+		fehlstunden: boolean,
+		asv: boolean,
+		aue: boolean,
+		zb: boolean,
+	},
 }

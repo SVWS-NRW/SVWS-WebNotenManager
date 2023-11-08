@@ -7,20 +7,22 @@
     }
 
     let props = defineProps<{
-        leistung: Leistung|Schueler,
-        floskelgruppe: keyof floskelgruppen
+        model: Leistung|Schueler,
+        floskelgruppe: any
         value: any
     }>()
 
-const bemerkungButtonAriaLabel = (): string =>
-    `Wechseln zu ${floskelgruppen[props.floskelgruppe]} für ${props.leistung.vorname} ${props.leistung.nachname}`
+    const test = () => emit('clicked')
+
+    const bemerkungButtonAriaLabel = (): string =>
+        `Wechseln zu ${floskelgruppen[props.floskelgruppe]} für ${props.model.vorname} ${props.model.nachname}`
 </script>
 
 
 <template>
     <button
         type="button"
-        @click="emit('clicked')"
+        @click="test()"
         :aria-label="bemerkungButtonAriaLabel()"
     >
         {{ value }}

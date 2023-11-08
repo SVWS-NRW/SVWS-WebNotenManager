@@ -14,7 +14,7 @@
 
     const rowsFiltered = computed((): Leistung[] =>
         rows.value.filter((leistung: Leistung): boolean =>
-            searchHelper(leistung, ['name', 'klasse'], searchFilter.value)
+            searchHelper(leistung, ['name'], searchFilter.value)
             && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
             && multiSelectHelper(leistung, 'fach', fachFilter.value)
             && multiSelectHelper(leistung, 'kurs', kursFilter.value)
@@ -160,7 +160,7 @@
                 <template #cell(klasse)="{ value, rowData }">
                     <BemerkungButton
                         :value="value"
-                        :leistung="rowData"
+                        :model="rowData"
                         floskelgruppe="fb"
                         @clicked="selectLeistung(rowData)"
                     />
@@ -169,7 +169,7 @@
                 <template #cell(name)="{ value, rowData }">
                     <BemerkungButton
                         :value="value"
-                        :leistung="rowData"
+                        :model="rowData"
                         floskelgruppe="fb"
                         @clicked="selectLeistung(rowData)"
                     />
@@ -178,7 +178,7 @@
                 <template #cell(fach)="{ value, rowData }">
                     <BemerkungButton
                         :value="value"
-                        :leistung="rowData"
+                        :model="rowData"
                         floskelgruppe="fb"
                         @clicked="selectLeistung(rowData)"
                     />
@@ -187,7 +187,7 @@
                 <template #cell(kurs)="{ value, rowData }">
                     <BemerkungButton
                         :value="value"
-                        :leistung="rowData"
+                        :model="rowData"
                         floskelgruppe="fb"
                         @clicked="selectLeistung(rowData)"
                     />
