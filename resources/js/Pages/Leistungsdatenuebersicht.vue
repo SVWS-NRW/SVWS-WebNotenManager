@@ -366,7 +366,7 @@
                             :bemerkung="rowData.fachbezogeneBemerkungen"
                             @clicked="select(rowData, 'FB')"
                             :disabled="inputDisabled(rowData.matrix.editable_fb)"
-                            floskelgruppe="zb"
+                            floskelgruppe="fb"
                         />
                     </template>
                 </SvwsUiTable>

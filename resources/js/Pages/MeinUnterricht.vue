@@ -1,368 +1,231 @@
 <script setup lang="ts">
-    import AppLayout from '../Layouts/AppLayout.vue'
+    import { computed, onMounted, Ref, ref } from 'vue'
+    import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import { Head } from '@inertiajs/inertia-vue3'
-    import { onMounted, reactive, computed, ref, watch, PropType, Ref, provide } from 'vue'
-    import { Leistung } from '../Interfaces/Leistung'
-    import { SortTableColumns } from '../Interfaces/SortTableColumns'
-    import TableSortButton from '../Components/TableSortButton.vue'
-    import { Column } from '../Interfaces/Column'
-    import { usePage } from '@inertiajs/inertia-vue3'
-    import axios, { AxiosResponse, AxiosPromise } from 'axios'
-    import MahnungIndicator from '../Components/MahnungIndicator.vue'
-    //TODO: add functionalities after refactoring uitable
-    import NoteInput from '../Components/NoteInput.vue'
-    import FbEditor from '../Components/FbEditor.vue'
-    import BemerkungIndicator from '../Components/BemerkungIndicator.vue'
-
+    import { Leistung, TableColumnToggle } from '@/Interfaces/Interface'
+    import AppLayout from '@/Layouts/AppLayout.vue'
+    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
+    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect } from '@svws-nrw/svws-ui'
     import {
-        baseColumns,
-        fachbezogeneBemerkungenColumns,
-        notenColumns,
-        teilleistungenColumns,
-        mahnungenColumns,
-        fehlstundenColumns,
-    } from '../Helpers/columns.helper'
-
-    import {
-        SvwsUiCheckbox,
-        SvwsUiTable,
-        //deprecated
-        SvwsUiDataTable,
-        SvwsUiButton,
-        SvwsUiTextInput,
-        SvwsUiTooltip,
-        SvwsUiMultiSelect,
-        SvwsUiDataTableCell,
-        SvwsUiDataTableRow,
-    } from '@svws-nrw/svws-ui'
-
-    import FehlstundenInput from '../Components/FehlstundenInput.vue'
-    import {Settings} from '../Interfaces/Settings'
-    import MahnungIndicatorReadonly from '../Components/MahnungIndicatorReadonly.vue'
-    import {Auth} from '../Interfaces/Auth'
-    import {tableCellEditable, nextNote, tableCellDisabled} from '../Helpers/pages.helper'
-import { IndexKind } from 'typescript'
-
-    const title = 'Notenmanager - mein Unterricht'
+        BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton
+    } from '@/Components/Components'
 
     const rows: Ref<Leistung[]> = ref([])
 
-    //TODO: check this functionality
-    const selectedFbLeistung: Ref<Leistung | null> = ref(null)
-
-    const getToggleValue = (column: string): boolean => usePage().props.value.settings.filters[column] == 1
-
-    let toggles = <{
-        teilleistungen: boolean,
-        mahnungen: boolean,
-        bemerkungen: boolean,
-        fehlstunden: boolean
-    }>reactive({
-        teilleistungen: getToggleValue('mein_unterricht_teilleistungen'),
-        mahnungen: getToggleValue('mein_unterricht_mahnungen'),
-        bemerkungen: getToggleValue('mein_unterricht_bemerkungen'),
-        fehlstunden: getToggleValue('mein_unterricht_fehlstunden'),
-    })
-
-    const auth: Auth = usePage().props.value.auth
-
-    watch(toggles, (): void => drawTable())
-
-    const klasseFilter: Ref <string[]> = ref([])
-    const jahrgangFilter: Ref <string[]> = ref([])
-    const fachFilter: Ref <string[]> = ref([])
-    const kursFilter: Ref <string[]> = ref([])
-    const noteFilter: Ref<string[]> = ref([])
-    const searchFilter: Ref<string|null> = ref(null)
-    const noteItems: Ref<string[]> = ref([])
-    const klasseItems: Ref<string[]> = ref([])
-    const jahrgangItems: Ref<string[]> = ref([])
-    const fachItems: Ref<string[]> = ref([])
-    const kursItems: Ref<string[]> = ref([])
-
-    let tableRedrawKey: number = 0
-
-    const columns = ref<Column[]>([])
-
-    //TODO: remove 'cause unnecessary to use this with uitable?
-    const drawTable = (): void => {
-        const pushTable = (pushable: boolean, array: Array<Column>): void => {
-            if (pushable) array.forEach((column: Column): number => columns.value.push(column))
-        }
-
-        columns.value.length = 0
-
-        pushTable(true, baseColumns)
-        pushTable(toggles.teilleistungen, teilleistungenColumns)
-        pushTable(true, notenColumns)
-        pushTable(toggles.mahnungen, mahnungenColumns)
-        pushTable(toggles.fehlstunden, fehlstundenColumns)
-        pushTable(toggles.bemerkungen, fachbezogeneBemerkungenColumns)
-
-        tableRedrawKey++;
-    }
-
-    const getLeistungen = (): Promise<any> => axios
-        .get(route('api.mein_unterricht'))
-        .then((response: AxiosResponse): void => rows.value = response.data)
-        .then((): string[] => klasseItems.value = mapItems("klasse"))
-        .then((): string[] => jahrgangItems.value = mapItems("jahrgang"))
-        .then((): string[] => fachItems.value = mapItems("fach"))
-        .then((): string[] => kursItems.value = mapItems("kurs"))
-        .then((): string[] => noteItems.value = mapItems("note"))
-
-    //TODO: should empty be an option too? if so, null should be transformed
-    const mapItems = (column: string): string[] => rows.value
-        .map((leistung: Leistung): string => leistung[column])
-        .filter((value: string, index:number, self: string[]): boolean => self.indexOf(value) === index && value !== null)
-
-    onMounted((): void => {
-        getLeistungen()
-        drawTable()
-    })
-
-    const inputDisabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator)
-
-    //TODO: shall we keep this one
-    const disabled = (condition: boolean): boolean => tableCellDisabled(condition, auth.administrator) // ok
-
-    const select = (row: Leistung, always: boolean = false): void => {
-        if (always || selectedFbLeistung.value !== null) {
-            selectedFbLeistung.value = row
-        }
-    }
-        
-
-    const fehlstundenDisabled = (rowData: any): boolean =>
-        rowData.matrix.editable_fehlstunden && !rowData.matrix.toggleable_fehlstunden
-
-    const searchInput = (leistung: Leistung): boolean => {
-        const search = (search: string) => search.toLocaleLowerCase().includes(searchFilter.value?.toLocaleLowerCase() ?? '')
-        return search(leistung.nachname)
-            || search(leistung.vorname)
-            || search(leistung.klasse)
-    }
-
-    //TODO: correct type errors
-    const multiSelectFilter = (leistung: Leistung, search: string): boolean => {
-        switch (search) {
-            case "klasse":
-                if (klasseFilter.value.length > 0) {
-                    return klasseFilter.value.includes(leistung.klasse)
-                }
-            case "jahrgang":
-                if (jahrgangFilter.value.length > 0) {
-                    return jahrgangFilter.value.includes(leistung.jahrgang)
-                }
-            case "fach":
-                if (fachFilter.value.length > 0) {
-                    return fachFilter.value.includes(leistung.fach)
-                }
-            case "kurs":
-                if (kursFilter.value.length > 0) {
-                    return kursFilter.value.includes(leistung.kurs)
-                }
-            case "note":
-                if (noteFilter.value.length > 0) {
-                    return noteFilter.value.includes(leistung.note)
-                }
-            default:
-                return true
-        }
-    }
-
-    const rowsFiltered = computed(() =>
+    const rowsFiltered = computed((): Leistung[] =>
         rows.value.filter((leistung: Leistung): boolean =>
-            searchInput(leistung)
-            && multiSelectFilter(leistung, "klasse")
-            && multiSelectFilter(leistung, "jahrgang")
-            && multiSelectFilter(leistung, "fach")
-            && multiSelectFilter(leistung, "kurs")
-            && multiSelectFilter(leistung, "note")
+            searchHelper(leistung, ['name', 'klasse'], searchFilter.value)
+            && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
+            && multiSelectHelper(leistung, 'fach', fachFilter.value)
+            && multiSelectHelper(leistung, 'kurs', kursFilter.value)
+            && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
+            && multiSelectHelper(leistung, 'note', noteFilter.value)
         )
     )
 
+    const toggles: Ref<TableColumnToggle> = ref({
+        teilleistungen: false,
+        mahnungen: false,
+        bemerkungen: false,
+        fehlstunden: false,
+    })
+
+    onMounted((): AxiosPromise => axios
+        .get(route('api.mein_unterricht'))
+        .then((response: AxiosResponse): AxiosResponse => rows.value = response.data.data)
+        .then((response: AxiosResponse): AxiosResponse => toggles.value = response.data.toggles)
+        .finally((): void => mapFilters())
+    )
+
+    const cols = computed((): DataTableColumn[] => [
+         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: false },
+         { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
+         { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
+         { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
+         ...(toggles.value.teilleistungen ? [
+            { key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15 }
+         ] : []),
+         { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5 },
+         ...(toggles.value.mahnungen ? [
+             { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 4},
+         ] : []),
+         ...(toggles.value.fehlstunden ? [
+             { key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6 },
+             { key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6 },
+         ] : []),
+         ...(toggles.value.bemerkungen ? [
+             { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: true, span: 12, minWidth: 4 },
+         ] : []),
+    ])
+
+    const selectedLeistung: Ref<Leistung | null> = ref(null)
+
+    const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null =>
+        selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null
+
+
+    // Filters
+    const searchFilter: Ref<string|null> = ref(null)
+    const klasseFilter: Ref <string[]> = ref([])
+    const fachFilter: Ref <string[]> = ref([])
+    const kursFilter: Ref <string[]> = ref([])
+    const jahrgangFilter: Ref <string[]> = ref([])
+    const noteFilter: Ref <string[]> = ref([])
+
+    const klasseItems: Ref<string[]> = ref([])
+    const fachItems: Ref<string[]> = ref([])
+    const kursItems: Ref<string[]> = ref([])
+    const jahrgangItems: Ref<string[]> = ref([])
+    const noteItems: Ref<string[]> = ref([])
+
     const filterReset = (): void => {
+        searchFilter.value = ''
         klasseFilter.value = []
         jahrgangFilter.value = []
         fachFilter.value = []
         kursFilter.value = []
         noteFilter.value = []
-        searchFilter.value = ""
     }
 
-    const filtered = (): boolean => klasseFilter.value.length > 0 ||
-                                    jahrgangFilter.value.length > 0 ||
-                                    fachFilter.value.length > 0 ||
-                                    kursFilter.value.length > 0 ||
-                                    noteFilter.value.length > 0 ||
-                                    searchFilter.value !== null
-    
+    const isFiltered = (): boolean =>
+        searchFilter.value !== null
+        || klasseFilter.value.length > 0
+        || jahrgangFilter.value.length > 0
+        || fachFilter.value.length > 0
+        || kursFilter.value.length > 0
+        || noteFilter.value.length > 0
+
+    const mapFilters = (): void => {
+        klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse')
+        fachItems.value = mapFilterOptionsHelper(rows.value, 'fach')
+        kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs')
+        jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang')
+        noteItems.value = mapFilterOptionsHelper(rows.value, 'note')
+    }
 </script>
-""
+
 <template>
     <Head>
-        <title>{{ title }}</title>
+        <title>Mein Unterricht</title>
     </Head>
     <AppLayout>
-        <template v-slot:aside v-if="selectedFbLeistung">
-            <FbEditor
-                :leistung="selectedFbLeistung"
-                :readonly="!selectedFbLeistung.matrix.editable_fb"
-                @close="selectedFbLeistung = null"
-                @updated="selectedFbLeistung.fachbezogeneBemerkungen = $event; drawTable()"
-            ></FbEditor>
-        </template>
-
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
-                </div>
-                <div id="toggles">
+            <SvwsUiTable
+                :items="rowsFiltered.values()"
+                :columns="cols"
+                :clickable="true"
+                :count="true"
+                :filtered="isFiltered()"
+                :filterReset="filterReset"
+            >
+                <template #filter>
                     <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                </div>
-            </header>
+                </template>
+                <template #filterAdvanced>
+                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                    <SvwsUiMultiSelect label="Klasse"
+                        :items="klasseItems"
+                        :item-text="item => item"
+                        v-model="klasseFilter"
+                    />
+                    <SvwsUiMultiSelect
+                        label="Jahrgang"
+                        :items="jahrgangItems"
+                        :item-text="item => item"
+                        v-model="jahrgangFilter"
+                    />
+                    <SvwsUiMultiSelect
+                        label="Fach"
+                        :items="fachItems"
+                        :item-text="item => item"
+                        v-model="fachFilter"
+                    />
+                    <SvwsUiMultiSelect
+                        label="Kurs"
+                        :items="kursItems"
+                        :item-text="item => item"
+                        v-model="kursFilter"
+                    />
+                    <SvwsUiMultiSelect
+                        label="Note"
+                        :items="noteItems"
+                        :item-text="item => item"
+                        v-model="noteFilter"
+                    />
+                </template>
 
-<!-- TODO: some buttons with functionality still missing (see other TODOs) -->
-            <div class="content-area">
-                <SvwsUiTable
-                    :noData="false"
-                    :key="tableRedrawKey"
-                    :items="rowsFiltered.values()"
-                    :columns="columns"
-                    :clickable="true"
-                    :count="true"
-                    :filtered="filtered()"
-                    :filterReset="filterReset"
-                >
-                    <template #filterAdvanced>
-                        <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter"></SvwsUiTextInput>
-                        <SvwsUiMultiSelect
-                            label="Klasse"
-                            v-model="klasseFilter"
-                            :items="klasseItems"
-                            :item-text="item => item"
-                        ></SvwsUiMultiSelect>
-                            <SvwsUiMultiSelect
-                            label="Jahrgang"
-                            v-model="jahrgangFilter"
-                            :items="jahrgangItems"
-                            :item-text="item => item"
-                        ></SvwsUiMultiSelect>
-                        <SvwsUiMultiSelect
-                            label="Fach"
-                            v-model="fachFilter"
-                            :items="fachItems"
-                            :item-text="item => item"
-                        ></SvwsUiMultiSelect>
-                        <SvwsUiMultiSelect
-                            label="Kurs"
-                            v-model="kursFilter"
-                            :items="kursItems"
-                            :item-text="item => item"
-                        ></SvwsUiMultiSelect>
-                        <SvwsUiMultiSelect
-                            label="Note"
-                            v-model="noteFilter"
-                            :items="noteItems"
-                            :item-text="item => item"
-                            ></SvwsUiMultiSelect>
-                    </template>
-                    <!-- TODO: check functionalities here (if selected schuler not used) -->
-                    <template #cell(klasse)="{ value, rowData }">
-                        <button type="button" @click="select(rowData)" class="truncate">
-                                {{ value }}
-                        </button>
-                    </template>
-                    <template #cell(name)="{ value, rowData }">
-                        <button type="button" @click="select(rowData)" class="truncate">
-                                {{ value }}
-                        </button>
-                    </template>
-                    <template #cell(fach)="{ value, rowData }">
-                        <button type="button" @click="select(rowData)" class="truncate">
-                                {{ value }}
-                        </button>
-                    </template>
-                    <template #cell(kurs)="{ value, rowData }">
-                        <button type="button" @click="select(rowData)" class="truncate">
-                                {{ value }}
-                        </button>
-                    </template>
-                    <template #cell(teilnoten)>
-                        <button type="button" class="truncate">
-                            TBD
-                        </button>
-                    </template>
-                    <!-- TODO: keyboard navigation not working properly, index is undefined, right? get it somewhere, dummy for now -->
-                    <template #cell(note)="{ value, rowData, rowIndex}">
-                        <NoteInput
-                                :leistung="rowData"
-                                :row-index="rowIndex"
-                                :disabled="disabled(rowData.matrix.editable_noten)"
-                        ></NoteInput>
-                    </template>
-                    <template #cell(istGemahnt)="{ value, rowData, rowIndex}">
-                        <MahnungIndicator
-                                :leistung="rowData"
-                                :row-index="rowIndex"
-                                :disabled="disabled(rowData.matrix.editable_mahnungen)"
-                        ></MahnungIndicator>
-                    </template>
-                    <template #cell(fs)="{ value, rowData, rowIndex }">
-                        <FehlstundenInput
-                            :model="rowData"
-                            :row-index="rowIndex"
-                            column="fs"
-                            :disabled="fehlstundenDisabled(rowData)"
-                        />
-                    </template>
-                    <template #cell(fsu)="{ value, rowData, rowIndex  }">
-                        <FehlstundenInput
-                            :model="rowData"
-                            :row-index="rowIndex"
-                            column="fsu"
-                            :disabled="fehlstundenDisabled(rowData)"
-                        />
-                    </template>
-                    <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData.fachbezogeneBemerkungen"
-                            @clicked="select(rowData, 'FB')"
-                            :disabled="inputDisabled(rowData.matrix.editable_fb)"
-                            floskelgruppe="zb"
-                        />
-                    </template>
-                </SvwsUiTable>
-            </div>
+                <template #cell(klasse)="{ value, rowData }">
+                    <BemerkungButton
+                        :value="value"
+                        :leistung="rowData"
+                        floskelgruppe="fb"
+                        @clicked="selectLeistung(rowData)"
+                    />
+                </template>
+
+                <template #cell(name)="{ value, rowData }">
+                    <BemerkungButton
+                        :value="value"
+                        :leistung="rowData"
+                        floskelgruppe="fb"
+                        @clicked="selectLeistung(rowData)"
+                    />
+                </template>
+
+                <template #cell(fach)="{ value, rowData }">
+                    <BemerkungButton
+                        :value="value"
+                        :leistung="rowData"
+                        floskelgruppe="fb"
+                        @clicked="selectLeistung(rowData)"
+                    />
+                </template>
+
+                <template #cell(kurs)="{ value, rowData }">
+                    <BemerkungButton
+                        :value="value"
+                        :leistung="rowData"
+                        floskelgruppe="fb"
+                        @clicked="selectLeistung(rowData)"
+                    />
+                </template>
+
+                <template #cell(note)="{ value, rowData }">
+                    <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten"/>
+                </template>
+
+                <template #cell(mahnung)="{ value, rowData }">
+                    <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen"/>
+                </template>
+
+                <template #cell(fs)="{ value, rowData }">
+                    <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
+                </template>
+
+                <template #cell(fsu)="{ value, rowData }">
+                    <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
+                </template>
+
+                <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
+                      <BemerkungIndicator
+                          :model="rowData"
+                          :bemerkung="rowData['fachbezogeneBemerkungen']"
+                          @clicked="selectLeistung(rowData, true)"
+                          floskelgruppe="fb"
+                      />
+                </template>
+            </SvwsUiTable>
+        </template>
+
+        <template v-slot:aside v-if="selectedLeistung">
+            <FbEditor
+                :leistung="selectedLeistung"
+                @updated="selectedLeistung.fachbezogeneBemerkungen = $event"
+                @close="selectedLeistung = null"
+            ></FbEditor>
         </template>
     </AppLayout>
 </template>
-
-<style scoped>
-
-    .truncate {
-        @apply ui-truncate
-    }
-
-    header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
-    }
-
-    header #toggles {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
-    }
-
-    header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
-    }
-
-    .content-area {
-        @apply ui-mx-4
-    }
-</style>

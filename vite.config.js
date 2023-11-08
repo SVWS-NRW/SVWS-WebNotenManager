@@ -3,6 +3,8 @@ import laravel from 'laravel-vite-plugin'
 import vue from '@vitejs/plugin-vue'
 import * as os from 'os'
 
+
+
 import Icons from "unplugin-icons/vite"
 import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
@@ -13,17 +15,15 @@ export default defineConfig({
 		minify: false,
 		minifySyntax: false
 	},
-    server: {
-        host: 'localhost',
-        // host: '127.0.0.1',
-        // port: 5173,
-    },
     // server: {
-    //     https: false,
-    //     // host: true,
-	//	host: process.env.LARAVEL_SAIL ? Object.values(os.networkInterfaces()).flat().find(info => info?.internal === false)?.address : undefined,
-    //
-	//},
+    //     // host: 'https://webnotenmanager.test',
+    //     host: 'localhost',
+    //     port: 5173,
+    // },
+    server: {
+        https: false,
+		host: process.env.LARAVEL_SAIL ? Object.values(os.networkInterfaces()).flat().find(info => info?.internal === false)?.address : undefined,
+	},
 
     plugins: [
         laravel([

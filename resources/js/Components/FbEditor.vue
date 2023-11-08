@@ -88,10 +88,6 @@
         && multiselect(jahrgangFilter, floskel.jahrgang)
     ))
 
-
-
-
-
     // Button actions
     const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows)
     const close = (): void => closeEditor(isDirty, (): void => emit('close'))

@@ -13,7 +13,6 @@
 
     let props = defineProps<{
         leistung: Leistung,
-        rowIndex: number,
         disabled: boolean,
     }>()
 

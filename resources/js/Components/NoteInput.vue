@@ -2,7 +2,7 @@
     import { watch, computed, reactive } from 'vue'
     import { usePage } from '@inertiajs/inertia-vue3'
     import axios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios'
-    import { Leistung } from '../types'
+    import {Leistung} from "@/Interfaces/Interface"
 
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
 
@@ -11,7 +11,6 @@
     let props = defineProps<{
         leistung: Leistung,
         disabled: boolean,
-        rowIndex: number,
     }>()
 
     let element: CellRef = undefined

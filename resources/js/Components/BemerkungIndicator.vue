@@ -11,7 +11,7 @@
     const props = defineProps<{
         model: Schueler | Leistung,
         bemerkung: string | null,
-        floskelgruppe: 'asv' | 'aue' | 'zb',
+        floskelgruppe: 'asv' | 'aue' | 'zb' | 'fb',
     }>()
 
     const bemerkungButtonAriaLabel = (schueler: Schueler): string =>

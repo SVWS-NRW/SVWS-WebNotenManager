@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\LeistungResource;
+use App\Http\Resources\MeinUnterricht\LeistungResource;
 use App\Models\Leistung;
+use App\Settings\FilterSettings;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MeinUnterricht extends Controller
 {
-	public function __invoke(): AnonymousResourceCollection
+	public function __invoke(FilterSettings $settings)
 	{
 		$eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
@@ -18,27 +18,26 @@ class MeinUnterricht extends Controller
 			'note',
 		];
 
-		$sortByColumns = [
-			'schueler.klasse.kuerzel',
-			'schueler.nachname',
-			'lerngruppe.fach.kuerzelAnzeige',
-		];
-
 		$leistungen = Leistung::query()
-			->with(relations: $eagerLoadedColumns)
+			->with($eagerLoadedColumns)
 			->when(
-				value: auth()->user()->isLehrer(),
-				callback: fn (Builder $query): Builder => $query->whereHas(
-					relation: 'lerngruppe',
-					callback: fn (Builder $query): Builder => $query->whereIn(
-						column: 'id',
-						values: auth()->user()->lerngruppen->pluck(value: 'id')->toArray()
+				auth()->user()->isLehrer(),
+				fn (Builder $query): Builder => $query->whereHas('lerngruppe',
+					fn (Builder $query): Builder => $query->whereIn('id', auth()->user()->lerngruppen->pluck(value: 'id')->toArray()
 					)
 				)
 			)
 			->get()
-			->sortBy(callback: $sortByColumns);
+			->sortBy([
+                'schueler.klasse.kuerzel', 'schueler.nachname', 'lerngruppe.fach.kuerzelAnzeige',
+            ]);
 
-		return LeistungResource::collection(resource: $leistungen);
+		return LeistungResource::collection($leistungen) // TODO: @karol refactor after usersettings are present
+            ->additional(['toggles' => [
+                'teilleistungen' => $settings->mein_unterricht_teilleistungen,
+                'mahnungen' => $settings->mein_unterricht_mahnungen,
+                'bemerkungen' => $settings->mein_unterricht_bemerkungen,
+                'fehlstunden' => $settings->mein_unterricht_fehlstunden,
+            ]]);
 	}
 }

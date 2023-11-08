@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\MeinUnterricht;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -8,7 +8,7 @@ class LeistungResource extends JsonResource
 {
     public function toArray($request): array
     {
-        $matrix = new MatrixResource($this->schueler->klasse);
+
 
         return [
             'id' => $this->id,
@@ -28,13 +28,7 @@ class LeistungResource extends JsonResource
             'fs' => $this->fehlstundenFach,
             'fsu' => $this->fehlstundenUnentschuldigtFach,
             'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
-            'editable' => [
-                'teilnoten' => $matrix->editable_teilnoten,
-                'teilnotennoten' => $matrix->editable_noten,
-                'mahnungen' => $matrix->editable_mahnungen,
-                'fehlstunden' => $matrix->editable_fehlstunden & $this->toggleable_fehlstunden,
-                'fb' => $matrix->editable_fb,
-            ],
+            'editable' => new MatrixResource($this->schueler->klasse)
         ];
     }
 }

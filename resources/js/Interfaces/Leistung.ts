@@ -21,15 +21,11 @@ export interface Leistung {
 	istGemahnt: boolean,
 	mahndatum: string,
 	schueler: Schueler,
-	matrix: {
-		editable_teilnoten: boolean,
-		editable_noten: boolean,
-		editable_mahnungen: boolean,
-		editable_fehlstunden: boolean,
-		toggleable_fehlstunden: boolean,
-		editable_fb: boolean,
-		editable_asv: boolean,
-		editable_aue: boolean,
-		editable_zb: boolean,
+	editable: {
+		teilnoten: boolean,
+		noten: boolean,
+		mahnungen: boolean,
+		fehlstunden: boolean,
+		fb: boolean,
 	},
 }

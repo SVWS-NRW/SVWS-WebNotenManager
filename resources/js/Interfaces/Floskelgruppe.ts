@@ -5,8 +5,9 @@ export interface Floskelgruppe {
 	floskeln: Floskel
 }
 
-export const floskelgruppen: { asv: string, aue: string, zb: string } = {
+export const floskelgruppen: { asv: string, aue: string, zb: string, fb: string } = {
     asv: 'Arbeits- und Sozialverhalten',
     aue: 'Außerunterrichtliches Engagement',
     zb: 'Zeugnisbemerkung',
-};
+    fb: 'Fachbezogene Bemerkungen',
+}
