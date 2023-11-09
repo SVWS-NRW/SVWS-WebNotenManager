@@ -75,15 +75,16 @@
     // Button actions
     const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows)
     const close = (): void => closeEditor(isDirty, (): void => emit('close'))
-    const save = (): Promise<void> => axios.post(
-        route('api.schueler_bemerkung', props.schueler.id),
-        { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value }
-    ).then((): void => {
-        storedBemerkung.value = bemerkung.value
-        isDirty.value = false
-        emit('updated', bemerkung.value)
-    }).catch((error: AxiosError): void => {
-        alert('Ein Fehler ist aufgetreten.')
+    const save = (): Promise<void> => axios
+        .post(route('api.schueler_bemerkung', props.schueler.id),
+            { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value })
+        .then((): void => {
+            storedBemerkung.value = bemerkung.value
+            isDirty.value = false
+            emit('updated', bemerkung.value)
+        })
+        .catch((error: AxiosError): void => {
+            alert('Ein Fehler ist aufgetreten.')
         console.log(error)
     })
 

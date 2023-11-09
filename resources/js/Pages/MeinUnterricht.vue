@@ -34,8 +34,11 @@
 
     onMounted((): AxiosPromise => axios
         .get(route('api.mein_unterricht'))
-        .then((response: AxiosResponse): AxiosResponse => rows.value = response.data.data)
-        .then((response: AxiosResponse): AxiosResponse => toggles.value = response.data.toggles)
+        //not working if each action has its own .then
+        .then((response: AxiosResponse): AxiosResponse => {
+            rows.value = response.data.data
+            toggles.value = response.data.toggles
+        })
         .finally((): void => mapFilters())
     )
 
@@ -112,12 +115,12 @@
     </Head>
     <AppLayout>
         <template #main>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">{{ title }}</h2>
+                </div>
+            </header>
             <div class="content-area">
-                <header>
-                    <div id="headline">
-                        <h2 class="text-headline">{{ title }}</h2>
-                    </div>
-                </header>
                 <SvwsUiTable
                     :items="rowsFiltered.values()"
                     :columns="cols"
@@ -205,8 +208,9 @@
                         <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten"/>
                     </template>
 
-                    <template #cell(mahnung)="{ value, rowData }">
-                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen"/>
+                    <!-- testing here -->
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
+                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex"/>
                     </template>
 
                     <template #cell(fs)="{ value, rowData }">
@@ -232,7 +236,7 @@
         <template v-slot:aside v-if="selectedLeistung">
             <FbEditor
                 :leistung="selectedLeistung"
-                @updated="selectedLeistung.fachbezogeneBemerkungen = $event"
+                @updated="selectedLeistung.fachbezogeneBemerkungen = $event;"
                 @close="selectedLeistung = null"
             ></FbEditor>
         </template>

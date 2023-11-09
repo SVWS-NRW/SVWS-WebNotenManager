@@ -7,6 +7,8 @@
     import { Schueler } from '@/Interfaces/Interface'
     import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components'
 
+    const title = 'Notenmanager - Klassenleitung'
+
     const rows: Ref<Schueler[]> = ref([])
 
     const rowsFiltered = computed((): Schueler[] =>
@@ -63,7 +65,7 @@
         <template #main>
             <header>
                 <div id="headline">
-                    <h2 class="text-headline">Notenmanager - Klassenleitung</h2>
+                    <h2 class="text-headline">{{ title }}</h2>
                 </div>
             </header>
 
