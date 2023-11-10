@@ -38,7 +38,7 @@
 </script>
 
 <template>
-    <span v-if="!isDisabled()">
+    <span v-if="isDisabled()">
         <span v-if="leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
             <span class="icon green" aria-hidden="true">
                 <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
