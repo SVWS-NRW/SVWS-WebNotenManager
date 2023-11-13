@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
 				'gdpr' => app(GdprSettings::class),
 			],
 			'version' => config('wenom.version'),
+            'npm' => config('wenom.npm'),
         ]);
     }
 }
