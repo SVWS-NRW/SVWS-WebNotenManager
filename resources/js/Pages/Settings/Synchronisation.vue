@@ -11,14 +11,13 @@
     })
 
     const modal = ref<any>(null)
+    const _showModal: Ref<boolean> = ref(false)
 
-    const showModal: Ref<boolean> = ref(false)
+    const showModal = () => _showModal
 
-    const displayModal = () => {
-        showModal.value = true
-    }
+    const openModal = () => _showModal.value = true
 
-    const hideModal = () => showModal.value = false
+    const closeModal = () => _showModal.value = false
 
     //TODO: api method does not exist yet
     const adjustSettings = 
@@ -45,12 +44,11 @@
             </header>
             <div class="content">
                 Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.
-                <SvwsUiButton @click="displayModal()" type="secondary">
+                <SvwsUiButton @click="openModal()" type="secondary">
                     Generieren
                 </SvwsUiButton>
             </div>
-            <!-- TODO: actions like closModal are not workign, component needs adjustments -->
-            <SvwsUiModal ref="modal" :show="() => ref<boolean>(showModal)">
+            <SvwsUiModal ref="modal" :show="showModal">
                 <template #modalTitle>
                     Wahrnung
                 </template>
@@ -59,8 +57,8 @@
                 </template>
 
                 <template #modalActions>
-                    <SvwsUiButton @click="hideModal" type="secondary">Abrechen</SvwsUiButton>
-                    <SvwsUiButton @click="adjustSettings" type="secondary">OK</SvwsUiButton>
+                    <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
+                    <SvwsUiButton @click="adjustSettings()" type="secondary">OK</SvwsUiButton>
                 </template>
             </SvwsUiModal>
         </template>
