@@ -28,10 +28,10 @@
     const istGemahnt = computed((): boolean => Boolean(leistung.istGemahnt))
     const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
     const isDisabled = (): boolean => !!usePage().props.value.warning_entry_disabled || props.disabled
-    const defaultShowModal: Ref<boolean>= ref(false)
-    const showModal = () => ref<boolean>(defaultShowModal.value)
-    const displayModal = () => defaultShowModal.value = true
-    const hideModal = () => defaultShowModal.value = false
+    const _showModal: Ref<boolean> = ref(false)
+    const showModal = () => _showModal
+    const openModal = () => _showModal.value = true
+    const closeModal = () => _showModal.value = false
 
 
     const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
@@ -58,7 +58,7 @@
 
     <button
         v-else
-        @click="leistung.mahndatum ? displayModal() : updateIstGemahnt()"
+        @click="leistung.mahndatum ? openModal() : updateIstGemahnt()"
         @keydown.up.stop.prevent="navigate('up')"
         @keydown.down.stop.prevent="navigate('down')"
         @keydown.enter.stop.prevent="navigate('down')"
@@ -96,7 +96,7 @@
         </template>
 
         <template #modalActions>
-            <SvwsUiButton @click="hideModal()" type="secondary">Schließen</SvwsUiButton>
+            <SvwsUiButton @click="closeModal()" type="secondary">Schließen</SvwsUiButton>
         </template>
     </SvwsUiModal>
 </template>
