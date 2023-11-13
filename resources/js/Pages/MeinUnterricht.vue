@@ -208,7 +208,6 @@
                         <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten"/>
                     </template>
 
-                    <!-- testing here -->
                     <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
                         <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex"/>
                     </template>

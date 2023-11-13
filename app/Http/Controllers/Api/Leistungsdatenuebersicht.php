@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\LeistungResource;
+use App\Http\Resources\MeinUnterricht\LeistungResource;
 use App\Models\Leistung;
+use App\Settings\FilterSettings;
+use App\Settings\MatrixSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -17,7 +19,7 @@ class Leistungsdatenuebersicht extends Controller
 	 *
 	 * @return AnonymousResourceCollection
 	 */
-	public function __invoke(): AnonymousResourceCollection
+	public function __invoke(FilterSettings $settings, MatrixSettings $matrix): AnonymousResourceCollection
 	{
 		$eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
@@ -32,20 +34,29 @@ class Leistungsdatenuebersicht extends Controller
 		];
 
 		$leistungen = Leistung::query()
-			->with(relations: $eagerLoadedColumns)
+			->with($eagerLoadedColumns)
 			->when(
-				value: auth()->user()->isLehrer(),
-				callback: fn (Builder $query): Builder => $query->whereHas(
-					relation: 'schueler',
-					callback: fn (Builder $query): Builder => $query->whereIn(
-						column: 'klasse_id',
-						values: auth()->user()->klassen()->select(columns: 'id')
+				auth()->user()->isLehrer(),
+				fn (Builder $query): Builder => $query->whereHas(
+					'schueler',
+					fn (Builder $query): Builder => $query->whereIn(
+						'klasse_id',
+						auth()->user()->klassen()->select('id')
 					)
 				)
 			)
 			->get()
-			->sortBy(callback: $sortByColumns);
+			->sortBy($sortByColumns);
 
-        return LeistungResource::collection(resource: $leistungen);
+        return LeistungResource::collection($leistungen)      // TODO: @karol refactor after usersettings are present
+            ->additional([
+                'toggles' => [
+                    'teilleistungen' => $settings->leistungdatenuebersicht_teilleistungen,
+                    'mahnungen' => $settings->leistungdatenuebersicht_mahnungen,
+                    'bemerkungen' => $settings->leistungdatenuebersicht_bemerkungen,
+                    'fachlehrer' => $settings->leistungdatenuebersicht_fachlehrer,
+                ],
+                'lehrerCanOverrideFachlehrer' => $matrix->lehrer_can_override_fachlehrer,
+            ]);
     }
 }

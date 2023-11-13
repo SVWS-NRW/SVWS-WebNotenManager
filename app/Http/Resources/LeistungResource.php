@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class LeistungResource extends JsonResource
 {
+    // TODO: To be deleted
     public function toArray($request): array
     {
         $matrix = new MatrixResource($this->schueler->klasse);
@@ -30,9 +31,9 @@ class LeistungResource extends JsonResource
             'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
             'editable' => [
                 'teilnoten' => $matrix->editable_teilnoten,
-                'teilnotennoten' => $matrix->editable_noten,
+                'noten' => $matrix->editable_noten,
                 'mahnungen' => $matrix->editable_mahnungen,
-                'fehlstunden' => $matrix->editable_fehlstunden & $this->toggleable_fehlstunden,
+                'fehlstunden' => $matrix->editable_fehlstunden && $this->toggleable_fehlstunden,
                 'fb' => $matrix->editable_fb,
             ],
         ];
