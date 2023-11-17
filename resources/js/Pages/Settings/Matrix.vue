@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, Ref, onBeforeMount, watch } from 'vue'
+    import { computed, ref, Ref, onBeforeMount, watch } from 'vue'
     import axios, { AxiosResponse } from 'axios'
     import AppLayout from '@/Layouts/AppLayout.vue'
     import SettingsMenu from '@/Components/SettingsMenu.vue'
@@ -71,11 +71,8 @@
         [K in keyof Klasse]: Klasse[K] extends boolean ? K : never;
     }[keyof Klasse]
 
-    const settings: Ref<Settings> = ref({
-        lehrer_can_override_fachlehrer: false,
-    })
+    const settings: Ref<Settings> = ref({} as Settings)
 
-    //testing here
     const columns = ref([
         { key: 'gruppierung', label: 'Gruppierung'},
         { key: 'teilnoten', label: 'Teilnoten'},
@@ -93,19 +90,56 @@
     const klassen: Ref<Klasse[]> = ref([])
     const jahgraengeCollapsed: Ref<CollapseReference> = ref({})
     const klassenCollapsed: Ref<boolean> = ref(defaultCollapsed)
+    const storedSettings: Ref<String> = ref('')
+    const storedKlassen: Ref<String> = ref('')
+    const storedJahrgaenge: Ref<String> = ref('')
+    const isDirty: Ref<boolean> = ref(false)
 
     onBeforeMount((): void => {
         axios.get(route('api.matrix.index'))
             .then((response: AxiosResponse): void => {
                 jahrgaenge.value = response.data.jahrgaenge
+                storedJahrgaenge.value = JSON.stringify(jahrgaenge.value)
                 klassen.value = response.data.klassen
+                storedKlassen.value = JSON.stringify(klassen.value)
                 setTableCollapseValues(response.data.jahrgaenge)
             })
             .catch((error: any): void => apiError(error))
 
         axios.get(route('api.settings.index', 'matrix'))
-            .then((response: AxiosResponse): void => settings.value = response.data)
+            .then((response: AxiosResponse): void => {
+                settings.value = response.data
+                storedSettings.value = JSON.stringify(settings.value)
+            })
             .catch((error: any): void => apiError(error))
+    })
+
+    watch((): boolean => settings.value.lehrer_can_override_fachlehrer, (): void => {
+        if (JSON.stringify(settings.value) == storedSettings.value) {
+            if (JSON.stringify(jahrgaenge.value) === storedJahrgaenge.value) {
+                isDirty.value = false
+            }
+        }
+    })
+
+    watch((): Ref<JahrgangStructure> => jahrgaenge, (): void => {
+        if (JSON.stringify(jahrgaenge.value) === storedJahrgaenge.value) {
+            if (JSON.stringify(settings.value) == storedSettings.value) {
+                isDirty.value = false
+            }
+        }
+    }, {
+        deep: true,
+    })
+
+    watch((): Ref<Klasse[]> => klassen, (): void => {
+        if (JSON.stringify(klassen.value) === storedKlassen.value) {
+            if (JSON.stringify(settings.value) == storedSettings.value) {
+                isDirty.value = false
+            }
+        }
+    }, {
+        deep: true,
     })
 
     // Creates the collapsed boolean table to switch the table toggles
@@ -223,45 +257,60 @@
         })
     }, { deep: true })
 
-    const toggleAllKlassen = (): void => klassen.value.forEach((klasse: Klasse): void =>
-        checkboxes().forEach((column: ToggleableKeys): boolean => klasse[column] = klassenGlobalToggle.value === true)
-    )
+    const updateIsDirty = (): boolean => isDirty.value = true
 
-    const toggleKlasse = (klasse: Klasse): void => checkboxes().forEach((column: ToggleableKeys): boolean =>
-        klasse[column] = klassenToggle.value[klasse.id] === true)
+    const toggleAllKlassen = (): void =>
+        klassen.value.forEach((klasse: Klasse): void =>
+            checkboxes().forEach((column: ToggleableKeys): boolean => klasse[column] = klassenGlobalToggle.value === true)
+        )
 
-    const toggleKlassenColumn = (column: ToggleableKeys): void =>
+    const toggleKlasse = (klasse: Klasse): void => {
+        checkboxes().forEach((column: ToggleableKeys): boolean =>
+            klasse[column] = klassenToggle.value[klasse.id] === true)
+        updateIsDirty()
+    }
+
+    const toggleKlassenColumn = (column: ToggleableKeys): void => {
         klassen.value.forEach((klasse: Klasse): boolean =>
             klasse[column] = klassenColumnsToggle.value[column] === true
         )
+        updateIsDirty()
+    }
 
-    const toggleJahrgangsColumn = (jahrgang: Jahrgang, column: ToggleableKeys): void =>
+    const toggleJahrgangsColumn = (jahrgang: Jahrgang, column: ToggleableKeys): void => {
         jahrgang.klassen.forEach((klasse: Klasse): boolean =>
              klasse[column] = jahrgangsKlassenColumnsToggle.value[jahrgang.id][column] === true
         )
+        updateIsDirty()
+    }
 
-    const toggleJahrgangsKlassenRow = (klasse: Klasse): void => checkboxes().forEach((column: ToggleableKeys): boolean =>
-        klasse[column] = jahrgangKlassenToggle.value[klasse.id] === true
-    )
+    const toggleJahrgangsKlassenRow = (klasse: Klasse): void => {
+        checkboxes().forEach((column: ToggleableKeys): boolean =>
+            klasse[column] = jahrgangKlassenToggle.value[klasse.id] === true
+        )
+        updateIsDirty()
+    }
 
-    const toggleGroupColumn = (groupedJahrgaenge: Jahrgang[], column: ToggleableKeys, key: string) =>
+    const toggleGroupColumn = (groupedJahrgaenge: Jahrgang[], column: ToggleableKeys, key: string) => 
         groupedJahrgaenge.forEach((jahrgang: Jahrgang): void =>
             jahrgang.klassen.forEach((klasse: Klasse): boolean =>
                 klasse[column] = jahrgangsGroupsColumnsToggle.value[key][column] === true
             )
         )
 
-    const toggleJahrgangGroup = (jahrgaenge: Jahrgang[], key: string): void =>
+    const toggleJahrgangGroup = (jahrgaenge: Jahrgang[], key: string): void => 
         jahrgaenge.forEach((jahrgang: Jahrgang): void =>
             jahrgang.klassen.forEach((klasse: Klasse): void => checkboxes().forEach((column: ToggleableKeys) =>
                 klasse[column] = jahrgangGroupToggle.value[key] === true)
             )
         )
 
-    const toggleJahrgang = (jahrgang: Jahrgang): void =>
+    const toggleJahrgang = (jahrgang: Jahrgang): void => {
         jahrgang.klassen.forEach((klasse: Klasse) => checkboxes().forEach((column: ToggleableKeys): boolean | string =>
             klasse[column] = jahrgangToggle.value[jahrgang.id] === true
         ))
+        updateIsDirty()
+    }
 
     const updateKlassenToggleState = (klassen: Klasse[], toggle: any): void =>
         klassen.forEach((klasse: Klasse): ToggleColumnType =>
@@ -293,7 +342,7 @@
             </header>
             <div class="content">
                 <section class="flex flex-col w-full gap-4">
-                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true">
+                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:model-value="updateIsDirty()">
                         <SvwsUiTooltip>
                             Die Klassenleitung darf alle Leistungsdaten bearbeiten.
                             <template #content>
@@ -306,7 +355,6 @@
                     <!-- INFO: collapsible is not a valid attribute as it was for SvwsUiTable -->
                     <SvwsUiTable :columns="columns" :noData="false" v-if="Object.entries(jahrgaenge).length || klassen.length">
                         <template #body>
-                            <!-- TODO: check if there is sthg to apply here which was applied to Klassen mit Jahrgaenge -->
                             <!-- Klassen ohne Jahrgaenge -->
                             <span v-if="klassen.length">
                                 <div class="svws-ui-tr" role="row">
@@ -413,39 +461,41 @@
                                             :value="true"
                                         />
                                     </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_teilnoten" />
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
+                                        <SvwsUiCheckbox v-model="klasse.editable_teilnoten" @update:modelValue="updateIsDirty()" />
                                     </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_noten" />
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
+                                        <SvwsUiCheckbox v-model="klasse.editable_noten" @update:modelValue="updateIsDirty()" />
                                     </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_mahnungen" />
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
+                                        <SvwsUiCheckbox v-model="klasse.editable_mahnungen" @update:modelValue="updateIsDirty()" />
                                     </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" />
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
+                                        <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" @update:modelValue="updateIsDirty()" />
                                     </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
                                         <SvwsUiRadioOption
                                             v-model="klasse.toggleable_fehlstunden"
                                             :value="true"
+                                            @update:modelValue="updateIsDirty()"
                                         >FS</SvwsUiRadioOption>
                                         <SvwsUiRadioOption
                                             v-model="klasse.toggleable_fehlstunden"
                                             :value="false"
+                                            @update:modelValue="updateIsDirty()"
                                         >GFS</SvwsUiRadioOption>
                                     </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_fb" />
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
+                                        <SvwsUiCheckbox v-model="klasse.editable_fb" @update:modelValue="updateIsDirty()" />
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
+                                        <SvwsUiCheckbox v-model="klasse.editable_asv" @update:modelValue="updateIsDirty()" />
+                                    </div>
+                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip"  >
+                                        <SvwsUiCheckbox v-model="klasse.editable_aue" @update:modelValue="updateIsDirty()" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_asv" />
-                                    </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_aue" />
-                                    </div>
-                                    <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_zb" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_zb" @update:modelValue="updateIsDirty()" />
                                     </div>
                                 </div>
                             </span>
@@ -637,7 +687,6 @@
                                             />
                                         </div>
                                     </div>
-<!-- testing here -->
                                     <div class="svws-ui-tr" role="row"
                                         :depth="2"
                                         :collapsed="jahgraengeCollapsed[key][0] || jahgraengeCollapsed[key][1][index]"
@@ -655,38 +704,40 @@
                                             </div>
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_teilnoten" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_teilnoten" @update:modelValue="updateIsDirty()" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_noten" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_noten" @update:modelValue="updateIsDirty()" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_mahnungen" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_mahnungen" @update:modelValue="updateIsDirty()" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" @update:modelValue="updateIsDirty()" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiRadioOption
                                                 v-model="klasse.toggleable_fehlstunden"
                                                 :value="true"
+                                                @update:modelValue="updateIsDirty()"
                                             >FS</SvwsUiRadioOption>
                                             <SvwsUiRadioOption
                                                 v-model="klasse.toggleable_fehlstunden"
                                                 :value="false"
+                                                @update:modelValue="updateIsDirty()"
                                             >GFS</SvwsUiRadioOption>
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_fb" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_fb" @update:modelValue="updateIsDirty()"/>
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_asv" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_asv" @update:modelValue="updateIsDirty()"/>
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_aue" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_aue" @update:modelValue="updateIsDirty()"/>
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_zb" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_zb" @update:modelValue="updateIsDirty()"/>
                                         </div>
                                     </div>
                                 </span>
@@ -694,7 +745,7 @@
                         </template>
                     </SvwsUiTable>
                 </div>
-                    <SvwsUiButton @click="save()">Speichern</SvwsUiButton>
+                    <SvwsUiButton @click="save()" :disabled="!isDirty">Speichern</SvwsUiButton>
                 </section>
             </div>
         </template>
@@ -709,7 +760,7 @@
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
 
-/* TODO: adjust for it to take effect */
+/* TODO: check if redundant */
     header #headline {
         @apply ui-flex ui-items-center ui-justify-start ui-gap-6
     }
