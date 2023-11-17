@@ -251,10 +251,6 @@
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
 
-    header #toggles {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-3 ui-flex-wrap
-    }
-
     header #headline {
         @apply ui-flex ui-items-center ui-justify-start ui-gap-6
     }

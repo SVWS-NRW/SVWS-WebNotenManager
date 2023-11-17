@@ -12,6 +12,8 @@
         BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput,
     } from '@/Components/Components'
 
+    const title = 'Notenmanager - Leistungsdatenübersicht'
+
     const rows: Ref<Leistung[]> = ref([])
 
     const rowsFiltered = computed((): Leistung[] =>
@@ -128,147 +130,155 @@
 
     <AppLayout>
          <template #main>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">{{ title }}</h2>
+                </div>
+            </header>
+            <div class="content-area">
+                <SvwsUiTable
+                    :items="rowsFiltered.values()"
+                    :columns="cols"
+                    :clickable="true"
+                    :count="true"
+                    :filtered="isFiltered()"
+                    :filterReset="filterReset"
+                >
+                    <template #filter>
+                        <div class="edition-pencil-button">
+                            <SvwsUiButton
+                                @click="leistungEditableToggle()"
+                                v-if="lehrerCanOverrideFachlehrer"
+                                :type="leistungEditable ? 'primary' : 'secondary'"
+                                size="big"
+                            >
+                                <mdi-pencil></mdi-pencil>
+                            </SvwsUiButton>
+                        </div>
+                        <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    </template>
+                    <template #filterAdvanced>
+                        <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                        <SvwsUiMultiSelect
+                            label="Klasse"
+                            :items="klasseItems"
+                            :item-text="item => item"
+                            v-model="klasseFilter"
+                        />
+                        <SvwsUiMultiSelect
+                            label="Jahrgang"
+                            :items="jahrgangItems"
+                            :item-text="item => item"
+                            v-model="jahrgangFilter"
+                        />
+                        <SvwsUiMultiSelect
+                            label="Fach"
+                            :items="fachItems"
+                            :item-text="item => item"
+                            v-model="fachFilter"
+                        />
+                        <SvwsUiMultiSelect
+                            label="Kurs"
+                            :items="kursItems"
+                            :item-text="item => item"
+                            v-model="kursFilter"
+                        />
+                        <SvwsUiMultiSelect
+                            label="Note"
+                            :items="noteItems"
+                            :item-text="item => item"
+                            v-model="noteFilter"
+                        />
+                    </template>
 
-            <SvwsUiTable
-                :items="rowsFiltered.values()"
-                :columns="cols"
-                :clickable="true"
-                :count="true"
-                :filtered="isFiltered()"
-                :filterReset="filterReset"
-            >
-                <template #filter>
-                    <SvwsUiButton
-                        @click="leistungEditableToggle()"
-                        v-if="lehrerCanOverrideFachlehrer"
-                        :type="leistungEditable ? 'primary' : 'secondary'"
-                        size="big"
-                    >
-                        <mdi-pencil></mdi-pencil>
-                    </SvwsUiButton>
-                    <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                </template>
-                <template #filterAdvanced>
-                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                    <SvwsUiMultiSelect
-                        label="Klasse"
-                        :items="klasseItems"
-                        :item-text="item => item"
-                        v-model="klasseFilter"
-                    />
-                    <SvwsUiMultiSelect
-                        label="Jahrgang"
-                        :items="jahrgangItems"
-                        :item-text="item => item"
-                        v-model="jahrgangFilter"
-                    />
-                    <SvwsUiMultiSelect
-                        label="Fach"
-                        :items="fachItems"
-                        :item-text="item => item"
-                        v-model="fachFilter"
-                    />
-                    <SvwsUiMultiSelect
-                        label="Kurs"
-                        :items="kursItems"
-                        :item-text="item => item"
-                        v-model="kursFilter"
-                    />
-                    <SvwsUiMultiSelect
-                        label="Note"
-                        :items="noteItems"
-                        :item-text="item => item"
-                        v-model="noteFilter"
-                    />
-                </template>
+                    <template #cell(klasse)="{ value, rowData }">
+                        <BemerkungButton
+                            :value="value"
+                            :model="rowData"
+                            floskelgruppe="fb"
+                            @clicked="selectLeistung(rowData)"
+                        />
+                    </template>
 
-                <template #cell(klasse)="{ value, rowData }">
-                    <BemerkungButton
-                        :value="value"
-                        :model="rowData"
-                        floskelgruppe="fb"
-                        @clicked="selectLeistung(rowData)"
-                    />
-                </template>
+                    <template #cell(name)="{ value, rowData }">
+                        <BemerkungButton
+                            :value="value"
+                            :model="rowData"
+                            floskelgruppe="fb"
+                            @clicked="selectLeistung(rowData)"
+                        />
+                    </template>
 
-                <template #cell(name)="{ value, rowData }">
-                    <BemerkungButton
-                        :value="value"
-                        :model="rowData"
-                        floskelgruppe="fb"
-                        @clicked="selectLeistung(rowData)"
-                    />
-                </template>
+                    <template #cell(fach)="{ value, rowData }">
+                        <BemerkungButton
+                            :value="value"
+                            :model="rowData"
+                            floskelgruppe="fb"
+                            @clicked="selectLeistung(rowData)"
+                        />
+                    </template>
 
-                <template #cell(fach)="{ value, rowData }">
-                    <BemerkungButton
-                        :value="value"
-                        :model="rowData"
-                        floskelgruppe="fb"
-                        @clicked="selectLeistung(rowData)"
-                    />
-                </template>
+                    <template #cell(kurs)="{ value, rowData }">
+                        <BemerkungButton
+                            :value="value"
+                            :model="rowData"
+                            floskelgruppe="fb"
+                            @clicked="selectLeistung(rowData)"
+                        />
+                    </template>
 
-                <template #cell(kurs)="{ value, rowData }">
-                    <BemerkungButton
-                        :value="value"
-                        :model="rowData"
-                        floskelgruppe="fb"
-                        @clicked="selectLeistung(rowData)"
-                    />
-                </template>
+                    <template #cell(lehrer)="{ value, rowData }">
+                        <BemerkungButton
+                            :value="value"
+                            :model="rowData"
+                            floskelgruppe="fb"
+                            @clicked="selectLeistung(rowData)"
+                        />
+                    </template>
 
-                <template #cell(lehrer)="{ value, rowData }">
-                    <BemerkungButton
-                        :value="value"
-                        :model="rowData"
-                        floskelgruppe="fb"
-                        @clicked="selectLeistung(rowData)"
-                    />
-                </template>
+                    <template #cell(note)="{ value, rowData }">
+                        <NoteInput
+                            :leistung="rowData"
+                            :disabled="inputDisabled(rowData.editable.noten)"
+                        />
+                    </template>
 
-                <template #cell(note)="{ value, rowData }">
-                    <NoteInput
-                        :leistung="rowData"
-                        :disabled="inputDisabled(rowData.editable.noten)"
-                    />
-                </template>
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
+                        <MahnungIndicator
+                            :leistung="rowData"
+                            :disabled="inputDisabled(rowData.editable.mahnungen)"
+                        />
+                    </template>
 
-                <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
-                    <MahnungIndicator
-                        :leistung="rowData"
-                        :disabled="inputDisabled(rowData.editable.mahnungen)"
-                    />
-                </template>
+                    <template #cell(fs)="{ value, rowData }">
+                        <FehlstundenInput
+                            column="fs"
+                            :model="rowData"
+                            :disabled="inputDisabled(rowData.editable.fehlstunden)"
+                        />
+                    </template>
 
-                <template #cell(fs)="{ value, rowData }">
-                    <FehlstundenInput
-                        column="fs"
-                        :model="rowData"
-                        :disabled="inputDisabled(rowData.editable.fehlstunden)"
-                    />
-                </template>
+                    <template #cell(fsu)="{ value, rowData }">
+                        <FehlstundenInput
+                            column="fsu"
+                            :model="rowData"
+                            :disabled="inputDisabled(rowData.editable.fehlstunden)"
+                        />
+                    </template>
 
-                <template #cell(fsu)="{ value, rowData }">
-                    <FehlstundenInput
-                        column="fsu"
-                        :model="rowData"
-                        :disabled="inputDisabled(rowData.editable.fehlstunden)"
-                    />
-                </template>
-
-                <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
-                    <BemerkungIndicator
-                        :model="rowData"
-                        :bemerkung="rowData.fachbezogeneBemerkungen"
-                        @clicked="selectLeistung(rowData, true)"
-                        floskelgruppe="fb"
-                    />
-                </template>
-            </SvwsUiTable>
+                    <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
+                        <BemerkungIndicator
+                            :model="rowData"
+                            :bemerkung="rowData.fachbezogeneBemerkungen"
+                            @clicked="selectLeistung(rowData, true)"
+                            floskelgruppe="fb"
+                        />
+                    </template>
+                </SvwsUiTable>
+            </div>
         </template>
 
         <template v-slot:aside v-if="selectedLeistung">
@@ -280,3 +290,25 @@
         </template>
     </AppLayout>
 </template>
+
+<style scoped>
+    .truncate {
+        @apply ui-truncate
+    }
+
+    header {
+        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+    }
+
+    .edition-pencil-button {
+        @apply ui-mr-4
+    }
+
+    header #headline {
+        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+    }
+
+    .content-area {
+        @apply ui-mx-4
+    }
+</style>
