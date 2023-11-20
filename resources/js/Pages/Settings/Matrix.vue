@@ -353,7 +353,7 @@
                     </SvwsUiCheckbox>
                 <div class="content-area">
                     <!-- INFO: collapsible is not a valid attribute as it was for SvwsUiTable -->
-                    <SvwsUiTable :columns="columns" :noData="false" v-if="Object.entries(jahrgaenge).length || klassen.length">
+                    <SvwsUiTable :columns="columns" :noData="false" :filterOpen="true" v-if="Object.entries(jahrgaenge).length || klassen.length">
                         <template #body>
                             <!-- Klassen ohne Jahrgaenge -->
                             <span v-if="klassen.length">

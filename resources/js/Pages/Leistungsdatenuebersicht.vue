@@ -143,6 +143,7 @@
                     :count="true"
                     :filtered="isFiltered()"
                     :filterReset="filterReset"
+                    :filterOpen="true"
                 >
                     <template #filter>
                         <div class="edition-pencil-button">

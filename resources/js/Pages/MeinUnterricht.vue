@@ -128,6 +128,7 @@
                     :count="true"
                     :filtered="isFiltered()"
                     :filterReset="filterReset"
+                    :filterOpen="true"
                 >
                     <template #filter>
                         <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>

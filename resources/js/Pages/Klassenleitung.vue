@@ -77,6 +77,7 @@
                     :count="true"
                     :filtered="isFiltered()"
                     :filterReset="filterReset"
+                    :filterOpen="true"
                 >
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
