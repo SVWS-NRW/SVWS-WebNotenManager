@@ -161,6 +161,7 @@
 
         axios.put(route('api.settings.bulk_update', {group: 'matrix'}), {settings: settings.value})
             .then((): void => apiSuccess())
+            .then((): void => isDirty.value = false)
             .catch((error: any): void => apiError(
                 error,
                 'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'

@@ -259,4 +259,8 @@
     .content-area {
         @apply ui-mx-4
     }
+
+    .myToggles {
+        @apply ui-m-4
+    }
 </style>
