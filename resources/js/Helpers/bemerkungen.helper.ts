@@ -125,7 +125,7 @@ const saveBemerkung = (
 		}
 	})
 	.catch((error: AxiosError): void => {
-		alert('Ein Fehler ist aufgetreten.')
+		alert('Speichern nicht möglich!')
 		console.log(error)
 	})
 
