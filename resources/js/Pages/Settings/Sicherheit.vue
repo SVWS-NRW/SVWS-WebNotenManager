@@ -32,7 +32,7 @@
         .then((): void => apiSuccess())
         .catch((error: any): void => apiError(
             error,
-            'Ein Problem ist aufgetreten bei Speichern von E-Mail-Daten'
+            'Speichern der Änderungen fehlgeschlagen!'
         ))
 </script>
 
