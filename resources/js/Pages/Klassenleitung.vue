@@ -27,8 +27,8 @@
     const cols: Ref<DataTableColumn[]> = ref([
         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, },
         { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
-        { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6, },
-        { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6, },
+        { key: 'gfs', label: 'GFS', sortable: true, span: 10, minWidth: 6, },
+        { key: 'gfsu', label: 'GFSU', sortable: true, span: 10, minWidth: 6, },
         { key: 'asv', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
         { key: 'aue', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
         { key: 'zb', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
@@ -71,7 +71,7 @@
 
             <div class="content-area">
                 <SvwsUiTable
-                    :items="rowsFiltered.values()"
+                    :items="rowsFiltered"
                     :columns="cols"
                     :clickable="true"
                     :count="true"
@@ -105,10 +105,10 @@
                         />
                     </template>
                     <template #cell(gfs)="{ value, rowData }">
-                        <FehlstundenInput column="gfs" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
+                        <FehlstundenInput column="gfs" :model="rowData" :disabled="!rowData.editable.fehlstunden" />
                     </template>
                     <template #cell(gfsu)="{ value, rowData }">
-                        <FehlstundenInput column="gfsu" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
+                        <FehlstundenInput column="gfsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" />
                     </template>
                     <template #cell(asv)="{ value, rowData }">
                         <BemerkungIndicator

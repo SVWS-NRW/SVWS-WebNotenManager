@@ -37,7 +37,10 @@
     const isEditable: Ref<boolean> = ref(true)
 
     // Watchers
-    onMounted((): Promise<AxiosResponse | void> => fetchFloskeln())
+    onMounted((): Promise<AxiosResponse | void> => {
+        fetchFloskeln()
+        isEditable.value = props.schueler.editable[props.floskelgruppe]
+    })
 
     watch((): string => props.floskelgruppe, (): Promise<AxiosResponse | void> => fetchFloskeln())
 
@@ -50,10 +53,6 @@
         isDirty.value = storedBemerkung.value !== bemerkung.value
         bemerkung.value = formatBasedOnGender(bemerkung.value, props.schueler)
     })
-
-    watch((): Schueler => props.schueler, (): boolean =>
-        isEditable.value = props.schueler.matrix['editable_' + props.floskelgruppe]
-    )
 
     const fetchFloskeln = (): Promise<AxiosResponse | void> => axios
         .get(route('api.floskeln', props.floskelgruppe.toUpperCase()))
@@ -106,26 +105,15 @@
             @input="bemerkung = $event.target.value"
             @keydown="onKeyDown"
         />
-    <div class="buttons">
-        <SvwsUiButton
-            v-if="isEditable"
-            @click="add"
-            :disabled="selectedRows.length === 0"
-        >Zuweisen</SvwsUiButton>
 
-        <SvwsUiButton
-            v-if="isEditable"
-            :disabled="!isDirty"
-            @click="save"
-        >Speichern</SvwsUiButton>
-
-        <SvwsUiButton
-            @click="close"
-            :type="isDirty && isEditable ? 'danger' : 'secondary'"
-        >Schließen</SvwsUiButton>
-    </div>
+        <div class="buttons">
+            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
+            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
+        </div>
 
         <SvwsUiTable
+            v-if="isEditable"
             v-model="selectedRows"
             :items="rowsFiltered"
             :columns="columns"

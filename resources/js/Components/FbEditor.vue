@@ -12,6 +12,7 @@
 
     const props = defineProps<{
         leistung: Leistung,
+        editable: boolean,
     }>()
 
     const emit = defineEmits<{
@@ -35,17 +36,15 @@
     const isEditable: Ref<boolean> = ref(true)
 
     // Watchers
-    onMounted((): Promise<void> => fetch())
+    onMounted((): Promise<void> => {
+        fetch()
+        isDirty.value = false
+        isEditable.value = props.leistung.editable.fb && props.editable
+    })
 
     watch((): string|null => bemerkung.value, (): void => {
         isDirty.value = storedBemerkung.value !== bemerkung.value
         bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung)
-    })
-
-    watch((): Leistung => props.leistung, (): void => {
-        fetch()
-        isDirty.value = false
-        isEditable.value = props.leistung.matrix['editable_fb']
     })
 
     const fetch = (): Promise<void> => axios
@@ -103,8 +102,6 @@
             console.log(error)
     })
 
-    // Textarea actions
-    //const onChange = (text: string): string => bemerkung.value = text
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows)
 </script>
 
@@ -115,33 +112,21 @@
 
         <SvwsUiTextareaInput
             v-model="bemerkung"
+            :disabled="!isEditable"
             placeholder="Bemerkung"
             resizeable="vertical"
-            :disabled="!isEditable"
             @input="bemerkung = $event.target.value"
             @keydown="onKeyDown"
         />
 
         <div class="buttons">
-            <SvwsUiButton
-                v-if="isEditable"
-                @click="add"
-                :disabled="selectedRows.length === 0"
-            >Zuweisen</SvwsUiButton>
-
-            <SvwsUiButton
-                v-if="isEditable"
-                :disabled="!isDirty"
-                @click="save"
-            >Speichern</SvwsUiButton>
-
-            <SvwsUiButton
-                @click="close"
-                :type="isDirty && isEditable ? 'danger' : 'secondary'"
-            >Schließen</SvwsUiButton>
+            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
+            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
         </div>
 
         <SvwsUiTable
+            v-if="isEditable"
             v-model="selectedRows"
             :items="rowsFiltered"
             :columns="columns"

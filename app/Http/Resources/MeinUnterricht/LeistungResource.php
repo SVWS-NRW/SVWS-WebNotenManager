@@ -8,8 +8,6 @@ class LeistungResource extends JsonResource
 {
     public function toArray($request): array
     {
-
-
         return [
             'id' => $this->id,
             'klasse' => $this->schueler->klasse->kuerzelAnzeige,

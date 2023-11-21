@@ -13,7 +13,9 @@ class MatrixResource extends JsonResource
             'teilnotennoten' => $this->permission($this->editable_noten),
             'mahnungen' => $this->permission($this->editable_mahnungen),
             'fehlstunden' => $this->permission($this->editable_fehlstunden & !$this->toggleable_fehlstunden),
-            'fb' => $this->permission($this->editable_fb),
+            'asv' => $this->permission($this->editable_asv),
+            'aue' => $this->permission($this->editable_aue),
+            'zb' => $this->permission($this->editable_zb),
         ];
     }
 

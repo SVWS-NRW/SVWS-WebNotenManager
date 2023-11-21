@@ -1,8 +1,7 @@
 <script setup lang="ts">
-    import { watch, reactive } from 'vue'
-    import axios from 'axios'
-    import { Leistung, Schueler } from "@/Interfaces/Interface";
-
+import {watch, ref, Ref} from 'vue'
+    import axios, {AxiosPromise, AxiosResponse} from 'axios'
+    import { Leistung, Schueler } from '@/Interfaces/Interface'
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
 
     let props = defineProps<{
@@ -11,30 +10,35 @@
         disabled: boolean,
     }>()
 
-    let model = reactive<Leistung|Schueler>(props.model)
-    let debounce: ReturnType<typeof setTimeout>
-    let stored: number = props.model[props.column]
+    const model: Ref<number|string> = ref(props.model[props.column])
 
-    watch((): any => model[props.column], (): void => {
+    let debounce: ReturnType<typeof setTimeout>
+    watch(model, (): void => {
         clearTimeout(debounce)
-        debounce = setTimeout(() => saveFehlstunden(), 500)
+        debounce = setTimeout((): AxiosPromise => saveFehlstunden(), 500)
     })
 
-    const saveFehlstunden = () => axios
-        .post(route(`api.fehlstunden.${props.column}`, model), { value : model[props.column] })
-        .then((): Number => stored = model[props.column])
-        .catch((): Number => model[props.column] = stored)
+    const saveFehlstunden = (): AxiosResponse => {
+        if (isNaN(parseInt(model.value))) {
+            model.value = ''
+        }
+
+        return axios
+            .post(route(`api.fehlstunden.${props.column}`, props.model), {value: model.value})
+            .then((): number => props.model[props.column] = model.value)
+            .catch((): number => model.value = props.model[props.column])
+    }
+
 </script>
 
 <template>
     <span v-if="props.disabled">
-        {{ model[props.column] }}
+        {{ model }}
     </span>
 
     <SvwsUiTextInput
         v-else
-        v-model="model[props.column]"
-        :headless="true"
-        @click="selectClickedItem($event)"
+        v-model="model"
+        :disabled="props.disabled"
     ></SvwsUiTextInput>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue'
     import { Head } from '@inertiajs/inertia-vue3'
-    import {computed, onMounted, reactive, ref, Ref} from 'vue'
+    import {computed, onMounted, ref, Ref} from 'vue'
     import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface'
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
@@ -11,8 +11,6 @@
     import {
         BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput,
     } from '@/Components/Components'
-
-    const title = 'Notenmanager - Leistungsdatenübersicht'
 
     const rows: Ref<Leistung[]> = ref([])
 
@@ -41,7 +39,7 @@
             leistungEditable.value = !leistungEditable.value
         }
     }
-    const inputDisabled = (condition): boolean => !Boolean(condition) || !leistungEditable.value
+    const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value)
 
     onMounted((): AxiosPromise => axios
         .get(route('api.leistungsdatenuebersicht'))
@@ -118,9 +116,6 @@
         jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang')
         noteItems.value = mapFilterOptionsHelper(rows.value, 'note')
     }
-
-
-
 </script>
 
 <template>
@@ -132,12 +127,12 @@
          <template #main>
             <header>
                 <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
+                    <h2 class="text-headline">Notenmanager - Leistungsdatenübersicht</h2>
                 </div>
             </header>
             <div class="content-area">
                 <SvwsUiTable
-                    :items="rowsFiltered.values()"
+                    :items="rowsFiltered"
                     :columns="cols"
                     :clickable="true"
                     :count="true"
@@ -247,7 +242,7 @@
                         />
                     </template>
 
-                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
+                    <template #cell(istGemahnt)="{ value, rowData }">
                         <MahnungIndicator
                             :leistung="rowData"
                             :disabled="inputDisabled(rowData.editable.mahnungen)"
@@ -287,6 +282,7 @@
                 :leistung="selectedLeistung"
                 @updated="selectedLeistung.fachbezogeneBemerkungen = $event;"
                 @close="selectedLeistung = null"
+                :editable="leistungEditable"
             ></FbEditor>
         </template>
     </AppLayout>

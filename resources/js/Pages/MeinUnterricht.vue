@@ -68,7 +68,6 @@
     const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null =>
         selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null
 
-
     // Filters
     const searchFilter: Ref<string|null> = ref(null)
     const klasseFilter: Ref <string[]> = ref([])
@@ -122,7 +121,7 @@
             </header>
             <div class="content-area">
                 <SvwsUiTable
-                    :items="rowsFiltered.values()"
+                    :items="rowsFiltered"
                     :columns="cols"
                     :clickable="true"
                     :count="true"
@@ -206,11 +205,14 @@
                     </template>
 
                     <template #cell(note)="{ value, rowData }">
-                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten"/>
+                        <NoteInput
+                            :leistung="rowData"
+                            :disabled="!rowData.editable.noten"
+                        />
                     </template>
 
-                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
-                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex"/>
+                    <template #cell(istGemahnt)="{ value, rowData }">
+                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" />
                     </template>
 
                     <template #cell(fs)="{ value, rowData }">
@@ -238,6 +240,7 @@
                 :leistung="selectedLeistung"
                 @updated="selectedLeistung.fachbezogeneBemerkungen = $event;"
                 @close="selectedLeistung = null"
+                :editable="true"
             ></FbEditor>
         </template>
     </AppLayout>

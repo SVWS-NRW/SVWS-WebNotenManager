@@ -10,7 +10,7 @@ class GreaterThanOrEqualWhenPresent implements Rule
 
     public function passes($attribute, mixed $value): bool
     {
-		if (!is_int(value: (int) $value)) {
+		if (!is_int((int) $value)) {
 			return false;
 		}
 
@@ -18,8 +18,8 @@ class GreaterThanOrEqualWhenPresent implements Rule
 			return false;
 		}
 
-		if (in_array(needle: $value, haystack: [null, ''])) {
-			return in_array(needle: $this->right, haystack: [null, '']);
+		if (in_array($value, [null, ''])) {
+			return in_array($this->right, [null, '']);
 		}
 
 		return $value >= ($this->right ?? 0);
