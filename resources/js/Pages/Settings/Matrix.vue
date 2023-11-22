@@ -161,7 +161,7 @@
 
         axios.put(route('api.settings.bulk_update', {group: 'matrix'}), {settings: settings.value})
             .then((): void => apiSuccess())
-            .then((): void => isDirty.value = false)
+            .then((): boolean => isDirty.value = false)
             .catch((error: any): void => apiError(
                 error,
                 'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'
@@ -343,7 +343,7 @@
             </header>
             <div class="content">
                 <section class="flex flex-col w-full gap-4">
-                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:model-value="updateIsDirty()">
+                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="updateIsDirty()">
                         <SvwsUiTooltip>
                             Die Klassenleitung darf alle Leistungsdaten bearbeiten.
                             <template #content>
