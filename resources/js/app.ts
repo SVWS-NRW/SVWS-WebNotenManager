@@ -7,11 +7,9 @@ import '@svws-nrw/svws-ui/style.css'
 import { createApp, h, Plugin } from 'vue'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createInertiaApp, InertiaApp, InertiaAppProps } from '@inertiajs/inertia-vue3'
-import { createPinia } from 'pinia'
 import eventBus from '@/event-bus'
 
 
-const pinia = createPinia()
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel'
 
 if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -28,7 +26,6 @@ createInertiaApp({
     setup({el, app, props, plugin}: { el: Element, app: InertiaApp, props: InertiaAppProps, plugin: Plugin }): void | any {
         return createApp({render: () => h(app, props)})
             .use(plugin)
-            .use(createPinia())
             .provide('$eventBus', eventBus) 
             .mixin({ methods: {route}})
             .mount(el);

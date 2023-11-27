@@ -36,16 +36,20 @@
     const isEditable: Ref<boolean> = ref(true)
 
     // Watchers
-    onMounted((): Promise<void> => {
-        fetch()
-        isDirty.value = false
-        isEditable.value = props.leistung.editable.fb && props.editable
-    })
-
-    watch((): string|null => bemerkung.value, (): void => {
+    onMounted((): Promise<void> => setup())
+    watch((): void => props.leistung, (): void => setup())
+    watch((): void => bemerkung.value, (): void => {
         isDirty.value = storedBemerkung.value !== bemerkung.value
         bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung)
     })
+
+    const setup = (): void => {
+        bemerkung.value = props.leistung.fachbezogeneBemerkungen
+        storedBemerkung.value = ref(props.leistung.fachbezogeneBemerkungen)
+        isDirty.value = false
+        isEditable.value = props.leistung.editable.fb && props.editable
+        fetch()
+    }
 
     const fetch = (): Promise<void> => axios
         .get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
