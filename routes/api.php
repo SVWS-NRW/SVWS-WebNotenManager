@@ -18,9 +18,12 @@ use App\Http\Controllers\Api\Settings\MatrixController;
 use App\Http\Controllers\Api\Settings\SettingsController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\PassportController;
 use App\Http\Controllers\SecureTransferController;
 use App\Services\DataImportService;
 use Illuminate\Support\Facades\Route;
+
+
 
 Route::controller(SecureTransferController::class)
 	->middleware('client')
@@ -40,6 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::get('index', 'index')->name('index');
 			Route::put('update', 'update')->name('update');
 		});
+
+    Route::resource('settings/passport', PassportController::class)
+        ->only('index', 'store', 'destroy')
+        ->middleware('administrator');
 
 	Route::controller(SettingController::class)
 		->prefix('settings')

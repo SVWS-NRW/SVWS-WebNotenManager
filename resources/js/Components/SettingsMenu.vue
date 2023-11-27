@@ -25,8 +25,12 @@
                 <SvwsUiMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')">
                     <template #label>Schule bearbeiten</template>
                 </SvwsUiMenuItem>
+
                 <SvwsUiMenuItem @click="navigate('settings.sicherheit')" :active="route().current('settings.sicherheit')">
                     <template #label>Sicherheit & Datenaustausch</template>
+                </SvwsUiMenuItem>
+                <SvwsUiMenuItem @click="navigate('settings.synchronisation')" :active="route().current('settings.synchronisation')">
+                    <template #label>Synchronisation</template>
                 </SvwsUiMenuItem>
             </div>
         </template>
