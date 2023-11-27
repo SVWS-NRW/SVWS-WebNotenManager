@@ -13,9 +13,13 @@ use App\Http\Controllers\Api\KlassenMatrix;
 use App\Http\Controllers\Api\Noten;
 use App\Http\Controllers\Api\Mahnungen;
 use App\Http\Controllers\Api\SchuelerBemerkung;
+
 use App\Http\Controllers\Api\Settings\EnvController;
 use App\Http\Controllers\Api\Settings\MatrixController;
 use App\Http\Controllers\Api\Settings\SettingsController;
+
+use App\Http\Controllers\Api\TwoFAAuthentication;
+
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\PassportController;
@@ -35,6 +39,14 @@ Route::controller(SecureTransferController::class)
 	});
 
 Route::middleware('auth:sanctum')->group(function () {
+//testing 2fa here
+//should probably be up there (let's think about it)
+	Route::controller(TwoFAAuthentication::class)
+		->group(function(): void {
+			Route::post('activate2FA', 'activate2FA')->name('activate2FA');;
+			Route::delete('deactivate2FA', 'deactivate2FA')->name('deactivate2FA');;
+	});
+
 	Route::controller(KlassenMatrix::class)
 		->prefix('matrix')
 		->middleware('administrator')
@@ -73,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
 				Route::put('mail-send-credentials', 'updateMailSendCredentials')
 					->name('mail_send_credentials');
 			});
+
 		});
 
 	Route::controller(Fehlstunden::class)
@@ -112,7 +125,6 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::get('klassenleitung', Klassenleitung::class)
 		->name('api.klassenleitung');
 });
-
 
 // TODO: To be removed, temporary testing route
 // TODO: Testing

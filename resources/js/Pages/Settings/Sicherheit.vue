@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
     import { Ref, ref, watch } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
     import axios, { AxiosResponse } from 'axios'
@@ -9,7 +10,7 @@
     let props = defineProps({
         auth: Object,
     })
-
+    
     //TODO: fetch 2FA data from backend
     const enabled = ref(false)
 
@@ -64,11 +65,34 @@
     })
 
     const updateIsDirty = (): boolean => isDirty.value = true
+
+
+
+
+    //only going in one direction (activate/deactivate) for the moment
+    //     //TODO: check types
+    // const submit = (): void => {
+    //     if (enabled.value) {
+    //     axios.post(route('activate2FA'))
+    //     .then((): void => apiSuccess())
+    //     .catch((error: any): void => apiError(
+    //         error,
+    //         'Ein Problem ist aufgetreten.'
+    //     ))
+    //     // .finally(() => alert(enabled.value))
+    //     }
+    // };
+
+
+
+
+
 </script>
 
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
+
             <header>
                 <div id="headline">
                     <h2 class="text-headline">Einstellungen - Sicherheit</h2>
@@ -92,6 +116,14 @@
                 </div>
                 <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
             </div>
+
+            <section>
+                <h2 class="text-headline">Einstellungen - Sicherheit</h2>
+                <h3 class="text-headline-md">Mein Unterricht</h3>
+                <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten</SvwsUiCheckbox>
+                <SvwsUiButton @click="submit" type="secondary">Speichern</SvwsUiButton>
+            </section>
+
         </template>
         <template #secondaryMenu>
             <SettingsMenu></SettingsMenu>
@@ -100,6 +132,7 @@
 </template>
 
 <style scoped>
+
     header {
         @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
     }
@@ -117,6 +150,17 @@
     }
 
     .button {
+
+    section {
+        @apply ui-p-6 ui-space-y-12
+    }
+
+    section>div {
+        @apply ui-flex ui-flex-col ui-gap-3 ui-items-start
+    }
+
+    button {
+
         @apply ui-self-start
     }
 </style>

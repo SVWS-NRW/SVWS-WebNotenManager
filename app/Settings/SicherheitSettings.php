@@ -15,3 +15,4 @@ class SicherheitSettings extends Settings
         return 'sicherheit';
     }
 }
+

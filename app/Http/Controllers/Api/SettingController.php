@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Settings\FilterSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\MatrixSettings;
+use App\Settings\SicherheitSettings;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,10 +41,12 @@ class SettingController extends Controller
 
 	private function getSetting(
 		string $group
-	): FilterSettings | MatrixSettings | GeneralSettings {
+	): FilterSettings | MatrixSettings | SicherheitSettings | GeneralSettings {
 		return app(match ($group) {
 			'filter' => FilterSettings::class,
 			'matrix' => MatrixSettings::class,
+//TODO:check if this makes sense here
+			'sicherheit' => SicherheitSettings::class,
 			default => GeneralSettings::class,
 		});
 	}
