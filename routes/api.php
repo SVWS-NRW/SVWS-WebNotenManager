@@ -15,9 +15,12 @@ use App\Http\Controllers\Api\Mahnungen;
 use App\Http\Controllers\Api\SchuelerBemerkung;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\PassportController;
 use App\Http\Controllers\SecureTransferController;
 use App\Services\DataImportService;
 use Illuminate\Support\Facades\Route;
+
+
 
 Route::controller(SecureTransferController::class)
     ->middleware('client')
@@ -38,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::put('update', 'update')->name('update');
 		});
 
+    Route::resource('settings/passport', PassportController::class)
+        ->only('index', 'store', 'destroy')
+        ->middleware('administrator');
+
 	Route::controller(SettingController::class)
 		->prefix('settings')
 		->name('api.settings.')
@@ -46,6 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::get('index/{group}', 'index')->name('index');
 			Route::put('update/{group}', 'update')->name('update');
 			Route::put('bulk-update/{group}', 'bulkUpdate')->name('bulk_update');
+
+
 		});
 
 	Route::controller(Fehlstunden::class)

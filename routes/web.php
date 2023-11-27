@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\PasswordController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Response as InertiaResponse;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 	Route::inertia(uri: '/', component: 'MeinUnterricht')
