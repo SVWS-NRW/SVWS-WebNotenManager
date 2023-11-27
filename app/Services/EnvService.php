@@ -8,7 +8,6 @@ class EnvService
 {
     public function read()
     {
-
     }
 
     /**
@@ -31,6 +30,7 @@ class EnvService
      * @throws FileNotFoundException
      */
     public function update(string $key, string|bool $value): void
+
     {
         $path = base_path('.env');
 
@@ -41,6 +41,7 @@ class EnvService
         $currentContent = file_get_contents($path);
 
         if (str_contains($currentContent, $key . '=')) {
+
             $newContent = preg_replace('/' . $key . '=(.*)/', $key . '=' . $this->wrapValue($value), $currentContent);
         } else {
             $newContent = $currentContent . PHP_EOL . $key . '=' . $this->wrapValue($value);

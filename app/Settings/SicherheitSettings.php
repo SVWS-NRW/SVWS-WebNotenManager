@@ -8,9 +8,11 @@ use Spatie\LaravelSettings\Settings;
 
 class SicherheitSettings extends Settings
 {
-	public bool $zwei_faktor_authentisierung;
 
-	public static function group(): string
+    public bool $zwei_faktor_authentisierung;
+
+    public static function group(): string
+
     {
         return 'sicherheit';
     }

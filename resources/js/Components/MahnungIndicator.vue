@@ -1,46 +1,58 @@
 <script setup lang="ts">
-    import { computed, reactive, ref } from 'vue'
+    import { ref, Ref } from 'vue'
     import axios from 'axios'
     import moment from 'moment'
-    import { usePage } from '@inertiajs/inertia-vue3'
-    import { Leistung } from '../Interfaces/Leistung'
-    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
+    import { Leistung } from '@/Interfaces/Interface'
+    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui'
 
-    import { SvwsUiBadge, SvwsUiButton,
-        SvwsUiModal } from '@svws-nrw/svws-ui'
-
-    const modal = ref<any>(null)
-
-    let props = defineProps<{
+    const props = defineProps<{
         leistung: Leistung,
-        rowIndex: number,
         disabled: boolean,
     }>()
 
-    let element: CellRef = undefined
-    let leistung = reactive<Leistung>(props.leistung)
+    const modalVisible: Rev<boolean> = ref(false)
+    const modal = (): boolean => modalVisible
+    const open = () => modal().value = true
+    const close = () => modal().value = false
 
-    const updateIstGemahnt = (): void => {
-        leistung.istGemahnt = !leistung.istGemahnt
-        axios.post(route('api.mahnung', leistung.id), leistung)
-        .catch((): boolean => leistung.istGemahnt = !leistung.istGemahnt)
+    const leistung: Ref<Leistung> = ref(props.leistung)
+
+    const toggleMahnung = (): void => {
+        leistung.value.istGemahnt = !leistung.value.istGemahnt
+        axios.post(route('api.mahnung', props.leistung.id), props.leistung)
+            .catch((): boolean => leistung.value.istGemahnt = !leistung.value.istGemahnt)
     }
 
-    const istGemahnt = computed((): boolean => Boolean(leistung.istGemahnt))
-    const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
-    const isDisabled = (): boolean => !!usePage().props.value.warning_entry_disabled || props.disabled
-
-    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
+    const mahndatumFormatted = (): string => moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY')
 </script>
 
 <template>
-    <span v-if="isDisabled()">
-        <span v-if="leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
+    <svws-ui-modal :show="modal" size="small">
+        <template #modalTitle>
+            {{ props.leistung.vorname }} {{ props.leistung.nachname }}
+            <SvwsUiBadge variant="primary">
+                {{ props.leistung.klasse ?? props.leistung.kurs }}
+            </SvwsUiBadge>
+        </template>
+
+        <template #modalDescription>
+            <strong>Mahndatum:</strong> {{ mahndatumFormatted() }}
+        </template>
+
+        <template #modalActions>
+            <svws-ui-button type="secondary" @click="close">
+                Schliessen
+            </svws-ui-button>
+        </template>
+    </svws-ui-modal>
+
+    <span v-if="props.disabled">
+        <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
             <span class="icon green" aria-hidden="true">
                 <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
             </span>
         </span>
-        <span v-else-if="istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
+        <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
             <span class="icon red" aria-hidden="true">
                 <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
             </span>
@@ -52,23 +64,13 @@
         </span>
     </span>
 
-    <button
-        v-else
-        @click="leistung.mahndatum ? modal.openModal() : updateIstGemahnt()"
-        @keydown.up.stop.prevent="navigate('up')"
-        @keydown.down.stop.prevent="navigate('down')"
-        @keydown.enter.stop.prevent="navigate('down')"
-        @keydown.left.stop.prevent="navigate('left')"
-        @keydown.right.stop.prevent="navigate('right')"
-        @keydown.tab.stop.prevent="navigate('right')"
-        :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
-    >
-        <span v-if="leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
+    <button v-else @click="props.leistung.mahndatum ? open() : toggleMahnung()">
+        <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
            <span class="icon green" aria-hidden="true">
                 <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
            </span>
         </span>
-        <span v-else-if="istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
+        <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
             <span class="icon red" aria-hidden="true">
                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
            </span>
@@ -79,23 +81,6 @@
            </span>
         </span>
     </button>
-
-    <SvwsUiModal ref="modal">
-        <template #modalTitle>
-            {{ leistung.vorname }} {{ leistung.nachname }}
-            <SvwsUiBadge variant="primary">
-                {{ leistung.klasse ?? leistung.kurs }}
-            </SvwsUiBadge>
-        </template>
-
-        <template #modalContent>
-            <strong>Mahndatum:</strong> {{ mahndatumFormatted() }}
-        </template>
-
-        <template #modalActions>
-            <SvwsUiButton @click="modal.closeModal()" type="secondary">Schließen</SvwsUiButton>
-        </template>
-    </SvwsUiModal>
 </template>
 
 <style scoped>
@@ -105,9 +90,5 @@
 
     .green {
         @apply ui-text-green-500
-    }
-
-    button.modal-button {
-        @apply ui-flex ui-items-center ui-justify-center
     }
 </style>

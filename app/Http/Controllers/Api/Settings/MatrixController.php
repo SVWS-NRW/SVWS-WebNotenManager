@@ -14,36 +14,38 @@ use Symfony\Component\HttpFoundation\Response;
 class MatrixController extends Controller
 {
     public function index(): JsonResponse
-	{
-		$jahrgaenge = JahrgangResource::collection(
-			Jahrgang::orderedWithKlassenOrdered()
-		)->collection->groupBy('stufe');
+    {
+        $jahrgaenge = JahrgangResource::collection(
+            Jahrgang::orderedWithKlassenOrdered()
+        )->collection->groupBy('stufe');
 
-		$klassen = KlasseResource::collection(
-			Klasse::notBelongingToJahrgangOrdered()
-		);
+        $klassen = KlasseResource::collection(
+            Klasse::notBelongingToJahrgangOrdered()
+        );
 
-		return response()->json(['jahrgaenge' => $jahrgaenge, 'klassen' => $klassen], Response::HTTP_OK);
-	}
+        return response()->json(['jahrgaenge' => $jahrgaenge, 'klassen' => $klassen], Response::HTTP_OK);
+    }
 
-	public function update(): JsonResponse
-	{
-		$only = [
-			'editable_teilnoten',
-			'editable_noten',
-			'editable_mahnungen',
-			'editable_fehlstunden',
-			'toggleable_fehlstunden',
-			'editable_fb',
-			'editable_asv',
-			'editable_aue',
-			'editable_zb',
-		];
+    public function update(): JsonResponse
+    {
+        $only = [
+            'editable_teilnoten',
+            'editable_noten',
+            'editable_mahnungen',
+            'editable_fehlstunden',
+            'toggleable_fehlstunden',
+            'editable_fb',
+            'editable_asv',
+            'editable_aue',
+            'editable_zb',
+        ];
 
-		collect(request()->klassen)->each(fn (array $klasse) =>
-			Klasse::find($klasse['id'])->update(Arr::only($klasse, $only))
-		);
+        collect(request()->klassen)->each(
+            fn (array $klasse) =>
+            Klasse::find($klasse['id'])->update(Arr::only($klasse, $only))
+        );
 
-		return response()->json(status: Response::HTTP_NO_CONTENT);
-	}
+        return response()->json(status: Response::HTTP_NO_CONTENT);
+    }
+
 }

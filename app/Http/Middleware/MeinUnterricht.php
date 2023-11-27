@@ -18,8 +18,6 @@ class MeinUnterricht
 			return $next($request);
 		}
 
-		return redirect(
-			to: route(name: 'leistungsdatenuebersicht')
-		);
+		return redirect(route('leistungsdatenuebersicht'));
     }
 }

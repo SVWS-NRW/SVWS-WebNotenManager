@@ -60,6 +60,7 @@ class Kernel extends HttpKernel
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'client' => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'klassenleitung' => \App\Http\Middleware\RedirectIfKlassenleitung::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
@@ -67,5 +68,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 		'mein.unterricht' => \App\Http\Middleware\MeinUnterricht::class,
+        'two.fa' => \App\Http\Middleware\Check2FA::class,
     ];
 }

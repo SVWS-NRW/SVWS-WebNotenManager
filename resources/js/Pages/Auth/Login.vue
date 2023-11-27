@@ -64,7 +64,7 @@ const submit = (): void => {
                         <SvwsUiTextInput
                             v-model="data.form.email"
                             v-on:keyup.enter="submit"
-                            :valid="!hasErrors('email')"
+                            :valid="() => !hasErrors('email')"
                             :disabled="data.processing"
                             type="email"
                             placeholder="E-Mail-Adresse"
@@ -81,7 +81,7 @@ const submit = (): void => {
                         <SvwsUiTextInput
                             v-model="data.form.password"
                             v-on:keyup.enter="submit"
-                            :valid="!hasErrors('password')"
+                            :valid="() => !hasErrors('password')"
                             :disabled="data.processing"
                             type="password"
                             placeholder="Passwort"
@@ -93,7 +93,7 @@ const submit = (): void => {
                         </span>
                     </div>
 
-                    <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing">
+                    <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing" v-on:keyup.enter="submit">
                         Angemeldet bleiben
                     </SvwsUiCheckbox>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Ref, ref } from 'vue'
+    import { Ref, ref, watch } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
     import axios, { AxiosResponse } from 'axios'
     import { apiError, apiSuccess } from '@/Helpers/api.helper'
@@ -10,23 +10,29 @@
         auth: Object,
     })
 
-    let settings: Ref<{
-        meinunterricht?: {
-            teilleistungen?: boolean,
-            mahnungen?: boolean,
-            fehlstunden?: boolean,
-            bemerkungen?: boolean,
-        }
-        leistungsdatenuebersicht?: {
-            teilleistungen?: boolean,
-            fachlehrer?: boolean,
-            mahnungen?: boolean,
-            bemerkungen?: boolean,
-        }
-    }> = ref({})
 
-    axios.get(route('api.settings.filters'))
-        .then((response: AxiosResponse) => settings.value = response.data)
+    //TODO: adjust if personal settings comes into force and data changes
+    interface Settings {
+        mein_unterricht_teilleistungen: boolean,
+        mein_unterricht_mahnungen: boolean,
+        mein_unterricht_fehlstunden: boolean,
+        mein_unterricht_bemerkungen: boolean,
+        leistungdatenuebersicht_teilleistungen: boolean,
+        leistungdatenuebersicht_fachlehrer: boolean,
+        leistungdatenuebersicht_mahnungen: boolean,
+        leistungdatenuebersicht_bemerkungen: boolean,
+    }
+
+    const settings: Ref<Settings> = ref({} as Settings)
+    const storedSettings: Ref<String> = ref('')
+    const isDirty: Ref<boolean> = ref(false)
+
+
+    axios.get(route('api.settings.index', 'filter'))
+        .then((response: AxiosResponse): void => {
+            settings.value = response.data
+            storedSettings.value = JSON.stringify(settings.value)
+        })
 
     const saveSettings = () => axios
         .post(route('api.settings.filters'),  {
@@ -44,10 +50,22 @@
             },
         })
         .then((): void => apiSuccess())
+        .then((): boolean => isDirty.value = false)
         .catch((error: any): void => apiError(
             error,
             'Ein Problem ist aufgetreten bei Speichern von Filtern'
         ))
+
+    
+    watch(() => settings.value, (): void => {
+        if (JSON.stringify(settings.value) == storedSettings.value) {
+            isDirty.value = false
+        }
+    }, {
+        deep: true,
+    })
+
+    const updateIsDirty = (): boolean => isDirty.value = true
 </script>
 
 <template>
@@ -58,21 +76,25 @@
 
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+
+                    <SvwsUiCheckbox v-model="settings.mein_unterricht_teilleistungen" @input="updateIsDirty()" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.mein_unterricht_mahnungen" @input="updateIsDirty()" :value="1">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.mein_unterricht_fehlstunden" @input="updateIsDirty()" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.mein_unterricht_bemerkungen" @input="updateIsDirty()" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+
                 </div>
 
                 <div>
                     <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+
+                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_teilleistungen" @input="updateIsDirty()" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_fachlehrer" @input="updateIsDirty()" :value="1">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_mahnungen" @input="updateIsDirty()" :value="1">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungdatenuebersicht_bemerkungen" @input="updateIsDirty()" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+
                 </div>
 
-                <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
+                <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
             </section>
         </template>
         <template #secondaryMenu>

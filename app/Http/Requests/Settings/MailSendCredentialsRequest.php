@@ -28,13 +28,13 @@ class MailSendCredentialsRequest extends FormRequest
             ],
             'MAIL_USERNAME' => [
                 'required', 'string',
-                ],
+            ],
             'MAIL_PASSWORD' => [
                 'required', 'string',
-                ],
+            ],
             'MAIL_ENCRYPTION' => [
                 'required', 'string',
-                ],
+            ],
             'MAIL_FROM_ADDRESS' => [
                 'required', 'string', 'email:rfc,dns'
             ],

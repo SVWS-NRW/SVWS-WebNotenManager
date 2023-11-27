@@ -1,6 +1,6 @@
 export interface Floskel {
 	id: number,
-	gruppe: string,
+	gruppe?: string,
 	kuerzel: string,
 	text: string
 }

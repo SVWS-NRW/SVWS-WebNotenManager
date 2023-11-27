@@ -1,10 +1,10 @@
 import { Column } from '../Interfaces/Column'
 
 const baseColumns: Array<Column> = [
-	{ key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: true },
-	{ key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: true },
-	{ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: true },
-	{ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: true },
+	{ key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: false },
+	{ key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
+	{ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
+	{ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
 ]
 
 const fachbezogeneBemerkungenColumns: Array<Column> = [
