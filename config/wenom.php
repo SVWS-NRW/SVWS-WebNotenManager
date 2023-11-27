@@ -2,11 +2,10 @@
 
 return [
     'version' => '0.1.2',
-
-    'npm' => '0.7.7',
-    'schulnummer' => env(key: 'SCHULNUMMER'),
-	'aes_password' => env(key: 'AES_PASSWORD'),
-	'aes_salt' => env(key: 'AES_SALT'),
+    'npm' => '0.7.8',
+    'schulnummer' => env('SCHULNUMMER'),
+    'aes_password' => env('AES_PASSWORD'),
+    'aes_salt' => env('AES_SALT'),
     'mail_send_credentials' => [
         'mailer' => env('MAIL_MAILER'),
         'host' => env('MAIL_HOST'),
