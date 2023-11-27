@@ -1,163 +1,143 @@
 <script setup lang="ts">
-    import { computed, onMounted, Ref, ref, watch, nextTick } from 'vue'
+    import { computed, onMounted, Ref, ref, watch } from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
-    import { Floskel, TableColumn, Schueler } from '@/types'
-
+    import { Floskel } from '@/Interfaces/Floskel'
+    import { Schueler } from '@/Interfaces/Schueler'
+    import { floskelgruppen } from '@/Interfaces/Floskelgruppe'
     import {
-        searchFilter,
-        formatStringBasedOnGender,
-        closeEditor,
-        addSelectedFloskelnToBemerkung,
-        selectFloskeln,
-        saveBemerkung,
-        floskelPasteShortcut,
+        SvwsUiTextareaInput, SvwsUiTextInput, SvwsUiButton, SvwsUiTable, DataTableColumn,
+    } from '@svws-nrw/svws-ui'
+    import {
+        formatBasedOnGender, closeEditor, addSelectedToBemerkung, pasteShortcut, search,
     } from '@/Helpers/bemerkungen.helper'
 
-    import {
-        SvwsUiTextareaInput,
-        SvwsUiDataTable,
-        SvwsUiTextInput,
-        SvwsUiButton,
-    } from '@svws-nrw/svws-ui'
-
-    const emit = defineEmits(['close', 'updated'])
     const props = defineProps<{
         schueler: Schueler,
         floskelgruppe: string,
+        bemerkung: string|null,
     }>()
 
-    const bemerkung: Ref<string> = ref(props.schueler[props.floskelgruppe.toUpperCase()])
-    const storedBemerkung: Ref<string> = ref(props.schueler[props.floskelgruppe.toUpperCase()])
-    const isDirty: Ref<boolean> = ref(false)
-    const readonly: Ref<boolean> = ref(!props.schueler.matrix['editable_' + props.floskelgruppe])
-    const searchTerm: Ref<string> = ref('')
+    const emit = defineEmits<{
+        (event: 'close'): void;
+        (event: 'updated', value: string|null): void;
+    }>()
 
-    const floskeln: Ref<Floskel[]> = ref([])
-    const selectedFloskeln: Ref<Floskel[]> = ref([])
-
-    const columns: Ref<TableColumn[]> = ref([
+    const rows: Ref<Floskel[]> = ref([])
+    const selectedRows: Ref<Floskel[]> = ref([])
+    const columns: Ref<DataTableColumn[]> = ref([
         { key: 'id', label: 'ID', sortable: true },
         { key: 'kuerzel', label: 'Kuerzel', sortable: true },
         { key: 'text', label: 'Text', sortable: true, span: 5 },
     ])
 
-    const types: { asv: string, aue: string, zb: string } = {
-        asv: 'Arbeits- und Sozialverhalten',
-        aue: 'Außerunterrichtliches Engagement',
-        zb: 'Zeugnisbemerkung',
-    }
+    const bemerkung: Ref<string|null> = ref(props.bemerkung)
+    const storedBemerkung: Ref<string|null> = ref(props.bemerkung)
 
-    watch(() => props.schueler, (): void =>
-        bemerkung.value = storedBemerkung.value = props.schueler[props.floskelgruppe.toUpperCase()]
-    )
+    const isDirty: Ref<boolean> = ref(false)
+    const isEditable: Ref<boolean> = ref(true)
 
-    onMounted((): void =>
-        axios.get(route('api.floskeln', props.floskelgruppe.toUpperCase()))
-            .then((response: AxiosResponse): AxiosResponse =>
-                floskeln.value = response.data
-            )
-            .catch((error: AxiosError): void => {
-                alert('Ein Fehler ist aufgetreten.')
-                console.log(error)
-    }))
+    // Watchers
+    onMounted((): Promise<AxiosResponse | void> => {
+        fetchFloskeln()
+        isEditable.value = props.schueler.editable[props.floskelgruppe]
+    })
 
-    watch(() => props.floskelgruppe, (): void => {
-        bemerkung.value = storedBemerkung.value = props.schueler[props.floskelgruppe.toUpperCase()]
-        axios.get(route('api.floskeln', props.floskelgruppe.toUpperCase()))
-            .then((response: AxiosResponse): AxiosResponse =>
-                floskeln.value = response.data
-            )
-            .catch((error: AxiosError): void => {
-                alert('Ein Fehler ist aufgetreten.')
-                console.log(error)
+    watch((): string => props.floskelgruppe, (): Promise<AxiosResponse | void> => fetchFloskeln())
+
+    watch((): string|null => props.bemerkung, (): void => {
+        bemerkung.value = storedBemerkung.value = props.bemerkung
+        isDirty.value = false
+    })
+
+    watch((): string|null => bemerkung.value, (): void => {
+        isDirty.value = storedBemerkung.value !== bemerkung.value
+        bemerkung.value = formatBasedOnGender(bemerkung.value, props.schueler)
+    })
+
+    const fetchFloskeln = (): Promise<AxiosResponse | void> => axios
+        .get(route('api.floskeln', props.floskelgruppe.toUpperCase()))
+        .then((response: AxiosResponse): AxiosResponse => rows.value = response.data)
+        .catch((error: AxiosError): void => {
+            alert('Ein Fehler ist aufgetreten.')
+            console.log(error)
         })
+
+    // Filters
+    const searchFilter: Ref<string> = ref('')
+    const filterReset = (): string => searchFilter.value = ''
+    const filtered = (): boolean => '' !== searchFilter.value
+
+    const rowsFiltered = computed((): Floskel[] => rows.value.filter((floskel: Floskel): boolean =>
+        search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text)
+    ))
+
+    // Button actions
+    const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows)
+    const close = (): void => closeEditor(isDirty, (): void => emit('close'))
+    const save = (): Promise<void> => axios
+        .post(route('api.schueler_bemerkung', props.schueler.id),
+            { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value })
+        .then((): void => {
+            storedBemerkung.value = bemerkung.value
+            isDirty.value = false
+            emit('updated', bemerkung.value)
+        })
+        .catch((error: AxiosError): void => {
+            alert('Speichern nicht möglich!')
+        console.log(error)
     })
 
-    const computedBemerkung = computed((): string | void => {
-        isDirty.value = bemerkung.value != storedBemerkung.value
-        if (!bemerkung.value) return
-        return formatStringBasedOnGender(bemerkung.value, props.schueler)
-    })
+    // Textarea actions
+    const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows)
 
-    const computedFloskeln = computed((): Array<Floskel> =>
-        floskeln.value.filter((floskel: Floskel): boolean => searchFilter(floskel, searchTerm.value))
-    )
-
-    const save = (): Promise<void> => saveBemerkung('api.schueler_bemerkung', props.schueler.id,
-        { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value }, bemerkung, storedBemerkung, isDirty,
-        (): void => emit('updated', bemerkung.value)
-    )
-
-    const addSelected = (): void => addSelectedFloskelnToBemerkung(bemerkung, selectedFloskeln)
-    const close = (): void => closeEditor(isDirty, () => emit('close'))
-    const select = (floskeln: Floskel[]): void => selectFloskeln(floskeln, selectedFloskeln)
-    const onKeyDown = (event: KeyboardEvent): string|null => bemerkung.value = floskelPasteShortcut(event, bemerkung, floskeln)
 </script>
 
 <template>
     <div class="content">
-        <h2 class="text-headline">{{ types[props.floskelgruppe] }}</h2>
-        <h1 class="text-headline-xl text-primary">{{ props.schueler.name }}</h1>
+        <h1>{{ props.schueler.name }}</h1>
+        <h2>{{ floskelgruppen[props.floskelgruppe] }}</h2>
 
         <SvwsUiTextareaInput
-            v-model="computedBemerkung"
-            @update:modelValue="bemerkung = $event"
-            autoresize
-            :disabled="readonly"
-            ref="textareaContent"
+            v-model="bemerkung"
+            placeholder="Bemerkung"
+            resizeable="vertical"
+            :disabled="!isEditable"
+            @input="bemerkung = $event.target.value"
             @keydown="onKeyDown"
-        ></SvwsUiTextareaInput>
+        />
 
         <div class="buttons">
-            <SvwsUiButton
-                v-if="!readonly"
-                @click="addSelected"
-                :disabled="selectedFloskeln.length === 0"
-            >
-                Zuweisen
-            </SvwsUiButton>
-
-            <SvwsUiButton
-                v-if="!readonly"
-                @click="save"
-                :disabled="!isDirty"
-            >
-                Speichern
-            </SvwsUiButton>
-
-            <SvwsUiButton
-                @click="close"
-                :type="isDirty ? 'danger' : 'secondary'"
-            >
-                Schließen
-            </SvwsUiButton>
+            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
+            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
         </div>
 
-        <SvwsUiDataTable
-            :modelValue="selectedFloskeln"
-            :items="computedFloskeln"
+        <SvwsUiTable
+            v-if="isEditable"
+            v-model="selectedRows"
+            :items="rowsFiltered"
             :columns="columns"
-            :selectable="true"
-            @update:modelValue="select($event)"
-            v-if="!readonly"
+            :clickable="true"
+            :selectable="isEditable"
+            :count="true"
+            :filtered="filtered()"
+            :filterReset="filterReset"
         >
-            <template #search>
-                <SvwsUiTextInput
-                    type="search"
-                    v-model="searchTerm"
-                    placeholder="Suche"
-                ></SvwsUiTextInput>
+            <template #filterAdvanced>
+                <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
             </template>
-        </SvwsUiDataTable>
+        </SvwsUiTable>
     </div>
 </template>
 
 <style scoped>
+
     .content {
         @apply ui-p-6 ui-flex ui-flex-col ui-gap-6
     }
-
+    
     .buttons {
         @apply ui-flex ui-justify-end ui-gap-3
     }
+
 </style>

@@ -17,7 +17,7 @@ class FsuRequest extends FormRequest
 	{
 		return [
 			'value' => new LessThanOrEqualWhenPresent(
-				right: $this->leistung->fehlstundenFach,
+				$this->leistung->fehlstundenFach,
 			),
 		];
 	}

@@ -16,7 +16,7 @@ class GfsuRequest extends FormRequest
 	{
 		return [
 			'value' => new LessThanOrEqualWhenPresent(
-				right: $this->schueler->lernabschnitt->fehlstundenGesamt,
+				$this->schueler->lernabschnitt->fehlstundenGesamt,
 			),
 		];
 	}

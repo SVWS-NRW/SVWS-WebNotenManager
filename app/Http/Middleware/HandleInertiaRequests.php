@@ -25,14 +25,15 @@ class HandleInertiaRequests extends Middleware
 				? $request->user()->only('id', 'vorname', 'nachname', 'email', 'klassen', 'lerngruppen')
 				: null,
 			'auth.administrator' => $request->user() ? $request->user()->is_administrator : false,
-			'schoolName' => config(key:'app.school_name'),
+			'schoolName' => config('app.school_name'),
 			'settings' => [
-				'general' => app(abstract: GeneralSettings::class),
-				'filters' => app(abstract: FilterSettings::class),
-				'matrix' => app(abstract: MatrixSettings::class),
-				'gdpr' => app(abstract: GdprSettings::class),
+				'general' => app(GeneralSettings::class),
+				'filters' => app(FilterSettings::class),
+				'matrix' => app(MatrixSettings::class),
+				'gdpr' => app(GdprSettings::class),
 			],
-			'version' => config(key: 'wenom.version'),
+			'version' => config('wenom.version'),
+            'npm' => config('wenom.npm'),
         ]);
     }
 }

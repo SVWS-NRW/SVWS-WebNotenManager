@@ -16,21 +16,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Fehlstunden extends Controller
 {
-	// TODO: Add tests
-
 	/**
 	 * @throws AuthorizationException
 	 */
 	public function fs(FsRequest $request, Leistung $leistung, MatrixSettings $settings): Response
 	{
-		$this->authorize(
-			ability: 'update',
-			arguments: [$leistung, $settings],
-		);
+		$this->authorize('update', [$leistung, $settings]);
 
-        $leistung->update(attributes: [
-			'fehlstundenFach' => $request->get(key: 'value'),
-			'tsFehlstundenFach' => now()->format(format: 'Y-m-d H:i:s.u'),
+        $leistung->update([
+			'fehlstundenFach' => $request->get('value'),
+			'tsFehlstundenFach' => now()->format('Y-m-d H:i:s.u'),
 		]);
 
 		return response(status: Response::HTTP_NO_CONTENT);
@@ -41,17 +36,14 @@ class Fehlstunden extends Controller
 	 */
 	public function fsu(FsuRequest $request, Leistung $leistung, MatrixSettings $settings): Response
 	{
-		$this->authorize(
-			ability: 'update',
-			arguments: [$leistung, $settings],
-		);
+		$this->authorize('update', [$leistung, $settings]);
 
         $leistung->update(attributes: [
-			'fehlstundenUnentschuldigtFach' => $request->get(key: 'value'),
-			'tsFehlstundenUnentschuldigtFach' => now()->format(format: 'Y-m-d H:i:s.u'),
+			'fehlstundenUnentschuldigtFach' => $request->get('value'),
+			'tsFehlstundenUnentschuldigtFach' => now()->format('Y-m-d H:i:s.u'),
 		]);
 
-		return response(status: Response::HTTP_NO_CONTENT);
+        return response(status: Response::HTTP_NO_CONTENT);
     }
 
 	/**
@@ -59,17 +51,14 @@ class Fehlstunden extends Controller
 	 */
 	public function gfs(GfsRequest $request, Schueler $schueler): Response
 	{
-		$this->authorize(
-			ability: 'update',
-			arguments: $schueler,
-		);
+		$this->authorize('update', $schueler);
 
-		$schueler->lernabschnitt->update(attributes: [
-			'fehlstundenGesamt' => $request->get(key: 'value'),
-			'tsFehlstundenGesamt' => now()->format(format: 'Y-m-d H:i:s.u'),
+		$schueler->lernabschnitt->update([
+			'fehlstundenGesamt' => $request->get('value'),
+			'tsFehlstundenGesamt' => now()->format('Y-m-d H:i:s.u'),
 		]);
 
-		return response(status: Response::HTTP_NO_CONTENT);
+        return response(status: Response::HTTP_NO_CONTENT);
     }
 
 	/**
@@ -77,16 +66,13 @@ class Fehlstunden extends Controller
 	 */
 	public function gfsu(GfsuRequest $request, Schueler $schueler): Response
 	{
-		$this->authorize(
-			ability: 'update',
-			arguments: $schueler,
-		);
+		$this->authorize('update', $schueler);
 
-		Lernabschnitt::whereBelongsTo(related: $schueler)->first()->update(attributes: [
-			'fehlstundenGesamtUnentschuldigt' => $request->get(key: 'value'),
-			'tsFehlstundenGesamtUnentschuldigt' => now()->format(format: 'Y-m-d H:i:s.u'),
+		Lernabschnitt::whereBelongsTo($schueler)->first()->update([
+			'fehlstundenGesamtUnentschuldigt' => $request->get('value'),
+			'tsFehlstundenGesamtUnentschuldigt' => now()->format('Y-m-d H:i:s.u'),
 		]);
 
-		return response(status: Response::HTTP_NO_CONTENT);
+        return response(status: Response::HTTP_NO_CONTENT);
     }
 }

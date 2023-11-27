@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\PasswordController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Response as InertiaResponse;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 	Route::inertia(uri: '/', component: 'MeinUnterricht')
@@ -24,6 +23,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 			Route::inertia('schule', 'Settings/School')->name('school');
 			Route::inertia('filter', 'Settings/Filter')->name('filter');
 			Route::inertia('matrix', 'Settings/Matrix')->name('matrix');
+			Route::inertia('sicherheit', 'Settings/Sicherheit')->name('sicherheit');
+			Route::inertia('synchronisation', 'Settings/Synchronisation')->name('synchronisation');
 		});
 });
 

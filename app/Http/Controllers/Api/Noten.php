@@ -15,44 +15,36 @@ class Noten extends Controller
 {
 	public function __invoke(Leistung $leistung): JsonResponse
 	{
-		abort_unless(
-			boolean: $leistung->schueler->klasse->editable_noten,
-			code: Response::HTTP_FORBIDDEN
-		);
+		abort_unless($leistung->schueler->klasse->editable_noten, Response::HTTP_FORBIDDEN);
 
 		if (request()->note == '') {
-			return $this->updateNote(leistung: $leistung);
+			return $this->updateNote($leistung);
 		}
 
-		try {
 			$note = Note::query()
-				->where(
-					column: 'kuerzel',
-					operator: '=',
-					value: (string) request()->note
-				)
+				->where('kuerzel', '=', (string) request()->note)
 				->firstOrFail();
+//		try {
+//		} catch (ModelNotFoundException $e) {
+//			return response()->json(
+//				[
+//					'message' => $e->getMessage(),
+//					'note' => $leistung->note?->kuerzel
+//				],
+//				Response::HTTP_UNPROCESSABLE_ENTITY
+//			);
+//		}
 
-		} catch (ModelNotFoundException $e) {
-			return response()->json(
-				data: [
-					'message' => $e->getMessage(),
-					'note' => $leistung->note?->kuerzel
-				],
-				status: Response::HTTP_UNPROCESSABLE_ENTITY
-			);
-		}
-
-		return $this->updateNote(leistung: $leistung, note: $note->id);
+		return $this->updateNote($leistung, $note->id);
     }
 
-	private function updateNote(Leistung $leistung, int|null $note = null): JsonResponse
+	private function updateNote(Leistung $leistung, string|null $note = null): JsonResponse
 	{
 		$leistung->update(attributes: [
 			'note_id' => $note,
-			'tsNote' => now()->format(format: 'Y-m-d H:i:s.u'),
+			'tsNote' => now()->format('Y-m-d H:i:s.u'),
 		]);
 
-		return response()->json(status: Response::HTTP_NO_CONTENT);
+		return response()->json(Response::HTTP_NO_CONTENT);
 	}
 }

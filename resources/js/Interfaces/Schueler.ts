@@ -1,9 +1,12 @@
+import { Matrix } from "@/Interfaces/Matrix";
+
 export interface Schueler {
-	id: Number,
+	id: number,
 	vorname: string,
 	nachname: string,
 	name: string,
 	geschlecht: string,
+	klasse: string,
 	bemerkung: object,
 	fachbezogeneBemerkungen: string,
 	asv: string | null,
@@ -11,4 +14,10 @@ export interface Schueler {
 	zb: string | null,
 	gfs: Number,
 	gfsu: Number,
+	editable: {
+		fehlstunden: boolean,
+		asv: boolean,
+		aue: boolean,
+		zb: boolean,
+	},
 }

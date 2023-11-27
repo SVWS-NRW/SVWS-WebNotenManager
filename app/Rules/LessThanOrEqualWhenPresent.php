@@ -10,7 +10,7 @@ class LessThanOrEqualWhenPresent implements Rule
 
 	public function passes($attribute, mixed $value): bool
 	{
-		if (!is_int(value: (int) $value)) {
+		if (!is_int((int) $value)) {
 			return false;
 		}
 
@@ -18,7 +18,7 @@ class LessThanOrEqualWhenPresent implements Rule
 			return false;
 		}
 
-		if (in_array(needle: $value, haystack: [null, ''])) {
+		if (in_array($value, [null, ''])) {
 			return true;
 		}
 

@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Settings\MatrixSettings;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class LeistungsFehlstundenPolicy
+class LeistungFehlstundenPolicy
 {
     use HandlesAuthorization;
 
@@ -24,7 +24,7 @@ class LeistungsFehlstundenPolicy
 		if (!$leistung->schueler->klasse->toggleable_fehlstunden) {
 			return false;
 		}
-// check if is klassen lehrer
+
 		if ($leistung->sharesKlasseWithCurrentUser() && $settings->lehrer_can_override_fachlehrer) {
 			return true;
 		}
