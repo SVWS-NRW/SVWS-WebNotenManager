@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeinUnterricht\LeistungResource;
 use App\Models\Leistung;
+use App\Models\UserSetting;
 use App\Settings\FilterSettings;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -32,12 +33,14 @@ class MeinUnterricht extends Controller
                 'schueler.klasse.kuerzel', 'schueler.nachname', 'lerngruppe.fach.kuerzelAnzeige',
             ]);
 
-		return LeistungResource::collection($leistungen) // TODO: @karol refactor after usersettings are present
+        $settings = auth()->user()->userSettings->filters_meinunterricht;
+
+		return LeistungResource::collection($leistungen)
             ->additional(['toggles' => [
-                'teilleistungen' => $settings->mein_unterricht_teilleistungen,
-                'mahnungen' => $settings->mein_unterricht_mahnungen,
-                'bemerkungen' => $settings->mein_unterricht_bemerkungen,
-                'fehlstunden' => $settings->mein_unterricht_fehlstunden,
+                'teilleistungen' => $settings->teilleistungen,
+                'mahnungen' => $settings->mahnungen,
+                'bemerkungen' => $settings->bemerkungen,
+                'fehlstunden' => $settings->fehlstunden,
             ]]);
 	}
 }

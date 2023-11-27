@@ -15,8 +15,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 		->name(name: 'mein_unterricht')
 		->middleware(middleware: 'mein.unterricht');
 
+    Route::inertia('impressum', 'Impressum')->name('impressum');
+    Route::inertia('datenschutz', 'Datenschutz')->name('datenschutz');
+    Route::inertia('barrierefreiheit', 'Barrierefreiheit')->name('barrierefreiheit');
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function (): void {
+
+    Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function (): void {
 	Route::inertia('/', 'MeinUnterricht')
         ->name('mein_unterricht')
         ->middleware('mein.unterricht');
@@ -56,6 +60,7 @@ Route::controller(PasswordController::class)
 		Route::get('passwort-aendern/{token}', 'reset_form')->name('reset_form');
         Route::post('passwort-aendern', 'update')->name('update');
 	});
+});
 
 
 //Route::post('password-reset', ResetPasswordController::class)->name('password_reset');

@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Settings\EnvController;
 use App\Http\Controllers\Api\Settings\MatrixController;
 use App\Http\Controllers\Api\Settings\SettingsController;
 
+use App\Http\Controllers\Api\Settings\UserSettingsController;
 use App\Http\Controllers\Api\TwoFAAuthentication;
 
 
@@ -95,6 +96,15 @@ Route::middleware('auth:sanctum')->group(function () {
 			Route::post('gfs/{schueler}', 'gfs')->name('gfs');
 			Route::post('gfsu/{schueler}', 'gfsu')->name('gfsu');
 		});
+
+    Route::controller(UserSettingsController::class)
+        ->prefix('benutzereinstellungen')
+        ->name('user_settings.')
+        ->group(function (): void {
+            Route::post('filters', 'setFilters')->name('set_filters');
+            Route::get('filters', 'getAllFilters')->name('get_all_filters');
+            Route::get('filters/{group}', 'getFilters')->name('get_filters');
+        });
 
 	Route::post('fachbezogene-bemerkung/{leistung}', FachbezogeneBemerkung::class)
 		->name('api.fachbezogene_bemerkung');

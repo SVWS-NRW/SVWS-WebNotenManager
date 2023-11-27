@@ -21,7 +21,6 @@ class UserSetting extends Model
         'filters_meinunterricht' => 'object',
     ];
 
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

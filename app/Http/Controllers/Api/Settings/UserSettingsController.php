@@ -32,8 +32,6 @@ class UserSettingsController extends Controller
     {
         abort_unless(in_array($group, ['leistungsdatenuebersicht', 'meinunterricht']), 404);
 
-        //TODO: correct this - it fills the db with NULL for both filters, which breaks the leistungsdatenuebersicht/meinunterricht page display and doesn't allow further user filter saving
-        //the db seems to need explicit input for both filters_leistungsdatenuebersicht and filters_meinunterricht not only for one
         return response()->json(
             $this->retrieveFilters(
                 config("wenom.filters.{$group}"),
@@ -44,7 +42,7 @@ class UserSettingsController extends Controller
 
     public function setFilters(FilterValidationRequest $request): JsonResponse
     {
-        auth()->user()->settings()->update(
+        auth()->user()->userSettings()->update(
             $request->safe($this->filterColumns)
         );
 

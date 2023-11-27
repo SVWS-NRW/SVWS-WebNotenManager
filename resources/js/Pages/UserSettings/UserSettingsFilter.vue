@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Ref, ref, onBeforeMount } from 'vue'
+    import { Ref, ref, onMounted } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
     import axios, { AxiosResponse } from 'axios'
     import { apiError, apiSuccess } from '@/Helpers/api.helper'
@@ -10,29 +10,26 @@
         auth: Object,
     })
 
-    //TODO: solve errors from line 66
-    //let user_settings: Ref<{}> = ref({})
-    let user_settings: Ref<{
-        filters_leistungsdatenuebersicht?: {
-            teilleistungen?: boolean,
-            fachlehrer?: boolean,
-            mahnungen?: boolean,
-            bemerkungen?: boolean,
-        }
-        filters_meinunterricht?: {
-            teilleistungen?: boolean,
-            mahnungen?: boolean,
-            fehlstunden?: boolean,
-            bemerkungen?: boolean,
-        }
+    let user_settings: Ref<any> = ref({
+        filters_leistungsdatenuebersicht: {
+            teilleistungen: false,
+            fachlehrer: false,
+            mahnungen: false,
+            bemerkungen: false,
+        },
+        filters_meinunterricht: {
+            teilleistungen: false,
+            mahnungen: false,
+            fehlstunden: false,
+            bemerkungen: false,
+        }})
 
-     }> = ref({})
+    onMounted((): AxiosResponse => axios.get(route('user_settings.get_all_filters'))
+        .then((response: AxiosResponse): AxiosResponse => user_settings.value = response.data)
+    )
 
-    axios.get(route('user_settings.get_all_filters'))
-        .then((response: AxiosResponse) => user_settings.value = response.data)
-        
     const saveSettings = () => axios
-        .post(route('user_settings.set_filters'),  {
+        .post(route('user_settings.set_filters'), {
             'filters_leistungsdatenuebersicht': {
                 'mahnungen': user_settings.value.filters_leistungsdatenuebersicht?.mahnungen,
                 'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht?.fachlehrer,
@@ -51,7 +48,6 @@
             error,
             'Ein Problem ist aufgetreten bei Speichern von Filtern'
         ))
-
 </script>
 
 <template>

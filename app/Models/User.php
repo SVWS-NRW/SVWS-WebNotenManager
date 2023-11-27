@@ -140,7 +140,7 @@ class User extends Authenticatable
 		return ! $this->isAdministrator();
 	}
 
-    public function settings(): HasOne
+    public function userSettings(): HasOne
     {
         return $this->hasOne(UserSetting::class);
     }
