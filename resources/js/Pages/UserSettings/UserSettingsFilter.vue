@@ -41,6 +41,9 @@
                 'bemerkungen': user_settings.value.filters_meinunterricht?.bemerkungen,
                 'fehlstunden': user_settings.value.filters_meinunterricht?.fehlstunden,
                 'teilleistungen': user_settings.value.filters_meinunterricht?.teilleistungen,
+                'kurs': user_settings.value.filters_meinunterricht?.kurs,
+                'note': user_settings.value.filters_meinunterricht?.note,
+                'fach': user_settings.value.filters_meinunterricht?.fach,
             },
         })
         .then((): void => apiSuccess())
@@ -62,6 +65,9 @@
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.kurs">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.note">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fach">Fach</SvwsUiCheckbox>
                 </div>
 
                 <div>

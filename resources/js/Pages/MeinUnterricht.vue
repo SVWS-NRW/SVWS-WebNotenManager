@@ -31,6 +31,9 @@
         mahnungen: false,
         bemerkungen: false,
         fehlstunden: false,
+        kurs: false,
+        note: false,
+        fach: false,
     })
 
     onMounted((): AxiosPromise => axios
@@ -46,12 +49,18 @@
     const cols = computed((): DataTableColumn[] => [
          { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: false },
          { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
-         { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
-         { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
-         ...(toggles.value.teilleistungen ? [
+        ...(toggles.value.fach ? [
+            { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
+        ] : []),
+        ...(toggles.value.kurs ? [
+            { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
+        ] : []),
+        ...(toggles.value.teilleistungen ? [
             { key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15 }
+        ] : []),
+        ...(toggles.value.note ? [
+            { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5 },
          ] : []),
-         { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5 },
          ...(toggles.value.mahnungen ? [
              { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 4},
          ] : []),
@@ -131,7 +140,10 @@
                     :filterOpen="true"
                 >
                     <template #filter>
+                        <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.kurs" :value="true">Kurs</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.note" :value="true">Note</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>

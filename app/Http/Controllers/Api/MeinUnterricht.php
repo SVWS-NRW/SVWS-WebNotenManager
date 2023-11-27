@@ -41,6 +41,9 @@ class MeinUnterricht extends Controller
                 'mahnungen' => $settings->mahnungen,
                 'bemerkungen' => $settings->bemerkungen,
                 'fehlstunden' => $settings->fehlstunden,
+                'kurs' => $settings->kurs,
+                'note' => $settings->note,
+                'fach' => $settings->fach,
             ]]);
 	}
 }

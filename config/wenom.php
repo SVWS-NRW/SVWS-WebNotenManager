@@ -23,6 +23,9 @@ return [
             'mahnungen' => env('FILTERS_MEINUNTERRICHT_MAHNUNGEN', true),
             'fehlstunden' => env('FILTERS_MEINUNTERRICHT_FEHLSTUNDEN', false),
             'bemerkungen' => env('FILTERS_MEINUNTERRICHT_BEMERKUNGEN', true),
+            'kurs' => env('FILTERS_MEINUNTERRICHT_KURS', true),
+            'note' => env('FILTERS_MEINUNTERRICHT_NOTE', true),
+            'fach' => env('FILTERS_MEINUNTERRICHT_FACH', true),
         ],
         'leistungsdatenuebersicht' => [
             'teilleistungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_TEILLEISTUNGEN', false),

@@ -27,7 +27,6 @@ class UserSettingsController extends Controller
         );
     }
 
-    //TODO: use this function on Liestungsdatenuebersicht.vue line 61 and MeinUnterricht.vue line 71 instead of getAllFilters
     public function getFilters(string $group = 'leistungsdatenuebersicht'): JsonResponse
     {
         abort_unless(in_array($group, ['leistungsdatenuebersicht', 'meinunterricht']), 404);
