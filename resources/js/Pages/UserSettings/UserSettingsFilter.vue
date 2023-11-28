@@ -22,7 +22,7 @@
             mahnungen: false,
             fehlstunden: false,
             bemerkungen: false,
-            kurs: false,
+                        kurs: false,
             note: false,
             fach:false
         }})
