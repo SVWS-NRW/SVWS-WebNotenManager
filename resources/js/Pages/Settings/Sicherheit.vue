@@ -145,8 +145,6 @@
         @apply ui-flex ui-flex-col ui-gap-5 ui-justify-start
     }
 
-    .button {
-
     section {
         @apply ui-p-6 ui-space-y-12
     }
