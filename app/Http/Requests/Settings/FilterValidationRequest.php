@@ -23,9 +23,6 @@ class FilterValidationRequest extends FormRequest
             'filters_meinunterricht.bemerkungen' => ['required', 'boolean'],
             'filters_meinunterricht.fehlstunden' => ['required', 'boolean'],
             'filters_meinunterricht.teilleistungen' => ['required', 'boolean'],
-            'filters_meinunterricht.kurs' => ['required', 'boolean'],
-            'filters_meinunterricht.note' => ['required', 'boolean'],
-            'filters_meinunterricht.fach' => ['required', 'boolean'],
         ];
     }
 
@@ -41,9 +38,6 @@ class FilterValidationRequest extends FormRequest
             'filters_meinunterricht.bemerkungen' => 'Mein Unterricht Bemerkungen',
             'filters_meinunterricht.fehlstunden' => 'Mein Unterricht Fehlstunden',
             'filters_meinunterricht.teilleistungen' => 'Mein Unterricht Teilleistungen',
-            'filters_meinunterricht.kurs' => 'Mein Unterricht Kurs',
-            'filters_meinunterricht.note' => 'Mein Unterricht Note',
-            'filters_meinunterricht.fach' => 'Mein Unterricht Fach',
         ];
     }
 }

@@ -84,6 +84,10 @@ Route::middleware('auth:sanctum')->group(function () {
 					->name('mail_send_credentials');
 				Route::put('mail-send-credentials', 'updateMailSendCredentials')
 					->name('mail_send_credentials');
+				Route::post('filters', 'setFilters')
+					->name('filters');
+				Route::get('filters', 'getFilters')
+					->name('filters');
 			});
 		});
 

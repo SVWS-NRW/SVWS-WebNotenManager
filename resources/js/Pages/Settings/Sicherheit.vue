@@ -55,7 +55,6 @@
         ))
 
     watch(() => settings.value, (): void => {
-        console.log("changed")
         if (JSON.stringify(settings.value) == storedSettings.value) {
             isDirty.value = false
         }
@@ -112,13 +111,13 @@
                 </div>
                 <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
             </div>
-
+<!-- 
             <section>
                 <h2 class="text-headline">Einstellungen - Sicherheit</h2>
                 <h3 class="text-headline-md">Mein Unterricht</h3>
                 <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten</SvwsUiCheckbox>
                 <SvwsUiButton @click="submit" type="secondary">Speichern</SvwsUiButton>
-            </section>
+            </section> -->
 
 
         </template>

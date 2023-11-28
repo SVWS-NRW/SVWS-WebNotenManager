@@ -36,7 +36,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 				Route::inertia('filter', 'Settings/Filter')->name('filter');
 				Route::inertia('matrix', 'Settings/Matrix')->name('matrix');
 				Route::inertia('sicherheit', 'Settings/Sicherheit')->name('sicherheit');
-
 				Route::inertia('synchronisation', 'Settings/Synchronisation')->name('synchronisation');
 			});
 

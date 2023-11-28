@@ -8,6 +8,7 @@ use App\Http\Requests\Settings\MailSendCredentialsRequest;
 use App\Services\EnvService;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Settings\FilterValidationRequest;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,5 +30,23 @@ class EnvController extends Controller
 
         return response()->json(status: Response::HTTP_NO_CONTENT);
 
+    }
+
+    public function getFilters(): JsonResponse
+    {
+        return response()->json(config('wenom.filters'));
+    }
+
+    public function setFilters(FilterValidationRequest $request, EnvService $service): JsonResponse
+    {
+        collect($request->all())->each(fn (array $item, string $key) =>
+            collect($item)->each(fn ($value, string $itemKey) =>
+                $service->update(
+                    sprintf('%s_%s', strtoupper($key), strtoupper($itemKey)), $value
+                )
+            )
+        );
+
+        return response()->json(status: Response::HTTP_NO_CONTENT);
     }
 }
