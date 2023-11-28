@@ -22,6 +22,9 @@
             mahnungen: false,
             fehlstunden: false,
             bemerkungen: false,
+            kurs: false,
+            note: false,
+            fach:false
         }})
 
     onMounted((): AxiosResponse => axios.get(route('user_settings.get_all_filters'))
@@ -58,7 +61,6 @@
         <template #main>
             <section>
                 <h2 class="text-headline">Einstellungen - Filter</h2>
-{{ user_settings }}
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
