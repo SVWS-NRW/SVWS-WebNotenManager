@@ -54,6 +54,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereIdJahrgang($value)
  * @property bool $toggleable_fehlstunden
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereToggleableFehlstunden($value)
+ * @property-read \App\Models\Jahrgang|null $jahrgang
  * @mixin \Eloquent
  */
 class Klasse extends Model

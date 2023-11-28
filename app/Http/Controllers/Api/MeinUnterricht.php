@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MeinUnterricht extends Controller
 {
-	public function __invoke(FilterSettings $settings)
+	public function __invoke()
 	{
 		$eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
@@ -33,17 +33,8 @@ class MeinUnterricht extends Controller
                 'schueler.klasse.kuerzel', 'schueler.nachname', 'lerngruppe.fach.kuerzelAnzeige',
             ]);
 
-        $settings = auth()->user()->userSettings->filters_meinunterricht;
-
-		return LeistungResource::collection($leistungen)
-            ->additional(['toggles' => [
-                'teilleistungen' => $settings->teilleistungen,
-                'mahnungen' => $settings->mahnungen,
-                'bemerkungen' => $settings->bemerkungen,
-                'fehlstunden' => $settings->fehlstunden,
-                'kurs' => $settings->kurs,
-                'note' => $settings->note,
-                'fach' => $settings->fach,
-            ]]);
+		return LeistungResource::collection($leistungen)->additional([
+            'toggles' => auth()->user()->filters('meinunterricht'),
+        ]);
 	}
 }

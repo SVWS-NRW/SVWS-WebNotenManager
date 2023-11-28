@@ -10,7 +10,7 @@
         auth: Object,
     })
 
-    let user_settings: Ref<any> = ref({
+    let user_settings = ref({
         filters_leistungsdatenuebersicht: {
             teilleistungen: false,
             fachlehrer: false,
@@ -58,10 +58,10 @@
         <template #main>
             <section>
                 <h2 class="text-headline">Einstellungen - Filter</h2>
-
+{{ user_settings }}
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>

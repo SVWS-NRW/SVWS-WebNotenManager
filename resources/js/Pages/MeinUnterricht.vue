@@ -38,7 +38,6 @@
 
     onMounted((): AxiosPromise => axios
         .get(route('api.mein_unterricht'))
-        //not working if each action has its own .then
         .then((response: AxiosResponse): AxiosResponse => {
             rows.value = response.data.data
             toggles.value = response.data.toggles

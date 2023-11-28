@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\FilterValidationRequest;
 use App\Models\UserSetting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserSettingsController extends Controller
@@ -17,41 +18,23 @@ class UserSettingsController extends Controller
 
     public function getAllFilters(): JsonResponse
     {
-        $data = [
-            'filters_leistungsdatenuebersicht' => config('wenom.filters.leistungsdatenuebersicht'),
-            'filters_meinunterricht' => config('wenom.filters.meinunterricht'),
-        ];
-
-        return response()->json(
-            $this->retrieveFilters($data, $this->filterColumns)
-        );
+        return response()->json([
+            'filters_meinunterricht' => auth()->user()->filters('meinunterricht'),
+            'filters_leistungsdatenuebersicht' => auth()->user()->filters('leistungsdatenuebersicht'),
+        ]);
     }
 
     public function getFilters(string $group = 'leistungsdatenuebersicht'): JsonResponse
     {
         abort_unless(in_array($group, ['leistungsdatenuebersicht', 'meinunterricht']), 404);
 
-        return response()->json(
-            $this->retrieveFilters(
-                config("wenom.filters.{$group}"),
-                ["filters_{$group}"],
-            )
-        );
+        return response()->json(auth()->user()->filters($group));
     }
 
     public function setFilters(FilterValidationRequest $request): JsonResponse
     {
-        auth()->user()->userSettings()->update(
-            $request->safe($this->filterColumns)
-        );
+        UserSetting::updateOrCreate(['user_id' => auth()->id()], $request->safe($this->filterColumns));
 
         return response()->json(status: Response::HTTP_NO_CONTENT);
-    }
-
-    private function retrieveFilters(array $data, array $columns): array
-    {
-        return UserSetting::query()
-            ->firstOrCreate(['user_id' => auth()->id()], $data)
-            ->only($columns);
     }
 }

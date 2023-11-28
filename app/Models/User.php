@@ -68,6 +68,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereGeschlecht($value)
  * @property int $is_administrator
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsAdministrator($value)
+ * @property-read \App\Models\UserSetting|null $userSettings
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -143,5 +144,14 @@ class User extends Authenticatable
     public function userSettings(): HasOne
     {
         return $this->hasOne(UserSetting::class);
+    }
+
+    public function filters(string $column): array
+    {
+        $filterColumn = "filters_{$column}";
+
+        return $this->userSettings()->exists()
+            ? json_decode(json_encode($this->userSettings->$filterColumn), true)
+            : config("wenom.filters.{$column}");
     }
 }

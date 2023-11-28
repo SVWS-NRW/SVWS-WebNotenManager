@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Collection<int, \App\Models\Klasse> $klassen
  * @property-read int|null $klassen_count
  * @property-read Collection<int, \App\Models\Klasse> $klassen
+ * @property-read Collection<int, \App\Models\Klasse> $klassen
  * @mixin \Eloquent
  */
 class Jahrgang extends Model

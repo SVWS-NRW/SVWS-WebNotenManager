@@ -50,17 +50,11 @@ class Leistungsdatenuebersicht extends Controller
 			->sortBy($sortByColumns);
 
 
-        $settings = auth()->user()->userSettings->filters_leistungsdatenuebersicht;
-
         return LeistungResource::collection($leistungen)->additional([
-            'toggles' => [
-                'teilleistungen' => $settings->teilleistungen,
-                'mahnungen' => $settings->mahnungen,
-                'bemerkungen' => $settings->bemerkungen,
-                'fachlehrer' => $settings->fachlehrer,
-            ],
+            'toggles' => auth()->user()->filters('leistungsdatenuebersicht'),
             'lehrerCanOverrideFachlehrer' => $matrix->lehrer_can_override_fachlehrer,
         ]);
+
     }
 }
 
