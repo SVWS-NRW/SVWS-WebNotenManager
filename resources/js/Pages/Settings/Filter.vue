@@ -10,12 +10,17 @@
         auth: Object,
     })
 
+    //correct this
+
     let settings: Ref<{
         meinunterricht?: {
             teilleistungen?: boolean,
             mahnungen?: boolean,
             fehlstunden?: boolean,
             bemerkungen?: boolean,
+            kurs?: boolean,
+            note?: boolean,
+            fach?: boolean,
         }
         leistungsdatenuebersicht?: {
             teilleistungen?: boolean,
@@ -41,6 +46,9 @@
                 'bemerkungen': settings.value.meinunterricht.bemerkungen,
                 'fehlstunden': settings.value.meinunterricht.fehlstunden,
                 'teilleistungen': settings.value.meinunterricht.teilleistungen,
+                'kurs': settings.value.meinunterricht.kurs,
+                'note': settings.value.meinunterricht.note,
+                'fach': settings.value.meinunterricht.fach,
             },
         })
         .then((): void => apiSuccess())
@@ -62,6 +70,9 @@
                     <SvwsUiCheckbox v-model="settings.meinunterricht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.meinunterricht.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.meinunterricht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.meinunterricht.kurs" :value="1">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.meinunterricht.note" :value="1">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.meinunterricht.fach" :value="1">Fach</SvwsUiCheckbox>
                 </div>
 
                 <div>

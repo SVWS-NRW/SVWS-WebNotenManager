@@ -10,6 +10,9 @@ class FilterSettings extends Settings
 	public bool $mein_unterricht_mahnungen;
 	public bool $mein_unterricht_fehlstunden;
 	public bool $mein_unterricht_bemerkungen;
+	public bool $mein_unterricht_kurs;
+	public bool $mein_unterricht_note;
+	public bool $mein_unterricht_fach;
 
 	public bool $leistungdatenuebersicht_teilleistungen;
 	public bool $leistungdatenuebersicht_fachlehrer;

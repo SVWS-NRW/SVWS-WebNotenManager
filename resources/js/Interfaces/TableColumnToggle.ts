@@ -4,4 +4,7 @@ export interface TableColumnToggle {
     fachlehrer?: boolean
     bemerkungen: boolean
     fehlstunden: boolean
+    kurs: boolean
+    note: boolean
+    fach: boolean
 }

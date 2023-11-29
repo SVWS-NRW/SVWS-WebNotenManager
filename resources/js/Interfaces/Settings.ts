@@ -26,6 +26,9 @@ export interface Settings {
 		mein_unterricht_mahnungen: boolean,
 		mein_unterricht_fehlstunden: boolean,
 		mein_unterricht_bemerkungen: boolean,
+		mein_unterricht_kurs: boolean,
+		mein_unterricht_note: boolean, 
+		mein_unterricht_fach: boolean,
 
 		leistungdatenuebersicht_teilleistungen: boolean,
 		leistungdatenuebersicht_fachlehrer: boolean,
