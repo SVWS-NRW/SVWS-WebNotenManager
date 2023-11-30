@@ -611,10 +611,12 @@
                                                     <mdi-chevron-down v-if="jahgraengeCollapsed[key][1][index]" />
                                                     <mdi-chevron-right v-else />
                                                 </SvwsUiButton>
+                                         <!-- testing here for indeterminate status-->
                                                 <SvwsUiCheckbox
                                                     v-model="jahrgangToggle[jahrgang.id]"
                                                     @update:modelValue="toggleJahrgang(jahrgang)"
-                                                    :value="true"
+                                                    :value="jahrgangToggle[jahrgang.id]"
+                                                    :indeterminate="jahrgangToggle[jahrgang.id] === 'indeterminate'"
                                                 />
                                                 {{ jahrgang.kuerzel }}
                                             </div>
@@ -623,28 +625,32 @@
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_teilnoten']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_teilnoten')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_teilnoten']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_teilnoten'] === 'indeterminate'"
                                             />
                                         </div>
                                         <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_noten']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_noten')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_noten']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_noten'] === 'indeterminate'"
                                             />
                                         </div>
                                         <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_mahnungen']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_mahnungen')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_mahnungen']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_mahnungen'] === 'indeterminate'"
                                             />
                                         </div>
                                         <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fehlstunden']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_fehlstunden')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fehlstunden']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fehlstunden'] === 'indeterminate'"
                                             />
                                         </div>
                                         <div class="svws-ui-td" role="cell">
@@ -663,28 +669,32 @@
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fb']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_fb')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fb']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_fb'] === 'indeterminate'"
                                             />
                                         </div>
                                         <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_asv']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_asv')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_asv']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_asv'] === 'indeterminate'"
                                             />
                                         </div>
                                         <div class="svws-ui-td" role="cell">
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_aue']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_aue')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_aue']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_aue'] === 'indeterminate'"
                                             />
                                         </div>
                                         <div class="svws-ui-td" role="cell" >
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_zb']"
                                                 @update:modelValue="toggleJahrgangsColumn(jahrgang, 'editable_zb')"
-                                                :value="true"
+                                                :value="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_zb']"
+                                                :indeterminate="jahrgangsKlassenColumnsToggle[jahrgang.id]['editable_zb'] === 'indeterminate'"
                                             />
                                         </div>
                                     </div>
@@ -699,7 +709,8 @@
                                                 <SvwsUiCheckbox
                                                     v-model="jahrgangKlassenToggle[klasse.id]"
                                                     @update:modelValue="toggleJahrgangsKlassenRow(klasse)"
-                                                    :value="true"
+                                                    :value="jahrgangKlassenToggle[klasse.id]"
+                                                    :indeterminate="jahrgangKlassenToggle[klasse.id] === 'indeterminate'"
                                                 />
                                                 {{ klasse.kuerzel }}
                                             </div>
