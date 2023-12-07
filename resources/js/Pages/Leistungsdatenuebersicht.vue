@@ -57,14 +57,14 @@
         { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
         { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
         ...(toggles.value.fachlehrer ? [
-            { key: 'lehrer', label: 'Fachlehrer', sortable: true, span: 5, minWidth: 15 }
+            { key: 'lehrer', label: 'Fachlehrer', sortable: true, span: 2, minWidth: 7 }
         ] : []),
         ...(toggles.value.teilleistungen ? [
-            { key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15 }
+            { key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 6 }
         ] : []),
-        { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5 },
+        { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 6 },
         ...(toggles.value.mahnungen ? [
-            { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 4},
+            { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8},
         ] : []),
         { key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6 },
         { key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6 },

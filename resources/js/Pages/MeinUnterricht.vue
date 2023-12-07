@@ -61,7 +61,7 @@
             { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5 },
          ] : []),
          ...(toggles.value.mahnungen ? [
-             { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 4},
+             { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8},
          ] : []),
          ...(toggles.value.fehlstunden ? [
              { key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6 },
