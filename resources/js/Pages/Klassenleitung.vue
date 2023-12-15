@@ -78,6 +78,7 @@
                     :filtered="isFiltered()"
                     :filterReset="filterReset"
                     :filterOpen="true"
+                    :sortByAndOrder="{ key: 'klasse', order: true}"
                 >
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />

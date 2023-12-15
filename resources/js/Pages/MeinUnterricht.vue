@@ -137,6 +137,7 @@
                     :filtered="isFiltered()"
                     :filterReset="filterReset"
                     :filterOpen="true"
+                    :sortByAndOrder= "{ key: 'klasse', order: true}"
                 >
                     <template #filter>
                         <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>

@@ -137,8 +137,9 @@
                     :clickable="true"
                     :count="true"
                     :filtered="isFiltered()"
-                    :filterReset="filterReset"
+                    :filterReset="filterReset"  
                     :filterOpen="true"
+                    :sortByAndOrder="{ key: 'klasse', order: true}"
                 >
                     <template #filter>
                         <div class="edition-pencil-button">
