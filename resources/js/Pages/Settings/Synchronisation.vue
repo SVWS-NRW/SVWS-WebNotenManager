@@ -4,11 +4,26 @@
     import axios, { AxiosResponse } from 'axios'
     import SettingsMenu from '@/Components/SettingsMenu.vue'
     import { apiError, apiSuccess } from '@/Helpers/api.helper'
-    import { SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui'
+    import { SvwsUiButton, SvwsUiModal, SvwsUiTextInput } from '@svws-nrw/svws-ui'
+    import { usePage } from '@inertiajs/inertia-vue3'
 
     let props = defineProps({
         auth: Object,
     })
+
+    interface ClientRecord {
+        id: string
+        name: string
+        secret: string
+    }
+
+    const clientRecords: Ref<ClientRecord[]> = ref({} as ClientRecord[])
+    const newClientRecord: Ref<ClientRecord> = ref({} as ClientRecord)
+    const adjustSettingsInfo: Ref<string> = ref("Es müssen die Einstellungen im zugehörigen SVWS-Server angepasst werden")
+    const modalTitle: Ref<string> = ref("Warnung")
+    const newClientName: string = usePage().props.value.schoolName as string
+    const buttonText: Ref<string> = ref("Generieren")
+    const clientExists: Ref<boolean> = ref(false)
 
     const modal = ref<any>(null)
     const _showModal: Ref<boolean> = ref(false)
@@ -19,19 +34,26 @@
 
     const closeModal = () => _showModal.value = false
 
-    //TODO: api method does not exist yet
-    const adjustSettings = 
-        //example
-        // () => axios
-        // .post(route('api.settings.synchronisation'), {
-        //     //etc
-        // })
-        // .then((): void => apiSuccess())
-        // .catch((error: any): void => apiError(
-        //     error,
-        //     'Ein Problem ist aufgetreten bei Speichern'
-        // ))
-        () => alert("Call to adjustSettings")
+    axios.get(route('passport.index'))
+        .then((response: AxiosResponse): void => {
+            clientRecords.value = response.data
+            for (let record in clientRecords.value) {
+                if (clientRecords.value[record].name == newClientName + "_client") {
+                    buttonText.value = "Client bereits vorhanden"
+                    clientExists.value = true
+                }
+            }
+        })
+
+    const adjustSettings = () => axios
+        .post(route('passport.store'), { 'name': newClientName + "_client" })
+        .then((response: AxiosResponse) => {
+            newClientRecord.value = response.data
+            modalTitle.value = "Neuer Client erfolgreich angelegt"
+            buttonText.value = "Client bereits  vorhanden"
+            clientExists.value = true
+        })
+        .catch((error: any): void => apiError(error))
 </script>
 
 <template>
@@ -44,21 +66,25 @@
             </header>
             <div class="content">
                 Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.
-                <SvwsUiButton @click="openModal()" type="secondary">
-                    Generieren
+                <SvwsUiButton @click="openModal()" :disabled="clientExists" type="secondary">
+                    {{ buttonText }}
                 </SvwsUiButton>
             </div>
-            <SvwsUiModal ref="modal" :show="showModal">
+            <SvwsUiModal ref="modal" :show="showModal" size="medium">
                 <template #modalTitle>
-                    Wahrnung
+                    {{ modalTitle }}
                 </template>
                 <template #modalContent>
-                    <p>Es müssen die Einstellungen im zugehörigen SVWS-Server angepasste werden</p>
+                    <p v-if="!clientExists">{{ adjustSettingsInfo }}</p>
+                    <div v-else>
+                        <p><span class="client-data-fields">Client ID:</span> {{ newClientRecord.id }} </p>
+                        <p><span class="client-data-fields">Client Name:</span> {{ newClientRecord.name }} </p>
+                        <p><span class="client-data-fields">Client Secret:</span> {{ newClientRecord.secret }} </p>
+                    </div>
                 </template>
-
                 <template #modalActions>
+                    <SvwsUiButton v-if="!clientExists" @click="adjustSettings()" type="secondary">Neuer Token</SvwsUiButton>
                     <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
-                    <SvwsUiButton @click="adjustSettings()" type="secondary">OK</SvwsUiButton>
                 </template>
             </SvwsUiModal>
         </template>
@@ -83,6 +109,10 @@
 
     .content>div {
         @apply ui-flex ui-flex-col ui-gap-5 ui-justify-start
+    }
+
+    .client-data-fields{
+        @apply ui-font-bold
     }
 
     .button {
