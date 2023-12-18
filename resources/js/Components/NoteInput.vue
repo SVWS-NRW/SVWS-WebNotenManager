@@ -37,6 +37,7 @@
             v-model="note"
             :disabled="props.disabled"
             :valid="() => valid()"
+            style="font-weight: bold;"
         ></SvwsUiTextInput>
     </strong>
 </template>

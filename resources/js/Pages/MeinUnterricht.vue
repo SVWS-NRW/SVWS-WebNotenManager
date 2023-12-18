@@ -220,7 +220,7 @@
                     <template #cell(note)="{ value, rowData }">
                         <NoteInput
                             :leistung="rowData"
-                            :disabled="!rowData.editable.noten"
+                            :disabled="false"
                         />
                     </template>
 
