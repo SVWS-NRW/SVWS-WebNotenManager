@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { Ref, ref } from 'vue'
+    import { Ref, ref, watch } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, { AxiosResponse } from 'axios'
+    import axios, { AxiosPromise, AxiosResponse } from 'axios'
     import SettingsMenu from '@/Components/SettingsMenu.vue'
     import { apiError, apiSuccess } from '@/Helpers/api.helper'
     import { SvwsUiButton, SvwsUiModal, SvwsUiTextInput } from '@svws-nrw/svws-ui'
@@ -12,48 +12,69 @@
     })
 
     interface ClientRecord {
-        id: string
+        id: number
         name: string
         secret: string
+        created_at: Date
     }
 
-    const clientRecords: Ref<ClientRecord[]> = ref({} as ClientRecord[])
-    const newClientRecord: Ref<ClientRecord> = ref({} as ClientRecord)
-    const adjustSettingsInfo: Ref<string> = ref("Es müssen die Einstellungen im zugehörigen SVWS-Server angepasst werden")
-    const modalTitle: Ref<string> = ref("Warnung")
     const newClientName: string = usePage().props.value.schoolName as string
-    const buttonText: Ref<string> = ref("Generieren")
+    const clientRecord: Ref<ClientRecord> = ref({} as ClientRecord)
     const clientExists: Ref<boolean> = ref(false)
-
+    const convertedClientRecordTimestamp: Ref<string> = ref("")
+    const newClientCreated: Ref<boolean> = ref(false)
+    const newClientDataInfo: Ref<HTMLDivElement>= ref({} as HTMLDivElement)
     const modal = ref<any>(null)
+    const modalTitle: Ref<string> = ref("Warnung")
+    const adjustSettingsInfo: Ref<string> = ref("Es müssen die Einstellungen im zugehörigen SVWS-Server angepasst werden")
     const _showModal: Ref<boolean> = ref(false)
 
-    const showModal = () => _showModal
+    const showModal = (): Ref<boolean> => _showModal
 
-    const openModal = () => _showModal.value = true
+    const openModal = (): boolean => _showModal.value = true
 
-    const closeModal = () => _showModal.value = false
+    const closeModal = (): boolean => _showModal.value = false
+
+    const copyToClipboard = (receivedClientDataInfo: HTMLDivElement) => {
+        navigator.clipboard.writeText(receivedClientDataInfo.innerText);
+    }
 
     axios.get(route('passport.index'))
         .then((response: AxiosResponse): void => {
-            clientRecords.value = response.data
-            for (let record in clientRecords.value) {
-                if (clientRecords.value[record].name == newClientName + "_client") {
-                    buttonText.value = "Client bereits vorhanden"
+            for (let record in response.data) {
+                if (response.data[record].name == newClientName + "_client") {
+                    clientRecord.value = response.data[record]
+                    convertedClientRecordTimestamp.value = new Date(clientRecord.value.created_at).toLocaleString('de-DE')
                     clientExists.value = true
                 }
             }
         })
 
-    const adjustSettings = () => axios
-        .post(route('passport.store'), { 'name': newClientName + "_client" })
-        .then((response: AxiosResponse) => {
-            newClientRecord.value = response.data
-            modalTitle.value = "Neuer Client erfolgreich angelegt"
-            buttonText.value = "Client bereits  vorhanden"
-            clientExists.value = true
-        })
-        .catch((error: any): void => apiError(error))
+    const adjustSettings = (): void => {
+        if (clientExists.value) {
+            axios.delete(route('passport.destroy', clientRecord.value.id))
+                .then((response: AxiosResponse) => {
+                    return response
+                })
+                .catch((error: any): void => console.log("error: " + apiError(error)))
+        }
+        axios.post(route('passport.store'), { 'name': newClientName + "_client" })
+            .then((response: AxiosResponse) => {
+                clientRecord.value = response.data
+                convertedClientRecordTimestamp.value = new Date(clientRecord.value.created_at).toLocaleString('de-DE');
+                clientExists.value = true
+                newClientCreated.value = true
+                modalTitle.value = "Neuer Client erfolgreich angelegt"
+            })
+            .catch((error: any): void => apiError(error))
+    }
+
+    watch(() => _showModal.value, () => {
+        if (_showModal.value == false) {
+            newClientCreated.value = false
+            modalTitle.value = "Warnung"
+        }
+    })
 </script>
 
 <template>
@@ -64,26 +85,30 @@
                     <h2 class="text-headline">Einstellungen - Synchronisationseinstellungen für den SVWS-Server</h2>
                 </div>
             </header>
+            <br />
             <div class="content">
-                Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.
-                <SvwsUiButton @click="openModal()" :disabled="clientExists" type="secondary">
-                    {{ buttonText }}
+                <p v-if="clientExists">Letzte Tokengenerierung: {{ convertedClientRecordTimestamp }}</p>
+                <p>Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.</p>
+                <SvwsUiButton @click="openModal()" type="secondary">
+                    Generieren
                 </SvwsUiButton>
             </div>
-            <SvwsUiModal ref="modal" :show="showModal" size="medium">
+            <SvwsUiModal id="clientModal" ref="modal" :show="showModal" size="medium">
                 <template #modalTitle>
                     {{ modalTitle }}
                 </template>
                 <template #modalContent>
-                    <p v-if="!clientExists">{{ adjustSettingsInfo }}</p>
-                    <div v-else>
-                        <p><span class="client-data-fields">Client ID:</span> {{ newClientRecord.id }} </p>
-                        <p><span class="client-data-fields">Client Name:</span> {{ newClientRecord.name }} </p>
-                        <p><span class="client-data-fields">Client Secret:</span> {{ newClientRecord.secret }} </p>
+                    <div ref="newClientDataInfo" v-if="newClientCreated">
+                        <p><span class="client-data-fields">Client ID:</span> {{ clientRecord.id }} </p>
+                        <p><span class="client-data-fields">Client Name:</span> {{ clientRecord.name }} </p>
+                        <p><span class="client-data-fields">Client Secret:</span> {{ clientRecord.secret }} </p>
                     </div>
+                    <p v-else>{{ adjustSettingsInfo }}</p>
                 </template>
                 <template #modalActions>
-                    <SvwsUiButton v-if="!clientExists" @click="adjustSettings()" type="secondary">Neuer Token</SvwsUiButton>
+                    <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
+                    </SvwsUiButton>
+                    <SvwsUiButton v-if="newClientCreated" @click="copyToClipboard(newClientDataInfo)" type="secondary">Kopieren</SvwsUiButton>
                     <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
                 </template>
             </SvwsUiModal>
@@ -111,7 +136,7 @@
         @apply ui-flex ui-flex-col ui-gap-5 ui-justify-start
     }
 
-    .client-data-fields{
+    .client-data-fields {
         @apply ui-font-bold
     }
 

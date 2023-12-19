@@ -13,7 +13,7 @@ class PassportController extends Controller
     public function index(): JsonResponse
     {
         $clients = Client::query()
-            ->select('id', 'name', 'secret')
+            ->select('id', 'name', 'secret', 'created_at')
             ->get()
             ->each(fn (Client $client): Client => $client->makeVisible('secret') );
 
@@ -28,13 +28,17 @@ class PassportController extends Controller
             'id' => $client->id,
             'name' => $client->name,
             'secret' => $client->secret,
+            'created_at' => $client->created_at,
         ], Response::HTTP_CREATED);
     }
 
-    public function destroy(Client $client): JsonResponse
+    //public function destroy(Client $client): JsonResponse
+    public function destroy(int $client_id)
     {
+        $client = new Client();
+        $client = $client->find($client_id);
         $client->delete();
-
+        
         return response()->json(status: Response::HTTP_NO_CONTENT);
     }
 }
