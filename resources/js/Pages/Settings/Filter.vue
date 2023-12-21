@@ -21,11 +21,12 @@
             kurs?: boolean,
             note?: boolean,
             fach?: boolean,
-        }
+        },
         leistungsdatenuebersicht?: {
             teilleistungen?: boolean,
             fachlehrer?: boolean,
             mahnungen?: boolean,
+            fehlstunden?: boolean,
             bemerkungen?: boolean,
             kurs?: boolean,
             note?: boolean,
@@ -38,15 +39,6 @@
 
     const saveSettings = () => axios
         .post(route('api.settings.filters'),  {
-            'filters_leistungsdatenuebersicht': {
-                'mahnungen': settings.value.leistungsdatenuebersicht.mahnungen,
-                'fachlehrer': settings.value.leistungsdatenuebersicht.fachlehrer,
-                'bemerkungen': settings.value.leistungsdatenuebersicht.bemerkungen,
-                'teilleistungen': settings.value.leistungsdatenuebersicht.teilleistungen,
-                'kurs': settings.value.leistungsdatenuebersicht.kurs,
-                'note': settings.value.leistungsdatenuebersicht.note,
-                'fach': settings.value.leistungsdatenuebersicht.fach,
-            },
             'filters_meinunterricht': {
                 'mahnungen': settings.value.meinunterricht.mahnungen,
                 'bemerkungen': settings.value.meinunterricht.bemerkungen,
@@ -55,6 +47,16 @@
                 'kurs': settings.value.meinunterricht.kurs,
                 'note': settings.value.meinunterricht.note,
                 'fach': settings.value.meinunterricht.fach,
+            },
+            'filters_leistungsdatenuebersicht': {
+                'mahnungen': settings.value.leistungsdatenuebersicht.mahnungen,
+                'fachlehrer': settings.value.leistungsdatenuebersicht.fachlehrer,
+                'bemerkungen': settings.value.leistungsdatenuebersicht.bemerkungen,
+                'fehlstunden': settings.value.leistungsdatenuebersicht.fehlstunden,
+                'teilleistungen': settings.value.leistungsdatenuebersicht.teilleistungen,
+                'kurs': settings.value.leistungsdatenuebersicht.kurs,
+                'note': settings.value.leistungsdatenuebersicht.note,
+                'fach': settings.value.leistungsdatenuebersicht.fach,
             },
         })
         .then((): void => apiSuccess())
@@ -86,6 +88,7 @@
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.kurs" :value="1">Kurs</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.note" :value="1">Note</SvwsUiCheckbox>

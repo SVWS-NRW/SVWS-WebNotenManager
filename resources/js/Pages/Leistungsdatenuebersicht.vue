@@ -27,9 +27,10 @@
 
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
-        bemerkungen: false,
         fachlehrer: false,
+        mahnungen: false,
         fehlstunden: false,
+        bemerkungen: false,
         kurs: false,
         note: false,
         fach: false,
@@ -69,12 +70,16 @@
         ...(toggles.value.teilleistungen ? [
             { key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 6 }
         ] : []),
-        { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 6 },
-        ...(toggles.value.mahnungen ? [
+        ...(toggles.value.note ? [
+            { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 6 },
+        ] : []),
+            ...(toggles.value.mahnungen ? [
             { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8},
         ] : []),
-        { key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6 },
-        { key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6 },
+        ...(toggles.value.fehlstunden ? [
+            { key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6 },
+            { key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6 },
+        ] : []),
         ...(toggles.value.bemerkungen ? [
             { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: true, span: 12, minWidth: 4 },
         ] : []),
@@ -165,6 +170,7 @@
                         <SvwsUiCheckbox v-model="toggles.note" :value="true">Note</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     </template>
                     <template #filterAdvanced>

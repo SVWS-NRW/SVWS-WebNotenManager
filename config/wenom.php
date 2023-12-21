@@ -30,6 +30,7 @@ return [
             'teilleistungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_TEILLEISTUNGEN', false),
             'fachlehrer' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FACHLEHRER', true),
             'mahnungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_MAHNUNGEN', false),
+            'fehlstunden' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FEHLSTUNDEN', false),
             'bemerkungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_BEMERKUNGEN', true),
             'kurs' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_KURS', true),
             'note' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_NOTE', true),
