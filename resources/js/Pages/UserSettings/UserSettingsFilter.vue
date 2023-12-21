@@ -10,22 +10,27 @@
         auth: Object,
     })
 
-    let user_settings = ref({
-        filters_leistungsdatenuebersicht: {
-            teilleistungen: false,
-            fachlehrer: false,
-            mahnungen: false,
-            bemerkungen: false,
+    let user_settings: Ref<{
+        meinunterricht?: {
+            teilleistungen?: boolean,
+            mahnungen?: boolean,
+            fehlstunden?: boolean,
+            bemerkungen?: boolean,
+            kurs?: boolean,
+            note?: boolean,
+            fach?: boolean,
         },
-        filters_meinunterricht: {
-            teilleistungen: false,
-            mahnungen: false,
-            fehlstunden: false,
-            bemerkungen: false,
-                        kurs: false,
-            note: false,
-            fach:false
-        }})
+        leistungsdatenuebersicht?: {
+            teilleistungen?: boolean,
+            fachlehrer?: boolean,
+            mahnungen?: boolean,
+            fehlstunden?: boolean,
+            bemerkungen?: boolean,
+            kurs?: boolean,
+            note?: boolean,
+            fach?: boolean,
+        }
+    }> = ref({})
 
     onMounted((): AxiosResponse => axios.get(route('user_settings.get_all_filters'))
         .then((response: AxiosResponse): AxiosResponse => user_settings.value = response.data)
@@ -33,15 +38,6 @@
 
     const saveSettings = () => axios
         .post(route('user_settings.set_filters'), {
-            'filters_leistungsdatenuebersicht': {
-                'mahnungen': user_settings.value.filters_leistungsdatenuebersicht?.mahnungen,
-                'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht?.fachlehrer,
-                'bemerkungen': user_settings.value.filters_leistungsdatenuebersicht?.bemerkungen,
-                'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht?.teilleistungen,
-                'kurs': user_settings.value.filters_leistungsdatenuebersicht?.kurs,
-                'note': user_settings.value.filters_leistungsdatenuebersicht?.note,
-                'fach': user_settings.value.filters_leistungsdatenuebersicht?.fach,
-            },
             'filters_meinunterricht': {
                 'mahnungen': user_settings.value.filters_meinunterricht?.mahnungen,
                 'bemerkungen': user_settings.value.filters_meinunterricht?.bemerkungen,
@@ -50,6 +46,16 @@
                 'kurs': user_settings.value.filters_meinunterricht?.kurs,
                 'note': user_settings.value.filters_meinunterricht?.note,
                 'fach': user_settings.value.filters_meinunterricht?.fach,
+            },
+            'filters_leistungsdatenuebersicht': {
+                'mahnungen': user_settings.value.filters_leistungsdatenuebersicht?.mahnungen,
+                'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht?.fachlehrer,
+                'bemerkungen': user_settings.value.filters_leistungsdatenuebersicht?.bemerkungen,
+                'fehlstunden': user_settings.value.filters_leistungsdatenuebersicht?.fehlstunden,
+                'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht?.teilleistungen,
+                'kurs': user_settings.value.filters_leistungsdatenuebersicht?.kurs,
+                'note': user_settings.value.filters_leistungsdatenuebersicht?.note,
+                'fach': user_settings.value.filters_leistungsdatenuebersicht?.fach,
             },
         })
         .then((): void => apiSuccess())
@@ -80,6 +86,7 @@
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fachlehrer">Fachlehrer</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.mahnungen">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.kurs">Kurs</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note">Note</SvwsUiCheckbox>

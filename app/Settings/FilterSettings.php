@@ -17,6 +17,7 @@ class FilterSettings extends Settings
 	public bool $leistungdatenuebersicht_teilleistungen;
 	public bool $leistungdatenuebersicht_fachlehrer;
 	public bool $leistungdatenuebersicht_mahnungen;
+	public bool $leistungdatenuebersicht_fehlstunden;
 	public bool $leistungdatenuebersicht_bemerkungen;
 	public bool $leistungdatenuebersicht_kurs;
 	public bool $leistungdatenuebersicht_note;
