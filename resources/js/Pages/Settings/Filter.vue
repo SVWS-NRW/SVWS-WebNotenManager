@@ -27,6 +27,9 @@
             fachlehrer?: boolean,
             mahnungen?: boolean,
             bemerkungen?: boolean,
+            kurs?: boolean,
+            note?: boolean,
+            fach?: boolean,
         }
     }> = ref({})
 
@@ -40,6 +43,9 @@
                 'fachlehrer': settings.value.leistungsdatenuebersicht.fachlehrer,
                 'bemerkungen': settings.value.leistungsdatenuebersicht.bemerkungen,
                 'teilleistungen': settings.value.leistungsdatenuebersicht.teilleistungen,
+                'kurs': settings.value.leistungsdatenuebersicht.kurs,
+                'note': settings.value.leistungsdatenuebersicht.note,
+                'fach': settings.value.leistungsdatenuebersicht.fach,
             },
             'filters_meinunterricht': {
                 'mahnungen': settings.value.meinunterricht.mahnungen,
@@ -81,6 +87,9 @@
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.kurs" :value="1">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.note" :value="1">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fach" :value="1">Fach</SvwsUiCheckbox>
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>

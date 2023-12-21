@@ -18,6 +18,9 @@ class FilterSettings extends Settings
 	public bool $leistungdatenuebersicht_fachlehrer;
 	public bool $leistungdatenuebersicht_mahnungen;
 	public bool $leistungdatenuebersicht_bemerkungen;
+	public bool $leistungdatenuebersicht_kurs;
+	public bool $leistungdatenuebersicht_note;
+	public bool $leistungdatenuebersicht_fach;
 
 	public static function group(): string
     {

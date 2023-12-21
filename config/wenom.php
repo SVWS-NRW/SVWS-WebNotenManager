@@ -31,6 +31,9 @@ return [
             'fachlehrer' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FACHLEHRER', true),
             'mahnungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_MAHNUNGEN', false),
             'bemerkungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_BEMERKUNGEN', true),
+            'kurs' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_KURS', true),
+            'note' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_NOTE', true),
+            'fach' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FACH', true),
         ],
     ],
 ];
