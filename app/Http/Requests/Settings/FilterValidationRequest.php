@@ -18,6 +18,9 @@ class FilterValidationRequest extends FormRequest
             'filters_leistungsdatenuebersicht.fachlehrer' => ['required', 'boolean'],
             'filters_leistungsdatenuebersicht.bemerkungen' => ['required', 'boolean'],
             'filters_leistungsdatenuebersicht.teilleistungen' => ['required', 'boolean'],
+            'filters_leistungsdatenuebersicht.kurs' => ['required', 'boolean'],
+            'filters_leistungsdatenuebersicht.note' => ['required', 'boolean'],
+            'filters_leistungsdatenuebersicht.fach' => ['required', 'boolean'],
 
             'filters_meinunterricht.mahnungen' => ['required', 'boolean'],
             'filters_meinunterricht.bemerkungen' => ['required', 'boolean'],
@@ -36,6 +39,9 @@ class FilterValidationRequest extends FormRequest
             'filters_leistungsdatenuebersicht.fachlehrer' => 'Leistungsdatenuebersicht Fachlehrer',
             'filters_leistungsdatenuebersicht.bemerkungen' => 'Leistungsdatenuebersicht Bemerkungen',
             'filters_leistungsdatenuebersicht.teilleistungen' => 'Leistungsdatenuebersicht Teilleistungen',
+            'filters_leistungsdatenuebersicht.kurs' => 'Leistungsdatenübersicht Kurs',
+            'filters_leistungsdatenuebersicht.note' => 'Leistungsdatenübersicht Note',
+            'filters_leistungsdatenuebersicht.fach' => 'Leistungsdatenübersicht Fach',
 
             'filters_meinunterricht.mahnungen' => 'Mein Unterricht Mahnungen',
             'filters_meinunterricht.bemerkungen' => 'Mein Unterricht Bemerkungen',

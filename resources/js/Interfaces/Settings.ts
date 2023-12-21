@@ -34,6 +34,9 @@ export interface Settings {
 		leistungdatenuebersicht_fachlehrer: boolean,
 		leistungdatenuebersicht_mahnungen: boolean,
 		leistungdatenuebersicht_bemerkungen: boolean,
+		leistungdatenuebersicht_kurs: boolean,
+		leistungdatenuebersicht_note: boolean, 
+		leistungdatenuebersicht_fach: boolean,
 	},
 	gdpr: {
 		domain_url: string,

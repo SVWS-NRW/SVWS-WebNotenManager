@@ -38,6 +38,9 @@
                 'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht?.fachlehrer,
                 'bemerkungen': user_settings.value.filters_leistungsdatenuebersicht?.bemerkungen,
                 'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht?.teilleistungen,
+                'kurs': user_settings.value.filters_leistungsdatenuebersicht?.kurs,
+                'note': user_settings.value.filters_leistungsdatenuebersicht?.note,
+                'fach': user_settings.value.filters_leistungsdatenuebersicht?.fach,
             },
             'filters_meinunterricht': {
                 'mahnungen': user_settings.value.filters_meinunterricht?.mahnungen,
@@ -78,6 +81,9 @@
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fachlehrer">Fachlehrer</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.mahnungen">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.kurs">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach">Fach</SvwsUiCheckbox>
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>

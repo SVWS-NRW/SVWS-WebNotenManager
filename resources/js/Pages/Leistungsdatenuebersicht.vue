@@ -30,6 +30,9 @@
         bemerkungen: false,
         fachlehrer: false,
         fehlstunden: false,
+        kurs: false,
+        note: false,
+        fach: false,
     })
 
     let lehrerCanOverrideFachlehrer = ref(false)
@@ -54,8 +57,12 @@
     const cols = computed((): DataTableColumn[] => [
         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: false },
         { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
-        { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
-        { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
+        ...(toggles.value.fach ? [
+            { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
+        ] : []),
+        ...(toggles.value.kurs ? [
+            { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
+        ] : []),
         ...(toggles.value.fachlehrer ? [
             { key: 'lehrer', label: 'Fachlehrer', sortable: true, span: 2, minWidth: 7 }
         ] : []),
@@ -152,7 +159,10 @@
                                 <mdi-pencil></mdi-pencil>
                             </SvwsUiButton>
                         </div>
+                        <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.kurs" :value="true">Kurs</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                        <SvwsUiCheckbox v-model="toggles.note" :value="true">Note</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.fachlehrer" :value="true">Fachlehrer</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
