@@ -49,17 +49,17 @@
     <span v-if="props.disabled">
         <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
             <span class="icon green" aria-hidden="true">
-                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
+                <ri-checkbox-line ></ri-checkbox-line>
             </span>
         </span>
         <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
             <span class="icon red" aria-hidden="true">
-                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
+                <ri-checkbox-line></ri-checkbox-line>
             </span>
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
             <span class="icon" aria-hidden="true">
-                <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
+                <ri-checkbox-blank-line></ri-checkbox-blank-line>
             </span>
         </span>
     </span>
@@ -67,17 +67,17 @@
     <button v-else @click="props.leistung.mahndatum ? open() : toggleMahnung()">
         <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
            <span class="icon green" aria-hidden="true">
-                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
+                <ri-checkbox-line ></ri-checkbox-line>
            </span>
         </span>
         <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
             <span class="icon red" aria-hidden="true">
-               <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
+               <ri-checkbox-line></ri-checkbox-line>
            </span>
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
            <span class="icon" aria-hidden="true">
-               <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
+               <ri-checkbox-blank-line></ri-checkbox-blank-line>
            </span>
         </span>
     </button>

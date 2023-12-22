@@ -34,13 +34,13 @@
             :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
         >
             <span class="icon">
-               <mdi-checkbox-marked-outline aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></mdi-checkbox-marked-outline>
+               <ri-checkbox-line aria-hidden="true" aria-description="Ist gemahnt mit Mahndatum"></ri-checkbox-line>
             </span>
         </button>
         <div v-else>
             <span class="icon">
-                <mdi-checkbox-marked-outline v-if="leistung.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></mdi-checkbox-marked-outline>
-                <mdi-checkbox-blank-outline v-else aria-hidden="true" aria-description="Ist nicht gemahnt"></mdi-checkbox-blank-outline>
+                <ri-checkbox-line v-if="leistung.istGemahnt" aria-hidden="true" aria-description="Ist gemahnt"></ri-checkbox-line>
+                <ri-checkbox-blank-line v-else aria-hidden="true" aria-description="Ist nicht gemahnt"></ri-checkbox-blank-line>
             </span>
         </div>
     </div>

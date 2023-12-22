@@ -78,7 +78,7 @@
                         @click="navigate('settings.index')"
                     >
                         <template #icon>
-                           <mdi-cog-outline />
+                           <ri-settings-3-line />
                         </template>
                         <template #label>Einstellungen</template>
                     </SvwsUiMenuItem>

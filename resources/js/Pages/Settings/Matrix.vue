@@ -366,8 +366,8 @@
                                                 size="small"
                                                 @click="klassenCollapsed = !klassenCollapsed"
                                             >
-                                            <mdi-chevron-down v-if="klassenCollapsed" />
-                                            <mdi-chevron-right v-else />
+                                            <ri-arrow-down-s-line v-if="klassenCollapsed" />
+                                            <ri-arrow-right-s-line v-else />
                                             </SvwsUiButton>
                                             Klassen
                                             <SvwsUiCheckbox
@@ -514,8 +514,8 @@
                                                 size="small"
                                                 @click="jahgraengeCollapsed[key][0] = !jahgraengeCollapsed[key][0]"
                                             >
-                                                <mdi-chevron-down v-if="jahgraengeCollapsed[key][0]" />
-                                                <mdi-chevron-right v-else />
+                                                <ri-arrow-down-s-line v-if="jahgraengeCollapsed[key][0]" />
+                                                <ri-arrow-right-s-line v-else />
                                             </SvwsUiButton>
                                             <SvwsUiCheckbox
                                                 v-model="jahrgangGroupToggle[key]"
@@ -608,8 +608,8 @@
                                                     size="small"
                                                     @click="jahgraengeCollapsed[key][1][index] = !jahgraengeCollapsed[key][1][index]"
                                                 >
-                                                    <mdi-chevron-down v-if="jahgraengeCollapsed[key][1][index]" />
-                                                    <mdi-chevron-right v-else />
+                                                    <ri-arrow-down-s-line v-if="jahgraengeCollapsed[key][1][index]" />
+                                                    <ri-arrow-right-s-line v-else />
                                                 </SvwsUiButton>
                                          <!-- testing here for indeterminate status-->
                                                 <SvwsUiCheckbox

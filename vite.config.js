@@ -45,7 +45,7 @@ export default defineConfig({
 			resolvers: [
 				IconsResolver({
 					prefix: false,
-					enabledCollections: ['ri', 'mdi'],
+					enabledCollections: ['ri'],
 
 				})
 			],
@@ -54,7 +54,7 @@ export default defineConfig({
 			autoInstall: false,
             scales: {
                 ri: true,
-                mdi: true,
+                mdi: false,
                 // Weitere Icon-Sets hier aktivieren, wenn benötigt
             },
             compiler: 'vue3',

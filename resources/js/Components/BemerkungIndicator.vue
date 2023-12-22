@@ -23,8 +23,8 @@
 <template>
     <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
         <span>
-            <mdi-checkbox-marked-outline v-if="props.bemerkung"></mdi-checkbox-marked-outline>
-            <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
+            <ri-checkbox-line v-if="props.bemerkung"></ri-checkbox-line>
+            <ri-checkbox-blank-line v-else></ri-checkbox-blank-line>
         </span>
 
         <span class="bemerkung">

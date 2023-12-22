@@ -161,7 +161,7 @@
                                 :type="leistungEditable ? 'primary' : 'secondary'"
                                 size="big"
                             >
-                                <mdi-pencil></mdi-pencil>
+                                <ri-pencil-fill></ri-pencil-fill>
                             </SvwsUiButton>
                         </div>
                         <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
