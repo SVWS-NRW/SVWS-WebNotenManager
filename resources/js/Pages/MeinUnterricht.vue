@@ -5,7 +5,10 @@
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface'
     import AppLayout from '@/Layouts/AppLayout.vue'
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
-    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect } from '@svws-nrw/svws-ui'
+    import { handleExport } from '@/Helpers/exportHelper'
+    import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper'
+    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton
+    } from '@svws-nrw/svws-ui'
 
     import {
         BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton
@@ -115,6 +118,41 @@
         jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang')
         noteItems.value = mapFilterOptionsHelper(rows.value, 'note')
     }
+
+    /**
+     * Exports data to a file in the specified format (CSV or Excel).
+     * @param type - The type of export ('csv' or 'excel').
+     */
+    const exportToFile = (type: string): void => {
+        // Determine the columns to be exported based on user preferences
+        const visibleColumns: string[] = [
+            "klasse",
+            "nachname",
+            "vorname",
+            ...Object.keys(toggles.value).filter((col: string) => toggles.value[col as keyof TableColumnToggle])
+        ];
+        
+        // Map visible columns to corresponding database fields
+        const mappedColumns: string[] = visibleColumns.map((col: string) => mapToggleToDatabaseField(col as keyof TableColumnToggle));
+
+        // Prepare data for export by selecting relevant columns
+        const exportData = rowsFiltered.value.map((row: Leistung) => {
+            const rowData: Record<string, any> = {}
+            mappedColumns.forEach((col: string) => {
+                // Check if the column is 'istGemahnt' and map the values to 'ja' or 'nein'
+                if (col === 'istGemahnt') {
+                    rowData[col] = row[col as keyof Leistung] ? 'ja' : 'nein';
+                } else {
+                    rowData[col] = row[col as keyof Leistung];
+                }
+            });
+            return rowData;
+        });
+
+        // Call the general export handler with the prepared data
+        handleExport(exportData, type, 'mein_unterricht');
+    }
+
 </script>
 
 <template>
@@ -147,6 +185,8 @@
                         <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                        <SvwsUiButton class="export-button" type="transparent" @click="exportToFile('csv')">CSV</SvwsUiButton>
+                        <SvwsUiButton class="export-button" type="transparent" @click="exportToFile('excel')">Excel</SvwsUiButton>
                     </template>
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
@@ -278,5 +318,9 @@
 
     .myToggles {
         @apply ui-m-4
+    }
+
+    .export-button {
+        @apply ui-ml-6
     }
 </style>
