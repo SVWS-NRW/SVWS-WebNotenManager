@@ -45,13 +45,19 @@ export default defineConfig({
 			resolvers: [
 				IconsResolver({
 					prefix: false,
-					enabledCollections: ['mdi'],
+					enabledCollections: ['ri', 'mdi'],
 
 				})
 			],
 		}),
 		Icons({
-			autoInstall: true,
+			autoInstall: false,
+            scales: {
+                ri: true,
+                mdi: true,
+                // Weitere Icon-Sets hier aktivieren, wenn benötigt
+            },
+            compiler: 'vue3',
 		})
     ],
 

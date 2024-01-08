@@ -50,7 +50,7 @@
                         :active="activePage('mein_unterricht')"
                         @click="navigate('mein_unterricht')"
                     >
-                        <template #icon><mdi-home-outline /></template>
+                        <template #icon><ri-book-2-line /></template>
                         <template #label>Notenmanager</template>
                     </SvwsUiMenuItem>
 
@@ -58,7 +58,7 @@
                         :active="activePage('leistungsdatenuebersicht')"
                         @click="navigate('leistungsdatenuebersicht')"
                     >
-                        <template #icon><mdi-book-open-outline /></template>
+                        <template #icon><ri-book-read-line /></template>
                         <template #label>Leistungsdatenübersicht</template>
                     </SvwsUiMenuItem>
 
@@ -67,7 +67,7 @@
                         :active="activePage('klassenleitung')"
                         @click="navigate('klassenleitung')"
                     >
-                        <template #icon><mdi-user-outline/></template>
+                        <template #icon><ri-team-line /></template>
                         <template #label>Klassenleitung</template>
                     </SvwsUiMenuItem>
                 </template>
@@ -84,7 +84,7 @@
                     </SvwsUiMenuItem>
 
                     <SvwsUiMenuItem @click="logout()">
-                       <template #icon><mdi-logout /></template>
+                        <template #icon><ri-logout-circle-line /></template>
                         <template #label>Abmelden</template>
                     </SvwsUiMenuItem>
                 </template>
