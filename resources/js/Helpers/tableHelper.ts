@@ -10,7 +10,7 @@ const searchHelper = (model: Leistung|Schueler, search: string[], searchFilter: 
         )
     )
 
-const multiSelectHelper = (model: Leistung|Schueler, column: string, filterItems: [] = []): boolean =>
+const multiSelectHelper = (model: Leistung|Schueler, column: string, filterItems: string[] = []): boolean =>
     filterItems.length === 0
     || filterItems.some((item: string|null): boolean => (item === 'Leer' ? null : item) === model[column])
 
