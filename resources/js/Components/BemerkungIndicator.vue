@@ -35,10 +35,10 @@
 
 <style scoped>
     button {
-        @apply ui-max-w-full ui-flex ui-gap-1.5 ui-items-center ui-justify-start
+        @apply max-w-full flex gap-1.5 items-center justify-start
     }
 
     .bemerkung {
-        @apply ui-truncate
+        @apply truncate
     }
 </style>

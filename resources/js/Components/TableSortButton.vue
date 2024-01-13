@@ -50,22 +50,22 @@
 
 <style scoped>
     .sorting-button {
-        @apply ui-pl-1 hover:ui-bg-gray-100 ui-rounded-md hover:ui-p-1
+        @apply pl-1 hover:bg-gray-100 rounded-md hover:p-1
     }
 
     .sort-icon {
-        @apply ui-inline ui-gap-1.5 ui-items-center ui-justify-start
+        @apply inline gap-1.5 items-center justify-start
     }
 
     .sort-icon-up {
-        @apply sort-icon ui-pl-1
+        @apply sort-icon pl-1
     }
 
     .sort-icon-down {
-        @apply ui-inline ui-pl-1 -ui-ml-3
+        @apply inline pl-1 -ml-3
     }
 
     .sort-icon__active {
-        @apply ui-text-sortingblue ui-bg-blue-200/10 hover:ui-bg-blue-200/10 ui-p-1
+        @apply text-sortingblue bg-blue-200/10 hover:bg-blue-200/10 p-1
     }
 </style>

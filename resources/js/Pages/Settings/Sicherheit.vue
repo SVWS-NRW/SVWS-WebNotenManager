@@ -1,3 +1,45 @@
+<template>
+    <AppLayout title="Einstellungen">
+        <template #main>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">Einstellungen - Sicherheit</h2>
+                </div>
+            </header>
+            <div class="content">
+                <div>
+                    <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten
+                    </SvwsUiCheckbox>
+                </div>
+                <div>
+                    <SvwsUiTextInput v-model="settings.mailer" @input="updateIsDirty()" placeholder="Mailer"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.host" @input="updateIsDirty()" placeholder="HOST_URL"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.port" @input="updateIsDirty()" placeholder="PORT"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.username" @input="updateIsDirty()" placeholder="Benutzername"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.password" @input="updateIsDirty()" placeholder="Passwort"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.encryption" @input="updateIsDirty()" placeholder="Verschluesselung"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.from_address" @input="updateIsDirty()" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.from_name" @input="updateIsDirty()" placeholder="Absender"></SvwsUiTextInput>
+                </div>
+                <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
+            </div>
+<!-- 
+            <section>
+                <h2 class="text-headline">Einstellungen - Sicherheit</h2>
+                <h3 class="text-headline-md">Mein Unterricht</h3>
+                <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten</SvwsUiCheckbox>
+                <SvwsUiButton @click="submit" type="secondary">Speichern</SvwsUiButton>
+            </section> -->
+
+
+        </template>
+        <template #secondaryMenu>
+            <SettingsMenu></SettingsMenu>
+        </template>
+    </AppLayout>
+</template>
+
+
 <script setup lang="ts">
     import { Ref, ref, watch } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
@@ -86,73 +128,33 @@
 
 </script>
 
-<template>
-    <AppLayout title="Einstellungen">
-        <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Einstellungen - Sicherheit</h2>
-                </div>
-            </header>
-            <div class="content">
-                <div>
-                    <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten
-                    </SvwsUiCheckbox>
-                </div>
-                <div>
-                    <SvwsUiTextInput v-model="settings.mailer" @input="updateIsDirty()" placeholder="Mailer"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.host" @input="updateIsDirty()" placeholder="HOST_URL"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.port" @input="updateIsDirty()" placeholder="PORT"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.username" @input="updateIsDirty()" placeholder="Benutzername"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.password" @input="updateIsDirty()" placeholder="Passwort"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.encryption" @input="updateIsDirty()" placeholder="Verschluesselung"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.from_address" @input="updateIsDirty()" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.from_name" @input="updateIsDirty()" placeholder="Absender"></SvwsUiTextInput>
-                </div>
-                <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
-            </div>
-<!-- 
-            <section>
-                <h2 class="text-headline">Einstellungen - Sicherheit</h2>
-                <h3 class="text-headline-md">Mein Unterricht</h3>
-                <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten</SvwsUiCheckbox>
-                <SvwsUiButton @click="submit" type="secondary">Speichern</SvwsUiButton>
-            </section> -->
-
-
-        </template>
-        <template #secondaryMenu>
-            <SettingsMenu></SettingsMenu>
-        </template>
-    </AppLayout>
-</template>
 
 <style scoped>
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply flex flex-col gap-4 p-6
     }
 
     header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+        @apply flex items-center justify-start gap-6
     }
 
     .content {
-        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-max-w-lg
+        @apply px-6 flex flex-col gap-12 max-w-lg
     }
 
     .content>div {
-        @apply ui-flex ui-flex-col ui-gap-5 ui-justify-start
+        @apply flex flex-col gap-5 justify-start
     }
 
     section {
-        @apply ui-p-6 ui-space-y-12
+        @apply p-6 space-y-12
     }
 
     section>div {
-        @apply ui-flex ui-flex-col ui-gap-3 ui-items-start
+        @apply flex flex-col gap-3 items-start
     }
 
     button {
-        @apply ui-self-start
+        @apply self-start
     }
 </style>

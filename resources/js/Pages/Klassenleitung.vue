@@ -1,65 +1,3 @@
-<script setup lang="ts">
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, { AxiosPromise, AxiosResponse } from 'axios'
-    import { computed, onMounted, Ref, ref } from 'vue'
-    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
-    import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui'
-    import { Schueler } from '@/Interfaces/Interface'
-    import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components'
-
-    const title = 'Notenmanager - Klassenleitung'
-
-    const rows: Ref<Schueler[]> = ref([])
-
-    const rowsFiltered = computed((): Schueler[] =>
-        rows.value.filter((schueler: Schueler): boolean =>
-            searchHelper(schueler, ['name'], searchFilter.value)
-            && multiSelectHelper(schueler, 'klasse', klasseFilter.value)
-        )
-    )
-
-    onMounted((): AxiosPromise => axios
-        .get(route('api.klassenleitung'))
-        .then((response: AxiosResponse): AxiosResponse => rows.value = response.data)
-        .finally((): string[] => klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse'))
-    )
-
-    const cols: Ref<DataTableColumn[]> = ref([
-        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, },
-        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
-        { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6, },
-        { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6, },
-        { key: 'asv', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
-        { key: 'aue', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
-        { key: 'zb', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
-    ])
-
-    const selectedSchueler: Ref<Schueler|null> = ref(null)
-    const selectedFloskelgruppe: Ref<string> = ref('asv')
-
-    const selectSchueler = (schueler: Schueler, floskelgruppe: string): void => {
-        if (floskelgruppe || selectedSchueler.value != null) {
-            selectedSchueler.value = schueler
-
-            if (floskelgruppe) {
-                selectedFloskelgruppe.value = floskelgruppe
-            }
-        }
-    }
-
-    const searchFilter: Ref<string|null> = ref(null)
-    const klasseFilter: Ref <string[]> = ref([])
-    const klasseItems: Ref<string[]> = ref([])
-
-    const filterReset = (): void => {
-        klasseFilter.value = []
-        searchFilter.value = ""
-    }
-
-    const isFiltered = (): boolean => klasseFilter.value.length > 0 || searchFilter.value !== null
-
-</script>
-
 <template>
     <AppLayout title="Klassenleitung">
         <template #main>
@@ -151,13 +89,79 @@
     </AppLayout>
 </template>
 
+
+<script setup lang="ts">
+    import AppLayout from '@/Layouts/AppLayout.vue'
+    import axios, { AxiosPromise, AxiosResponse } from 'axios'
+    import { computed, onMounted, Ref, ref } from 'vue'
+    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
+    import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui'
+    import { Schueler } from '@/Interfaces/Interface'
+    import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components'
+
+    const title = 'Notenmanager - Klassenleitung'
+
+    const rows: Ref<Schueler[]> = ref([])
+
+    const rowsFiltered = computed((): Schueler[] =>
+        rows.value.filter((schueler: Schueler): boolean =>
+            searchHelper(schueler, ['name'], searchFilter.value)
+            && multiSelectHelper(schueler, 'klasse', klasseFilter.value)
+        )
+    )
+
+    onMounted((): AxiosPromise => axios
+        .get(route('api.klassenleitung'))
+        .then((response: AxiosResponse): AxiosResponse => rows.value = response.data)
+        .finally((): string[] => klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse'))
+    )
+
+    const cols: Ref<DataTableColumn[]> = ref([
+        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, },
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, },
+        { key: 'gfs', label: 'GFS', sortable: true, span: 1, minWidth: 6, },
+        { key: 'gfsu', label: 'GFSU', sortable: true, span: 1, minWidth: 6, },
+        { key: 'asv', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
+        { key: 'aue', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
+        { key: 'zb', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
+    ])
+
+    const selectedSchueler: Ref<Schueler|null> = ref(null)
+    const selectedFloskelgruppe: Ref<string> = ref('asv')
+
+    const selectSchueler = (schueler: Schueler, floskelgruppe: string): void => {
+        if (floskelgruppe || selectedSchueler.value != null) {
+            selectedSchueler.value = schueler
+
+            if (floskelgruppe) {
+                selectedFloskelgruppe.value = floskelgruppe
+            }
+        }
+    }
+
+    const searchFilter: Ref<string|null> = ref(null)
+    const klasseFilter: Ref <string[]> = ref([])
+    const klasseItems: Ref<string[]> = ref([])
+
+    const filterReset = (): void => {
+        klasseFilter.value = []
+        searchFilter.value = ""
+    }
+
+    const isFiltered = (): boolean => klasseFilter.value.length > 0 || searchFilter.value !== null
+
+</script>
+
+
 <style scoped>
+
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply flex flex-col gap-4 p-6
     }
 
     .content-area {
-        @apply ui-mx-4
+        @apply mx-4
     }
+    
 </style>
 

@@ -44,6 +44,6 @@
 
 <style scoped>
     .low-score {
-        @apply ui-text-red-500
+        @apply text-red-500
     }
 </style>

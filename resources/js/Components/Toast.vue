@@ -53,24 +53,24 @@
 <style scoped>
     .toast {
         @apply 
-        ui-absolute ui-top-4 ui-right-4 
-        ui-p-4 
-        ui-rounded 
-        ui-font-bold ui-text-white
-        ui-transition
-        ui-opacity-0
-        ui-pointer-events-none
+        absolute top-4 right-4 
+        p-4 
+        rounded 
+        font-bold text-white
+        transition
+        opacity-0
+        pointer-events-none
     }
 
     .toast--visible {
-        @apply ui-opacity-100
+        @apply opacity-100
     }
 
     .toast--error {
-        @apply ui-bg-red-500 
+        @apply bg-red-500 
     }
 
     .toast--success {
-        @apply ui-bg-green-500
+        @apply bg-green-500
     }
 </style>

@@ -85,10 +85,10 @@
 
 <style scoped>
     .red {
-        @apply ui-text-red-500
+        @apply text-red-500
     }
 
     .green {
-        @apply ui-text-green-500
+        @apply text-green-500
     }
 </style>

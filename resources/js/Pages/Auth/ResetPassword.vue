@@ -1,31 +1,3 @@
-<script setup>
-    import { Head, useForm } from '@inertiajs/inertia-vue3'
-    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue'
-    import AuthLayout from '../../Layouts/AuthLayout.vue'
-    import {SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui'
-
-    const props = defineProps({
-        email: String,
-        token: String,
-    });
-
-    console.log(props)
-
-    const form = useForm({
-        token: props.token,
-        email: props.email,
-        password: '',
-        password_confirmation: '',
-    });
-
-    const submit = () => {
-        form.post(route('request_password.update'), {
-            onFinish: () => form.reset('password', 'password_confirmation'),
-        })
-    }
-</script>
-
-
 <template>
     <div>
         <Head>
@@ -63,35 +35,63 @@
 </template>
 
 
+<script setup>
+    import { Head, useForm } from '@inertiajs/inertia-vue3'
+    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue'
+    import AuthLayout from '../../Layouts/AuthLayout.vue'
+    import {SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui'
+
+    const props = defineProps({
+        email: String,
+        token: String,
+    });
+
+    console.log(props)
+
+    const form = useForm({
+        token: props.token,
+        email: props.email,
+        password: '',
+        password_confirmation: '',
+    });
+
+    const submit = () => {
+        form.post(route('request_password.update'), {
+            onFinish: () => form.reset('password', 'password_confirmation'),
+        })
+    }
+</script>
+
+
 <style scoped>
 #logo {
-    @apply ui-flex ui-gap-6 ui-justify-center ui-items-center
+    @apply flex gap-6 justify-center items-center
 }
 
 #logo > svg {
-    @apply ui-w-12
+    @apply w-12
 }
 
 #component {
     @apply
-    ui-rounded-lg ui-shadow-lg
-    ui-p-8
-    ui-flex ui-flex-col ui-gap-6
-    ui-w-full ui-max-w-lg
-    ui-bg-white
-    ui-m-auto
+    rounded-lg shadow-lg
+    p-8
+    flex flex-col gap-6
+    w-full max-w-lg
+    bg-white
+    m-auto
 }
 
 #buttons {
-    @apply ui-flex ui-gap-6 ui-justify-between
+    @apply flex gap-6 justify-between
 }
 
 .form-control {
-    @apply ui-flex ui-flex-col ui-gap-0
+    @apply flex flex-col gap-0
 }
 
 .error {
-    @apply ui-text-red-500 ui-text-sm ui-mt-2
+    @apply text-red-500 text-sm mt-2
 }
 </style>
 

@@ -1,3 +1,46 @@
+<template>
+    <AppLayout title="Einstellungen">
+        <template #main>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">Einstellungen - Synchronisationseinstellungen für den SVWS-Server</h2>
+                </div>
+            </header>
+            <br />
+            <div class="content">
+                <p v-if="clientExists">Letzte Tokengenerierung: {{ convertedClientRecordTimestamp }}</p>
+                <p>Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.</p>
+                <SvwsUiButton @click="openModal()" type="secondary">
+                    Generieren
+                </SvwsUiButton>
+            </div>
+            <SvwsUiModal id="clientModal" ref="modal" :show="showModal" size="medium">
+                <template #modalTitle>
+                    {{ modalTitle }}
+                </template>
+                <template #modalContent>
+                    <div ref="newClientDataInfo" v-if="newClientCreated">
+                        <p><span class="client-data-fields">Client ID:</span> {{ clientRecord.id }} </p>
+                        <p><span class="client-data-fields">Client Name:</span> {{ clientRecord.name }} </p>
+                        <p><span class="client-data-fields">Client Secret:</span> {{ clientRecord.secret }} </p>
+                    </div>
+                    <p v-else>{{ adjustSettingsInfo }}</p>
+                </template>
+                <template #modalActions>
+                    <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
+                    </SvwsUiButton>
+                    <SvwsUiButton v-if="newClientCreated" @click="copyToClipboard(newClientDataInfo)" type="secondary">Kopieren</SvwsUiButton>
+                    <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
+                </template>
+            </SvwsUiModal>
+        </template>
+        <template #secondaryMenu>
+            <SettingsMenu></SettingsMenu>
+        </template>
+    </AppLayout>
+</template>
+
+
 <script setup lang="ts">
     import { Ref, ref, watch } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
@@ -77,70 +120,29 @@
     })
 </script>
 
-<template>
-    <AppLayout title="Einstellungen">
-        <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Einstellungen - Synchronisationseinstellungen für den SVWS-Server</h2>
-                </div>
-            </header>
-            <br />
-            <div class="content">
-                <p v-if="clientExists">Letzte Tokengenerierung: {{ convertedClientRecordTimestamp }}</p>
-                <p>Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.</p>
-                <SvwsUiButton @click="openModal()" type="secondary">
-                    Generieren
-                </SvwsUiButton>
-            </div>
-            <SvwsUiModal id="clientModal" ref="modal" :show="showModal" size="medium">
-                <template #modalTitle>
-                    {{ modalTitle }}
-                </template>
-                <template #modalContent>
-                    <div ref="newClientDataInfo" v-if="newClientCreated">
-                        <p><span class="client-data-fields">Client ID:</span> {{ clientRecord.id }} </p>
-                        <p><span class="client-data-fields">Client Name:</span> {{ clientRecord.name }} </p>
-                        <p><span class="client-data-fields">Client Secret:</span> {{ clientRecord.secret }} </p>
-                    </div>
-                    <p v-else>{{ adjustSettingsInfo }}</p>
-                </template>
-                <template #modalActions>
-                    <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
-                    </SvwsUiButton>
-                    <SvwsUiButton v-if="newClientCreated" @click="copyToClipboard(newClientDataInfo)" type="secondary">Kopieren</SvwsUiButton>
-                    <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
-                </template>
-            </SvwsUiModal>
-        </template>
-        <template #secondaryMenu>
-            <SettingsMenu></SettingsMenu>
-        </template>
-    </AppLayout>
-</template>
 
 <style scoped>
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply flex flex-col gap-4 p-6
     }
 
     header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+        @apply flex items-center justify-start gap-6
     }
 
     .content {
-        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-max-w-lg
+        @apply px-6 flex flex-col gap-12 max-w-lg
     }
 
     .content>div {
-        @apply ui-flex ui-flex-col ui-gap-5 ui-justify-start
+        @apply flex flex-col gap-5 justify-start
     }
 
     .client-data-fields {
-        @apply ui-font-bold
+        @apply font-bold
     }
 
     .button {
-        @apply ui-self-start
+        @apply self-start
     }
 </style>

@@ -39,6 +39,6 @@
 
 <style scoped>
     .container {
-        @apply ui-flex ui-flex-col ui-gap-3
+        @apply flex flex-col gap-3
     }
 </style>

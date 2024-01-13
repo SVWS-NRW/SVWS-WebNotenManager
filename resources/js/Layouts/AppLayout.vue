@@ -112,7 +112,7 @@
 
 <style scoped>
     #header {
-        @apply hover:ui-cursor-pointer
+        @apply hover:cursor-pointer
     }
 
 </style>

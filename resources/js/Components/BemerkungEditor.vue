@@ -133,11 +133,11 @@
 <style scoped>
 
     .content {
-        @apply ui-p-6 ui-flex ui-flex-col ui-gap-6
+        @apply p-6 flex flex-col gap-6
     }
     
     .buttons {
-        @apply ui-flex ui-justify-end ui-gap-3
+        @apply flex justify-end gap-3
     }
 
 </style>

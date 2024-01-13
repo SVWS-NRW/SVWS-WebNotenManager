@@ -228,24 +228,24 @@
 
 <style scoped>
 
-    .truncate {
-        @apply ui-truncate
-    }
+    /*.truncate {
+        @apply truncate
+    } */
 
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply flex flex-col gap-4 p-6
     }
 
     header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+        @apply flex items-center justify-start gap-6
     }
 
     .content-area {
-        @apply ui-mx-4
+        @apply mx-4
     }
 
     .myToggles {
-        @apply ui-m-4
+        @apply m-4
     }
 
 </style>
