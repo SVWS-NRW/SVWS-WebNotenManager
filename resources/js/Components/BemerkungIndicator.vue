@@ -1,3 +1,17 @@
+<template>
+    <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
+        <span>
+            <ri-checkbox-line v-if="props.bemerkung"></ri-checkbox-line>
+            <ri-checkbox-blank-line v-else></ri-checkbox-blank-line>
+        </span>
+
+        <span class="bemerkung">
+            {{ formatBasedOnGender(props.bemerkung, props.model) }}
+        </span>
+    </button>
+</template>
+
+
 <script setup lang="ts">
     import { Schueler } from '@/Interfaces/Schueler'
     import { Leistung } from '@/Interfaces/Leistung'
@@ -20,20 +34,9 @@
     const emit = defineEmits<EmitsOptions>()
 </script>
 
-<template>
-    <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
-        <span>
-            <ri-checkbox-line v-if="props.bemerkung"></ri-checkbox-line>
-            <ri-checkbox-blank-line v-else></ri-checkbox-blank-line>
-        </span>
-
-        <span class="bemerkung">
-            {{ formatBasedOnGender(props.bemerkung, props.model) }}
-        </span>
-    </button>
-</template>
 
 <style scoped>
+
     button {
         @apply max-w-full flex gap-1.5 items-center justify-start
     }
@@ -41,4 +44,5 @@
     .bemerkung {
         @apply truncate
     }
+    
 </style>

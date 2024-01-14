@@ -1,31 +1,3 @@
-<script setup lang="ts">
-    import { ref, Ref } from 'vue'
-    import axios from 'axios'
-    import moment from 'moment'
-    import { Leistung } from '@/Interfaces/Interface'
-    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui'
-
-    const props = defineProps<{
-        leistung: Leistung,
-        disabled: boolean,
-    }>()
-
-    const modalVisible: Rev<boolean> = ref(false)
-    const modal = (): boolean => modalVisible
-    const open = () => modal().value = true
-    const close = () => modal().value = false
-
-    const leistung: Ref<Leistung> = ref(props.leistung)
-
-    const toggleMahnung = (): void => {
-        leistung.value.istGemahnt = !leistung.value.istGemahnt
-        axios.post(route('api.mahnung', props.leistung.id), props.leistung)
-            .catch((): boolean => leistung.value.istGemahnt = !leistung.value.istGemahnt)
-    }
-
-    const mahndatumFormatted = (): string => moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY')
-</script>
-
 <template>
     <svws-ui-modal :show="modal" size="small">
         <template #modalTitle>
@@ -83,6 +55,36 @@
     </button>
 </template>
 
+
+<script setup lang="ts">
+    import { ref, Ref } from 'vue'
+    import axios from 'axios'
+    import moment from 'moment'
+    import { Leistung } from '@/Interfaces/Interface'
+    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui'
+
+    const props = defineProps<{
+        leistung: Leistung,
+        disabled: boolean,
+    }>()
+
+    const modalVisible: Rev<boolean> = ref(false)
+    const modal = (): boolean => modalVisible
+    const open = () => modal().value = true
+    const close = () => modal().value = false
+
+    const leistung: Ref<Leistung> = ref(props.leistung)
+
+    const toggleMahnung = (): void => {
+        leistung.value.istGemahnt = !leistung.value.istGemahnt
+        axios.post(route('api.mahnung', props.leistung.id), props.leistung)
+            .catch((): boolean => leistung.value.istGemahnt = !leistung.value.istGemahnt)
+    }
+
+    const mahndatumFormatted = (): string => moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY')
+</script>
+
+
 <style scoped>
     .red {
         @apply text-red-500
@@ -91,4 +93,5 @@
     .green {
         @apply text-green-500
     }
+    
 </style>

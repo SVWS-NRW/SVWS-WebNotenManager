@@ -1,3 +1,20 @@
+<template>
+    <div class="flex flex-col gap-6">
+        <h2 class="headline-4">Floskeln</h2>
+        <hr class="border-gray">
+        <div class="pb-0">
+            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
+        </div>
+
+        <SvwsUiNewTable :data="computedFloskeln" :columns="columns" selectionMode="multiple" :footer="true" v-on:update:modelValue="select">
+            <template #footer>
+                <SvwsUiButton @click="add" :type="type">Zuweisen</SvwsUiButton>
+            </template>
+        </SvwsUiNewTable>
+    </div>
+</template>
+
+
 <script setup lang="ts">// TODO: TBR
     import {computed, reactive} from 'vue'
 
@@ -48,21 +65,6 @@
     const type = computed((): string => state.selected.length > 0 ? 'primary' : 'secondary')
 </script>
 
-<template>
-    <div class="flex flex-col gap-6">
-        <h2 class="headline-4">Floskeln</h2>
-        <hr class="border-gray">
-        <div class="pb-0">
-            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
-        </div>
-
-        <SvwsUiNewTable :data="computedFloskeln" :columns="columns" selectionMode="multiple" :footer="true" v-on:update:modelValue="select">
-            <template #footer>
-                <SvwsUiButton @click="add" :type="type">Zuweisen</SvwsUiButton>
-            </template>
-        </SvwsUiNewTable>
-    </div>
-</template>
 
 <style scoped>
 /**/

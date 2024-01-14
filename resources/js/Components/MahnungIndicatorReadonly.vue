@@ -1,25 +1,3 @@
-<script setup lang="ts">
-    import { reactive, ref } from 'vue'
-    import { Leistung } from '../Interfaces/Leistung'
-    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
-    import { SvwsUiBadge, SvwsUiButton,
-        SvwsUiModal } from '@svws-nrw/svws-ui'
-    import moment from 'moment'
-
-    let props = defineProps<{
-        leistung: Leistung
-        rowIndex: number,
-    }>()
-
-    const modal = ref<any>(null)
-
-    let element: CellRef = undefined
-    let leistung = reactive<Leistung>(props.leistung)
-
-    const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
-    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
-</script>
-
 <template>
     <div :class="{ red: leistung.istGemahnt, green: leistung.mahndatum }">
         <button
@@ -62,6 +40,30 @@
         </template>
     </SvwsUiModal>
 </template>
+
+
+<script setup lang="ts">
+    import { reactive, ref } from 'vue'
+    import { Leistung } from '../Interfaces/Leistung'
+    import { CellRef, setCellRefs, navigateTable } from '../Helpers/tableNavigationHelper'
+    import { SvwsUiBadge, SvwsUiButton,
+        SvwsUiModal } from '@svws-nrw/svws-ui'
+    import moment from 'moment'
+
+    let props = defineProps<{
+        leistung: Leistung
+        rowIndex: number,
+    }>()
+
+    const modal = ref<any>(null)
+
+    let element: CellRef = undefined
+    let leistung = reactive<Leistung>(props.leistung)
+
+    const mahndatumFormatted = (): string => moment(new Date(leistung.mahndatum)).format('DD.MM.YYYY')
+    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
+</script>
+
 
 <style scoped>
     .red {

@@ -1,3 +1,20 @@
+<template>
+    <strong  :class="{ 'low-score' : !valid() }">
+        <span v-if="props.disabled">
+            {{ note }}
+        </span>
+
+        <SvwsUiTextInput
+            v-else
+            v-model="note"
+            :disabled="props.disabled"
+            :valid="() => valid()"
+            style="font-weight: bold;"
+        ></SvwsUiTextInput>
+    </strong>
+</template>
+
+
 <script setup lang="ts">
     import { watch, ref } from 'vue'
     import axios, { AxiosPromise } from 'axios'
@@ -26,24 +43,10 @@
     const valid: boolean = (): boolean => !lowScoreArray.includes(note.value)
 </script>
 
-<template>
-    <strong  :class="{ 'low-score' : !valid() }">
-        <span v-if="props.disabled">
-            {{ note }}
-        </span>
-
-        <SvwsUiTextInput
-            v-else
-            v-model="note"
-            :disabled="props.disabled"
-            :valid="() => valid()"
-            style="font-weight: bold;"
-        ></SvwsUiTextInput>
-    </strong>
-</template>
 
 <style scoped>
     .low-score {
         @apply text-red-500
     }
+    
 </style>

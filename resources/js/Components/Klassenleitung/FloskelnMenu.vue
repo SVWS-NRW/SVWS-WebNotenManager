@@ -1,3 +1,40 @@
+<template>
+    <aside class="bg-white border-dark p-6 z-50 fixed top-0 right-0 bottom-0 w-1/2 border-l-2 border-black/20 flex flex-col gap-6" v-if="props.selected">
+        <header class="flex gap-6 justify-between">
+            <div class="flex gap-6 items-center">
+                <h1 class="headline-1 text-black">
+                    {{ state.schueler?.nachname }}, {{ state.schueler?.vorname }}
+                </h1>
+
+                <SvwsUiBadge variant="highlight" size="big" class="px-6 uppercase">
+                    {{ props.selected?.floskelgruppe }}
+                </SvwsUiBadge>
+            </div>
+
+            <SvwsUiButton @click="close" type="transparent">
+                <span class="icon">
+                   <span class="sr-only">Schließen</span>
+                   <i-ri-close-line aria-hidden="true"></i-ri-close-line>
+                </span>
+            </SvwsUiButton>
+        </header>
+        <div class="flex flex-col gap-12">
+            <div class="h-1/2 flex flex-col gap-3">
+                <SvwsUiTextareaInput resizeable="none" class="flex-1" :modelValue="computedBemerkung" placeholder="Tragen Sie bitte hier Ihre Bemerkungen ein." @update:modelValue="updateBemerkung"></SvwsUiTextareaInput>
+                <div class="flex gap-3">
+                    <SvwsUiButton @click="setBemerkungen" :type="state.isDirty ? 'primary' : 'secondary'">Speichern</SvwsUiButton>
+                    <SvwsUiButton @click="close" v-show="state.isDirty" type="secondary">Verwerfen</SvwsUiButton>
+                </div>
+            </div>
+
+            <div v-if="currentFloskelGruppe">
+                <FloskelTable floskelgruppe="zb" :floskelgruppen="props.floskelgruppen" @added="addFloskeln"></FloskelTable>
+            </div>
+        </div>
+    </aside>
+</template>
+
+
 <script setup lang="ts">// TODO: TBR
     import {computed, reactive, watch} from "vue";
 
@@ -103,41 +140,6 @@
     }, {capture: true})
 </script>
 
-<template>
-    <aside class="bg-white border-dark p-6 z-50 fixed top-0 right-0 bottom-0 w-1/2 border-l-2 border-black/20 flex flex-col gap-6" v-if="props.selected">
-        <header class="flex gap-6 justify-between">
-            <div class="flex gap-6 items-center">
-                <h1 class="headline-1 text-black">
-                    {{ state.schueler?.nachname }}, {{ state.schueler?.vorname }}
-                </h1>
-
-                <SvwsUiBadge variant="highlight" size="big" class="px-6 uppercase">
-                    {{ props.selected?.floskelgruppe }}
-                </SvwsUiBadge>
-            </div>
-
-            <SvwsUiButton @click="close" type="transparent">
-                <span class="icon">
-                   <span class="sr-only">Schließen</span>
-                   <i-ri-close-line aria-hidden="true"></i-ri-close-line>
-                </span>
-            </SvwsUiButton>
-        </header>
-        <div class="flex flex-col gap-12">
-            <div class="h-1/2 flex flex-col gap-3">
-                <SvwsUiTextareaInput resizeable="none" class="flex-1" :modelValue="computedBemerkung" placeholder="Tragen Sie bitte hier Ihre Bemerkungen ein." @update:modelValue="updateBemerkung"></SvwsUiTextareaInput>
-                <div class="flex gap-3">
-                    <SvwsUiButton @click="setBemerkungen" :type="state.isDirty ? 'primary' : 'secondary'">Speichern</SvwsUiButton>
-                    <SvwsUiButton @click="close" v-show="state.isDirty" type="secondary">Verwerfen</SvwsUiButton>
-                </div>
-            </div>
-
-            <div v-if="currentFloskelGruppe">
-                <FloskelTable floskelgruppe="zb" :floskelgruppen="props.floskelgruppen" @added="addFloskeln"></FloskelTable>
-            </div>
-        </div>
-    </aside>
-</template>
 
 <style scoped>
     .icon > svg {

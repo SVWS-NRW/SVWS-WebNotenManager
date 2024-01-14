@@ -1,5 +1,18 @@
+<template>
+    <span v-if="props.disabled">
+        {{ model }}
+    </span>
+
+    <SvwsUiTextInput
+        v-else
+        v-model="model"
+        :disabled="props.disabled"
+    ></SvwsUiTextInput>
+</template>
+
+
 <script setup lang="ts">
-import {watch, ref, Ref} from 'vue'
+    import {watch, ref, Ref} from 'vue'
     import axios, {AxiosPromise, AxiosResponse} from 'axios'
     import { Leistung, Schueler } from '@/Interfaces/Interface'
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui'
@@ -31,14 +44,7 @@ import {watch, ref, Ref} from 'vue'
 
 </script>
 
-<template>
-    <span v-if="props.disabled">
-        {{ model }}
-    </span>
 
-    <SvwsUiTextInput
-        v-else
-        v-model="model"
-        :disabled="props.disabled"
-    ></SvwsUiTextInput>
-</template>
+<style scoped>
+/**/
+</style>

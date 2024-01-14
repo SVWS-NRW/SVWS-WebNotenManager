@@ -1,3 +1,17 @@
+<template>
+    <div 
+        class="toast" 
+        :class="{ 
+            'toast--success': toast.variant === 'success', 
+            'toast--error': toast.variant === 'error',
+            'toast--visible': toast.visible,
+        }"
+    >
+        {{ toast.message }}
+    </div>
+</template>
+
+
 <script setup lang="ts">
     import { ref, Ref } from 'vue'
     import eventBus from '@/event-bus'
@@ -37,18 +51,6 @@
     }
 </script>
 
-<template>
-    <div 
-        class="toast" 
-        :class="{ 
-            'toast--success': toast.variant === 'success', 
-            'toast--error': toast.variant === 'error',
-            'toast--visible': toast.visible,
-        }"
-    >
-        {{ toast.message }}
-    </div>
-</template>
 
 <style scoped>
     .toast {
@@ -73,4 +75,5 @@
     .toast--success {
         @apply bg-green-500
     }
+    
 </style>

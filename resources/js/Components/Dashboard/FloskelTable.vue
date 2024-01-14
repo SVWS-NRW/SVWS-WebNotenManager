@@ -1,3 +1,24 @@
+<template>
+    <div class="flex flex-col gap-6">
+    <h2 class="headline-4">Floskeln</h2>
+    <hr class="border-gray">
+    <div class="pb-0">
+        <div class="grid grid-cols-3 gap-3">
+            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
+            <!-- <SvwsUiSelectInput placeholder="Niveau" v-model="filters.niveau" @update:value="(niveau: Number) => filters.niveau = niveau" :options="state.filterValues.niveau"></SvwsUiSelectInput> -->
+            <!-- <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang_id" @update:value="(jahrgang: Number) => filters.jahrgang_id = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput> -->
+        </div>
+    </div>
+
+    <SvwsUiNewTable :data="computedFloskeln" :columns="columns" selectionMode="multiple" :footer="true" v-on:update:modelValue="select">
+        <template #footer>
+            <SvwsUiButton @click="add" :type="type">Zuweisen</SvwsUiButton>
+        </template>
+    </SvwsUiNewTable>
+    </div>
+</template>
+
+
 <script setup lang="ts">
 // TODO: TBR
 // TODO: Check if this file is still being used (it seems it isn't)
@@ -68,25 +89,6 @@
     })
 </script>
 
-<template>
-    <div class="flex flex-col gap-6">
-    <h2 class="headline-4">Floskeln</h2>
-    <hr class="border-gray">
-    <div class="pb-0">
-        <div class="grid grid-cols-3 gap-3">
-            <SvwsUiTextInput type="search" v-model="state.search" placeholder="Suche"></SvwsUiTextInput>
-            <!-- <SvwsUiSelectInput placeholder="Niveau" v-model="filters.niveau" @update:value="(niveau: Number) => filters.niveau = niveau" :options="state.filterValues.niveau"></SvwsUiSelectInput> -->
-            <!-- <SvwsUiSelectInput placeholder="Jahrgang" v-model="filters.jahrgang_id" @update:value="(jahrgang: Number) => filters.jahrgang_id = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput> -->
-        </div>
-    </div>
-
-    <SvwsUiNewTable :data="computedFloskeln" :columns="columns" selectionMode="multiple" :footer="true" v-on:update:modelValue="select">
-        <template #footer>
-            <SvwsUiButton @click="add" :type="type">Zuweisen</SvwsUiButton>
-        </template>
-    </SvwsUiNewTable>
-    </div>
-</template>
 
 <style scoped>
 /**/

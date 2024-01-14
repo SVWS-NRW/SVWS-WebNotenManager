@@ -1,3 +1,62 @@
+<template>
+    <div class="content">
+        <h2>{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
+        <h1>{{ props.leistung.name }}</h1>
+
+        <SvwsUiTextareaInput
+            v-model="bemerkung"
+            :disabled="!isEditable"
+            placeholder="Bemerkung"
+            resizeable="vertical"
+            @input="bemerkung = $event.target.value"
+            @keydown="onKeyDown"
+        />
+
+        <div class="buttons">
+            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
+            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
+        </div>
+
+        <SvwsUiTable
+            v-if="isEditable"
+            v-model="selectedRows"
+            :items="rowsFiltered"
+            :columns="columns"
+            :clickable="true"
+            :selectable="isEditable"
+            :count="true"
+            :filtered="filtered()"
+            :filterReset="filterReset"
+        >
+            <template #filterAdvanced>
+                <SvwsUiTextInput
+                    type="search"
+                    placeholder="Suche"
+                    v-model="searchFilter"
+                />
+
+                <SvwsUiMultiSelect
+                    v-if="niveauItems.length"
+                    label="Niveau"
+                    :items="niveauItems"
+                    :item-text="item => item"
+                    v-model="niveauFilter"
+                />
+
+                <SvwsUiMultiSelect
+                    v-if="jahrgangItems.length"
+                    label="Jahrgang"
+                    :items="jahrgangItems"
+                    :item-text="item => item"
+                    v-model="jahrgangFilter"
+                />
+            </template>
+        </SvwsUiTable>
+    </div>
+</template>
+
+
 <script setup lang="ts">
     import { computed, onMounted, ref, Ref, watch } from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
@@ -109,63 +168,6 @@
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows)
 </script>
 
-<template>
-    <div class="content">
-        <h2>{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
-        <h1>{{ props.leistung.name }}</h1>
-
-        <SvwsUiTextareaInput
-            v-model="bemerkung"
-            :disabled="!isEditable"
-            placeholder="Bemerkung"
-            resizeable="vertical"
-            @input="bemerkung = $event.target.value"
-            @keydown="onKeyDown"
-        />
-
-        <div class="buttons">
-            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
-            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
-            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
-        </div>
-
-        <SvwsUiTable
-            v-if="isEditable"
-            v-model="selectedRows"
-            :items="rowsFiltered"
-            :columns="columns"
-            :clickable="true"
-            :selectable="isEditable"
-            :count="true"
-            :filtered="filtered()"
-            :filterReset="filterReset"
-        >
-            <template #filterAdvanced>
-                <SvwsUiTextInput
-                    type="search"
-                    placeholder="Suche"
-                    v-model="searchFilter"
-                />
-
-                <SvwsUiMultiSelect
-                    v-if="niveauItems.length"
-                    label="Niveau"
-                    :items="niveauItems"
-                    :item-text="item => item"
-                    v-model="niveauFilter"
-                />
-
-                <SvwsUiMultiSelect
-                    v-if="jahrgangItems.length"
-                    label="Jahrgang"
-                    :items="jahrgangItems"
-                    :item-text="item => item"
-                    v-model="jahrgangFilter"
-                />
-        </template>
-    </SvwsUiTable>
-</div>
-</template>
 
 <style scoped>
     .content {
@@ -175,4 +177,5 @@
     .buttons {
         @apply flex justify-end gap-3
     }
+    
 </style>
