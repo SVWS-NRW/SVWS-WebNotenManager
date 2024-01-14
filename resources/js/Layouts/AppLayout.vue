@@ -1,41 +1,3 @@
-<script setup lang="ts">
-    import { ref, useSlots } from 'vue';
-    import { Inertia } from '@inertiajs/inertia'
-    import { usePage } from '@inertiajs/inertia-vue3'
-    import { Auth } from '@/Interfaces/Auth'
-    import Toast from '@/Components/Toast.vue';
-
-    import {
-        SvwsUiAppLayout,
-        SvwsUiMenu,
-        SvwsUiMenuHeader,
-        SvwsUiMenuItem,
-    } from '@svws-nrw/svws-ui'
-
-    const modal = ref<any>(null);
-    const modalInfo = ref<any>(null);
-    const slots = useSlots()
-    const auth: Auth = usePage().props.value.auth as Auth
-
-    const visible = (item: 'mein_unterricht' | 'klassenleitung' | 'settings'): boolean => {
-        switch (item) {
-            case 'mein_unterricht':
-                return !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator)
-            case 'klassenleitung':
-                return auth.user.klassen.length > 0
-            case 'settings':
-                return auth.administrator
-            default:
-                return false
-        }
-    }
-
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
-    const logout = (): void => Inertia.post(route('logout'))
-    const activePage = (routeName: string): boolean => route().current(routeName)
-    const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ')
-</script>
-
 <template>
     <SvwsUiAppLayout>
         <template #sidebar>
@@ -110,7 +72,48 @@
     </SvwsUiAppLayout>
 </template>
 
+
+<script setup lang="ts">
+    import { ref, useSlots } from 'vue';
+    import { Inertia } from '@inertiajs/inertia'
+    import { usePage } from '@inertiajs/inertia-vue3'
+    import { Auth } from '@/Interfaces/Auth'
+    import Toast from '@/Components/Toast.vue';
+
+    import {
+        SvwsUiAppLayout,
+        SvwsUiMenu,
+        SvwsUiMenuHeader,
+        SvwsUiMenuItem,
+    } from '@svws-nrw/svws-ui'
+
+    const modal = ref<any>(null);
+    const modalInfo = ref<any>(null);
+    const slots = useSlots()
+    const auth: Auth = usePage().props.value.auth as Auth
+
+    const visible = (item: 'mein_unterricht' | 'klassenleitung' | 'settings'): boolean => {
+        switch (item) {
+            case 'mein_unterricht':
+                return !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator)
+            case 'klassenleitung':
+                return auth.user.klassen.length > 0
+            case 'settings':
+                return auth.administrator
+            default:
+                return false
+        }
+    }
+
+    const navigate = (routeName: string): void => Inertia.get(route(routeName))
+    const logout = (): void => Inertia.post(route('logout'))
+    const activePage = (routeName: string): boolean => route().current(routeName)
+    const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ')
+</script>
+
+
 <style scoped>
+
     #header {
         @apply hover:cursor-pointer
     }

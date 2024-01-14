@@ -1,8 +1,3 @@
-<script setup lang="ts">
-    import { SvwsUiAppLayout } from '@svws-nrw/svws-ui'
-    import { usePage } from '@inertiajs/inertia-vue3'
-</script>
-
 <template>
     <SvwsUiAppLayout :fullwidthContent="true" v-cloak>
         <template #main>
@@ -30,6 +25,13 @@
         </template>
     </SvwsUiAppLayout>
 </template>
+
+
+<script setup lang="ts">
+    import { SvwsUiAppLayout } from '@svws-nrw/svws-ui'
+    import { usePage } from '@inertiajs/inertia-vue3'
+</script>
+
 
 <style scoped>
     div.component {
@@ -68,4 +70,5 @@
     footer img {
         @apply h-20 w-auto
     }
+    
 </style>
