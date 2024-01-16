@@ -1,5 +1,5 @@
 export interface Occurrence {
 	'$vorname$ $nachname$': string,
 	'$vorname$': string,
-	'$nachname$': string | null
+	'$nachname$': string | null,
 }

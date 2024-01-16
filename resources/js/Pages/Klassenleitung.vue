@@ -91,30 +91,30 @@
 
 
 <script setup lang="ts">
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, { AxiosPromise, AxiosResponse } from 'axios'
-    import { computed, onMounted, Ref, ref } from 'vue'
-    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
-    import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui'
-    import { Schueler } from '@/Interfaces/Interface'
-    import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components'
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import axios, { AxiosPromise, AxiosResponse } from 'axios';
+    import { computed, onMounted, Ref, ref } from 'vue';
+    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
+    import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import { Schueler } from '@/Interfaces/Interface';
+    import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components';
 
-    const title = 'Notenmanager - Klassenleitung'
+    const title = 'Notenmanager - Klassenleitung';
 
-    const rows: Ref<Schueler[]> = ref([])
+    const rows: Ref<Schueler[]> = ref([]);
 
-    const rowsFiltered = computed((): Schueler[] =>
-        rows.value.filter((schueler: Schueler): boolean =>
-            searchHelper(schueler, ['name'], searchFilter.value)
-            && multiSelectHelper(schueler, 'klasse', klasseFilter.value)
-        )
-    )
+    const rowsFiltered = computed((): Schueler[] => {
+        return rows.value.filter((schueler: Schueler): boolean => {
+            return searchHelper(schueler, ['name'], searchFilter.value)
+                && multiSelectHelper(schueler, 'klasse', klasseFilter.value);
+        })
+    });
 
     onMounted((): AxiosPromise => axios
         .get(route('api.klassenleitung'))
         .then((response: AxiosResponse): AxiosResponse => rows.value = response.data)
         .finally((): string[] => klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse'))
-    )
+    );
 
     const cols: Ref<DataTableColumn[]> = ref([
         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, },
@@ -124,37 +124,35 @@
         { key: 'asv', label: 'ASV', sortable: true, span: 8, minWidth: 5, },
         { key: 'aue', label: 'AUE', sortable: true, span: 8, minWidth: 5, },
         { key: 'zb', label: 'ZB', sortable: true, span: 8, minWidth: 5, },
-    ])
+    ]);
 
-    const selectedSchueler: Ref<Schueler|null> = ref(null)
-    const selectedFloskelgruppe: Ref<string> = ref('asv')
+    const selectedSchueler: Ref<Schueler|null> = ref(null);
+    const selectedFloskelgruppe: Ref<string> = ref('asv');
 
     const selectSchueler = (schueler: Schueler, floskelgruppe: string): void => {
         if (floskelgruppe || selectedSchueler.value != null) {
-            selectedSchueler.value = schueler
+            selectedSchueler.value = schueler;
 
             if (floskelgruppe) {
-                selectedFloskelgruppe.value = floskelgruppe
+                selectedFloskelgruppe.value = floskelgruppe;
             }
         }
     }
 
-    const searchFilter: Ref<string|null> = ref(null)
-    const klasseFilter: Ref <string[]> = ref([])
-    const klasseItems: Ref<string[]> = ref([])
+    const searchFilter: Ref<string|null> = ref(null);
+    const klasseFilter: Ref <string[]> = ref([]);
+    const klasseItems: Ref<string[]> = ref([]);
 
     const filterReset = (): void => {
-        klasseFilter.value = []
-        searchFilter.value = ""
-    }
+        klasseFilter.value = [];
+        searchFilter.value = "";
+    };
 
-    const isFiltered = (): boolean => klasseFilter.value.length > 0 || searchFilter.value !== null
-
+    const isFiltered = (): boolean => klasseFilter.value.length > 0 || searchFilter.value !== null;
 </script>
 
 
 <style scoped>
-
     header {
         @apply flex flex-col gap-4 p-6
     }
@@ -162,6 +160,5 @@
     .content-area {
         @apply mx-4
     }
-    
 </style>
 

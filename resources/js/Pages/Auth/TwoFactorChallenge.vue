@@ -66,40 +66,39 @@
 
 
 <script setup>
-import { nextTick, ref } from 'vue';
-import { Head, useForm } from '@inertiajs/inertia-vue3';
-import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
-import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
+    import { nextTick, ref } from 'vue';
+    import { Head, useForm } from '@inertiajs/inertia-vue3';
+    import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
+    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
+    import JetButton from '@/Jetstream/Button.vue';
+    import JetInput from '@/Jetstream/Input.vue';
+    import JetLabel from '@/Jetstream/Label.vue';
+    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
 
-const recovery = ref(false);
+    const recovery = ref(false);
 
-const form = useForm({
-    code: '',
-    recovery_code: '',
-});
+    const form = useForm({
+        code: '',
+        recovery_code: '',
+    });
 
-const recoveryCodeInput = ref(null);
-const codeInput = ref(null);
+    const recoveryCodeInput = ref(null);
+    const codeInput = ref(null);
 
-const toggleRecovery = async () => {
-    recovery.value ^= true;
+    const toggleRecovery = async () => {
+        recovery.value ^= true;
 
-    await nextTick();
+        await nextTick();
 
-    if (recovery.value) {
-        recoveryCodeInput.value.focus();
-        form.code = '';
-    } else {
-        codeInput.value.focus();
-        form.recovery_code = '';
-    }
-};
+        if (recovery.value) {
+            recoveryCodeInput.value.focus();
+            form.code = '';
+        } else {
+            codeInput.value.focus();
+            form.recovery_code = '';
+        }
+    };
 
-const submit = () => {
-    form.post(route('two-factor.login'));
-};
+    const submit = () => form.post(route('two-factor.login'));
+
 </script>

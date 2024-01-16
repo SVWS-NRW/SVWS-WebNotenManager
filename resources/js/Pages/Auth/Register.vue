@@ -84,27 +84,25 @@
 
 
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
-import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
-import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetCheckbox from '@/Jetstream/Checkbox.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
-import AuthLayout from "../../Layouts/AuthLayout.vue";
+    import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+    import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
+    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
+    import JetButton from '@/Jetstream/Button.vue';
+    import JetInput from '@/Jetstream/Input.vue';
+    import JetCheckbox from '@/Jetstream/Checkbox.vue';
+    import JetLabel from '@/Jetstream/Label.vue';
+    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
+    import AuthLayout from "../../Layouts/AuthLayout.vue";
 
-const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    terms: false,
-});
+    const form = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        terms: false,
+    });
 
-const submit = () => {
-    form.post(route('register'), {
+    const submit = () => form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
-};
 </script>

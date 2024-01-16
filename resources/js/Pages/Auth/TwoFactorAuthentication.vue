@@ -53,11 +53,11 @@
 
 
 <script setup lang="ts">
-    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui'
-    import { Head, Link } from '@inertiajs/inertia-vue3'
-    import { Errors, Inertia } from '@inertiajs/inertia'
-    import { reactive } from 'vue'
-    import AuthLayout from '../../Layouts/AuthLayout.vue'
+    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { Head, Link } from '@inertiajs/inertia-vue3';
+    import { Errors, Inertia } from '@inertiajs/inertia';
+    import { reactive } from 'vue';
+    import AuthLayout from '../../Layouts/AuthLayout.vue';
 
     let data= reactive({
         form: {
@@ -65,53 +65,53 @@
         },
         processing: false,
         errors: {},
-    })
+    });
 
-    const getError = (column: string): string => data.errors[column]
-    const hasErrors = (column: string): boolean => column in data.errors
+    const getError = (column: string): string => data.errors[column];
+    const hasErrors = (column: string): boolean => column in data.errors;
 
     //TODO: routes and requests
     const submit = (): void => Inertia.post(route('xxx.xx'), data.form, {
         onSuccess: (): boolean => data.successMessage = true,
         onError: (error: Errors): Errors => data.errors = error,
-        onFinish: (): boolean => data.processing = false
-    })
+        onFinish: (): boolean => data.processing = false,
+    });
 
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
+    const navigate = (routeName: string): void => Inertia.get(route(routeName));
 </script>
 
 
 <style scoped>
-#logo {
-    @apply flex gap-6 justify-center items-center
-}
+    #logo {
+        @apply flex gap-6 justify-center items-center
+    }
 
-#logo > svg {
-    @apply w-12
-}
+    #logo > svg {
+        @apply w-12
+    }
 
-#component {
-    @apply
-    rounded-lg shadow-lg
-    p-8
-    flex flex-col gap-6
-    w-full max-w-lg
-    bg-white
-    m-auto
-}
-.headline-1 {
-    @apply font-bold text-center
-}
+    #component {
+        @apply
+        rounded-lg shadow-lg
+        p-8
+        flex flex-col gap-6
+        w-full max-w-lg
+        bg-white
+        m-auto
+    }
+    .headline-1 {
+        @apply font-bold text-center
+    }
 
-#buttons {
-    @apply flex gap-6 justify-between
-}
+    #buttons {
+        @apply flex gap-6 justify-between
+    }
 
-.form-control {
-    @apply flex flex-col gap-0
-}
+    .form-control {
+        @apply flex flex-col gap-0
+    }
 
-.error {
-    @apply text-red-500 text-sm mt-2
-}
+    .error {
+        @apply text-red-500 text-sm mt-2
+    }
 </style>

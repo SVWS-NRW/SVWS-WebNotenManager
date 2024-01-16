@@ -79,43 +79,35 @@
     import { usePage } from '@inertiajs/inertia-vue3'
     import { Auth } from '@/Interfaces/Auth'
     import Toast from '@/Components/Toast.vue';
-
-    import {
-        SvwsUiAppLayout,
-        SvwsUiMenu,
-        SvwsUiMenuHeader,
-        SvwsUiMenuItem,
-    } from '@svws-nrw/svws-ui'
+    import { SvwsUiAppLayout, SvwsUiMenu, SvwsUiMenuHeader, SvwsUiMenuItem } from '@svws-nrw/svws-ui';
 
     const modal = ref<any>(null);
     const modalInfo = ref<any>(null);
-    const slots = useSlots()
-    const auth: Auth = usePage().props.value.auth as Auth
+    const slots = useSlots();
+    const auth: Auth = usePage().props.value.auth as Auth;
 
     const visible = (item: 'mein_unterricht' | 'klassenleitung' | 'settings'): boolean => {
         switch (item) {
             case 'mein_unterricht':
-                return !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator)
+                return !auth.administrator || (auth.user.lerngruppen.length > 0 && auth.administrator);
             case 'klassenleitung':
-                return auth.user.klassen.length > 0
+                return auth.user.klassen.length > 0;
             case 'settings':
-                return auth.administrator
+                return auth.administrator;
             default:
-                return false
+                return false;
         }
-    }
+    };
 
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
-    const logout = (): void => Inertia.post(route('logout'))
-    const activePage = (routeName: string): boolean => route().current(routeName)
-    const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ')
+    const navigate = (routeName: string): void => Inertia.get(route(routeName));
+    const logout = (): void => Inertia.post(route('logout'));
+    const activePage = (routeName: string): boolean => route().current(routeName);
+    const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ');
 </script>
 
 
 <style scoped>
-
     #header {
         @apply hover:cursor-pointer
     }
-
 </style>

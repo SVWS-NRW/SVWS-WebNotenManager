@@ -68,76 +68,76 @@
 
 
 <script setup lang="ts">
-import AuthLayout from '../../Layouts/AuthLayout.vue'
-import axios, { AxiosError, AxiosResponse } from 'axios'
-import { Inertia } from '@inertiajs/inertia'
-import { PropType, reactive } from 'vue'
-import { Settings } from '../../Interfaces/Settings'
-import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui'
-import { Head } from '@inertiajs/inertia-vue3'
-import { LoginFormData as Login } from '../../Interfaces/FormData'
+    import AuthLayout from '../../Layouts/AuthLayout.vue';
+    import axios, { AxiosError, AxiosResponse } from 'axios';
+    import { Inertia } from '@inertiajs/inertia';
+    import { PropType, reactive } from 'vue';
+    import { Settings } from '@/Interfaces/Settings'
+    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { Head } from '@inertiajs/inertia-vue3';
+    import { LoginFormData as Login } from '../../Interfaces/FormData';
 
-let props = defineProps({
-    settings: {
-        type: Object as PropType<Settings>,
-        required: true,
-    },
-})
+    let props = defineProps({
+        settings: {
+            type: Object as PropType<Settings>,
+            required: true,
+        },
+    });
 
-let data: Login = reactive({
-    form: {
-        email: '',
-        password: '',
-        remember: false,
-    },
-    processing: false,
-    errors: [],
-})
+    let data: Login = reactive({
+        form: {
+            email: '',
+            password: '',
+            remember: false,
+        },
+        processing: false,
+        errors: [],
+    });
 
-const getError = (column: string): string => data.errors[column][0]
-const hasErrors = (column: string): boolean => column in data.errors
+    const getError = (column: string): string => data.errors[column][0];
+    const hasErrors = (column: string): boolean => column in data.errors;
 
-const requestPassword = (): void => Inertia.get(route('request_password.index'))
+    const requestPassword = (): void => Inertia.get(route('request_password.index'));
 
-const submit = (): void => {
-    data.processing = true
-    axios.post(route('login'), data.form)
-        .then((): void => Inertia.get(route('mein_unterricht')))
-        .catch((error: any): AxiosError => data.errors = error.response.data.errors)
-        .finally((): boolean => data.processing = false)
-}
+    const submit = (): void => {
+        data.processing = true;
+        axios.post(route('login'), data.form)
+            .then((): void => Inertia.get(route('mein_unterricht')))
+            .catch((error: any): AxiosError => data.errors = error.response.data.errors)
+            .finally((): boolean => data.processing = false);
+    };
 </script>
 
 
 <style scoped>
-#logo {
-    @apply flex gap-6 justify-center items-center
-}
+    #logo {
+        @apply flex gap-6 justify-center items-center
+    }
 
-#logo > svg {
-    @apply w-12
-}
+    #logo > svg {
+        @apply w-12
+    }
 
-#component {
-    @apply
-    rounded-lg shadow-lg
-    p-8
-    flex flex-col gap-6
-    w-full max-w-lg
-    bg-white
-    m-auto
-}
+    #component {
+        @apply
+        rounded-lg shadow-lg
+        p-8
+        flex flex-col gap-6
+        w-full max-w-lg
+        bg-white
+        m-auto
+    }
 
-#buttons {
-    @apply flex gap-6 justify-between
-}
+    #buttons {
+        @apply flex gap-6 justify-between
+    }
 
-.form-control {
-    @apply flex flex-col gap-0
-}
+    .form-control {
+        @apply flex flex-col gap-0
+    }
 
-.error {
-    @apply text-red-500 text-sm mt-2
-}
+    .error {
+        @apply text-red-500 text-sm mt-2
+    }
 </style>
 

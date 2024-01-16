@@ -28,8 +28,8 @@
 
 
 <script setup lang="ts">
-    import { SvwsUiAppLayout } from '@svws-nrw/svws-ui'
-    import { usePage } from '@inertiajs/inertia-vue3'
+    import { SvwsUiAppLayout } from '@svws-nrw/svws-ui';
+    import { usePage } from '@inertiajs/inertia-vue3';
 </script>
 
 

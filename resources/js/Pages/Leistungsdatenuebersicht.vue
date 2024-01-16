@@ -180,7 +180,7 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue';
     import { Head } from '@inertiajs/inertia-vue3';
-    import {computed, onMounted, ref, Ref} from 'vue';
+    import { computed, onMounted, ref, Ref } from 'vue';
     import axios, { AxiosPromise, AxiosResponse } from 'axios';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
@@ -194,14 +194,16 @@
 
     const rows: Ref<Leistung[]> = ref([]);
 
-    const rowsFiltered = computed((): Leistung[] => rows.value.filter((leistung: Leistung): boolean =>
-        searchHelper(leistung, ['name'], searchFilter.value)
-            && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
-            && multiSelectHelper(leistung, 'fach', fachFilter.value)
-            && multiSelectHelper(leistung, 'kurs', kursFilter.value)
-            && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
-            && multiSelectHelper(leistung, 'note', noteFilter.value)
-    ));
+    const rowsFiltered = computed((): Leistung[] => {
+        return rows.value.filter((leistung: Leistung): boolean => {
+            return searchHelper(leistung, ['name'], searchFilter.value)
+                && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
+                && multiSelectHelper(leistung, 'fach', fachFilter.value)
+                && multiSelectHelper(leistung, 'kurs', kursFilter.value)
+                && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
+                && multiSelectHelper(leistung, 'note', noteFilter.value)
+        });
+    });
 
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
@@ -218,17 +220,18 @@
     let leistungEditable: Ref<boolean> = ref(false);
     const leistungEditableToggle = (): void => {
         if (true === lehrerCanOverrideFachlehrer.value) {
-            leistungEditable.value = !leistungEditable.value
+            leistungEditable.value = !leistungEditable.value;
         }
-    }
+    };
+
     const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value);
 
     onMounted((): AxiosPromise => axios
         .get(route('api.leistungsdatenuebersicht'))
         .then((response: AxiosResponse): void => {
-            rows.value = response.data.data
-            toggles.value = response.data.toggles
-            lehrerCanOverrideFachlehrer.value = response.data.lehrerCanOverrideFachlehrer
+            rows.value = response.data.data;
+            toggles.value = response.data.toggles;
+            lehrerCanOverrideFachlehrer.value = response.data.lehrerCanOverrideFachlehrer;
         })
         .finally((): void => mapFilters())
     );

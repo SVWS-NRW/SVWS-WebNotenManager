@@ -98,12 +98,12 @@
 
 
 <script setup lang="ts">
-    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui'
-    import { Head, Link } from '@inertiajs/inertia-vue3'
-    import { Errors, Inertia } from '@inertiajs/inertia'
-    import { reactive } from 'vue'
-    import AuthLayout from '../../Layouts/AuthLayout.vue'
-    import { PasswordRequestFormData as PasswordRequest } from '../../Interfaces/FormData'
+    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { Head, Link } from '@inertiajs/inertia-vue3';
+    import { Errors, Inertia } from '@inertiajs/inertia';
+    import { reactive } from 'vue';
+    import AuthLayout from '../../Layouts/AuthLayout.vue';
+    import { PasswordRequestFormData as PasswordRequest } from '../../Interfaces/FormData';
 
     let data: PasswordRequest = reactive({
         form: {
@@ -114,18 +114,18 @@
         processing: false,
         errors: {},
         successMessage: false,
-    })
+    });
 
-    const getError = (column: string): string => data.errors[column]
-    const hasErrors = (column: string): boolean => column in data.errors
+    const getError = (column: string): string => data.errors[column];
+    const hasErrors = (column: string): boolean => column in data.errors;
 
     const submit = (): void => Inertia.post(route('request_password.execute'), data.form, {
         onSuccess: (): boolean => data.successMessage = true,
         onError: (error: Errors): Errors => data.errors = error,
-        onFinish: (): boolean => data.processing = false
-    })
+        onFinish: (): boolean => data.processing = false,
+    });
 
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
+    const navigate = (routeName: string): void => Inertia.get(route(routeName));
 </script>
 
 

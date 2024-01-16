@@ -47,42 +47,42 @@
 
 
 <script setup lang="ts">
-    import { ref, Ref, watch } from 'vue'
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, {AxiosResponse} from 'axios'
-    import SettingsMenu from '@/Components/SettingsMenu.vue'
+    import { ref, Ref, watch } from 'vue';
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import axios, {AxiosResponse} from 'axios';
+    import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui'
+    import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
 
     let props = defineProps({
         auth: Object,
-    })
+    });
 
     interface Settings {
-        name: number
-        address: string
-        email: string
-        management_name: string
-        management_telephone: string
-        management_email: string
-        board_name: string
-        board_address: string
-        board_contact: string
-        gdpr_email: string
-        gdpr_address: string
-        hosting_provider_name: string
-        hosting_provider_address: string
+        name: number,
+        address: string,
+        email: string,
+        management_name: string,
+        management_telephone: string,
+        management_email: string,
+        board_name: string,
+        board_address: string,
+        board_contact: string,
+        gdpr_email: string,
+        gdpr_address: string,
+        hosting_provider_name: string,
+        hosting_provider_address: string,
     }
 
-    const settings: Ref<Settings> = ref({} as Settings)
-    const storedSettings: Ref<String> = ref('')
-    const isDirty: Ref<boolean> = ref(false)
+    const settings: Ref<Settings> = ref({} as Settings);
+    const storedSettings: Ref<String> = ref('');
+    const isDirty: Ref<boolean> = ref(false);
 
     axios.get(route('api.settings.index', 'general'))
         .then((response: AxiosResponse): void => {
-            settings.value = response.data
-            storedSettings.value = JSON.stringify(settings.value)
-        })
+            settings.value = response.data;
+            storedSettings.value = JSON.stringify(settings.value);
+        });
 
     const saveSettings = () => axios
         .put(route('api.settings.bulk_update', { group: 'general' }),  { settings: settings.value })
@@ -91,17 +91,17 @@
         .catch((error: any): void => apiError(
             error,
             'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'
-        ))
+        ));
 
     watch(() => settings.value, (): void => {
         if (JSON.stringify(settings.value) == storedSettings.value) {
-            isDirty.value = false
+            isDirty.value = false;
         }
     }, {
         deep: true,
-    })
+    });
     
-    const updateIsDirty = (): boolean => isDirty.value = true
+    const updateIsDirty = (): boolean => isDirty.value = true;
 </script>
 
 

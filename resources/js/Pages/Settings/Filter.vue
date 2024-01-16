@@ -47,7 +47,7 @@
 
     let props = defineProps({
         auth: Object,
-    })
+    });
 
     //correct this
 
@@ -71,7 +71,7 @@
             note?: boolean,
             fach?: boolean,
         }
-    }> = ref({})
+    }> = ref({});
 
     axios.get(route('api.settings.filters'))
         .then((response: AxiosResponse) => settings.value = response.data)
@@ -102,7 +102,7 @@
         .catch((error: any): void => apiError(
             error,
             'Ein Problem ist aufgetreten bei Speichern von Filtern'
-        ))
+        ));
 </script>
 
 

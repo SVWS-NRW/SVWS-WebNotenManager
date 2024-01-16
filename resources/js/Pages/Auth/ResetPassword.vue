@@ -64,35 +64,35 @@
 
 
 <style scoped>
-#logo {
-    @apply flex gap-6 justify-center items-center
-}
+    #logo {
+        @apply flex gap-6 justify-center items-center
+    }
 
-#logo > svg {
-    @apply w-12
-}
+    #logo > svg {
+        @apply w-12
+    }
 
-#component {
-    @apply
-    rounded-lg shadow-lg
-    p-8
-    flex flex-col gap-6
-    w-full max-w-lg
-    bg-white
-    m-auto
-}
+    #component {
+        @apply
+        rounded-lg shadow-lg
+        p-8
+        flex flex-col gap-6
+        w-full max-w-lg
+        bg-white
+        m-auto
+    }
 
-#buttons {
-    @apply flex gap-6 justify-between
-}
+    #buttons {
+        @apply flex gap-6 justify-between
+    }
 
-.form-control {
-    @apply flex flex-col gap-0
-}
+    .form-control {
+        @apply flex flex-col gap-0
+    }
 
-.error {
-    @apply text-red-500 text-sm mt-2
-}
+    .error {
+        @apply text-red-500 text-sm mt-2
+    }
 </style>
 
 

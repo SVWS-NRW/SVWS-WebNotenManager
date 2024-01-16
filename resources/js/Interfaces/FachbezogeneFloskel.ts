@@ -1,6 +1,6 @@
 export interface FachbezogeneFloskel {
 	kuerzel: string,
 	text: string,
-	niveau: string
-	jahrgang: string
+	niveau: string,
+	jahrgang: string,
 }

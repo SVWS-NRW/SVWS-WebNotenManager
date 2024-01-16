@@ -170,24 +170,22 @@
 
 
 <script setup lang="ts">
-    import AuthLayout from '../Layouts/AuthLayout.vue'
-    import { Head } from '@inertiajs/inertia-vue3'
+    import AuthLayout from '../Layouts/AuthLayout.vue';
+    import { Head } from '@inertiajs/inertia-vue3';
 
-    import { Settings } from '../Interfaces/Settings'
-    import { PropType } from 'vue'
+    import { Settings } from '@/Interfaces/Settings';
+    import { PropType } from 'vue';
 
     let props = defineProps({
         settings: {
             type: Object as PropType<Settings>,
             required: true,
-        }
-    })
+        },
+    });
 </script>
 
 
-
 <style scoped>
-
     main {
         @apply bg-white rounded-lg shadow-lg p-8 flex flex-col gap-6 w-full max-w-6xl mx-auto my-8 overflow-y-auto
     }
@@ -224,5 +222,4 @@
         rounded-sm
         break-all
     }
-
 </style>

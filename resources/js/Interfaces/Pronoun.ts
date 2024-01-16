@@ -1,4 +1,4 @@
 export interface Pronoun {
 	m: string,
-	w: string
+	w: string,
 }

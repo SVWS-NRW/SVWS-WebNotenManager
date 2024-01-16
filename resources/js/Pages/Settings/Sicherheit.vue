@@ -41,40 +41,40 @@
 
 
 <script setup lang="ts">
-    import { Ref, ref, watch } from 'vue'
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, { AxiosResponse } from 'axios'
-    import SettingsMenu from '@/Components/SettingsMenu.vue'
-    import { apiError, apiSuccess } from '@/Helpers/api.helper'
-    import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput } from '@svws-nrw/svws-ui'
+    import { Ref, ref, watch } from 'vue';
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import axios, { AxiosResponse } from 'axios';
+    import SettingsMenu from '@/Components/SettingsMenu.vue';
+    import { apiError, apiSuccess } from '@/Helpers/api.helper';
+    import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput } from '@svws-nrw/svws-ui';
 
     let props = defineProps({
         auth: Object,
-    })
+    });
 
     //TODO: fetch 2FA data from backend
-    const enabled = ref(false)
+    const enabled = ref(false);
 
     interface Settings {
-        mailer: number
-        host: string
-        port: string
-        username: string
-        password: string
-        encryption: string
-        from_address: string
-        from_name: string
+        mailer: number,
+        host: string,
+        port: string,
+        username: string,
+        password: string,
+        encryption: string,
+        from_address: string,
+        from_name: string,
     }
 
-    const settings: Ref<Settings> = ref({} as Settings)
-    const storedSettings: Ref<String> = ref('')
-    const isDirty: Ref<boolean> = ref(false)
+    const settings: Ref<Settings> = ref({} as Settings);
+    const storedSettings: Ref<String> = ref('');
+    const isDirty: Ref<boolean> = ref(false);
 
     axios.get(route('api.settings.mail_send_credentials'))
         .then((response: AxiosResponse): void => {
-            settings.value = response.data
-            storedSettings.value = JSON.stringify(settings.value)
-        })
+            settings.value = response.data;
+            storedSettings.value = JSON.stringify(settings.value);
+        });
 
     //TODO: save 2FA data too
     const saveSettings = () => axios
@@ -89,43 +89,18 @@
             'MAIL_FROM_NAME': settings.value.from_name,
         })
         .then((): void => apiSuccess())
-
         .then((): boolean => isDirty.value = false)
-        .catch((error: any): void => apiError(
-            error,
-            'Speichern der Änderungen fehlgeschlagen!'
-        ))
+        .catch((error: any): void => apiError(error, 'Speichern der Änderungen fehlgeschlagen!'));
 
     watch(() => settings.value, (): void => {
         if (JSON.stringify(settings.value) == storedSettings.value) {
-            isDirty.value = false
+            isDirty.value = false;
         }
     }, {
         deep: true,
-    })
+    });
 
-    const updateIsDirty = (): boolean => isDirty.value = true
-
-
-
-
-    //only going in one direction (activate/deactivate) for the moment
-    //     //TODO: check types
-    // const submit = (): void => {
-    //     if (enabled.value) {
-    //     axios.post(route('activate2FA'))
-    //     .then((): void => apiSuccess())
-    //     .catch((error: any): void => apiError(
-    //         error,
-    //         'Ein Problem ist aufgetreten.'
-    //     ))
-    //     // .finally(() => alert(enabled.value))
-    //     }
-    // };
-
-
-
-
+    const updateIsDirty = (): boolean => isDirty.value = true;
 </script>
 
 

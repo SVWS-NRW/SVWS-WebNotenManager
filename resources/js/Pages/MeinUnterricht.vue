@@ -119,14 +119,14 @@
 
     // Gefilterte Daten
     const rowsFiltered = computed((): Leistung[] => {
-        return rows.value.filter((leistung: Leistung): boolean =>
-            searchHelper(leistung, ['name'], searchFilter.value || '')
-            && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
-            && multiSelectHelper(leistung, 'fach', fachFilter.value)
-            && multiSelectHelper(leistung, 'kurs', kursFilter.value)
-            && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
-            && multiSelectHelper(leistung, 'note', noteFilter.value)
-        )
+        return rows.value.filter((leistung: Leistung): boolean => {
+            return searchHelper(leistung, ['name'], searchFilter.value || '')
+                && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
+                && multiSelectHelper(leistung, 'fach', fachFilter.value)
+                && multiSelectHelper(leistung, 'kurs', kursFilter.value)
+                && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
+                && multiSelectHelper(leistung, 'note', noteFilter.value)
+        })
     });
 
     // Schalter für Tabellenspalten
@@ -153,7 +153,7 @@
     // Standard-Spalten für die Tabelle
     const default_cols : DataTableColumn[] = [
         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, fixedWidth: 6, disabled: false },
-        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false }
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
     ];
 
      // Ein- und Ausblendbare Spalten

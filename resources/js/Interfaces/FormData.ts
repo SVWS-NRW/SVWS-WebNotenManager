@@ -5,7 +5,7 @@ export interface LoginFormData {
 		remember: boolean,
 	},
 	processing: boolean,
-	errors: [[key: string], string] | []
+	errors: [[key: string], string] | [],
 }
 
 export interface PasswordRequestFormData {

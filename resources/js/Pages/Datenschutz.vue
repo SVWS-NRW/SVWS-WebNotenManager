@@ -73,17 +73,17 @@
 
 
 <script setup lang="ts">
-    import AuthLayout from '../Layouts/AuthLayout.vue'
-    import { Head } from '@inertiajs/inertia-vue3'
-    import { Settings } from '../Interfaces/Settings'
-    import { PropType } from 'vue'
+    import AuthLayout from '../Layouts/AuthLayout.vue';
+    import { Head } from '@inertiajs/inertia-vue3';
+    import { Settings } from '@/Interfaces/Settings';
+    import { PropType } from 'vue';
 
     let props = defineProps({
         settings: {
             type: Object as PropType<Settings>,
             required: true,
-        }
-    })
+        },
+    });
 </script>
 
 
