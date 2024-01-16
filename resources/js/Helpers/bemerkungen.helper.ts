@@ -27,7 +27,7 @@ const pasteShortcut = (event: KeyboardEvent, bemerkung: Ref<string | null>, flos
 };
 
 const search = (searchFilter: Ref<string>, search: string): boolean => search.toLocaleLowerCase().includes(
-	searchFilter.value?.toLocaleLowerCase() ?? '';
+	searchFilter.value?.toLocaleLowerCase() ?? ''
 );
 
 const multiselect = (filter: Ref<string[]>, column: string): boolean => {
