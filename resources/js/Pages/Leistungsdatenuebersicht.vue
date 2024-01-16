@@ -332,7 +332,7 @@
     }
 
     .export-button {
-        @apply ui-ml-6
+        @apply ml-6
     }
 
 </style>

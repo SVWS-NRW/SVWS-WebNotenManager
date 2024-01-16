@@ -7,18 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    MdiBookOpenOutline: typeof import('~icons/mdi/book-open-outline')['default']
-    MdiCheckboxBlankOutline: typeof import('~icons/mdi/checkbox-blank-outline')['default']
-    MdiCheckboxMarkedOutline: typeof import('~icons/mdi/checkbox-marked-outline')['default']
-    MdiChevronDown: typeof import('~icons/mdi/chevron-down')['default']
-    MdiChevronRight: typeof import('~icons/mdi/chevron-right')['default']
-    MdiCogOutline: typeof import('~icons/mdi/cog-outline')['default']
-    MdiHomeOutline: typeof import('~icons/mdi/home-outline')['default']
-    MdiLogout: typeof import('~icons/mdi/logout')['default']
-    MdiPencil: typeof import('~icons/mdi/pencil')['default']
-    MdiUserOutline: typeof import('~icons/mdi/user-outline')['default']
-    RiArrowDownSLine: typeof import('~icons/ri/arrow-down-s-line')['default']
-    RiArrowRightSLine: typeof import('~icons/ri/arrow-right-s-line')['default']
     RiBook2Line: typeof import('~icons/ri/book2-line')['default']
     RiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
     RiCheckboxBlankLine: typeof import('~icons/ri/checkbox-blank-line')['default']
