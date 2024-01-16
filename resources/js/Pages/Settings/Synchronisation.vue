@@ -19,18 +19,23 @@
                     {{ modalTitle }}
                 </template>
                 <template #modalContent>
-                    <div ref="newClientDataInfo" v-if="newClientCreated">
+                    <div ref="newClientDataInfo" class="client-data-block" v-if="newClientCreated">
+                        <p>Diese Information wird Ihnen einmalig in diesem Fenster eingeblendet.</p>
+                        <br />
                         <p><span class="client-data-fields">Client ID:</span> {{ clientRecord.id }} </p>
                         <p><span class="client-data-fields">Client Name:</span> {{ clientRecord.name }} </p>
                         <p><span class="client-data-fields">Client Secret:</span> {{ clientRecord.secret }} </p>
+                        <br />
                     </div>
                     <p v-else>{{ adjustSettingsInfo }}</p>
                 </template>
                 <template #modalActions>
-                    <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
-                    </SvwsUiButton>
-                    <SvwsUiButton v-if="newClientCreated" @click="copyToClipboard(newClientDataInfo)" type="secondary">Kopieren</SvwsUiButton>
-                    <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
+                    <div class="buttons-block">
+                        <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
+                        </SvwsUiButton>
+                        <SvwsUiButton v-if="newClientCreated" @click="copyToClipboard(newClientDataInfo)" type="secondary">Kopieren</SvwsUiButton>
+                        <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
+                    </div>
                 </template>
             </SvwsUiModal>
         </template>
@@ -114,6 +119,7 @@
 
     watch(() => _showModal.value, () => {
         if (_showModal.value == false) {
+
             newClientCreated.value = false;
             modalTitle.value = "Warnung";
         }

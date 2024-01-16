@@ -331,4 +331,8 @@
     .content-area {
         @apply mx-4
     }
+
+    .export-button {
+        @apply ml-6
+    }
 </style>
