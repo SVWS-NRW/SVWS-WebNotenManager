@@ -1,3 +1,51 @@
+<template>
+    <AppLayout title="Einstellungen">
+        <template #main>
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">Einstellungen - Schule</h2>
+                </div>
+            </header>
+            <div class="content">
+                <div>
+                    <h3 class="headline-3">Schule</h3>
+                    <SvwsUiTextInput v-model="settings.name" @input="updateIsDirty()"  placeholder="Name der Schule"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.address" @input="updateIsDirty()"  placeholder="Adresse der Schule"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.email" @input="updateIsDirty()"  placeholder="E-Mail Adresse der Schule"></SvwsUiTextInput>
+                </div>
+
+                <div>
+                    <h3 class="headline-3">Schulleitung</h3>
+                    <SvwsUiTextInput v-model="settings.management_name" @input="updateIsDirty()" placeholder="Name Schulleitung"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.management_telephone" @input="updateIsDirty()"  placeholder="Sekretariat"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.management_email" @input="updateIsDirty()"  placeholder="E-Mail-Adresse"></SvwsUiTextInput>
+                </div>
+
+                <div>
+                    <h3 class="headline-3">Schulträger</h3>
+                    <SvwsUiTextInput v-model="settings.board_name" @input="updateIsDirty()"  placeholder="Name des Schulträgers"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.board_address" @input="updateIsDirty()"  placeholder="Anschrift des Schulträgers"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.board_contact" @input="updateIsDirty()"  placeholder="Kontaktdaten des Schulträgers"></SvwsUiTextInput>
+                </div>
+
+                <div>
+                    <h3 class="headline-3">Datenschutz</h3>
+                    <SvwsUiTextInput v-model="settings.gdpr_email" @input="updateIsDirty()"  placeholder="[Email des Datenschutzbeauftragten]"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.gdpr_address" @input="updateIsDirty()"  placeholder="[Anschrift des Datenschutzbeauftragten]"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.hosting_provider_name" @input="updateIsDirty()"  placeholder="[Name des Hosters]"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.hosting_provider_address" @input="updateIsDirty()"  placeholder="[Anschrift des Hosters]"></SvwsUiTextInput>
+                </div>
+
+                <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
+            </div>
+        </template>
+        <template #secondaryMenu>
+            <SettingsMenu></SettingsMenu>
+        </template>
+    </AppLayout>
+</template>
+
+
 <script setup lang="ts">
     import { ref, Ref, watch } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
@@ -56,71 +104,25 @@
     const updateIsDirty = (): boolean => isDirty.value = true
 </script>
 
-<template>
-    <AppLayout title="Einstellungen">
-        <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Einstellungen - Schule</h2>
-                </div>
-            </header>
-            <div class="content">
-                <div>
-                    <h3 class="headline-3">Schule</h3>
-                    <SvwsUiTextInput v-model="settings.name" @input="updateIsDirty()"  placeholder="Name der Schule"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.address" @input="updateIsDirty()"  placeholder="Adresse der Schule"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.email" @input="updateIsDirty()"  placeholder="E-Mail Adresse der Schule"></SvwsUiTextInput>
-                </div>
-
-                <div>
-                    <h3 class="headline-3">Schulleitung</h3>
-                    <SvwsUiTextInput v-model="settings.management_name" @input="updateIsDirty()" placeholder="Name Schulleitung"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.management_telephone" @input="updateIsDirty()"  placeholder="Sekretariat"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.management_email" @input="updateIsDirty()"  placeholder="E-Mail-Adresse"></SvwsUiTextInput>
-                </div>
-
-                <div>
-                    <h3 class="headline-3">Schulträger</h3>
-                    <SvwsUiTextInput v-model="settings.board_name" @input="updateIsDirty()"  placeholder="Name des Schulträgers"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.board_address" @input="updateIsDirty()"  placeholder="Anschrift des Schulträgers"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.board_contact" @input="updateIsDirty()"  placeholder="Kontaktdaten des Schulträgers"></SvwsUiTextInput>
-                </div>
-
-                <div>
-                    <h3 class="headline-3">Datenschutz</h3>
-                    <SvwsUiTextInput v-model="settings.gdpr_email" @input="updateIsDirty()"  placeholder="[Email des Datenschutzbeauftragten]"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.gdpr_address" @input="updateIsDirty()"  placeholder="[Anschrift des Datenschutzbeauftragten]"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.hosting_provider_name" @input="updateIsDirty()"  placeholder="[Name des Hosters]"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.hosting_provider_address" @input="updateIsDirty()"  placeholder="[Anschrift des Hosters]"></SvwsUiTextInput>
-                </div>
-
-                <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
-            </div>
-        </template>
-        <template #secondaryMenu>
-            <SettingsMenu></SettingsMenu>
-        </template>
-    </AppLayout>
-</template>
 
 <style scoped>
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply flex flex-col gap-4 p-6
     }
 
     header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+        @apply flex items-center justify-start gap-6
     }
 
     .content {
-        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-max-w-lg
+        @apply px-6 flex flex-col gap-12 max-w-lg
     }
 
     .content > div {
-        @apply ui-flex ui-flex-col ui-gap-5 ui-justify-start
+        @apply flex flex-col gap-5 justify-start
     }
 
     .button {
-        @apply ui-self-start
+        @apply self-start
     }
 </style>

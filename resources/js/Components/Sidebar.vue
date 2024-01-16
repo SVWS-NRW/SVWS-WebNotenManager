@@ -1,36 +1,3 @@
-<script setup lang="ts">// TODO: TBR
-    import { onMounted, reactive, watch} from 'vue';
-    import axios, {AxiosPromise, AxiosResponse} from 'axios';
-
-    import { Leistung } from '../Interfaces/Leistung'
-    import { Floskel } from '../Interfaces/Floskel'
-
-    let props = defineProps<{
-        leistung: Leistung
-    }>()
-
-    const state = reactive({
-        leistung: <Leistung | null> null,
-        floskelgruppen: [],
-        floskeln: <Floskel[]> [],
-        floskelnColumns: [
-            {id: 'gruppe', title: 'Gruppe'},
-            {id: 'kuerzel', title: 'Kuerzel', sortable: true},
-            {id: 'text', title: 'Text', sortable: true},
-        ],
-    });
-
-    const setFloskelgruppe = (id: number): Number => state.floskeln = state.floskelgruppen[id].floskeln;
-    const close = (): void => state.leistung = null;
-
-    onMounted((): AxiosPromise => axios
-        .get("/api/getFloskeln") // TODO: CHeck
-        .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data));
-
-    watch(() => props.leistung, (leistung: Leistung): Leistung => state.leistung = leistung);
-    watch(() => state.floskelgruppen, (): Number => setFloskelgruppe(0));
-</script>
-
 <template>
     <div v-if="state.leistung" class="wrapped">
         <div class="flex gap-6 items-center">
@@ -73,3 +40,43 @@
         </div>
     </div>
 </template>
+
+
+<script setup lang="ts">
+    // TODO: TBR
+    import { onMounted, reactive, watch} from 'vue';
+    import axios, {AxiosPromise, AxiosResponse} from 'axios';
+
+    import { Leistung } from '../Interfaces/Leistung'
+    import { Floskel } from '../Interfaces/Floskel'
+
+    let props = defineProps<{
+        leistung: Leistung
+    }>()
+
+    const state = reactive({
+        leistung: <Leistung | null> null,
+        floskelgruppen: [],
+        floskeln: <Floskel[]> [],
+        floskelnColumns: [
+            {id: 'gruppe', title: 'Gruppe'},
+            {id: 'kuerzel', title: 'Kuerzel', sortable: true},
+            {id: 'text', title: 'Text', sortable: true},
+        ],
+    });
+
+    const setFloskelgruppe = (id: number): Number => state.floskeln = state.floskelgruppen[id].floskeln;
+    const close = (): void => state.leistung = null;
+
+    onMounted((): AxiosPromise => axios
+        .get("/api/getFloskeln") // TODO: CHeck
+        .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data));
+
+    watch(() => props.leistung, (leistung: Leistung): Leistung => state.leistung = leistung);
+    watch(() => state.floskelgruppen, (): Number => setFloskelgruppe(0));
+</script>
+
+
+<style scoped>
+/**/
+</style>

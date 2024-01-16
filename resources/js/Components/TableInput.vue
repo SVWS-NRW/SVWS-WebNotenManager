@@ -1,4 +1,36 @@
-<script setup lang="ts">// TODO: TBR
+<template>
+    <div>
+        <div class="relative flex flex-col gap-6 w-full h-screen">
+            <TopMenu>
+                <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
+                <SvwsUiCheckbox v-model="klassenleitung">Klassenleitung</SvwsUiCheckbox>
+            </TopMenu>
+            <div id="filter-menu">
+                <SvwsUiTextInput type="search" v-model="state.filters.search" placeholder="Suche"></SvwsUiTextInput>
+<!--                <SvwsUiSelectInput placeholder="Klasse" v-model="state.klasse" @update:value="(klasse: Number) => state.filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>-->
+<!--                <SvwsUiSelectInput placeholder="Jahrgang" v-model="state.jahrgang" @update:value="(jahrgang: Number) => state.filters.jahrgang = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput>-->
+<!--                <SvwsUiSelectInput placeholder="Kurs" v-model="state.kurs" @update:value="(kurs: Number) => state.filters.kurs = kurs" :options="state.filterValues.kurse"></SvwsUiSelectInput>-->
+<!--                <SvwsUiSelectInput placeholder="Note" v-model="state.note" @update:value="(note: Number) => state.filters.note = note" :options="state.filterValues.noten"></SvwsUiSelectInput>-->
+                <SvwsUiButton type="secondary">
+                    <i-ri-filter-3-line aria-hidden="true"></i-ri-filter-3-line>
+                    Erweiterte Filter
+                </SvwsUiButton>
+            </div>
+
+            <div id="table" v-if="filteredLeistungen.length > 0">
+                <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
+                    <template #cell-mahnung="{ row }">
+                        <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
+                    </template>
+                </SvwsUiNewTable>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+<script setup lang="ts">
+    // TODO: TBR
     // TODO: Check if this file is still being used (it seems it isn't)
 
     import { ref, watch, computed, reactive, onMounted } from 'vue';
@@ -98,32 +130,7 @@
         state.leistungen.find((current: Leistung) => current.id === leistung.id)['note'] = note;
 </script>
 
-<template>
-    <div>
-        <div class="relative flex flex-col gap-6 w-full h-screen">
-            <TopMenu>
-                <SvwsUiCheckbox v-model="teilleistungen">Teilleistungen</SvwsUiCheckbox>
-                <SvwsUiCheckbox v-model="klassenleitung">Klassenleitung</SvwsUiCheckbox>
-            </TopMenu>
-            <div id="filter-menu">
-                <SvwsUiTextInput type="search" v-model="state.filters.search" placeholder="Suche"></SvwsUiTextInput>
-<!--                <SvwsUiSelectInput placeholder="Klasse" v-model="state.klasse" @update:value="(klasse: Number) => state.filters.klasse = klasse" :options="state.filterValues.klassen"></SvwsUiSelectInput>-->
-<!--                <SvwsUiSelectInput placeholder="Jahrgang" v-model="state.jahrgang" @update:value="(jahrgang: Number) => state.filters.jahrgang = jahrgang" :options="state.filterValues.jahrgaenge"></SvwsUiSelectInput>-->
-<!--                <SvwsUiSelectInput placeholder="Kurs" v-model="state.kurs" @update:value="(kurs: Number) => state.filters.kurs = kurs" :options="state.filterValues.kurse"></SvwsUiSelectInput>-->
-<!--                <SvwsUiSelectInput placeholder="Note" v-model="state.note" @update:value="(note: Number) => state.filters.note = note" :options="state.filterValues.noten"></SvwsUiSelectInput>-->
-                <SvwsUiButton type="secondary">
-                    <i-ri-filter-3-line aria-hidden="true"></i-ri-filter-3-line>
-                    Erweiterte Filter
-                </SvwsUiButton>
-            </div>
 
-            <div id="table" v-if="filteredLeistungen.length > 0">
-                <SvwsUiNewTable :data="filteredLeistungen" :columns="columns">
-                    <template #cell-mahnung="{ row }">
-                        <MahnungIndicator :leistung="row" :key="row.id" @updated="updateLeistungMahnung"></MahnungIndicator>
-                    </template>
-                </SvwsUiNewTable>
-            </div>
-        </div>
-    </div>
-</template>
+<style scoped>
+/**/
+</style>

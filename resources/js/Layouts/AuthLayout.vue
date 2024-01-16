@@ -1,8 +1,3 @@
-<script setup lang="ts">
-    import { SvwsUiAppLayout } from '@svws-nrw/svws-ui'
-    import { usePage } from '@inertiajs/inertia-vue3'
-</script>
-
 <template>
     <SvwsUiAppLayout :fullwidthContent="true" v-cloak>
         <template #main>
@@ -31,41 +26,49 @@
     </SvwsUiAppLayout>
 </template>
 
+
+<script setup lang="ts">
+    import { SvwsUiAppLayout } from '@svws-nrw/svws-ui'
+    import { usePage } from '@inertiajs/inertia-vue3'
+</script>
+
+
 <style scoped>
     div.component {
-        @apply ui-bg-chalk ui-bg-cover ui-w-full ui-h-full ui-flex ui-flex-col ui-justify-between
+        @apply bg-chalk bg-cover w-full h-full flex flex-col justify-between
     }
 
 
     footer {
-        @apply ui-bg-white ui-p-8 ui-flex ui-flex-col-reverse md:ui-flex-row ui-gap-8 ui-text-lg ui-items-center
+        @apply bg-white p-8 flex flex-col-reverse md:flex-row gap-8 text-lg items-center
     }
 
     footer .disclaimer {
-        @apply ui-flex ui-flex-col ui-gap-2 ui-grow ui-text-center md:ui-text-left ui-text-sm
+        @apply flex flex-col gap-2 grow text-center md:text-left text-sm
     }
 
     footer .disclaimer h3 {
-        @apply ui-text-black/75
+        @apply text-black/75
     }
 
     footer .disclaimer p {
-        @apply ui-text-black/30 ui-max-w-5xl
+        @apply text-black/30 max-w-5xl
     }
 
     footer .disclaimer nav {
-        @apply ui-flex ui-flex-row ui-items-center ui-gap-3 ui-justify-center md:ui-justify-start
+        @apply flex flex-row items-center gap-3 justify-center md:justify-start
     }
 
     footer .disclaimer nav a {
         @apply
-        ui-text-black/30 hover:ui-text-black/75
-        focus-visible:ui-outline focus-visible:ui-text-black/75 ui-outline-offset-2 ui-outline-2 ui-outline-black
-        ui-underline
-        ui-rounded-sm
+        text-black/30 hover:text-black/75
+        focus-visible:outline focus-visible:text-black/75 outline-offset-2 outline-2 outline-black
+        underline
+        rounded-sm
     }
 
     footer img {
-        @apply ui-h-20 ui-w-auto
+        @apply h-20 w-auto
     }
+    
 </style>

@@ -1,3 +1,78 @@
+<template>
+    <SvwsUiAppLayout>
+        <template #sidebar>
+            <SvwsUiMenu>
+                <template #header>
+                    <SvwsUiMenuHeader :user="currentUser()" :schule="usePage().props.value.schoolName" @click="navigate('user_settings.filter')"/>
+                </template>
+
+                <template #default>
+                    <SvwsUiMenuItem
+                        v-if="visible('mein_unterricht')"
+                        :active="activePage('mein_unterricht')"
+                        @click="navigate('mein_unterricht')"
+                    >
+                        <template #icon><ri-book-2-line /></template>
+                        <template #label>Notenmanager</template>
+                    </SvwsUiMenuItem>
+
+                    <SvwsUiMenuItem
+                        :active="activePage('leistungsdatenuebersicht')"
+                        @click="navigate('leistungsdatenuebersicht')"
+                    >
+                        <template #icon><ri-book-read-line /></template>
+                        <template #label>Leistungsdatenübersicht</template>
+                    </SvwsUiMenuItem>
+
+                    <SvwsUiMenuItem
+                        v-if="visible('klassenleitung')"
+                        :active="activePage('klassenleitung')"
+                        @click="navigate('klassenleitung')"
+                    >
+                        <template #icon><ri-team-line /></template>
+                        <template #label>Klassenleitung</template>
+                    </SvwsUiMenuItem>
+                </template>
+
+                <template #footer>
+                    <SvwsUiMenuItem
+                        v-if="visible('settings')"
+                        @click="navigate('settings.index')"
+                    >
+                        <template #icon>
+                           <ri-settings-3-line />
+                        </template>
+                        <template #label>Einstellungen</template>
+                    </SvwsUiMenuItem>
+
+                    <SvwsUiMenuItem @click="logout()">
+                        <template #icon><ri-logout-circle-line /></template>
+                        <template #label>Abmelden</template>
+                    </SvwsUiMenuItem>
+                </template>
+
+                <template #version>
+                    {{ usePage().props.value.version }}
+                </template>
+            </SvwsUiMenu>
+        </template>
+
+        <template #main>
+            <toast />
+            <slot name="main" />
+        </template>
+
+        <template #secondaryMenu v-if="slots.secondaryMenu">
+            <slot name="secondaryMenu" />
+        </template>
+
+        <template v-slot:aside v-if="slots.aside">
+            <slot name="aside" />
+        </template>
+    </SvwsUiAppLayout>
+</template>
+
+
 <script setup lang="ts">
     import { ref, useSlots } from 'vue';
     import { Inertia } from '@inertiajs/inertia'
@@ -36,83 +111,11 @@
     const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ')
 </script>
 
-<template>
-    <SvwsUiAppLayout>
-        <template #sidebar>
-            <SvwsUiMenu>
-                <template #header>
-                    <SvwsUiMenuHeader :user="currentUser()" :schule="usePage().props.value.schoolName" @click="navigate('user_settings.filter')"/>
-                </template>
-
-                <template #default>
-                    <SvwsUiMenuItem
-                        v-if="visible('mein_unterricht')"
-                        :active="activePage('mein_unterricht')"
-                        @click="navigate('mein_unterricht')"
-                    >
-                        <template #icon><mdi-home-outline /></template>
-                        <template #label>Notenmanager</template>
-                    </SvwsUiMenuItem>
-
-                    <SvwsUiMenuItem
-                        :active="activePage('leistungsdatenuebersicht')"
-                        @click="navigate('leistungsdatenuebersicht')"
-                    >
-                        <template #icon><mdi-book-open-outline /></template>
-                        <template #label>Leistungsdatenübersicht</template>
-                    </SvwsUiMenuItem>
-
-                    <SvwsUiMenuItem
-                        v-if="visible('klassenleitung')"
-                        :active="activePage('klassenleitung')"
-                        @click="navigate('klassenleitung')"
-                    >
-                        <template #icon><mdi-user-outline/></template>
-                        <template #label>Klassenleitung</template>
-                    </SvwsUiMenuItem>
-                </template>
-
-                <template #footer>
-                    <SvwsUiMenuItem
-                        v-if="visible('settings')"
-                        @click="navigate('settings.index')"
-                    >
-                        <template #icon>
-                           <mdi-cog-outline />
-                        </template>
-                        <template #label>Einstellungen</template>
-                    </SvwsUiMenuItem>
-
-                    <SvwsUiMenuItem @click="logout()">
-                       <template #icon><mdi-logout /></template>
-                        <template #label>Abmelden</template>
-                    </SvwsUiMenuItem>
-                </template>
-
-                <template #version>
-                    {{ usePage().props.value.version }}
-                </template>
-            </SvwsUiMenu>
-        </template>
-
-        <template #main>
-            <toast />
-            <slot name="main" />
-        </template>
-
-        <template #secondaryMenu v-if="slots.secondaryMenu">
-            <slot name="secondaryMenu" />
-        </template>
-
-        <template v-slot:aside v-if="slots.aside">
-            <slot name="aside" />
-        </template>
-    </SvwsUiAppLayout>
-</template>
 
 <style scoped>
+
     #header {
-        @apply hover:ui-cursor-pointer
+        @apply hover:cursor-pointer
     }
 
 </style>

@@ -1,3 +1,61 @@
+<template>
+    <svws-ui-modal :show="modal" size="small">
+        <template #modalTitle>
+            {{ props.leistung.vorname }} {{ props.leistung.nachname }}
+            <SvwsUiBadge variant="primary">
+                {{ props.leistung.klasse ?? props.leistung.kurs }}
+            </SvwsUiBadge>
+        </template>
+
+        <template #modalDescription>
+            <strong>Mahndatum:</strong> {{ mahndatumFormatted() }}
+        </template>
+
+        <template #modalActions>
+            <svws-ui-button type="secondary" @click="close">
+                Schliessen
+            </svws-ui-button>
+        </template>
+    </svws-ui-modal>
+
+    <span v-if="props.disabled">
+        <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
+            <span class="icon green" aria-hidden="true">
+                <ri-checkbox-line ></ri-checkbox-line>
+            </span>
+        </span>
+        <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
+            <span class="icon red" aria-hidden="true">
+                <ri-checkbox-line></ri-checkbox-line>
+            </span>
+        </span>
+        <span v-else aria-description="Ist nicht gemahnt">
+            <span class="icon" aria-hidden="true">
+                <ri-checkbox-blank-line></ri-checkbox-blank-line>
+            </span>
+        </span>
+    </span>
+
+    <button v-else @click="props.leistung.mahndatum ? open() : toggleMahnung()">
+        <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
+           <span class="icon green" aria-hidden="true">
+                <ri-checkbox-line ></ri-checkbox-line>
+           </span>
+        </span>
+        <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
+            <span class="icon red" aria-hidden="true">
+               <ri-checkbox-line></ri-checkbox-line>
+           </span>
+        </span>
+        <span v-else aria-description="Ist nicht gemahnt">
+           <span class="icon" aria-hidden="true">
+               <ri-checkbox-blank-line></ri-checkbox-blank-line>
+           </span>
+        </span>
+    </button>
+</template>
+
+
 <script setup lang="ts">
     import { ref, Ref } from 'vue'
     import axios from 'axios'
@@ -26,69 +84,14 @@
     const mahndatumFormatted = (): string => moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY')
 </script>
 
-<template>
-    <svws-ui-modal :show="modal" size="small">
-        <template #modalTitle>
-            {{ props.leistung.vorname }} {{ props.leistung.nachname }}
-            <SvwsUiBadge variant="primary">
-                {{ props.leistung.klasse ?? props.leistung.kurs }}
-            </SvwsUiBadge>
-        </template>
-
-        <template #modalDescription>
-            <strong>Mahndatum:</strong> {{ mahndatumFormatted() }}
-        </template>
-
-        <template #modalActions>
-            <svws-ui-button type="secondary" @click="close">
-                Schliessen
-            </svws-ui-button>
-        </template>
-    </svws-ui-modal>
-
-    <span v-if="props.disabled">
-        <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-            <span class="icon green" aria-hidden="true">
-                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
-            </span>
-        </span>
-        <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <span class="icon red" aria-hidden="true">
-                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
-            </span>
-        </span>
-        <span v-else aria-description="Ist nicht gemahnt">
-            <span class="icon" aria-hidden="true">
-                <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
-            </span>
-        </span>
-    </span>
-
-    <button v-else @click="props.leistung.mahndatum ? open() : toggleMahnung()">
-        <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-           <span class="icon green" aria-hidden="true">
-                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
-           </span>
-        </span>
-        <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <span class="icon red" aria-hidden="true">
-               <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
-           </span>
-        </span>
-        <span v-else aria-description="Ist nicht gemahnt">
-           <span class="icon" aria-hidden="true">
-               <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
-           </span>
-        </span>
-    </button>
-</template>
 
 <style scoped>
     .red {
-        @apply ui-text-red-500
+        @apply text-red-500
     }
 
     .green {
-        @apply ui-text-green-500
+        @apply text-green-500
     }
+    
 </style>

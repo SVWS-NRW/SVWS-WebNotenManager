@@ -1,3 +1,42 @@
+<template>
+    <div class="content">
+        <h1>{{ props.schueler.name }}</h1>
+        <h2>{{ floskelgruppen[props.floskelgruppe] }}</h2>
+
+        <SvwsUiTextareaInput
+            v-model="bemerkung"
+            placeholder="Bemerkung"
+            resizeable="vertical"
+            :disabled="!isEditable"
+            @input="bemerkung = $event.target.value"
+            @keydown="onKeyDown"
+        />
+
+        <div class="buttons">
+            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
+            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
+        </div>
+
+        <SvwsUiTable
+            v-if="isEditable"
+            v-model="selectedRows"
+            :items="rowsFiltered"
+            :columns="columns"
+            :clickable="true"
+            :selectable="isEditable"
+            :count="true"
+            :filtered="filtered()"
+            :filterReset="filterReset"
+        >
+            <template #filterAdvanced>
+                <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+            </template>
+        </SvwsUiTable>
+    </div>
+</template>
+
+
 <script setup lang="ts">
     import { computed, onMounted, Ref, ref, watch } from 'vue'
     import axios, { AxiosError, AxiosResponse } from 'axios'
@@ -92,52 +131,14 @@
 
 </script>
 
-<template>
-    <div class="content">
-        <h1>{{ props.schueler.name }}</h1>
-        <h2>{{ floskelgruppen[props.floskelgruppe] }}</h2>
-
-        <SvwsUiTextareaInput
-            v-model="bemerkung"
-            placeholder="Bemerkung"
-            resizeable="vertical"
-            :disabled="!isEditable"
-            @input="bemerkung = $event.target.value"
-            @keydown="onKeyDown"
-        />
-
-        <div class="buttons">
-            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
-            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
-            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
-        </div>
-
-        <SvwsUiTable
-            v-if="isEditable"
-            v-model="selectedRows"
-            :items="rowsFiltered"
-            :columns="columns"
-            :clickable="true"
-            :selectable="isEditable"
-            :count="true"
-            :filtered="filtered()"
-            :filterReset="filterReset"
-        >
-            <template #filterAdvanced>
-                <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-            </template>
-        </SvwsUiTable>
-    </div>
-</template>
 
 <style scoped>
-
     .content {
-        @apply ui-p-6 ui-flex ui-flex-col ui-gap-6
+        @apply p-6 flex flex-col gap-6
     }
     
     .buttons {
-        @apply ui-flex ui-justify-end ui-gap-3
+        @apply flex justify-end gap-3
     }
 
 </style>

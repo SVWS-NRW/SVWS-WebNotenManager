@@ -1,3 +1,41 @@
+<template>
+    <AppLayout title="Benutzereinstellungen">
+        <template #main>
+            <section>
+                <h2 class="text-headline">Einstellungen - Filter</h2>
+                <div>
+                    <h3 class="text-headline-md">Mein Unterricht</h3>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.kurs">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.note">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fach">Fach</SvwsUiCheckbox>
+                </div>
+
+                <div>
+                    <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fachlehrer">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.mahnungen">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.kurs">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach">Fach</SvwsUiCheckbox>
+                </div>
+
+                <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
+            </section>
+        </template>
+        <template #secondaryMenu>
+            <UserSettingsMenu></UserSettingsMenu>
+        </template>
+    </AppLayout>
+</template>
+
+
 <script setup lang="ts">
     import { Ref, ref, onMounted } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
@@ -65,53 +103,17 @@
         ))
 </script>
 
-<template>
-    <AppLayout title="Benutzereinstellungen">
-        <template #main>
-            <section>
-                <h2 class="text-headline">Einstellungen - Filter</h2>
-                <div>
-                    <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.kurs">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.note">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fach">Fach</SvwsUiCheckbox>
-                </div>
-
-                <div>
-                    <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fachlehrer">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.mahnungen">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.kurs">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach">Fach</SvwsUiCheckbox>
-                </div>
-
-                <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
-            </section>
-        </template>
-        <template #secondaryMenu>
-            <UserSettingsMenu></UserSettingsMenu>
-        </template>
-    </AppLayout>
-</template>
 
 <style scoped>
     section {
-        @apply ui-p-6 ui-space-y-12
+        @apply p-6 space-y-12
     }
 
     section > div {
-        @apply ui-flex ui-flex-col ui-gap-3 ui-items-start
+        @apply flex flex-col gap-3 items-start
     }
 
     button {
-        @apply ui-self-start
+        @apply self-start
     }
 </style>

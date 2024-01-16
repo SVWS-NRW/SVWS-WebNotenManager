@@ -1,31 +1,3 @@
-<script setup lang="ts">
-    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui'
-    import { Head, Link } from '@inertiajs/inertia-vue3'
-    import { Errors, Inertia } from '@inertiajs/inertia'
-    import { reactive } from 'vue'
-    import AuthLayout from '../../Layouts/AuthLayout.vue'
-
-    let data= reactive({
-        form: {
-            twoFACode: '',
-        },
-        processing: false,
-        errors: {},
-    })
-
-    const getError = (column: string): string => data.errors[column]
-    const hasErrors = (column: string): boolean => column in data.errors
-
-    //TODO: routes and requests
-    const submit = (): void => Inertia.post(route('xxx.xx'), data.form, {
-        onSuccess: (): boolean => data.successMessage = true,
-        onError: (error: Errors): Errors => data.errors = error,
-        onFinish: (): boolean => data.processing = false
-    })
-
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
-</script>
-
 <template>
     <div>
 
@@ -79,37 +51,67 @@
     </div>
 </template>
 
+
+<script setup lang="ts">
+    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui'
+    import { Head, Link } from '@inertiajs/inertia-vue3'
+    import { Errors, Inertia } from '@inertiajs/inertia'
+    import { reactive } from 'vue'
+    import AuthLayout from '../../Layouts/AuthLayout.vue'
+
+    let data= reactive({
+        form: {
+            twoFACode: '',
+        },
+        processing: false,
+        errors: {},
+    })
+
+    const getError = (column: string): string => data.errors[column]
+    const hasErrors = (column: string): boolean => column in data.errors
+
+    //TODO: routes and requests
+    const submit = (): void => Inertia.post(route('xxx.xx'), data.form, {
+        onSuccess: (): boolean => data.successMessage = true,
+        onError: (error: Errors): Errors => data.errors = error,
+        onFinish: (): boolean => data.processing = false
+    })
+
+    const navigate = (routeName: string): void => Inertia.get(route(routeName))
+</script>
+
+
 <style scoped>
 #logo {
-    @apply ui-flex ui-gap-6 ui-justify-center ui-items-center
+    @apply flex gap-6 justify-center items-center
 }
 
 #logo > svg {
-    @apply ui-w-12
+    @apply w-12
 }
 
 #component {
     @apply
-    ui-rounded-lg ui-shadow-lg
-    ui-p-8
-    ui-flex ui-flex-col ui-gap-6
-    ui-w-full ui-max-w-lg
-    ui-bg-white
-    ui-m-auto
+    rounded-lg shadow-lg
+    p-8
+    flex flex-col gap-6
+    w-full max-w-lg
+    bg-white
+    m-auto
 }
 .headline-1 {
-    @apply ui-font-bold ui-text-center
+    @apply font-bold text-center
 }
 
 #buttons {
-    @apply ui-flex ui-gap-6 ui-justify-between
+    @apply flex gap-6 justify-between
 }
 
 .form-control {
-    @apply ui-flex ui-flex-col ui-gap-0
+    @apply flex flex-col gap-0
 }
 
 .error {
-    @apply ui-text-red-500 ui-text-sm ui-mt-2
+    @apply text-red-500 text-sm mt-2
 }
 </style>

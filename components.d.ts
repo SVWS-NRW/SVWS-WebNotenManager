@@ -17,5 +17,15 @@ declare module 'vue' {
     MdiLogout: typeof import('~icons/mdi/logout')['default']
     MdiPencil: typeof import('~icons/mdi/pencil')['default']
     MdiUserOutline: typeof import('~icons/mdi/user-outline')['default']
+    RiArrowDownSLine: typeof import('~icons/ri/arrow-down-s-line')['default']
+    RiArrowRightSLine: typeof import('~icons/ri/arrow-right-s-line')['default']
+    RiBook2Line: typeof import('~icons/ri/book2-line')['default']
+    RiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
+    RiCheckboxBlankLine: typeof import('~icons/ri/checkbox-blank-line')['default']
+    RiCheckboxLine: typeof import('~icons/ri/checkbox-line')['default']
+    RiLogoutCircleLine: typeof import('~icons/ri/logout-circle-line')['default']
+    RiPencilFill: typeof import('~icons/ri/pencil-fill')['default']
+    RiSettings3Line: typeof import('~icons/ri/settings3-line')['default']
+    RiTeamLine: typeof import('~icons/ri/team-line')['default']
   }
 }

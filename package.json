@@ -38,10 +38,10 @@
         "vue-template-compiler": "^2.7.15"
     },
     "dependencies": {
-        "@svws-nrw/svws-ui": "^0.8.7",
+        "@svws-nrw/svws-ui": "^0.8.3",
         "exceljs": "^4.4.0",
         "moment": "^2.29.4",
-        "package.json": "^2.0.1",
+        "remixicon": "^4.0.1",
         "tslint": "^6.1.3"
     }
 }

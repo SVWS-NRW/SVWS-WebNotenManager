@@ -1,14 +1,3 @@
-<script setup lang="ts">
-    import { Inertia } from "@inertiajs/inertia";
-
-    import {
-        SvwsUiSecondaryMenu,
-        SvwsUiMenuItem,
-    } from '@svws-nrw/svws-ui'
-
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
-</script>
-
 <template>
     <SvwsUiSecondaryMenu>
         <template #headline>
@@ -24,8 +13,22 @@
     </SvwsUiSecondaryMenu>
 </template>
 
+
+<script setup lang="ts">
+    import { Inertia } from "@inertiajs/inertia";
+
+    import {
+        SvwsUiSecondaryMenu,
+        SvwsUiMenuItem,
+    } from '@svws-nrw/svws-ui'
+
+    const navigate = (routeName: string): void => Inertia.get(route(routeName))
+</script>
+
+
 <style scoped>
     .container {
-        @apply ui-flex ui-flex-col ui-gap-3
+        @apply flex flex-col gap-3
     }
+    
 </style>
