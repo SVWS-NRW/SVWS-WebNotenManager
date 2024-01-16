@@ -3,6 +3,7 @@
     <Head>
         <title>Mein Unterricht</title>
     </Head>
+
     <AppLayout>
         <template #main>
             <header>
@@ -104,12 +105,10 @@
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
-    import {
-        DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton,
-    } from '@svws-nrw/svws-ui';
-    import {
-        BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton,
-    } from '@/Components/Components';
+    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
+    import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
+    import { handleExport } from '@/Helpers/exportHelper';
+    import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
 
     // Seitentitel
     const title = 'Notenmanager - mein Unterricht';
@@ -117,7 +116,7 @@
     // Daten
     const rows: Ref<Leistung[]> = ref([]);
 
-    // Gefilterte Daten
+    // Datenfilter
     const rowsFiltered = computed((): Leistung[] => {
         return rows.value.filter((leistung: Leistung): boolean => {
             return searchHelper(leistung, ['name'], searchFilter.value || '')
@@ -135,6 +134,7 @@
         mahnungen: false,
         bemerkungen: false,
         fehlstunden: false,
+        fachlehrer: false,
         kurs: false,
         note: false,
         fach: false,
@@ -185,7 +185,7 @@
     const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null =>
         selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null;
 
-    // ...
+    // Filter
     const searchFilter: Ref<string|null> = ref(null);
     const klasseFilter: Ref <string[]> = ref([]);
     const fachFilter: Ref <string[]> = ref([]);
@@ -227,6 +227,40 @@
         jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang');
         noteItems.value = mapFilterOptionsHelper(rows.value, 'note');
     };
+
+    /**
+     * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
+     * @param type - Der Exporttyp ('csv' oder 'excel').
+     */
+     const exportToFile = (type: string): void => {
+        // Bestimme die zu exportierenden Spalten basierend auf den Benutzereinstellungen
+        const visibleColumns: string[] = [
+            "klasse",
+            "nachname",
+            "vorname",
+            ...Object.keys(toggles.value).filter((col: string) => toggles.value[col as keyof TableColumnToggle])
+        ];
+        
+        // Ordne sichtbare Spalten den entsprechenden Datenbankfeldern zu
+        const mappedColumns: string[] = visibleColumns.map((col: string) => mapToggleToDatabaseField(col as keyof TableColumnToggle));
+
+        // Bereite Daten für den Export vor, indem relevante Spalten ausgewählt werden
+        const exportData = rowsFiltered.value.map((row: Leistung) => {
+            const rowData: Record<string, any> = {};
+            mappedColumns.forEach((col: string) => {
+                // Überprüfe, ob die Spalte 'istGemahnt' ist und die Werte auf 'ja' oder 'nein' abbilde
+                if (col === 'istGemahnt')
+                    rowData[col] = row[col as keyof Leistung] ? 'ja' : 'nein';
+                else
+                    rowData[col] = row[col as keyof Leistung];
+            });
+            return rowData;
+        });
+
+        // Rufe den allgemeinen Export-Handler mit den vorbereiteten Daten auf
+        handleExport(exportData, type, 'leistungsdatenübersicht');
+    }
+    
 </script>
 
 
