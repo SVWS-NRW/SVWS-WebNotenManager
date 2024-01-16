@@ -1,59 +1,30 @@
 <template>
-    <div class="content">
-        <h2>{{ props.leistung.fach }} Fachbezogene Bemerkungen</h2>
-        <h1>{{ props.leistung.name }}</h1>
-
-        <SvwsUiTextareaInput
-            v-model="bemerkung"
-            :disabled="!isEditable"
-            placeholder="Bemerkung"
-            resizeable="vertical"
-            @input="bemerkung = $event.target.value"
-            @keydown="onKeyDown"
-        />
-
-        <div class="buttons">
-            <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
-            <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+    <SvwsUiContentCard :title="`${props.leistung.vorname} ${props.leistung.nachname}, Klasse ${props.leistung.klasse}, ${props.leistung.fach}${props.leistung.kurs ? ' (' + props.leistung.kurs + ')' : ''}`">
+        <template #actions>
             <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
-        </div>
+        </template>
 
-        <SvwsUiTable
-            v-if="isEditable"
-            v-model="selectedRows"
-            :items="rowsFiltered"
-            :columns="columns"
-            :clickable="true"
-            :selectable="isEditable"
-            :count="true"
-            :filtered="filtered()"
-            :filterReset="filterReset"
-        >
-            <template #filterAdvanced>
-                <SvwsUiTextInput
-                    type="search"
-                    placeholder="Suche"
-                    v-model="searchFilter"
-                />
+        <SvwsUiInputWrapper :grid="1">
 
-                <SvwsUiMultiSelect
-                    v-if="niveauItems.length"
-                    label="Niveau"
-                    :items="niveauItems"
-                    :item-text="item => item"
-                    v-model="niveauFilter"
-                />
+            <SvwsUiTextareaInput :rows="3" v-model="bemerkung" :disabled="!isEditable" placeholder="Bemerkung" resizeable="vertical"
+                @input="bemerkung = $event.target.value" @keydown="onKeyDown" />
 
-                <SvwsUiMultiSelect
-                    v-if="jahrgangItems.length"
-                    label="Jahrgang"
-                    :items="jahrgangItems"
-                    :item-text="item => item"
-                    v-model="jahrgangFilter"
-                />
-            </template>
-        </SvwsUiTable>
-    </div>
+            <div class="buttons">
+                <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
+                <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+                
+            </div>
+
+            <SvwsUiTable v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" clickable count
+                :selectable="isEditable" :filtered="filtered()" :filterReset="filterReset">
+                <template #filterAdvanced>
+                    <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                    <SvwsUiMultiSelect v-if="niveauItems.length" label="Niveau" :items="niveauItems" :item-text="item => item" v-model="niveauFilter" />
+                    <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
+                </template>
+            </SvwsUiTable>            
+        </SvwsUiInputWrapper>
+    </SvwsUiContentCard>
 </template>
 
 
@@ -63,7 +34,7 @@
     import { Leistung } from '@/Interfaces/Leistung';
     import { FachbezogeneFloskel } from '@/Interfaces/FachbezogeneFloskel';
     import {
-        DataTableColumn, SvwsUiButton, SvwsUiMultiSelect, SvwsUiTable, SvwsUiTextareaInput, SvwsUiTextInput,
+        DataTableColumn, SvwsUiButton, SvwsUiMultiSelect, SvwsUiTable, SvwsUiTextareaInput, SvwsUiTextInput, SvwsUiContentCard,
     } from '@svws-nrw/svws-ui';
     import {
         addSelectedToBemerkung, closeEditor, formatBasedOnGender, pasteShortcut, search, multiselect,
@@ -112,7 +83,7 @@
 
     const fetch = (): Promise<void> => axios
         .get(route('api.fachbezogene_floskeln', props.leistung.fach_id))
-        .then((response: AxiosResponse): void => rows.value = response.data?.data || null);
+        .then((response: AxiosResponse): void => rows.value = response.data?.data || null)
         .catch((error: AxiosError): void => {
             alert('Ein Fehler ist aufgetreten.');
             console.log(error);
@@ -134,8 +105,8 @@
         searchFilter.value = '';
         niveauFilter.value = [];
         jahrgangFilter.value = [];
-    };
-
+    }
+    ;
     const filtered = (): boolean => {
         return jahrgangFilter.value.length > 0
             || niveauFilter.value.length > 0
@@ -151,8 +122,7 @@
             return (search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text))
                 && multiselect(niveauFilter, floskel.niveau)
                 && multiselect(jahrgangFilter, floskel.jahrgang);
-            }
-        )
+        });
     });
 
     // Button actions
@@ -171,16 +141,11 @@
         });
 
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows);
+
 </script>
 
-
 <style scoped>
-    .content {
-        @apply p-6 flex flex-col gap-6
-    }
-    
     .buttons {
-        @apply flex justify-end gap-3
+        @apply flex justify-end gap-3 ui-mt-3
     }
-    
 </style>
