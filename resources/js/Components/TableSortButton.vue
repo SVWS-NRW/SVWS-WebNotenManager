@@ -22,31 +22,33 @@
 
 
 <script setup lang="ts">
-    import { Ref, ref, inject } from 'vue'
-    import { SortTableColumns } from '../types'
+    import { Ref, ref, inject } from 'vue';
+    import { SortTableColumns } from '@/types';
 
     const props = defineProps<{
         presentColumn: SortTableColumns,
-    }>()
+    }>();
 
-    const emit = defineEmits(['clicked'])
-    const clicked = (newSortRef: SortTableColumns): void => emit('clicked', newSortRef)
+    const emit = defineEmits(['clicked']);
+    const clicked = (newSortRef: SortTableColumns): void => emit('clicked', newSortRef);
 
-    const sortRef: Ref<SortTableColumns> = inject('sortRef')
+    const sortRef: Ref<SortTableColumns> = inject('sortRef');
 
     const newSortReference: Ref<SortTableColumns> = ref(props.presentColumn);
 
     const sortTable = (newSortRef: SortTableColumns): void => {
         if (sortRef.value.sortBy == newSortRef.sortBy) {
-            newSortRef.direction = !sortRef.value.direction
+            newSortRef.direction = !sortRef.value.direction;
         } else {
-            newSortRef.direction = true
+            newSortRef.direction = true;
         }
-        clicked(newSortRef)
+        clicked(newSortRef);
     }
 
     const updateIconColor = (directionDesc: boolean): string => {
-        return sortRef.value.sortBy == newSortReference.value.sortBy && directionDesc != sortRef.value.direction ? '#329cd5' : 'silver'
+        return sortRef.value.sortBy == newSortReference.value.sortBy && directionDesc != sortRef.value.direction
+            ? '#329cd5'
+            : 'silver'
     }
 
 </script>

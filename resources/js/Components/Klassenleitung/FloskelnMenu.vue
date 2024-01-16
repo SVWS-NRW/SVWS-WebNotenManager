@@ -37,25 +37,28 @@
 
 <script setup lang="ts">// TODO: TBR
     import {computed, reactive, watch} from "vue";
-
     import axios, { AxiosPromise, AxiosResponse } from "axios";
+    import { Column } from '@/Interfaces/Column'
+    import { Schueler } from '@/Interfaces/Schueler'
+    import { Floskelgruppe } from '@/Interfaces/Floskelgruppe'
+    import { Occurrence } from '@/Interfaces/Occurrence'
+    import { Pronoun } from '@/Interfaces/Pronoun'
 
-    import { Column } from '../../Interfaces/Column'
-    import { Schueler } from '../../Interfaces/Schueler'
-    import { Floskelgruppe } from '../../Interfaces/Floskelgruppe'
-    import { Occurrence } from '../../Interfaces/Occurrence'
-    import { Pronoun } from '../../Interfaces/Pronoun'
+    type Selected = {
+        floskelgruppe: string,
+        schueler: Schueler,
+    };
 
-    type Selected = { floskelgruppe: string, schueler: Schueler }
+    import FloskelTable from './FloskelTable.vue';
 
-    import FloskelTable from './FloskelTable.vue'
+    interface Props {
+        selected?: Selected | null,
+        floskelgruppen: Floskelgruppe[],
+    };
 
-    interface Props { selected?: Selected | null, floskelgruppen: Floskelgruppe[] }
+    const emit = defineEmits(['close', 'updated']);
 
-
-    const emit = defineEmits(['close', 'updated'])
-
-    let props = defineProps<Props>()
+    let props = defineProps<Props>();
 
     let state = reactive({
         bemerkung: <string> '',
@@ -67,21 +70,23 @@
             { key: 'kuerzel', label: 'Kürzel', sortable: true },
             { key: 'text', label: 'Text', sortable: true },
         ],
-    })
+    });
 
     watch(() => props.selected, (selected: Selected): void => {
-        state.schueler = selected?.schueler
-        state.bemerkung = state.storedBemerkung = selected?.schueler[selected?.floskelgruppe]
-        state.floskelgruppen = props.floskelgruppen
-    })
+        state.schueler = selected?.schueler;
+        state.bemerkung = state.storedBemerkung = selected?.schueler[selected?.floskelgruppe];
+        state.floskelgruppen = props.floskelgruppen;
+    });
 
     const computedBemerkung = computed((): string => {
-        state.isDirty = state.bemerkung != state.storedBemerkung
+        state.isDirty = state.bemerkung != state.storedBemerkung;
 
-        if (!state.bemerkung) return
+        if (!state.bemerkung) {
+            return;
+        }
 
-        const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/
-        let schueler = state.schueler
+        const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/;
+        let schueler = state.schueler;
 
         let pronouns: Pronoun = { m: 'Er', w: 'Sie' };
         let pronoun: string | null = pronouns[schueler.geschlecht] !== undefined ? pronouns[schueler.geschlecht] : null;
@@ -99,8 +104,12 @@
         };
 
         return state.bemerkung
-            .replace(new RegExp(pattern,"i"), (matched: string): string => initialOccurrence[matched.toLowerCase()])
-            .replaceAll(new RegExp(pattern ,"gi"), (matched: string): string => succeedingOccurrences[matched.toLowerCase()]);
+            .replace(new RegExp(pattern,"i"), (matched: string): string => {
+                return initialOccurrence[matched.toLowerCase()];
+            })
+            .replaceAll(new RegExp(pattern ,"gi"), (matched: string): string => {
+                return succeedingOccurrences[matched.toLowerCase()];
+            });
     });
 
     const updateBemerkung = (bemerkung: string): string => state.bemerkung = bemerkung;
@@ -110,34 +119,34 @@
             route('set_schueler_bemerkung', state.schueler.id),
             {key: props.selected?.floskelgruppe, value: state.bemerkung}
         ).then((): AxiosResponse => {
-            emit('updated')
-            state.storedBemerkung = state.bemerkung
-            state.isDirty = false
+            emit('updated');
+            state.storedBemerkung = state.bemerkung;
+            state.isDirty = false;
             return;
-        })
+        });
 
     const currentFloskelGruppe = computed((): Floskelgruppe => state.floskelgruppen.find(
         floskelgruppe => floskelgruppe.kuerzel == props.selected.floskelgruppe
     ));
 
-    const addFloskeln = (bemerkung: string): string => state.bemerkung = [state.bemerkung, bemerkung].join(' ').trim()
+    const addFloskeln = (bemerkung: string): string => state.bemerkung = [state.bemerkung, bemerkung].join(' ').trim();
 
-    const deleteConfirmationText: string = "Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren."
+    const deleteConfirmationText: string = "Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren.";
 
     const close = (): void => {
         if (state.isDirty ? confirm(deleteConfirmationText) : true) {
-            emit('close')
+            emit('close');
         }
-    }
+    };
 
     window.addEventListener("beforeunload", e => {
         if (state.isDirty) {
-            (e || window.event).returnValue = deleteConfirmationText
-            return deleteConfirmationText
+            (e || window.event).returnValue = deleteConfirmationText;
+            return deleteConfirmationText;
         }
 
-        emit('close')
-    }, {capture: true})
+        emit('close');
+    }, {capture: true});
 </script>
 
 

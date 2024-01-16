@@ -22,17 +22,20 @@
 <script setup lang="ts">
 // TODO: TBR
 // TODO: Check if this file is still being used (it seems it isn't)
-    import { computed, onMounted, reactive } from 'vue'
-    import axios, {AxiosPromise, AxiosResponse} from 'axios'
+    import { computed, onMounted, reactive } from 'vue';
+    import axios, {AxiosPromise, AxiosResponse} from 'axios';
 
-    const emit = defineEmits(['added'])
+    const emit = defineEmits(['added']);
 
-    import { Column } from '../../Interfaces/Column'
-    import { Floskel } from '../../Interfaces/Floskel'
+    import { Column } from '@/Interfaces/Column';
+    import { Floskel } from '@/Interfaces/Floskel';
 
-    type Selected = {text: string, selected: boolean}
+    type Selected = {
+        text: string,
+        selected: boolean,
+    };
 
-    let props = defineProps({floskeln: Array})
+    let props = defineProps({floskeln: Array});
 
     const state = reactive({
         selected: <Selected[]> [],
@@ -55,38 +58,44 @@
     onMounted((): AxiosPromise => axios
         .get(route('get_fachbezogene_floskeln_filters'))
         .then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
-    )
+    );
 
-    const computedFloskeln = computed(() => props.floskeln.filter((floskel: Floskel): boolean =>
-        searchFilter(floskel)
-        && tableFilter(floskel, 'niveau')
-        && tableFilter(floskel, 'jahrgang_id')
-    ))
+    const computedFloskeln = computed(() => props.floskeln.filter((floskel: Floskel): boolean => {
+        return searchFilter(floskel)
+            && tableFilter(floskel, 'niveau')
+            && tableFilter(floskel, 'jahrgang_id')
+    }));
 
     const tableFilter = (floskel: Floskel, column: string, withOnlyEmptyOption: boolean = false): boolean => {
-        if (withOnlyEmptyOption && [null, ''].includes(filters[column])) return floskel[column] == null
-        if (filters[column] == 0) return true
-        return floskel[column] == filters[column]
-    }
+        if (withOnlyEmptyOption && [null, ''].includes(filters[column])) {
+            return floskel[column] == null;
+        }
+        if (filters[column] == 0) {
+            return true;
+        }
+        return floskel[column] == filters[column];
+    };
 
     const searchFilter = (floskel: Floskel): boolean => {
-        if (state.search == '') return true
-        return floskel.text.toLowerCase().includes(state.search.toLowerCase())
-    }
+        if (state.search == '') {
+            return true;
+        }
+        return floskel.text.toLowerCase().includes(state.search.toLowerCase());
+    };
 
-    const select = (floskeln: Array<Selected>): Array<Selected> => state.selected = floskeln
+    const select = (floskeln: Array<Selected>): Array<Selected> => state.selected = floskeln;
 
     const add = (): void => emit(
         'added',
         state.selected.map((selected: Selected): string => selected.text).join(' ')
-    )
+    );
 
-    const type = computed((): string => state.selected.length > 0 ? 'primary' : 'secondary')
+    const type = computed((): string => state.selected.length > 0 ? 'primary' : 'secondary');
 
     const filters = reactive({
         niveau: <Number | string> 0,
         jahrgang_id: <Number | string> 0,
-    })
+    });
 </script>
 
 

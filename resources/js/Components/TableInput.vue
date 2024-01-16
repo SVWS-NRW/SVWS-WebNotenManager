@@ -46,12 +46,12 @@
         jahrgaenge: filterElementType,
         noten: filterElementType,
         klassen: filterElementType,
-        kurse: filterElementType
-    }
+        kurse: filterElementType,
+    };
 
     const store = useStore();
-    let teilleistungen = ref(true)
-    let klassenleitung = ref(true)
+    let teilleistungen = ref(true);
+    let klassenleitung = ref(true);
 
     let state = reactive({
         leistungen: <Leistung[]> [],
@@ -63,7 +63,6 @@
             'kurse': [],
             'noten': [],
         },
-
         filters: {
             search: <string> '',
             klasse: <Number | string> '',
@@ -72,7 +71,6 @@
             note: <Number | string> '0',
         },
     });
-
 
     const columns = <Column[]> [
         {key: 'klasse', label: 'Klasse', sortable: true },
@@ -84,47 +82,44 @@
         {key: 'mahnung', label: 'M', sortable: false},
         {key: 'fs', label: 'FS'},
         {key: 'ufs', label: 'uFS'},
-    ]
+    ];
 
     onMounted(() => {
-        axios.get(route('get_filters')).then(response => state.filterValues = response.data)
-        axios.get(route('get_leistungen')).then(response => state.leistungen = response.data)
+        axios.get(route('get_filters')).then(response => state.filterValues = response.data);
+        axios.get(route('get_leistungen')).then(response => state.leistungen = response.data);
     })
 
-    const filteredLeistungen = computed((): Leistung[] =>
-        state.leistungen
-            .map((leistung: Leistung): Leistung => {
-                leistung.name = [leistung.nachname, leistung.vorname].join(' ')
-                return leistung
-            })
-            .filter((leistung: Leistung): boolean =>
-                searchFilter(leistung)
+    const filteredLeistungen = computed((): Leistung[] => {
+        return state.leistungen.map((leistung: Leistung): Leistung => {
+            leistung.name = [leistung.nachname, leistung.vorname].join(' ')
+            return leistung
+        })
+        .filter((leistung: Leistung): boolean => {
+            return searchFilter(leistung)
                 && tableFilter(leistung, 'klasse', true)
                 && tableFilter(leistung, 'kurs')
                 && tableFilter(leistung, 'jahrgang')
                 && tableFilter(leistung, 'note')
-            )
-
-    );
+        });
+    });
 
     const searchFilter = (leistung: Leistung): boolean => {
-        if (state.filters.search === '') return true
-        const search = (search: string) => search.toLowerCase().includes(state.filters.search.toLowerCase())
-        return search(leistung.vorname) || search(leistung.nachname)
-    }
+        if (state.filters.search === '') return true;
+        const search = (search: string) => search.toLowerCase().includes(state.filters.search.toLowerCase());
+        return search(leistung.vorname) || search(leistung.nachname);
+    };
 
     const tableFilter = (leistung: Leistung, column: string, withOnlyEmptyOption: boolean = false): boolean => {
-        if (withOnlyEmptyOption && state.filters[column] == '') return leistung[column] == null
-        if (state.filters[column] == 0) return true
-        return leistung[column] == state.filters[column]
-    }
-
+        if (withOnlyEmptyOption && state.filters[column] == '') return leistung[column] == null;
+        if (state.filters[column] == 0) return true;
+        return leistung[column] == state.filters[column];
+    };
 
     const updateLeistungMahnung = (leistung: Leistung, istGemahnt: boolean, mahndatum: string): void => {
-        let current = state.leistungen.find((current: Leistung) => current.id === leistung.id)
-        current.istGemahnt = istGemahnt
-        current.mahndatum = Boolean(mahndatum)
-    }
+        let current = state.leistungen.find((current: Leistung) => current.id === leistung.id);
+        current.istGemahnt = istGemahnt;
+        current.mahndatum = Boolean(mahndatum);
+    };
 
     const updateLeistungNote = (leistung: Leistung, note: string) =>
         state.leistungen.find((current: Leistung) => current.id === leistung.id)['note'] = note;

@@ -13,10 +13,10 @@
 
 
 <script setup lang="ts">
-    import { Schueler } from '@/Interfaces/Schueler'
-    import { Leistung } from '@/Interfaces/Leistung'
-    import { floskelgruppen } from '@/Interfaces/Floskelgruppe'
-    import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper'
+    import { Schueler } from '@/Interfaces/Schueler';
+    import { Leistung } from '@/Interfaces/Leistung';
+    import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
+    import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
 
     interface EmitsOptions {
         (event: 'clicked'): void,
@@ -26,12 +26,13 @@
         model: Schueler | Leistung,
         bemerkung: string | null,
         floskelgruppe: 'asv' | 'aue' | 'zb' | 'fb',
-    }>()
+    }>();
 
-    const bemerkungButtonAriaLabel = (schueler: Schueler): string =>
-        `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`
+    const bemerkungButtonAriaLabel = (schueler: Schueler): string => {
+        return `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`;
+    }
 
-    const emit = defineEmits<EmitsOptions>()
+    const emit = defineEmits<EmitsOptions>();
 </script>
 
 

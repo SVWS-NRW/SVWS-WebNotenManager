@@ -13,42 +13,42 @@
 
 
 <script setup lang="ts">
-    import { ref, Ref } from 'vue'
-    import eventBus from '@/event-bus'
+    import { ref, Ref } from 'vue';
+    import eventBus from '@/event-bus';
 
-    const duration: number = 3000
+    const duration: number = 3000;
 
-    type Variant = 'success' | 'error' 
+    type Variant = 'success' | 'error' ;
 
     type Toast = {
-        message: string
-        variant:Variant
-        visible: boolean
-    }
+        message: string,
+        variant: Variant,
+        visible: boolean,
+    };
 
     const toast: Ref<Toast> = ref({
         message: '',
         variant: 'success',
         visible: false,
-    })
+    });
 
     eventBus.$on('toast-success', (message: string): void => 
         setMessage('success', message)
-    )
+    );
     
     eventBus.$on('toast-error', (message: string): void => {
         setMessage('error', message)
-    })
+    });
 
     const setMessage = (variant: Variant, message: string): void => {
         toast.value = {
             variant: variant,
             message: message,
-            visible: true
-        }
+            visible: true,
+        };
 
-        setTimeout((): boolean => toast.value.visible = false, duration)
-    }
+        setTimeout((): boolean => toast.value.visible = false, duration);
+    };
 </script>
 
 

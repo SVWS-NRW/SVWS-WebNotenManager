@@ -16,13 +16,9 @@
 
 <script setup lang="ts">
     import { Inertia } from "@inertiajs/inertia";
+    import { SvwsUiSecondaryMenu, SvwsUiMenuItem } from '@svws-nrw/svws-ui';
 
-    import {
-        SvwsUiSecondaryMenu,
-        SvwsUiMenuItem,
-    } from '@svws-nrw/svws-ui'
-
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
+    const navigate = (routeName: string): void => Inertia.get(route(routeName));
 </script>
 
 

@@ -56,20 +56,19 @@
 
 <script setup lang="ts">
 // TODO: TBR
-    import { useStore } from '../store.js'
-    import { Inertia } from '@inertiajs/inertia'
+    import { useStore } from '@/store';
+    import { Inertia } from '@inertiajs/inertia';
+    import { Auth } from '@/Interfaces/Auth'
 
-    import { Auth } from '../Interfaces/Auth'
-
-    const store = useStore()
+    const store = useStore();
 
     let props = defineProps<{
         auth: Auth
-    }>()
+    }>();
 
-    const logout = (): void => Inertia.post(route('logout'))
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
-    const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value
+    const logout = (): void => Inertia.post(route('logout'));
+    const navigate = (routeName: string): void => Inertia.get(route(routeName));
+    const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value;
 </script>
 
 

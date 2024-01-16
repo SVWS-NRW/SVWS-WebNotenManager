@@ -14,12 +14,12 @@
 
 
 <script setup lang="ts">// TODO: TBR
-    const emit = defineEmits(['open'])
-    const open = (): void => emit('open')
+    const emit = defineEmits(['open']);
+    const open = (): void => emit('open');
 
     let props = defineProps({
         bemerkung: Boolean,
-    })
+    });
 </script>
 
 

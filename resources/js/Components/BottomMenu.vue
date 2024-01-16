@@ -20,19 +20,19 @@
     // TODO: TBR
     import { useStore } from "../store";
 
-    const store = useStore()
+    const store = useStore();
 
     const darkMode = (): void => {
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.remove('dark', 'theme-dark')
-            localStorage.removeItem('theme')
-            store.darkmode = false
-            return
+            document.documentElement.classList.remove('dark', 'theme-dark');
+            localStorage.removeItem('theme');
+            store.darkmode = false;
+            return;
         }
 
-        document.documentElement.classList.add('dark', 'theme-dark')
-        localStorage.theme = 'dark'
-        store.darkmode = true
+        document.documentElement.classList.add('dark', 'theme-dark');
+        localStorage.theme = 'dark';
+        store.darkmode = true;
     }
 </script>
 

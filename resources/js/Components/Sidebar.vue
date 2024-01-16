@@ -47,12 +47,12 @@
     import { onMounted, reactive, watch} from 'vue';
     import axios, {AxiosPromise, AxiosResponse} from 'axios';
 
-    import { Leistung } from '../Interfaces/Leistung'
-    import { Floskel } from '../Interfaces/Floskel'
+    import { Leistung } from '../Interfaces/Leistung';
+    import { Floskel } from '../Interfaces/Floskel';
 
     let props = defineProps<{
         leistung: Leistung
-    }>()
+    }>();
 
     const state = reactive({
         leistung: <Leistung | null> null,
@@ -70,7 +70,8 @@
 
     onMounted((): AxiosPromise => axios
         .get("/api/getFloskeln") // TODO: CHeck
-        .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data));
+        .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data)
+    );
 
     watch(() => props.leistung, (leistung: Leistung): Leistung => state.leistung = leistung);
     watch(() => state.floskelgruppen, (): Number => setFloskelgruppe(0));
