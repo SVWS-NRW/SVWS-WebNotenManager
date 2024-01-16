@@ -146,6 +146,6 @@
 
 <style scoped>
     .buttons {
-        @apply flex justify-end gap-3 ui-mt-3
+        @apply flex justify-end gap-3 mt-3
     }
 </style>
