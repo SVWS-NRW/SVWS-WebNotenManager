@@ -178,31 +178,30 @@
 
 
 <script setup lang="ts">
-    import AppLayout from '../Layouts/AppLayout.vue'
-    import { Head } from '@inertiajs/inertia-vue3'
-    import {computed, onMounted, ref, Ref} from 'vue'
-    import axios, { AxiosPromise, AxiosResponse } from 'axios'
-    import { Leistung, TableColumnToggle } from '@/Interfaces/Interface'
-    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
+    import AppLayout from '../Layouts/AppLayout.vue';
+    import { Head } from '@inertiajs/inertia-vue3';
+    import {computed, onMounted, ref, Ref} from 'vue';
+    import axios, { AxiosPromise, AxiosResponse } from 'axios';
+    import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
+    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import {
         DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton,
-    } from '@svws-nrw/svws-ui'
+    } from '@svws-nrw/svws-ui';
     import {
         BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput,
-    } from '@/Components/Components'
+    } from '@/Components/Components';
+    import se from "../../../public/build/assets/Datenschutz-b9850b5d";
 
-    const rows: Ref<Leistung[]> = ref([])
+    const rows: Ref<Leistung[]> = ref([]);
 
-    const rowsFiltered = computed((): Leistung[] =>
-        rows.value.filter((leistung: Leistung): boolean =>
-            searchHelper(leistung, ['name'], searchFilter.value)
+    const rowsFiltered = computed((): Leistung[] => rows.value.filter((leistung: Leistung): boolean =>
+        searchHelper(leistung, ['name'], searchFilter.value)
             && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
             && multiSelectHelper(leistung, 'fach', fachFilter.value)
             && multiSelectHelper(leistung, 'kurs', kursFilter.value)
             && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
             && multiSelectHelper(leistung, 'note', noteFilter.value)
-        )
-    )
+    ));
 
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
@@ -213,16 +212,16 @@
         kurs: false,
         note: false,
         fach: false,
-    })
+    });
 
-    let lehrerCanOverrideFachlehrer = ref(false)
-    let leistungEditable: Ref<boolean> = ref(false)
+    let lehrerCanOverrideFachlehrer = ref(false);
+    let leistungEditable: Ref<boolean> = ref(false);
     const leistungEditableToggle = (): void => {
         if (true === lehrerCanOverrideFachlehrer.value) {
             leistungEditable.value = !leistungEditable.value
         }
     }
-    const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value)
+    const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value);
 
     onMounted((): AxiosPromise => axios
         .get(route('api.leistungsdatenuebersicht'))
@@ -232,7 +231,7 @@
             lehrerCanOverrideFachlehrer.value = response.data.lehrerCanOverrideFachlehrer
         })
         .finally((): void => mapFilters())
-    )
+    );
 
     const cols = computed((): DataTableColumn[] => [
         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: false },
@@ -264,57 +263,56 @@
         ] : []),
     ])
 
-    const selectedLeistung: Ref<Leistung | null> = ref(null)
+    const selectedLeistung: Ref<Leistung | null> = ref(null);
 
-    const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null =>
-        selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null
-
-    // Filters
-    const searchFilter: Ref<string|null> = ref(null)
-    const klasseFilter: Ref<string[]> = ref([])
-    const fachFilter: Ref<string[]> = ref([])
-    const kursFilter: Ref<string[]> = ref([])
-    const jahrgangFilter: Ref<string[]> = ref([])
-    const noteFilter: Ref<string[]> = ref([])
-
-    const klasseItems: Ref<string[]> = ref([])
-    const fachItems: Ref<string[]> = ref([])
-    const kursItems: Ref<string[]> = ref([])
-    const jahrgangItems: Ref<string[]> = ref([])
-    const noteItems: Ref<string[]> = ref([])
-
-    const filterReset = (): void => {
-        searchFilter.value = ''
-        klasseFilter.value = []
-        jahrgangFilter.value = []
-        fachFilter.value = []
-        kursFilter.value = []
-        noteFilter.value = []
+    const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null => {
+        selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null;
+        return selectedLeistung;
     }
 
-    const isFiltered = (): boolean =>
-        searchFilter.value !== null
-        || klasseFilter.value.length > 0
-        || jahrgangFilter.value.length > 0
-        || fachFilter.value.length > 0
-        || kursFilter.value.length > 0
-        || noteFilter.value.length > 0
+    // Filters
+    const searchFilter: Ref<string|null> = ref(null);
+    const klasseFilter: Ref<string[]> = ref([]);
+    const fachFilter: Ref<string[]> = ref([]);
+    const kursFilter: Ref<string[]> = ref([]);
+    const jahrgangFilter: Ref<string[]> = ref([]);
+    const noteFilter: Ref<string[]> = ref([]);
+
+    const klasseItems: Ref<string[]> = ref([]);
+    const fachItems: Ref<string[]> = ref([]);
+    const kursItems: Ref<string[]> = ref([]);
+    const jahrgangItems: Ref<string[]> = ref([]);
+    const noteItems: Ref<string[]> = ref([]);
+
+    const filterReset = (): void => {
+        searchFilter.value = '';
+        klasseFilter.value = [];
+        jahrgangFilter.value = [];
+        fachFilter.value = [];
+        kursFilter.value = [];
+        noteFilter.value = [];
+    };
+
+    const isFiltered = (): boolean => {
+        return searchFilter.value !== null
+            || klasseFilter.value.length > 0
+            || jahrgangFilter.value.length > 0
+            || fachFilter.value.length > 0
+            || kursFilter.value.length > 0
+            || noteFilter.value.length > 0;
+    }
 
     const mapFilters = (): void => {
-        klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse')
-        fachItems.value = mapFilterOptionsHelper(rows.value, 'fach')
-        kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs')
-        jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang')
-        noteItems.value = mapFilterOptionsHelper(rows.value, 'note')
+        klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse');
+        fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
+        kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs');
+        jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang');
+        noteItems.value = mapFilterOptionsHelper(rows.value, 'note');
     }
 </script>
 
 
 <style scoped>
-    /* .truncate {
-        @apply truncate
-    } */
-
     header {
         @apply flex flex-col gap-4 p-6
     }
@@ -330,9 +328,4 @@
     .content-area {
         @apply mx-4
     }
-
-    .export-button {
-        @apply ui-ml-6
-    }
-
 </style>

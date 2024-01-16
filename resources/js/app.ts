@@ -18,8 +18,6 @@ if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.match
 	document.documentElement.classList.remove('dark', 'theme-dark')
 }
 
-
-
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),

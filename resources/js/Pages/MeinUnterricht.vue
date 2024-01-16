@@ -1,6 +1,6 @@
 <template>
+    <!-- Seitentitel -->
     <Head>
-        <!-- Seitentitel -->
         <title>Mein Unterricht</title>
     </Head>
     <AppLayout>
@@ -15,7 +15,7 @@
                 <!-- Tabelle mit SvwsUiTable -->
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count :sortByAndOrder= "{ key: 'klasse', order: true}"
                     :filtered="isFiltered()" :filterReset="filterReset" filterOpen>
-                    
+
                     <!-- Basis-Filteroptionen -->
                     <template #filter>
                         <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
@@ -104,8 +104,12 @@
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
-    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect } from '@svws-nrw/svws-ui';
-    import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton } from '@/Components/Components';
+    import {
+        DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton,
+    } from '@svws-nrw/svws-ui';
+    import {
+        BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton,
+    } from '@/Components/Components';
 
     // Seitentitel
     const title = 'Notenmanager - mein Unterricht';
@@ -114,16 +118,16 @@
     const rows: Ref<Leistung[]> = ref([]);
 
     // Gefilterte Daten
-    const rowsFiltered = computed((): Leistung[] =>
-        rows.value.filter((leistung: Leistung): boolean =>
-            searchHelper(leistung, ['name'], searchFilter.value || '') && 
-            multiSelectHelper(leistung, 'klasse', klasseFilter.value) && 
-            multiSelectHelper(leistung, 'fach', fachFilter.value) && 
-            multiSelectHelper(leistung, 'kurs', kursFilter.value) && 
-            multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value) && 
-            multiSelectHelper(leistung, 'note', noteFilter.value)
+    const rowsFiltered = computed((): Leistung[] => {
+        return rows.value.filter((leistung: Leistung): boolean =>
+            searchHelper(leistung, ['name'], searchFilter.value || '')
+            && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
+            && multiSelectHelper(leistung, 'fach', fachFilter.value)
+            && multiSelectHelper(leistung, 'kurs', kursFilter.value)
+            && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
+            && multiSelectHelper(leistung, 'note', noteFilter.value)
         )
-    );
+    });
 
     // Schalter für Tabellenspalten
     const toggles: Ref<TableColumnToggle> = ref({
@@ -137,15 +141,14 @@
     });
 
     // Api Call - Daten für meinUnterricht
-    onMounted((): void => { 
-        axios
-            .get(route('api.mein_unterricht'))
-            .then((response: AxiosResponse): void => {
-                rows.value = response.data.data;
-                toggles.value = response.data.toggles;
-            })
-        .finally((): void => mapFilters());
-    });
+    onMounted((): void => axios
+        .get(route('api.mein_unterricht'))
+        .then((response: AxiosResponse): void => {
+            rows.value = response.data.data;
+            toggles.value = response.data.toggles;
+        })
+        .finally((): void => mapFilters())
+    );
 
     // Standard-Spalten für die Tabelle
     const default_cols : DataTableColumn[] = [
@@ -175,7 +178,7 @@
         return result;
     });
 
-    // ... 
+    // ...
     const selectedLeistung: Ref<Leistung | null> = ref(null);
 
     // ...
@@ -207,13 +210,14 @@
     }
 
     // Prüfen, ob Filter aktiv sind
-    const isFiltered = (): boolean =>
-        searchFilter.value !== null || 
-        klasseFilter.value.length > 0 || 
-        jahrgangFilter.value.length > 0 || 
-        fachFilter.value.length > 0 || 
-        kursFilter.value.length > 0 || 
-        noteFilter.value.length > 0;
+    const isFiltered = (): boolean => {
+        return searchFilter.value !== null
+            || klasseFilter.value.length > 0
+            || jahrgangFilter.value.length > 0
+            || fachFilter.value.length > 0
+            || kursFilter.value.length > 0
+            || noteFilter.value.length > 0;
+    }
 
     // Filteroptionen mappen
     const mapFilters = (): void => {
@@ -222,8 +226,7 @@
         kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs');
         jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang');
         noteItems.value = mapFilterOptionsHelper(rows.value, 'note');
-    }
-
+    };
 </script>
 
 
