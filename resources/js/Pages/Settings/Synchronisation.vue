@@ -142,18 +142,14 @@
     }
 
     .client-data-block {
-        @apply ui-text-left ui-pl-2
+        @apply text-left pl-2
     }
     
     .buttons-block {
-        @apply ui-flex ui-justify-end ui-gap-2 -ui-mr-[55%]
+        @apply flex justify-end gap-2 -mr-[55%]
     }
 
     .button {
-<<<<<<< HEAD
-        @apply ui-self-end
-=======
         @apply self-start
->>>>>>> origin/hann/codestyle
     }
 </style>

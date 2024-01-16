@@ -9,10 +9,10 @@
 export const handleExport = (data: Record<string, any>[], type: string, fileName: string): void => {
     // Check the export type and call the corresponding export function
     if (type === 'csv') {
-        const csvData = convertToCSV(data)
-        downloadCSV(csvData, fileName)
+        const csvData = convertToCSV(data);
+        downloadCSV(csvData, fileName);
     } else if (type === 'excel') {
-        downloadExcel(data, fileName)
+        downloadExcel(data, fileName);
     }
 };
 
@@ -24,14 +24,14 @@ export const handleExport = (data: Record<string, any>[], type: string, fileName
 const convertToCSV = (data: Record<string, any>[]): string => {
     // Check if the data array is empty and handle the case
     if (data.length === 0) {
-        return '' // TODO: Handle the case where data is an empty array
+        return ''; // TODO: Handle the case where data is an empty array
     }
 
     // Generate CSV header and body
-    const header = Object.keys(data[0]).join(';') + '\n'
-    const body = data.map(item => Object.values(item).join(';')).join('\n')
-    return header + body
-}
+    const header = Object.keys(data[0]).join(';') + '\n';
+    const body = data.map(item => Object.values(item).join(';')).join('\n');
+    return header + body;
+};
 
 /**
  * Downloads CSV data as a file.
@@ -40,23 +40,23 @@ const convertToCSV = (data: Record<string, any>[]): string => {
  */
 const downloadCSV = (csvData: string, title: String) => {
     // Create a Blob from the CSV data
-    const blob = new Blob([csvData], { type: 'text/csv' })
+    const blob = new Blob([csvData], { type: 'text/csv' });
     
     // Create a URL for the Blob
-    const url = window.URL.createObjectURL(blob)
+    const url = window.URL.createObjectURL(blob);
 
     // Create a link element for the download
-    const a = document.createElement('a')
-    a.href = url
-    a.download = title+'.csv'
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = title+'.csv';
     
     // Append the link to the body, trigger a click, and remove the link
-    document.body.appendChild(a)
+    document.body.appendChild(a);
     a.click()
-    document.body.removeChild(a)
+    document.body.removeChild(a);
 
     // Revoke the Object URL to free up resources
-    window.URL.revokeObjectURL(url)
+    window.URL.revokeObjectURL(url);
 }
 
 /**

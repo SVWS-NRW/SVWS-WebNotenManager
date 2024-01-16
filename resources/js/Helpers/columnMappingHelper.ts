@@ -1,4 +1,4 @@
-import { TableColumnToggle } from '@/Interfaces/Interface'
+import { TableColumnToggle } from '@/Interfaces/Interface';
 
 /**
  * Maps a toggle name to its corresponding database field.
@@ -15,7 +15,7 @@ export const mapToggleToDatabaseField = (toggleName: keyof TableColumnToggle): s
         fehlstunden: "fehlstunden",
         kurs: "kurs",
         note: "note",
-        fach: "fach"
+        fach: "fach",
     };
 
     // Return the corresponding database field name or the original toggle name if not found
