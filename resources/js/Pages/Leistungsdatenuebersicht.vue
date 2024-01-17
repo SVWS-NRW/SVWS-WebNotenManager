@@ -20,7 +20,7 @@
                     <!-- Basis-Filteroptionen -->
                     <template #filter>
                         <div class="edition-pencil-button">
-                            <SvwsUiButton @click="leistungEditableToggle()"v-if="lehrerCanOverrideFachlehrer" 
+                            <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer" 
                                 :type="leistungEditable ? 'primary' : 'secondary'" size="big">
                                 <ri-pencil-fill></ri-pencil-fill>
                             </SvwsUiButton>
