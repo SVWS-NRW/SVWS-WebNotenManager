@@ -110,4 +110,10 @@
     #header {
         @apply hover:cursor-pointer
     }
+
+    .app--layout--wenom :global(.app--content-container) {
+	    @apply rounded-2xl;
+    }
+
+
 </style>

@@ -34,6 +34,10 @@
 
 
 <style scoped>
+
+    /* .app--layout--wenom :global(.app--content-container) {
+	    @apply rounded-2xl;
+    } */
     div.component {
         @apply bg-chalk bg-cover w-full h-full flex flex-col justify-between
     }
