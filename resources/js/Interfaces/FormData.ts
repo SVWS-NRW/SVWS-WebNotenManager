@@ -18,3 +18,19 @@ export interface PasswordRequestFormData {
 	errors: {},
 	successMessage: boolean,
 }
+
+export interface MailSendCredentialsFormData {
+	form: {
+		mailer: number,
+        host: string,
+        port: string,
+        username: string,
+        password: string,
+        encryption: string,
+        from_address: string,
+        from_name: string,
+	},
+	processing: boolean,
+	errors: {},
+	successMessage: boolean,
+}
