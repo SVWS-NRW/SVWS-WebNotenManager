@@ -35,10 +35,10 @@
         debounce = setTimeout((): AxiosPromise => saveNote(), 500);
     })
 
-    const saveNote = (): AxiosPromise => axios
+    const saveNote = (): Promise<string | null> => axios
         .post(route('api.noten', props.leistung), { note: note.value })
-        .then((): string => props.leistung.note = note.value)
-        .catch((): string => note.value = props.leistung.note);
+        .then((): string | null => props.leistung.note = note.value)
+        .catch((): string | null => note.value = props.leistung.note);
 
     const valid: boolean = (): boolean => !lowScoreArray.includes(note.value);
 </script>

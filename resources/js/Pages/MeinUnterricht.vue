@@ -78,7 +78,10 @@
 
                     <!-- BemerkungButton in der Zelle 'fsu' -->
                     <template #cell(fsu)="{ value, rowData }">
-                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
+                        <!-- testing here for feature 207 -->
+                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden"
+                        @keyup.down="next(rowData)"
+                        />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'fachbezogeneBemerkungen' -->
@@ -260,6 +263,21 @@
         // Rufe den allgemeinen Export-Handler mit den vorbereiteten Daten auf
         handleExport(exportData, type, 'leistungsdatenübersicht');
     }
+
+    //testing here for 207
+    const itemRefs = ref(new Map());
+
+	function next(id: number) {
+		const el = itemRefs.value.get(id + 1);
+		if (el)
+			el.input.focus();
+	}
+
+	function previous(id: number) {
+		const el = itemRefs.value.get(id - 1);
+		if (el)
+			el.input.focus();
+	}
     
 </script>
 

@@ -1,5 +1,4 @@
 <template>
-    <!-- Seitentitel -->
     <Head>
         <title>Notenmanager - Leistungsdatenübersicht</title>
     </Head>
@@ -7,17 +6,13 @@
     <AppLayout>
          <template #main>
             <header>
-                <!-- Überschrift des Headers -->
                 <div id="headline">
                     <h2 class="text-headline">{{ title }}</h2>
                 </div>
             </header>
             <div class="content-area">
-                <!-- Tabelle mit SvwsUiTable -->
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count :filtered="isFiltered()" :filterReset="filterReset"  
                     :filterOpen="true" :sortByAndOrder="{ key: 'klasse', order: true}">
-                    
-                    <!-- Basis-Filteroptionen -->
                     <template #filter>
                         <div class="edition-pencil-button">
                             <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer" 
@@ -36,8 +31,6 @@
                         <SvwsUiButton class="export-button" type="transparent" @click="exportToFile('csv')">CSV</SvwsUiButton>
                         <SvwsUiButton class="export-button" type="transparent" @click="exportToFile('excel')">Excel</SvwsUiButton>
                     </template>
-                    
-                    <!-- Erweiterte Filteroptionen -->
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
                         <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
@@ -47,61 +40,47 @@
                         <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="item => item" v-model="noteFilter" />
                     </template>
 
-                    <!-- Individuelle Zellen-Template -->
-                    <!-- BemerkungButton in der Zelle 'klasse' -->
                     <template #cell(klasse)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'name' -->
                     <template #cell(name)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fach' -->
                     <template #cell(fach)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'kurs' -->
                     <template #cell(kurs)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'lehrer' -->
                     <template #cell(lehrer)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'note' -->
                     <template #cell(note)="{ value, rowData }">
                         <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" />
                     </template>
-
-                    <!-- BemerkungButton in der Zelle 'istGemahnt' -->
                     <template #cell(istGemahnt)="{ value, rowData }">
                         <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fs' -->
                     <template #cell(fs)="{ value, rowData }">
                         <FehlstundenInput column="fs" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fsu' -->
                     <template #cell(fsu)="{ value, rowData }">
                         <FehlstundenInput column="fsu" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fachbezogeneBemerkungen' -->
                     <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
                         <BemerkungIndicator :model="rowData" :bemerkung="rowData.fachbezogeneBemerkungen" @clicked="selectLeistung(rowData, true)" floskelgruppe="fb" />
                     </template>
                 </SvwsUiTable>
             </div>
         </template>
-
-        <!-- Anzeige des ausgewählten Elements -->
         <template v-slot:aside v-if="selectedLeistung">
             <FbEditor :leistung="selectedLeistung" @updated="selectedLeistung.fachbezogeneBemerkungen = $event;" @close="selectedLeistung = null" 
                 :editable="leistungEditable"></FbEditor>
@@ -119,17 +98,14 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
-    import se from "../../../public/build/assets/Datenschutz-b9850b5d";
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
     import { handleExport } from '@/Helpers/exportHelper';
 
-    // Seitentitel
     const title = 'Notenmanager - Leistungsdatenübersicht';
 
-    // Daten
     const rows: Ref<Leistung[]> = ref([]);
 
-    // Datenfilter
+    // in case some delimitation takes place under #filterAdvanced, data are filtered before display in the table
     const rowsFiltered = computed((): Leistung[] => {
         return rows.value.filter((leistung: Leistung): boolean => {
             return searchHelper(leistung, ['name'], searchFilter.value || '')
@@ -141,7 +117,17 @@
         });
     });
 
-    // Schalter für Tabellenspalten
+    //the pencil icon on top of the page is displayed and clickable only the user has the right to do so
+    let lehrerCanOverrideFachlehrer = ref(false);
+    let leistungEditable: Ref<boolean> = ref(false);
+
+    const leistungEditableToggle = (): void => {
+        if (true === lehrerCanOverrideFachlehrer.value) {
+            leistungEditable.value = !leistungEditable.value;
+        }
+    };
+
+    //these columns can be hidden/displayed on the page, which can overwrite the platform settings under Einstellungen/Filter
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
         fachlehrer: false,
@@ -153,18 +139,22 @@
         fach: false,
     });
 
-    // ...
-    let lehrerCanOverrideFachlehrer = ref(false);
-    let leistungEditable: Ref<boolean> = ref(false);
-    const leistungEditableToggle = (): void => {
-        if (true === lehrerCanOverrideFachlehrer.value) {
-            leistungEditable.value = !leistungEditable.value;
-        }
-    };
+    const searchFilter: Ref<string|null> = ref(null);
+    const klasseFilter: Ref<string[]> = ref([]);
+    const fachFilter: Ref<string[]> = ref([]);
+    const kursFilter: Ref<string[]> = ref([]);
+    const jahrgangFilter: Ref<string[]> = ref([]);
+    const noteFilter: Ref<string[]> = ref([]);
+
+    const klasseItems: Ref<string[]> = ref([]);
+    const fachItems: Ref<string[]> = ref([]);
+    const kursItems: Ref<string[]> = ref([]);
+    const jahrgangItems: Ref<string[]> = ref([]);
+    const noteItems: Ref<string[]> = ref([]);
 
     const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value);
 
-    onMounted((): AxiosPromise => axios
+    onMounted((): Promise<void> => axios
         .get(route('api.leistungsdatenuebersicht'))
         .then((response: AxiosResponse): void => {
             rows.value = response.data.data;
@@ -174,13 +164,13 @@
         .finally((): void => mapFilters())
     );
 
-    // Standard-Spalten für die Tabelle
+    // columns used for sorting the data
     const default_cols : DataTableColumn[] = [
         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, fixedWidth: 6, disabled: false },
         { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
     ];
 
-    // Ein- und Ausblendbare Spalten
+    // the other columns received from DB
     const cols = computed((): DataTableColumn[] => {
         const result = [...default_cols];
         if (toggles.value.fach)
@@ -204,40 +194,17 @@
         return result;
     });
 
-    // ...
+    //if a specific Leistung is clicked on, the FbEditor component is displayed on the right side of the screen
     const selectedLeistung: Ref<Leistung | null> = ref(null);
 
-    // ...
     const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null => {
         selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null;
-        return selectedLeistung;
+        if (selectedLeistung !== null) {
+            return selectedLeistung.value;
+        } return null
     }
 
-    // Filter
-    const searchFilter: Ref<string|null> = ref(null);
-    const klasseFilter: Ref<string[]> = ref([]);
-    const fachFilter: Ref<string[]> = ref([]);
-    const kursFilter: Ref<string[]> = ref([]);
-    const jahrgangFilter: Ref<string[]> = ref([]);
-    const noteFilter: Ref<string[]> = ref([]);
-
-    const klasseItems: Ref<string[]> = ref([]);
-    const fachItems: Ref<string[]> = ref([]);
-    const kursItems: Ref<string[]> = ref([]);
-    const jahrgangItems: Ref<string[]> = ref([]);
-    const noteItems: Ref<string[]> = ref([]);
-
-    // Filter zurücksetzen
-    const filterReset = (): void => {
-        searchFilter.value = '';
-        klasseFilter.value = [];
-        jahrgangFilter.value = [];
-        fachFilter.value = [];
-        kursFilter.value = [];
-        noteFilter.value = [];
-    };
-
-    // Prüfen, ob Filter aktiv sind
+    // check whether filters have receive some input from user
     const isFiltered = (): boolean => {
         return searchFilter.value !== null
             || klasseFilter.value.length > 0
@@ -247,7 +214,7 @@
             || noteFilter.value.length > 0;
     }
 
-    // Filteroptionen mappen
+    //inputs are adjusted (for example, ToLowercase) and compared to data; results are returned
     const mapFilters = (): void => {
         klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse');
         fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
@@ -256,8 +223,18 @@
         noteItems.value = mapFilterOptionsHelper(rows.value, 'note');
     }
 
+    const filterReset = (): void => {
+        searchFilter.value = '';
+        klasseFilter.value = [];
+        jahrgangFilter.value = [];
+        fachFilter.value = [];
+        kursFilter.value = [];
+        noteFilter.value = [];
+    };
+
     /**
      * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
+     * TODO: explain how here and delete duplicated comments
      * @param type - Der Exporttyp ('csv' oder 'excel').
      */
      const exportToFile = (type: string): void => {
