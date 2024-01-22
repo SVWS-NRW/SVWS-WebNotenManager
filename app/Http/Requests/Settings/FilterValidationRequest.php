@@ -4,13 +4,27 @@ namespace App\Http\Requests\Settings;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * A FormRequest class to handle validation and authorization for requests related current resource.
+ */
 class FilterValidationRequest extends FormRequest
 {
+    /**
+     * Determine if the given ability should be granted for the current user.
+     *
+     * @return bool
+     */
     public function authorize(): bool
     {
+        // Authorization passes if current user is logged in
         return auth()->check();
     }
 
+    /**
+     * Validation rules
+     *
+     * @return array
+     */
     public function rules(): array
     {
         return [
@@ -33,7 +47,12 @@ class FilterValidationRequest extends FormRequest
         ];
     }
 
-    public function attributes()
+    /**
+     * Validation attributes
+     *
+     * @return array
+     */
+    public function attributes(): array
     {
         return [
             'filters_meinunterricht.mahnungen' => 'Mein Unterricht Mahnungen',
