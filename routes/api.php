@@ -11,16 +11,11 @@ use App\Http\Controllers\Api\Mahnungen;
 use App\Http\Controllers\Api\MeinUnterricht;
 use App\Http\Controllers\Api\Noten;
 use App\Http\Controllers\Api\SchuelerBemerkung;
-
-
 use App\Http\Controllers\Api\Settings\EnvController;
 use App\Http\Controllers\Api\Settings\MatrixController;
 use App\Http\Controllers\Api\Settings\SettingsController;
-
 use App\Http\Controllers\Api\Settings\UserSettingsController;
 use App\Http\Controllers\Api\TwoFAAuthentication;
-
-
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\PassportController;
@@ -138,8 +133,7 @@ Route::middleware('auth:sanctum')->group(function () {
 		->name('api.klassenleitung');
 });
 
-// TODO: To be removed, temporary testing route
-// TODO: Testing
+// TODO: To be removed, temporary testing route #239
 Route::get('export', ExportController::class)->name('api.export'); // Rename namespace?
 Route::get('import/gzip', [ImportController::class, 'gzipEnm']);
 Route::post('import/gzip', [ImportController::class, 'gzip']);

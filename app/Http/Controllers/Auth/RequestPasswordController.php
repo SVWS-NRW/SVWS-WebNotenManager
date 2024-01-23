@@ -10,6 +10,7 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 
 class RequestPasswordController extends Controller
 {
+    // TODO: To be removed?
 	public function execute(FirstLoginRequest $request): void
     {
         if ($request->get('schulnummer') !== config('wenom.schulnummer')) {

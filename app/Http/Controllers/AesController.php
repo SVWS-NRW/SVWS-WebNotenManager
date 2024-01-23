@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AesController extends Controller
 {
+    // TODO: To be removed after testing #239
     public function __invoke(): string
 	{
 		$encryptedData = File::get(path: '../database/seeders/data/enm.json.aes.base64');
