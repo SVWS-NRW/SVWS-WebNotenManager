@@ -51,12 +51,14 @@
     import { Errors, Inertia } from '@inertiajs/inertia';
     import { reactive } from 'vue';
     import AuthLayout from '../Layouts/AuthLayout.vue';
+    import { TwoFA } from '@/Interfaces/FormData';
 
-    let data= reactive({
+    let data: TwoFA= reactive({
         form: {
             twoFACode: '',
         },
         processing: false,
+        successMessage: false,
         errors: {},
     });
 

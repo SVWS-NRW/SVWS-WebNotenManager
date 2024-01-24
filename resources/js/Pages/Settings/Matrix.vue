@@ -276,7 +276,6 @@
                                                     <ri-arrow-down-s-line v-if="jahgraengeCollapsed[key][1][index]" />
                                                     <ri-arrow-right-s-line v-else />
                                                 </SvwsUiButton>
-                                         <!-- testing here for indeterminate status-->
                                                 <SvwsUiCheckbox
                                                     v-model="jahrgangToggle[jahrgang.id]"
                                                     @update:modelValue="toggleJahrgang(jahrgang)"
@@ -470,19 +469,19 @@
     }
 
     interface Klasse {
-        id: number,
-        kuerzel: string,
-        sortierung: number,
-        editable_teilnoten: boolean,
-        editable_noten: boolean,
-        editable_mahnungen: boolean,
-        editable_fehlstunden: boolean,
-        toggleable_fehlstunden: boolean,
-        editable_fb: boolean,
-        editable_asv: boolean,
-        editable_aue: boolean,
-        editable_zb: boolean,
-    }
+    id: number,
+    kuerzel: string,
+    sortierung: number,
+    editable_teilnoten: boolean,
+    editable_noten: boolean,
+    editable_mahnungen: boolean,
+    editable_fehlstunden: boolean,
+    toggleable_fehlstunden: boolean,
+    editable_fb: boolean,
+    editable_asv: boolean,
+    editable_aue: boolean,
+    editable_zb: boolean,
+}
 
     interface Jahrgang {
         id: number,

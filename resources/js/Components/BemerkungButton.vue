@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
     import { Leistung, Schueler } from '@/Interfaces/Interface';
-    import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
+    import { Floskelgruppe, floskelgruppen } from '@/Interfaces/Floskelgruppe';
 
     interface EmitsOptions {
         (event: 'clicked'): void,

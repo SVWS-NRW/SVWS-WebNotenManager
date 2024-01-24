@@ -5,7 +5,7 @@ export interface LoginFormData {
 		remember: boolean,
 	},
 	processing: boolean,
-	errors: [[key: string], string] | [],
+	errors: {[key: string]: string},
 }
 
 export interface PasswordRequestFormData {
@@ -15,7 +15,7 @@ export interface PasswordRequestFormData {
 		schulnummer: string,
 	},
 	processing: boolean,
-	errors: {},
+	errors: {[key: string]: string},
 	successMessage: boolean,
 }
 
@@ -31,6 +31,15 @@ export interface MailSendCredentialsFormData {
         from_name: string,
 	},
 	processing: boolean,
-	errors: {},
+	errors: {[key: string]: string},
 	successMessage: boolean,
+}
+
+export interface TwoFA {
+	form: {
+		twoFACode: string,
+	},
+	processing: boolean,
+	successMessage: boolean,
+	errors: {[key: string]: string},
 }

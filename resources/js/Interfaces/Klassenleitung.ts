@@ -1,4 +1,4 @@
-export interface Schueler {
+export interface Klassenleitung {
 	id: number,
 	vorname: string,
 	nachname: string,
@@ -7,6 +7,9 @@ export interface Schueler {
 	klasse: string,
 	bemerkung: object,
 	fachbezogeneBemerkungen: string,
+    ASV: string,
+    AUE: string,
+    ZB: string,
 	asv: string,
 	aue: string | null,
 	zb: string | null,

@@ -35,6 +35,11 @@
         selected: boolean,
     };
 
+    type Filter = {
+        niveau: Number|string,
+        jahrgang_id: Number|string,
+    };
+
     let props = defineProps({floskeln: Array});
 
     const state = reactive({
@@ -60,20 +65,23 @@
         .then((response: AxiosResponse): AxiosResponse => state.filterValues = response.data)
     );
 
-    const computedFloskeln = computed(() => props.floskeln.filter((floskel: Floskel): boolean => {
-        return searchFilter(floskel)
-            && tableFilter(floskel, 'niveau')
-            && tableFilter(floskel, 'jahrgang_id')
-    }));
+    const computedFloskeln = computed(() => {
+        if (props.floskeln != undefined)
+            props.floskeln.filter((floskel: Floskel): boolean => {
+                return searchFilter(floskel)
+                    && tableFilter(floskel, 'niveau')
+                    && tableFilter(floskel, 'jahrgang_id')
+            })
+    });
 
     const tableFilter = (floskel: Floskel, column: string, withOnlyEmptyOption: boolean = false): boolean => {
         if (withOnlyEmptyOption && [null, ''].includes(filters[column])) {
-            return floskel[column] == null;
+            return floskel[column as keyof Floskel] == null;
         }
-        if (filters[column] == 0) {
+        if (filters[column as keyof Filter] == 0) {
             return true;
         }
-        return floskel[column] == filters[column];
+        return floskel[column as keyof Floskel] == filters[column as keyof Filter];
     };
 
     const searchFilter = (floskel: Floskel): boolean => {
@@ -92,7 +100,7 @@
 
     const type = computed((): string => state.selected.length > 0 ? 'primary' : 'secondary');
 
-    const filters = reactive({
+    const filters: Filter = reactive({
         niveau: <Number | string> 0,
         jahrgang_id: <Number | string> 0,
     });

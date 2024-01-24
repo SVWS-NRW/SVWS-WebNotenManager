@@ -3,9 +3,9 @@
         <template #main>
             <section>
                 <h2 class="text-headline">Einstellungen - Filter</h2>
+                <h3 class="text-headline-md">Mein Unterricht</h3>
                 <div>
-                    <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
@@ -13,7 +13,6 @@
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.note">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fach">Fach</SvwsUiCheckbox>
                 </div>
-
                 <div>
                     <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
@@ -25,7 +24,6 @@
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach">Fach</SvwsUiCheckbox>
                 </div>
-
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
             </section>
         </template>
@@ -48,52 +46,54 @@
         auth: Object,
     })
 
-    let user_settings: Ref<{
-        meinunterricht?: {
-            teilleistungen?: boolean,
-            mahnungen?: boolean,
-            fehlstunden?: boolean,
-            bemerkungen?: boolean,
-            kurs?: boolean,
-            note?: boolean,
-            fach?: boolean,
+    interface UserSettings {
+        filters_meinunterricht: {
+            teilleistungen: boolean,
+            mahnungen: boolean,
+            fehlstunden: boolean,
+            bemerkungen: boolean,
+            kurs: boolean,
+            note: boolean,
+            fach: boolean,
         },
-        leistungsdatenuebersicht?: {
-            teilleistungen?: boolean,
-            fachlehrer?: boolean,
-            mahnungen?: boolean,
-            fehlstunden?: boolean,
-            bemerkungen?: boolean,
-            kurs?: boolean,
-            note?: boolean,
-            fach?: boolean,
+        filters_leistungsdatenuebersicht: {
+            teilleistungen: boolean,
+            fachlehrer: boolean,
+            mahnungen: boolean,
+            fehlstunden: boolean,
+            bemerkungen: boolean,
+            kurs: boolean,
+            note: boolean,
+            fach: boolean,
         }
-    }> = ref({})
+    }
 
-    onMounted((): AxiosResponse => axios.get(route('user_settings.get_all_filters'))
+    const user_settings: Ref<UserSettings> = ref({} as UserSettings);
+
+    axios.get(route('user_settings.get_all_filters'))
         .then((response: AxiosResponse): AxiosResponse => user_settings.value = response.data)
-    )
+    ;
 
     const saveSettings = () => axios
         .post(route('user_settings.set_filters'), {
             'filters_meinunterricht': {
-                'mahnungen': user_settings.value.filters_meinunterricht?.mahnungen,
-                'bemerkungen': user_settings.value.filters_meinunterricht?.bemerkungen,
-                'fehlstunden': user_settings.value.filters_meinunterricht?.fehlstunden,
-                'teilleistungen': user_settings.value.filters_meinunterricht?.teilleistungen,
-                'kurs': user_settings.value.filters_meinunterricht?.kurs,
-                'note': user_settings.value.filters_meinunterricht?.note,
-                'fach': user_settings.value.filters_meinunterricht?.fach,
+                'mahnungen': user_settings.value.filters_meinunterricht.mahnungen,
+                'bemerkungen': user_settings.value.filters_meinunterricht.bemerkungen,
+                'fehlstunden': user_settings.value.filters_meinunterricht.fehlstunden,
+                'teilleistungen': user_settings.value.filters_meinunterricht.teilleistungen,
+                'kurs': user_settings.value.filters_meinunterricht.kurs,
+                'note': user_settings.value.filters_meinunterricht.note,
+                'fach': user_settings.value.filters_meinunterricht.fach,
             },
             'filters_leistungsdatenuebersicht': {
-                'mahnungen': user_settings.value.filters_leistungsdatenuebersicht?.mahnungen,
-                'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht?.fachlehrer,
-                'bemerkungen': user_settings.value.filters_leistungsdatenuebersicht?.bemerkungen,
-                'fehlstunden': user_settings.value.filters_leistungsdatenuebersicht?.fehlstunden,
-                'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht?.teilleistungen,
-                'kurs': user_settings.value.filters_leistungsdatenuebersicht?.kurs,
-                'note': user_settings.value.filters_leistungsdatenuebersicht?.note,
-                'fach': user_settings.value.filters_leistungsdatenuebersicht?.fach,
+                'mahnungen': user_settings.value.filters_leistungsdatenuebersicht.mahnungen,
+                'fachlehrer': user_settings.value.filters_leistungsdatenuebersicht.fachlehrer,
+                'bemerkungen': user_settings.value.filters_leistungsdatenuebersicht.bemerkungen,
+                'fehlstunden': user_settings.value.filters_leistungsdatenuebersicht.fehlstunden,
+                'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht.teilleistungen,
+                'kurs': user_settings.value.filters_leistungsdatenuebersicht.kurs,
+                'note': user_settings.value.filters_leistungsdatenuebersicht.note,
+                'fach': user_settings.value.filters_leistungsdatenuebersicht.fach,
             },
         })
         .then((): void => apiSuccess())

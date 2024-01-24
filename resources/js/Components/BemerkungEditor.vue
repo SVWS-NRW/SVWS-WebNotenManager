@@ -78,7 +78,7 @@
     const isEditable: Ref<boolean> = ref(true);
 
     // Watchers
-    onMounted((): Promise<AxiosResponse | void> => {
+    onMounted((): void => {
         fetchFloskeln();
         isEditable.value = props.schueler.editable[props.floskelgruppe];
     });

@@ -91,7 +91,7 @@
             remember: false,
         },
         processing: false,
-        errors: [],
+        errors: {},
     });
 
     const getError = (column: string): string => data.errors[column][0];

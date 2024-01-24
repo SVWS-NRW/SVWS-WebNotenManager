@@ -32,12 +32,12 @@
                             :value="value"
                             :model="rowData"
                             :floskelgruppe="selectedFloskelgruppe"
-                            @clicked="selectSchueler(rowData)"
+                            @clicked="selectSchueler(rowData, '')"
                         />
                     </template>
                     <template #cell(name)="{ value, rowData }">
                         <BemerkungButton
-                            @clicked="selectSchueler(rowData)"
+                            @clicked="selectSchueler(rowData, '')"
                             :value="value"
                             :model="rowData"
                             :floskelgruppe="selectedFloskelgruppe"
@@ -78,10 +78,11 @@
         </template>
 
         <template v-slot:aside v-if="selectedSchueler">
+            <!-- TODO: maybe try guarding validations? -->
             <BemerkungEditor
                 :schueler="selectedSchueler"
                 :floskelgruppe="selectedFloskelgruppe"
-                :bemerkung="selectedSchueler[selectedFloskelgruppe.toUpperCase()]"
+                :bemerkung="selectedSchueler[selectedFloskelgruppe.toUpperCase()] "
                 @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event;"
                 @close="selectedSchueler = null"
             ></BemerkungEditor>
@@ -97,16 +98,20 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
     import { Schueler } from '@/Interfaces/Interface';
+    import { Klassenleitung } from '../Interfaces/Klassenleitung';
     import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components';
 
     const title = 'Notenmanager - Klassenleitung';
 
-    const rows: Ref<Schueler[]> = ref([]);
+    const rows: Ref<Klassenleitung[]> = ref([]);
 
-    const rowsFiltered = computed((): Schueler[] => {
-        return rows.value.filter((schueler: Schueler): boolean => {
-            return searchHelper(schueler, ['name'], searchFilter.value)
-                && multiSelectHelper(schueler, 'klasse', klasseFilter.value);
+    const rowsFiltered = computed((): Klassenleitung[] => {
+        return rows.value.filter((schueler: Klassenleitung): boolean => {
+            if (searchFilter.value !== null) {
+                return searchHelper(schueler, ['name'], searchFilter.value)
+                    && multiSelectHelper(schueler, 'klasse', klasseFilter.value);
+            }
+            return true;
         })
     });
 
@@ -132,7 +137,6 @@
     const selectSchueler = (schueler: Schueler, floskelgruppe: string): void => {
         if (floskelgruppe || selectedSchueler.value != null) {
             selectedSchueler.value = schueler;
-
             if (floskelgruppe) {
                 selectedFloskelgruppe.value = floskelgruppe;
             }

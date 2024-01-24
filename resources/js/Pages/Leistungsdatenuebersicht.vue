@@ -105,7 +105,7 @@
 
     const rows: Ref<Leistung[]> = ref([]);
 
-    // in case some delimitation takes place under #filterAdvanced, data are filtered before display in the table
+    //in case some delimitation takes place under #filterAdvanced, data are filtered before display in the table
     const rowsFiltered = computed((): Leistung[] => {
         return rows.value.filter((leistung: Leistung): boolean => {
             return searchHelper(leistung, ['name'], searchFilter.value || '')

@@ -49,32 +49,33 @@
         auth: Object,
     });
 
-    //correct this
-
-    let settings: Ref<{
-        meinunterricht?: {
-            teilleistungen?: boolean,
-            mahnungen?: boolean,
-            fehlstunden?: boolean,
-            bemerkungen?: boolean,
-            kurs?: boolean,
-            note?: boolean,
-            fach?: boolean,
+    interface Settings {
+        meinunterricht: {
+            teilleistungen: boolean,
+            mahnungen: boolean,
+            fehlstunden: boolean,
+            bemerkungen: boolean,
+            kurs: boolean,
+            note: boolean,
+            fach: boolean,
         },
-        leistungsdatenuebersicht?: {
-            teilleistungen?: boolean,
-            fachlehrer?: boolean,
-            mahnungen?: boolean,
-            fehlstunden?: boolean,
-            bemerkungen?: boolean,
-            kurs?: boolean,
-            note?: boolean,
-            fach?: boolean,
+        leistungsdatenuebersicht: {
+            teilleistungen: boolean,
+            fachlehrer: boolean,
+            mahnungen: boolean,
+            fehlstunden: boolean,
+            bemerkungen: boolean,
+            kurs: boolean,
+            note: boolean,
+            fach: boolean,
         }
-    }> = ref({});
+    }
+
+    const settings: Ref<Settings> = ref({} as Settings);
 
     axios.get(route('api.settings.filters'))
         .then((response: AxiosResponse) => settings.value = response.data)
+    ;
 
     const saveSettings = () => axios
         .post(route('api.settings.filters'),  {

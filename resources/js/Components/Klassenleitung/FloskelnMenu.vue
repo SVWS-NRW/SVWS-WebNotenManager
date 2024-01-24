@@ -78,7 +78,7 @@
         state.floskelgruppen = props.floskelgruppen;
     });
 
-    const computedBemerkung = computed((): string => {
+    const computedBemerkung = computed((): string | undefined => {
         state.isDirty = state.bemerkung != state.storedBemerkung;
 
         if (!state.bemerkung) {
@@ -125,7 +125,7 @@
             return;
         });
 
-    const currentFloskelGruppe = computed((): Floskelgruppe => state.floskelgruppen.find(
+    const currentFloskelGruppe = computed((): Floskelgruppe | undefined => state.floskelgruppen.find(
         floskelgruppe => floskelgruppe.kuerzel == props.selected.floskelgruppe
     ));
 
