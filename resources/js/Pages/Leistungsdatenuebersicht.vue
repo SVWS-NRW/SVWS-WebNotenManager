@@ -127,7 +127,7 @@
         }
     };
 
-    //these columns can be hidden/displayed on the page, which can overwrite the platform settings under Einstellungen/Filter
+    //these columns can be hidden/displayed on the page, which can overwrite the platform general settings under Einstellungen/Filter
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
         fachlehrer: false,
