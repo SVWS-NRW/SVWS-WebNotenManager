@@ -510,7 +510,7 @@
         { key: 'noten', label: 'Noten'},
         { key: 'mahnung', label: 'M', tooltip: "Mahnung"},
         { key: 'klasse', label: 'FS', tooltip: "Fehlstunden"},
-        { key: 'klasse', label: 'GS/GFS', tooltip: "Fehlstunden/Gesamtfehlstunden"},
+        { key: 'klasse', label: 'FS/GFS', tooltip: "Fehlstunden/Gesamtfehlstunden"},
         { key: 'klasse', label: 'FB',  tooltip: "Fachbezogene Bemerkungen"},
         { key: 'klasse', label: 'ASV', tooltip: "Arbeits- und Sozialverhalten"},
         { key: 'klasse', label: 'AUE', tooltip: "Außerunterrichtliches Engagement"},
