@@ -136,7 +136,7 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12 max-w-lg
+        @apply px-6 flex flex-col gap-12
     }
 
     .content>div {
