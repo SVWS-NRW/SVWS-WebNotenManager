@@ -1,9 +1,5 @@
 <template>
     <SvwsUiContentCard :title="`${props.leistung.vorname} ${props.leistung.nachname}, Klasse ${props.leistung.klasse}, ${props.leistung.fach}${props.leistung.kurs ? ' (' + props.leistung.kurs + ')' : ''}`">
-        <template #actions>
-            <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
-        </template>
-
         <SvwsUiInputWrapper :grid="1">
 
             <SvwsUiTextareaInput :rows="3" v-model="bemerkung" :disabled="!isEditable" placeholder="Bemerkung" resizeable="vertical"
@@ -12,7 +8,7 @@
             <div class="buttons">
                 <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
                 <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
-                
+                <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
             </div>
 
             <SvwsUiTable v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" clickable count
