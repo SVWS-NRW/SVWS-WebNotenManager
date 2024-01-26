@@ -34,7 +34,7 @@
                         <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
                         </SvwsUiButton>
                         <SvwsUiButton v-if="newClientCreated" @click="copyToClipboard(newClientDataInfo)" type="secondary">Kopieren</SvwsUiButton>
-                        <SvwsUiButton @click="closeModal()" type="secondary">Abrechen</SvwsUiButton>
+                        <SvwsUiButton @click="closeModal()" type="secondary">Schließen</SvwsUiButton>
                     </div>
                 </template>
             </SvwsUiModal>
