@@ -49,7 +49,7 @@
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.encryption" :valid="() => !hasErrors('MAIL_ENCRYPTION')" type="text"
-                        @input="updateIsDirty()" placeholder="Verschluesselung"></SvwsUiTextInput>
+                        @input="updateIsDirty()" placeholder="Verschlüsselung"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_ENCRYPTION')" class="error">
                         {{ getError('MAIL_ENCRYPTION') }}
                     </span>
