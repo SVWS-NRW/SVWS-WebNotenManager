@@ -7,10 +7,25 @@ use App\Models\Klasse;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating Schueler model instances.
+ *
+ * @package Database\Factories
+ */
 class SchuelerFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = Schueler::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -22,21 +37,36 @@ class SchuelerFactory extends Factory
         ];
     }
 
-    public function bilingualeSprache(): Factory
+    /**
+     * Indicate that the model has AUE.
+     *
+     * @return SchuelerFactory
+     */
+    public function bilingualeSprache(): SchuelerFactory
     {
         return $this->state(fn (): array  => [
 			'bilingualeSprache' => $this->faker->unique->word(),
 		]);
     }
 
-    public function istZieldifferent(): Factory
+    /**
+     * Indicate that the model has Ist Zieldifferent.
+     *
+     * @return SchuelerFactory
+     */
+    public function withIstZieldifferent(): SchuelerFactory
     {
         return $this->state(fn (): array  => [
 			'istZieldifferent' => true,
 		]);
     }
 
-    public function istDaZFoerderung(): Factory
+    /**
+     * Indicate that the model has Ist DaZ Foerderung.
+     *
+     * @return SchuelerFactory
+     */
+    public function withIstDaZFoerderung(): SchuelerFactory
     {
         return $this->state(fn (): array  => [
 			'istDaZFoerderung' => true,

@@ -2,21 +2,27 @@
 
 namespace Database\Seeders;
 
-use App\Models\Setting;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+/**
+ * Seeder class responsible for populating the database with initial data.
+ *
+ * @package Database\Seeders
+ */
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->create(attributes: [
+        // Create a default administrator user
+        User::factory()->create([
 			'email' => 'user@user.com',
 			'is_administrator' => true,
 		]);
 
-        $this->call(class: [
+        // Call other specific seeders to populate additional data
+        $this->call([
+            // TODO: To be removed, temporary testing route #239 by Karol
             JsonImportSeeder::class,
         ]);
     }

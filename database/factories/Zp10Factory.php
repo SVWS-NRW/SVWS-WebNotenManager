@@ -9,12 +9,24 @@ use App\Models\Zp10;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Zp10>
+ * Factory for creating Zp10 model instances.
+ *
+ * @package Database\Factories
  */
 class Zp10Factory extends Factory
-{    
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = Zp10::class;
-    
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -25,16 +37,26 @@ class Zp10Factory extends Factory
             'noteMuendlichePruefung' => Note::factory(),
             'abschlussnote' => Note::factory(),
         ];
-    }    
-   
-    public function withMuendlichePruefung(): Factory
+    }
+
+    /**
+     * Indicate that the model has Muendliche Pruefung.
+     *
+     * @return Zp10Factory
+     */
+    public function withMuendlichePruefung(): Zp10Factory
     {
         return $this->state(fn (): array => [
 			'muendlichePruefung' => true,
 		]);
-    }    
+    }
 
-    public function withMuendlichePruefungFreiwillig(): Factory
+    /**
+     * Indicate that the model has Muendliche Pruefung Freiwillig.
+     *
+     * @return Zp10Factory
+     */
+    public function withMuendlichePruefungFreiwillig(): Zp10Factory
     {
         return $this->state(fn (): array => [
 			'muendlichePruefungFreiwillig' => true,

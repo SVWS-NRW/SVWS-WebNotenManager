@@ -6,6 +6,7 @@ use Spatie\LaravelSettings\Settings;
 
 class GdprSettings extends Settings
 {
+    // TODO: Check by Karol
 	public string $domain_url;
 	public string $domain_owner;
 

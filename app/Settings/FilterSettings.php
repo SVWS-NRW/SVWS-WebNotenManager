@@ -6,6 +6,7 @@ use Spatie\LaravelSettings\Settings;
 
 class FilterSettings extends Settings
 {
+    // TODO: Check by Karol
 	public bool $mein_unterricht_teilleistungen;
 	public bool $mein_unterricht_mahnungen;
 	public bool $mein_unterricht_fehlstunden;

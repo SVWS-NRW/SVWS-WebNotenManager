@@ -8,10 +8,25 @@ use App\Models\Floskelgruppe;
 use App\Models\Jahrgang;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating Floskel model instances.
+ *
+ * @package Database\Factories
+ */
 class FloskelFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = Floskel::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -21,21 +36,36 @@ class FloskelFactory extends Factory
         ];
     }
 
-    public function fach(): Factory
+    /**
+     * Indicate that the model has Fach.
+     *
+     * @return FloskelFactory
+     */
+    public function hasFach(): FloskelFactory
     {
         return $this->state(fn (): array  => [
 			'fach_id' => Fach::factory(),
 		]);
     }
 
-    public function niveau(): Factory
+    /**
+     * Indicate that the model has Niveau.
+     *
+     * @return FloskelFactory
+     */
+    public function hasNiveau(): FloskelFactory
     {
         return $this->state(fn (): array  => [
-			'niveau' => rand(min: 1, max: 10),
+			'niveau' => rand(1, 10),
 		]);
     }
 
-    public function jahrgang(): Factory
+    /**
+     * Indicate that the model has Jahrgang.
+     *
+     * @return FloskelFactory
+     */
+    public function hasJahrgang(): FloskelFactory
     {
         return $this->state(fn (): array  => [
 			'jahrgang_id' => Jahrgang::factory(),

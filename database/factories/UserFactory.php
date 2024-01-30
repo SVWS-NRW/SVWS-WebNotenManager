@@ -8,58 +8,93 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
 
+/**
+ * Factory for creating User model instances.
+ *
+ * @package Database\Factories
+ */
 class UserFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
 	protected $model = User::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
 	public function definition(): array
 	{
 		return [
 			'kuerzel' => $this->faker->unique->word(),
 			'vorname' => $this->faker->firstName(),
 			'nachname' => $this->faker->lastName(),
-			'geschlecht' => $this->faker->randomElement(array: User::GENDERS),
+			'geschlecht' => $this->faker->randomElement(User::GENDERS),
 			'email' => $this->faker->unique()->safeEmail(),
 			'email_verified_at' => now(),
 			'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-			'remember_token' => Str::random(length: 10),
+			'remember_token' => Str::random(10),
 		];
 	}
 
-	public function unverified(): Factory
+    /**
+     * Indicate that the model is unverified.
+     *
+     * @return UserFactory
+     */
+	public function unverified(): UserFactory
 	{
 		return $this->state(fn (): array  => [
 			'email_verified_at' => null,
 		]);
 	}
 
-	public function administrator(): Factory
+    /**
+     * Indicate that the model is administrator.
+     *
+     * @return UserFactory
+     */
+	public function administrator(): UserFactory
 	{
 		return $this->state(fn (): array  => [
 			'is_administrator' => true,
 		]);
 	}
 
-	public function lehrer(): Factory
+    /**
+     * Indicate that the model is lehrer.
+     *
+     * @return UserFactory
+     */
+	public function lehrer(): UserFactory
 	{
 		return $this->state(fn (): array  => [
 			'is_administrator' => false,
 		]);
 	}
 
-	public function withPersonalTeam(): Factory
+    /**
+     * Indicate that the model has Personal Team.
+     *
+     * @return UserFactory
+     */
+	public function withPersonalTeam(): UserFactory
 	{
 		if (! Features::hasTeamFeatures()) {
 			return $this->state([]);
 		}
 
 		return $this->has(
-			Team::factory()->state(state: fn (array $attributes, User $user): array => [
+			Team::factory()->state(fn (array $attributes, User $user): array => [
 				'name' => $user->kuerzel.'\'s Team',
 				'user_id' => $user->id,
 				'personal_team' => true
 			]),
-			relationship: 'ownedTeams'
+			'ownedTeams'
 		);
 	}
 }
