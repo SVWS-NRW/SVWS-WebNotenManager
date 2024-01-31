@@ -283,7 +283,7 @@
     }
 
     .content-area {
-        @apply mx-4
+        @apply mx-4 overflow-auto
     }
 
     .export-button {

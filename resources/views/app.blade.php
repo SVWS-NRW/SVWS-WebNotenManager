@@ -9,7 +9,7 @@
         @routes
         @inertiaHead
     </head>
-    <body class="font-sans antialiased relative">
+    <body class="font-sans antialiased relative" style="overflow: hidden;">
         @inertia
     </body>
 </html>

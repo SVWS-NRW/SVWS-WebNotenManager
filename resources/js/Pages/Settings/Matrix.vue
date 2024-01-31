@@ -790,7 +790,7 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12 items-start w-full
+        @apply px-6 flex flex-col gap-12 items-start w-full overflow-auto
     }
 
     .button {
