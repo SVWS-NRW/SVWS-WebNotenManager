@@ -23,6 +23,7 @@
         </div>
     </div>
 
+    <!-- TODO: check if deprecated -->
     <SvwsUiModal ref="modal">
         <template #modalTitle>
             {{ leistung.vorname }} {{ leistung.nachname }}

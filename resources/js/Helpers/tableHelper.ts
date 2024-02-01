@@ -17,7 +17,7 @@ const multiSelectHelper = (model: Leistung|Schueler, column: string, filterItems
 
 
 const mapFilterOptionsHelper = (rows: Leistung[]|Schueler[], column: string): string[] => Array.from(
-    new Set(rows.map((model: Leistung|Schuler): string => model[column] ?? emptyValueDescription))
+    new Set(rows.map((model: Leistung|Schueler): string => model[column] ?? emptyValueDescription))
 );
 
 export {

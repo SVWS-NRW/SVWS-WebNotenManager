@@ -26,63 +26,32 @@
                                 <div class="svws-ui-tr" role="row">
                                     <div class="svws-ui-td" role="cell">
                                         <div class="flex items-center gap-1">
-                                            <SvwsUiButton
-                                                type="icon"
-                                                size="small"
-                                                @click="klassenCollapsed = !klassenCollapsed"
-                                            >
+                                            <SvwsUiButton type="icon" size="small" @click="klassenCollapsed = !klassenCollapsed">
                                             <ri-arrow-down-s-line v-if="klassenCollapsed" />
                                             <ri-arrow-right-s-line v-else />
                                             </SvwsUiButton>
                                             Klassen
-                                            <SvwsUiCheckbox
-                                                v-model="klassenGlobalToggle"
-                                                @update:modelValue="toggleAllKlassen()"
-                                                :value="true"
-                                            />
+                                            <SvwsUiCheck v-model="klassenGlobalToggle" @update:modelValue="toggleAllKlassen()" :value="true"/>
                                         </div>
                                     </div>
                                     <div class="svws-ui-td" role="cell">
-                                        <SvwsUiCheckbox
-                                            v-model="klassenColumnsToggle['editable_teilnoten']"
-                                            @update:modelValue="toggleKlassenColumn('editable_teilnoten')"
-                                            :value="true"
-                                        />
+                                        <SvwsUiCheckbox v-model="klassenColumnsToggle['editable_teilnoten']" @update:modelValue="toggleKlassenColumn('editable_teilnoten')" :value="true"/>
                                     </div>
                                     <div class="svws-ui-td" role="cell">
-                                        <SvwsUiCheckbox
-                                            v-model="klassenColumnsToggle['editable_noten']"
-                                            @update:modelValue="toggleKlassenColumn('editable_noten')"
-                                            :value="true"
-                                        />
+                                        <SvwsUiCheckbox v-model="klassenColumnsToggle['editable_noten']" @update:modelValue="toggleKlassenColumn('editable_noten')" :value="true"/>
                                     </div>
                                     <div class="svws-ui-td" role="cell">
-                                        <SvwsUiCheckbox
-                                            v-model="klassenColumnsToggle['editable_mahnungen']"
-                                            @update:modelValue="toggleKlassenColumn('editable_mahnungen')"
-                                            :value="true"
-                                        />
+                                        <SvwsUiCheckbox v-model="klassenColumnsToggle['editable_mahnungen']" @update:modelValue="toggleKlassenColumn('editable_mahnungen')" :value="true"/>
                                     </div>
                                     <div class="svws-ui-td" role="cell">
-                                        <SvwsUiCheckbox
-                                            v-model="klassenColumnsToggle['editable_fehlstunden']"
-                                            @update:modelValue="toggleKlassenColumn('editable_fehlstunden')"
-                                            :value="true"
-                                        />
+                                        <SvwsUiCheckbox v-model="klassenColumnsToggle['editable_fehlstunden']" @update:modelValue="toggleKlassenColumn('editable_fehlstunden')" :value="true"/>
                                     </div>
                                     <div class="svws-ui-td" role="cell">
                                         <SvwsUiRadioOption
-                                            v-model="klassenColumnsToggle['toggleable_fehlstunden']"
-                                            @update:modelValue="toggleKlassenColumn('toggleable_fehlstunden')"
-                                            :value="true"
-                                        >
+                                            v-model="klassenColumnsToggle['toggleable_fehlstunden']" @update:modelValue="toggleKlassenColumn('toggleable_fehlstunden')" :value="true">
                                             FS
                                         </SvwsUiRadioOption>
-                                        <SvwsUiRadioOption
-                                            v-model="klassenColumnsToggle['toggleable_fehlstunden']"
-                                            @update:modelValue="toggleKlassenColumn('toggleable_fehlstunden')"
-                                            :value="false"
-                                        >
+                                        <SvwsUiRadioOption v-model="klassenColumnsToggle['toggleable_fehlstunden']" @update:modelValue="toggleKlassenColumn('toggleable_fehlstunden')" :value="false">
                                             GFS
                                         </SvwsUiRadioOption>
                                     </div>
@@ -90,8 +59,7 @@
                                         <SvwsUiCheckbox
                                             v-model="klassenColumnsToggle['editable_fb']"
                                             @update:modelValue="toggleKlassenColumn('editable_fb')"
-                                            :value="true"
-                                        />
+                                            :value="true"/>
                                     </div>
                                     <div class="svws-ui-td" role="cell">
                                         <SvwsUiCheckbox

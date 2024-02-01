@@ -1,3 +1,5 @@
+//IDE may warn there are type errors here but interface Klasse is to be found on file Matrix
+//klassenToggle and klassenGlobalToggle are also declared on Matrix
 type ToggleableKeys = {
     [K in keyof Klasse]: Klasse[K] extends boolean ? K : never;
 }[keyof Klasse];
@@ -26,7 +28,6 @@ const toggleAllKlassen = (): void => klassen.value.forEach((klasse: Klasse): voi
 
 export {
     toggleable,
-    checkState,
     toggleKlasse,
     toggleAllKlassen,
 };

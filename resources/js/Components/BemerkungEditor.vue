@@ -20,15 +20,8 @@
             </div>
 
             <SvwsUiTable
-                v-if="isEditable"
-                v-model="selectedRows"
-                :items="rowsFiltered"
-                :columns="columns"
-                :clickable="true"
-                :selectable="isEditable"
-                :count="true"
-                :filtered="filtered()"
-                :filterReset="filterReset"
+                v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" :clickable="true" :selectable="isEditable"
+                :count="true" :filtered="filtered()" :filterReset="filterReset"
             >
                 <template #filterAdvanced>
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />

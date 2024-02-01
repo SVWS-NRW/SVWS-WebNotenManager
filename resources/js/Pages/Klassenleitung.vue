@@ -8,23 +8,11 @@
             </header>
 
             <div class="content-area">
-                <SvwsUiTable
-                    :items="rowsFiltered"
-                    :columns="cols"
-                    :clickable="true"
-                    :count="true"
-                    :filtered="isFiltered()"
-                    :filterReset="filterReset"
-                    :filterOpen="true"
-                    :sortByAndOrder="{ key: 'klasse', order: true}"
-                >
+                <SvwsUiTable :items="rowsFiltered" :columns="cols" :clickable="true" :count="true" :filtered="isFiltered()"
+                    :filterReset="filterReset" :filterOpen="true" :sortByAndOrder="{ key: 'klasse', order: true}">
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                        <SvwsUiMultiSelect
-                            label="Klasse"
-                            :items="klasseItems"
-                            :item-text="item => item"
-                            v-model="klasseFilter"
+                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter"
                         />
                     </template>
                     <template #cell(klasse)="{ value, rowData }">
@@ -78,7 +66,7 @@
         </template>
 
         <template v-slot:aside v-if="selectedSchueler">
-            <!-- TODO: maybe try guarding validations? -->
+            <!-- TODO: correct this -->
             <BemerkungEditor
                 :schueler="selectedSchueler"
                 :floskelgruppe="selectedFloskelgruppe"

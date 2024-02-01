@@ -69,7 +69,7 @@
     }>();
 
     const modalVisible: Ref<boolean> = ref(false);
-    const modal = (): boolean => modalVisible;
+    const modal = (): Ref<boolean> => modalVisible;
     const open = () => modal().value = true;
     const close = () => modal().value = false;
 

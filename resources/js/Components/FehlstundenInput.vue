@@ -28,16 +28,14 @@
     let debounce: ReturnType<typeof setTimeout>;
     watch(model, (): void => {
         clearTimeout(debounce);
-        debounce = setTimeout((): AxiosPromise => saveFehlstunden(), 500);
+        debounce = setTimeout((): void => saveFehlstunden(), 500);
     });
 
-    const saveFehlstunden = (): AxiosResponse => {
-        if (isNaN(parseInt(model.value))) {
+    const saveFehlstunden = (): void => {
+        if (isNaN(parseInt(model.value as string))) {
             model.value = '';
         }
-
-        return axios
-            .post(route(`api.fehlstunden.${props.column}`, props.model), {value: model.value})
+        axios.post(route(`api.fehlstunden.${props.column}`, props.model), {value: model.value})
             .then((): number => props.model[props.column] = model.value)
             .catch((): number => model.value = props.model[props.column]);
     }

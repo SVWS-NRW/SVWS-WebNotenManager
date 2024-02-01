@@ -194,17 +194,19 @@
         return result;
     });
 
-    //if a specific Leistung is clicked on, the FbEditor component is displayed on the right side of the screen
+    //if a specific Leistung is clicked on and the function contains parameter "always === true"
+    //or if the FbEditor is already open (aka "selectedLeistung !== null")
+    //the FbEditor component displays Leistung data on the right side of the screen
     const selectedLeistung: Ref<Leistung | null> = ref(null);
 
     const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null => {
         selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null;
-        if (selectedLeistung !== null) {
-            return selectedLeistung.value;
-        } return null
+        // if (selectedLeistung !== null) {
+        //     return selectedLeistung.value;
+        // } return null
     }
 
-    // check whether filters have receive some input from user
+    //check whether filters have receive some input from user
     const isFiltered = (): boolean => {
         return searchFilter.value !== null
             || klasseFilter.value.length > 0

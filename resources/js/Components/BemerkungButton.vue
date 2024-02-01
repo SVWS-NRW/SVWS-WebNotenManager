@@ -26,7 +26,7 @@
     }>();
 
     const bemerkungButtonAriaLabel = (): string => {
-        return `Wechseln zu ${floskelgruppen[props.floskelgruppe]} für ${props.model.vorname} ${props.model.nachname}`;
+        return `Wechseln zu ${floskelgruppen[props.floskelgruppe as keyof floskelgruppen]} für ${props.model.vorname} ${props.model.nachname}`;
     }
 </script>
 

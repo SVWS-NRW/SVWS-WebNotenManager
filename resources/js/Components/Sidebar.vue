@@ -67,10 +67,10 @@
     });
 
     const setFloskelgruppe = (id: number): Number => state.floskeln = state.floskelgruppen[id].floskeln;
-    const close = (): void => state.leistung = null;
+    const close = (): null => state.leistung = null;
 
     onMounted((): AxiosPromise => axios
-        .get("/api/getFloskeln") // TODO: CHeck
+        .get("/api/getFloskeln") // TODO: Check
         .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data)
     );
 

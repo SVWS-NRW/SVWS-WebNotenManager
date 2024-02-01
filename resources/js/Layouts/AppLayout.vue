@@ -3,7 +3,7 @@
         <template #sidebar>
             <SvwsUiMenu>
                 <template #header>
-                    <SvwsUiMenuHeader :user="currentUser()" :schule="usePage().props.value.schoolName" @click="navigate('user_settings.filter')"/>
+                    <SvwsUiMenuHeader :user="currentUser()" :schule="(usePage().props.value.schoolName as string)" @click="navigate('user_settings.filter')"/>
                 </template>
 
                 <template #default>

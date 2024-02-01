@@ -62,16 +62,17 @@
     const isEditable: Ref<boolean> = ref(true);
 
     // Watchers
-    onMounted((): Promise<void> => setup());
-    watch((): void => props.leistung, (): void => setup());
-    watch((): void => bemerkung.value, (): void => {
+    onMounted((): void => setup());
+    watch((): Leistung => props.leistung, (): void => setup());
+    watch((): string | null => bemerkung.value, (): void => {
         isDirty.value = storedBemerkung.value !== bemerkung.value;
+        //TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
         bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
     });
 
     const setup = (): void => {
         bemerkung.value = props.leistung.fachbezogeneBemerkungen;
-        storedBemerkung.value = ref(props.leistung.fachbezogeneBemerkungen);
+        storedBemerkung.value = props.leistung.fachbezogeneBemerkungen;
         isDirty.value = false;
         isEditable.value = props.leistung.editable.fb && props.editable;
         fetch();
