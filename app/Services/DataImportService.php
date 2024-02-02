@@ -2,20 +2,10 @@
 
 namespace App\Services;
 
-//use App\Models\Daten;
-use App\Models\Bemerkung;
-use App\Models\Fach;
-use App\Models\Floskelgruppe;
-use App\Models\Foerderschwerpunkt;
-use App\Models\Jahrgang;
-use App\Models\Klasse;
-use App\Models\Leistung;
-use App\Models\Lernabschnitt;
-use App\Models\Lerngruppe;
-use App\Models\Note;
-use App\Models\Schueler;
-use App\Models\Teilleistungsart;
-use App\Models\User;
+use App\Models\{
+    Bemerkung, Fach, Floskelgruppe, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe, Note,
+    Schueler, Teilleistungsart, User,
+};
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -27,8 +17,11 @@ use Schema;
 
 class DataImportService
 {
+    // TODO: TO be removed by karol
 	private array $existingNoten = [];
+    // TODO: TO be removed by karol
 	private array $existingFoerderschwerpunkte = [];
+    // TODO: TO be removed by karol
 	private int $microtime;
 
     public function __construct(
@@ -56,9 +49,10 @@ class DataImportService
 		$this->schueler = $data['schueler'] ?? [];
 	}
 
+    // TODO: TO be removed by karol
 	public function truncate(): void
 	{
-		$this->start(text: 'Truncate');
+		$this->start('Truncate');
 
 		// Remove the table drop in final
 		Schema::disableForeignKeyConstraints();
@@ -75,7 +69,7 @@ class DataImportService
 				continue;
 			}
 
-			DB::table(table: $name)->truncate();
+			DB::table($name)->truncate();
 		}
 
 		Schema::enableForeignKeyConstraints();
@@ -88,7 +82,7 @@ class DataImportService
 		$this->stop();
 	}
 
-	public function execute($data): void
+	public function execute(array $data): void
 	{
 		$this->lehrer = $data['lehrer'] ?? [];
 		$this->foerderschwerpunkte = $data['foerderschwerpunkte'] ?? [];
@@ -122,7 +116,8 @@ class DataImportService
     }
 
 	/**
-	 * Creates the Lehrer model. The model can be updated anytime.
+	 * Creates the Lehrer model.
+     * The model can be updated anytime.
 	 * If the model does not exist yet, sets a new password depending on if in production or not.
 	 * Sets a random email if not provided.
 	 *
@@ -130,20 +125,20 @@ class DataImportService
 	 */
 	public function importLehrer(): void
 	{
-		if (is_null(value: $this->lehrer)) {
+		if (is_null($this->lehrer)) {
 			return;
 		}
 
-		$this->start(text: 'Lehrer');
+		$this->start('Lehrer');
 
 		foreach ($this->lehrer as $row) {
-			$row['email'] = $this->formatEmail(email: $row['eMailDienstlich']);
-			$row['geschlecht'] = $this->gender(data: $row, allowed: User::GENDERS);
+			$row['email'] = $this->formatEmail($row['eMailDienstlich']);
+			$row['geschlecht'] = $this->gender($row, User::GENDERS);
 
 			unset($row['eMailDienstlich']);
 
 			try {
-				User::where(column: 'ext_id', operator: '=', value: $row['id'])->firstOrFail();
+				User::where('ext_id', '=', $row['id'])->firstOrFail();
 			} catch (ModelNotFoundException $e) {
 				$row['password'] = app()->environment('production')
 					? Str::random()
@@ -151,17 +146,15 @@ class DataImportService
 				report($e);
 			}
 
-			User::updateOrCreate(
-				attributes: ['ext_id' => $row['id']],
-				values: $row
-			);
+			User::updateOrCreate(['ext_id' => $row['id']], $row);
 		}
 
 		$this->stop();
 	}
 
 	/**
-	 * Creates the Klasse model. The model will not be updated with future requests.
+	 * Creates the Klasse model.
+     * The model will not be updated with future requests.
 	 * After creating the model, the Lehrer model relationships are created.
 	 * The relationships are only being set once, and will not trigger at consecutive requests.
 	 *
@@ -169,20 +162,17 @@ class DataImportService
 	 */
 	public function importKlassen(): void
 	{
-		if (is_null(value: $this->klassen)) {
+		if (is_null($this->klassen)) {
 			return;
 		}
 
-		$this->start(text: 'Klassen');
+		$this->start('Klassen');
 
 		foreach($this->klassen as $row) {
-			$klasse = Klasse::firstOrCreate(
-				attributes: ['id' => $row['id']],
-				values: Arr::except(array: $row, keys: ['klassenlehrer'])
-			);
+			$klasse = Klasse::firstOrCreate(['id' => $row['id']], Arr::except($row, ['klassenlehrer']));
 
 			if ($klasse->wasRecentlyCreated === true) {
-				$klasse->klassenlehrer()->attach(id: $row['klassenlehrer']);
+				$klasse->klassenlehrer()->attach($row['klassenlehrer']);
 			}
 		}
 
@@ -190,7 +180,8 @@ class DataImportService
 	}
 
 	/**
-	 * Creates the Note model. The model will not be updated with future requests.
+	 * Creates the Note model.
+     * The model will not be updated with future requests.
 	 * Resources with an negative id are filtered out. Relatable models are nullable.
 	 *
 	 * TODO: All Models are stored in an array to be called by ID in different resources.
@@ -199,26 +190,24 @@ class DataImportService
 	 */
 	public function importNoten(): void
     {
-		if (is_null(value: $this->noten)) {
+		if (is_null($this->noten)) {
 			return;
 		}
 
-		$this->start(text: 'Noten');
+		$this->start('Noten');
 
-		collect(value: $this->noten)
-			->filter(callback: fn (array $row): bool => $row['id'] >= 0)
-			->each(callback: fn (array $row): Note => Note::firstOrCreate(
-				attributes: ['id' => $row['id']],
-				values: $row
-			));
+		collect($this->noten)
+			->filter(fn (array $row): bool => $row['id'] >= 0)
+			->each(fn (array $row): Note => Note::firstOrCreate(['id' => $row['id']], $row));
 
-		$this->existingNoten = $this->getExistingNoten();
+		$this->existingNoten = $this->getExistingNoten(); // TODO: To be removed
 
 		$this->stop();
     }
 
 	/**
-	 * Creates the Foerderschwerpunkt model. The model will not be updated with future requests.
+	 * Creates the Foerderschwerpunkt model.
+     * The model will not be updated with future requests.
 	 *
 	 * TODO: All Models are stored in an array to be called by ID in different resources.
 	 *
@@ -226,20 +215,17 @@ class DataImportService
 	 */
 	public function importFoerderschwerpunkte(): void
 	{
-		if (is_null(value: $this->foerderschwerpunkte)) {
+		if (is_null($this->foerderschwerpunkte)) {
 			return;
 		}
 
-		$this->start(text: 'Förderschwerpunkte');
+		$this->start('Förderschwerpunkte');
 
 		foreach ($this->foerderschwerpunkte as $row) {
-			Foerderschwerpunkt::firstOrCreate(
-				attributes: ['id' => $row['id']],
-				values: $row
-			);
+			Foerderschwerpunkt::firstOrCreate(['id' => $row['id']], $row);
 		}
 
-		$this->existingFoerderschwerpunkte = $this->getExistingFoerderschwerpunkte();
+		$this->existingFoerderschwerpunkte = $this->getExistingFoerderschwerpunkte(); // TODO: To be removed
 
 		$this->stop();
 	}
@@ -247,21 +233,22 @@ class DataImportService
 	private function getExistingFoerderschwerpunkte(): array
 	{
 		return Foerderschwerpunkt::query()
-			->orderBy(column: 'kuerzel')
-			->pluck(column: 'id', key: 'kuerzel')
+			->orderBy('kuerzel')
+			->pluck('id', 'kuerzel')
 			->toArray();
 	}
 
 	private function getExistingNoten(): array
 	{
 		return Note::query()
-			->orderBy(column: 'kuerzel')
-			->pluck(column: 'id', key: 'kuerzel')
+			->orderBy('kuerzel')
+			->pluck('id', 'kuerzel')
 			->toArray();
 	}
 
 	/**
-	 * Creates the Jahrgang model. The model will not be updated with future requests.
+	 * Creates the Jahrgang model.
+     * The model will not be updated with future requests.
 	 *
 	 * TODO: On customers site there were formatting problems with whitespaces.
 	 *
@@ -269,56 +256,51 @@ class DataImportService
 	 */
 	public function importJahrgaenge(): void
 	{
-		if (is_null(value: $this->jahrgaenge)) {
+		if (is_null($this->jahrgaenge)) {
 			return;
 		}
 
-		$this->start(text: 'Jahrgänge');
+		$this->start('Jahrgänge');
 
 		foreach ($this->jahrgaenge as $row) {
-			$row['beschreibung'] = $this->trimWhitespaces(text: $row['beschreibung']); // TODO: Check with customer
-
-			Jahrgang::firstOrCreate(
-				attributes: ['id' => $row['id']],
-				values: $row
-			);
+			$row['beschreibung'] = $this->trimWhitespaces($row['beschreibung']); // TODO: Check with customer if still needed
+			Jahrgang::firstOrCreate(['id' => $row['id']], $row);
 		}
 
 		$this->stop();
 	}
 
 	/**
-	 * Creates the Fach model. The model will not be updated with future requests.
+	 * Creates the Fach model.
+     * The model will not be updated with future requests.
 	 *
 	 * @return void
 	 */
 	public function importFaecher(): void
 	{
-		if (is_null(value: $this->faecher)) {
+		if (is_null($this->faecher)) {
 			return;
 		}
 
-		$this->start(text: 'Fächer');
+		$this->start('Fächer');
 
 		foreach($this->faecher as $row) {
-			Fach::firstOrCreate(
-				attributes: ['id' => $row['id']],
-				values: $row
-			);
+			Fach::firstOrCreate(['id' => $row['id']], $row);
 		}
 
 		$this->stop();
 	}
 
 	/**
-	 * Creates the Floskelgruppe model. The model will not be updated with future requests.
+	 * Creates the Floskelgruppe model.
+     * The model will not be updated with future requests.
 	 * Related floskel will be created only if the Floskelgruppe model was recently created.
 	 *
 	 * @return void
 	 */
 	public function importFloskelgruppen(): void
 	{
-		if (is_null(value: $this->floskelgruppen)) {
+		if (is_null($this->floskelgruppen)) {
 			return;
 		}
 
@@ -326,8 +308,8 @@ class DataImportService
 
 		foreach($this->floskelgruppen as $row) {
 			$floskelgruppe = Floskelgruppe::firstOrCreate(
-				attributes: ['kuerzel' => $row['kuerzel']],
-				values: Arr::except(array: $row, keys: ['floskeln'])
+				['kuerzel' => $row['kuerzel']],
+				Arr::except($row, ['floskeln'])
 			);
 
 			if ($floskelgruppe->wasRecentlyCreated === false) {
@@ -340,7 +322,7 @@ class DataImportService
 
 				unset($floskel['fachID'], $floskel['jahrgangID']);
 
-				$floskelgruppe->floskeln()->create(attributes: $floskel);
+				$floskelgruppe->floskeln()->create($floskel);
 			}
 		}
 
@@ -348,57 +330,56 @@ class DataImportService
 	}
 
 	/**
-	 * Creates the Lerngruppe model. The model will not be updated with future requests.
+	 * Creates the Lerngruppe model.
+     * The model will not be updated with future requests.
 	 * Related Lehrer models will be created only if the Lerngruppe model was recently created.
-	 *
 	 * A lerngruppe either belongs to a Klasse model or is a Kurs. Depending on the presence of kursartID.
 	 *
 	 * @return void
 	 */
 	public function importLerngruppen(): void
 	{
-		if (is_null(value: $this->lerngruppen)) {
+		if (is_null($this->lerngruppen)) {
 			return;
 		}
 
-		$this->start(text: 'Lerngruppen');
+		$this->start('Lerngruppen');
 
 		foreach ($this->lerngruppen as $row) {
 			$row['fach_id'] = $row['fachID'];
 
-			if (is_null(value: $row['kursartID'])) {
+			if (is_null($row['kursartID'])) {
 				$row['klasse_id'] = $row['kID'];
 				unset($row['kursartID']);
 			}
 
 			unset($row['fachID']);
 
-			$lerngruppe = Lerngruppe::firstOrCreate(
-				attributes: ['id' => $row['id']],
-				values: Arr::except(array: $row, keys: ['lehrerID'])
-			);
+			$lerngruppe = Lerngruppe::firstOrCreate(['id' => $row['id']], Arr::except($row, ['lehrerID']));
 
 			if ($lerngruppe->wasRecentlyCreated === true) {
-				$lerngruppe->lehrer()->attach(id: $row['lehrerID']);
+				$lerngruppe->lehrer()->attach($row['lehrerID']);
 			}
 		}
 
 		$this->stop();
 	}
 
+    /**
+     * Creates the Teilleistungen model.
+     *
+     * @return void
+     */
 	public function importTeilleistungsarten(): void
 	{
-		if (is_null(value: $this->teilleistungsarten)) {
+		if (is_null($this->teilleistungsarten)) {
 			return;
 		}
 
-		$this->start(text: 'Teilleistungsarten');
+		$this->start('Teilleistungsarten');
 
 		foreach ($this->teilleistungsarten as $row) {
-			Teilleistungsart::updateOrCreate(
-				attributes: ['id' => $row['id']],
-				values: $row
-			);
+			Teilleistungsart::updateOrCreate(['id' => $row['id']], $row);
 		}
 
 		$this->stop();
@@ -413,16 +394,16 @@ class DataImportService
 	 */
 	public function importSchueler(): void
 	{
-		if (is_null(value: $this->schueler)) {
+		if (is_null($this->schueler)) {
 			return;
 		}
 
-		$this->start(text: 'Schüler mit Leistungsdaten und Lernabschnitte');
+		$this->start('Schüler mit Leistungsdaten und Lernabschnitte');
 
 		foreach ($this->schueler as $row) {
 			$row['jahrgang_id'] = $row['jahrgangID'];
 			$row['klasse_id'] = $row['klasseID'];
-			$row['geschlecht'] = $this->gender(data: $row, allowed: Schueler::GENDERS);
+			$row['geschlecht'] = $this->gender($row, Schueler::GENDERS);
 
 			unset($row['klasseID'], $row['jahrgangID']);
 
@@ -430,16 +411,13 @@ class DataImportService
 			unset($row['sprachenfolge'], $row['zp10'], $row['bkabschluss']);
 
 			$schueler = Schueler::firstOrCreate(
-				attributes: ['id' => $row['id']],
-				values: Arr::except(
-					array: $row,
-					keys: ['bemerkungen', 'lernabschnitt', 'leistungsdaten']
-				)
+				['id' => $row['id']],
+				Arr::except($row, ['bemerkungen', 'lernabschnitt', 'leistungsdaten'])
 			);
 
-			$this->importBemerkungen(schueler: $schueler, data: $row['bemerkungen']);
-			$this->importLernabschnitte(schueler: $schueler, data: $row['lernabschnitt']);
-			$this->importLeistungsdaten(schueler: $schueler, data: $row['leistungsdaten']);
+			$this->importBemerkungen($schueler, $row['bemerkungen']);
+			$this->importLernabschnitte($schueler, $row['lernabschnitt']);
+			$this->importLeistungsdaten($schueler, $row['leistungsdaten']);
 
 
 
@@ -462,14 +440,14 @@ class DataImportService
 		$bemerkung->schulformEmpf = $data['schulformEmpf'];
 		$bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
 
-		$this->updateByTimestamp(data: $data, model: $bemerkung, column: 'ASV', tsColumn: 'tsASV');
-		$this->updateByTimestamp(data: $data, model: $bemerkung, column: 'AUE', tsColumn: 'tsAUE');
-		$this->updateByTimestamp(data: $data, model: $bemerkung, column: 'ZB', tsColumn: 'tsZB');
+		$this->updateByTimestamp($data, $bemerkung, 'ASV', 'tsASV');
+		$this->updateByTimestamp($data, $bemerkung, 'AUE', 'tsAUE');
+		$this->updateByTimestamp($data, $bemerkung, 'ZB', 'tsZB');
 		$this->updateByTimestamp(
-			data: $data,
-			model: $bemerkung,
-			column: 'individuelleVersetzungsbemerkungen',
-			tsColumn: 'tsIndividuelleVersetzungsbemerkungen'
+			$data,
+			$bemerkung,
+			'individuelleVersetzungsbemerkungen',
+			'tsIndividuelleVersetzungsbemerkungen'
 		);
 
 		$bemerkung->save();
@@ -488,46 +466,33 @@ class DataImportService
 	{
 		if ($data) { // TODO: To be updated if noteID is available // TODO: Idea to put into schueler
 
-			$lernabschnitt = Lernabschnitt::firstOrNew(attributes: ['id' => $data['id']]);
+			$lernabschnitt = Lernabschnitt::firstOrNew(['id' => $data['id']]);
 
 			$lernabschnitt->schueler_id = $schueler->id;
 
-			$this->updateByTimestamp(
-				data: $data,
-				model: $lernabschnitt,
-				column: 'fehlstundenGesamt',
-				tsColumn: 'tsFehlstundenGesamt'
-			);
+			$this->updateByTimestamp($data, $lernabschnitt, 'fehlstundenGesamt', 'tsFehlstundenGesamt');
 
 			$this->updateByTimestamp(
-				data: $data,
-				model: $lernabschnitt,
-				column: 'fehlstundenGesamtUnentschuldigt',
-				tsColumn: 'tsFehlstundenGesamtUnentschuldigt'
+                $data,
+                $lernabschnitt,
+                'fehlstundenGesamtUnentschuldigt',
+                'tsFehlstundenGesamtUnentschuldigt'
 			);
 
 			$lernabschnitt->foerderschwerpunkt1 = $this->getValueFromArray(
-				data: $data,
-				column: 'foerderschwerpunkt1',
-				collection: $this->existingFoerderschwerpunkte
+				$data, 'foerderschwerpunkt1', $this->existingFoerderschwerpunkte
 			);
 
 			$lernabschnitt->foerderschwerpunkt2 = $this->getValueFromArray(
-				data: $data,
-				column: 'foerderschwerpunkt2',
-				collection: $this->existingFoerderschwerpunkte
+				$data, 'foerderschwerpunkt2', $this->existingFoerderschwerpunkte
 			);
 
 			$lernabschnitt->lernbereich1note = $this->getValueFromArray(
-				data: $data,
-				column: 'lernbereich1note',
-				collection: $this->existingNoten
+				$data, 'lernbereich1note', $this->existingNoten
 			);
 
 			$lernabschnitt->lernbereich2note = $this->getValueFromArray(
-				data: $data,
-				column: 'lernbereich2note',
-				collection: $this->existingNoten
+				$data, 'lernbereich2note', $this->existingNoten
 			);
 
 			$lernabschnitt->pruefungsordnung = $data['pruefungsordnung'] ?? 'Lorem ipsum'; // TODO: Check with customer
@@ -556,11 +521,15 @@ class DataImportService
 			try {
 				$leistung = Leistung::findOrFail($row['id']);
 
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'note_id', tsColumn: 'tsNote', value: $noteId);
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fehlstundenFach', tsColumn: 'tsFehlstundenFach');
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fehlstundenUnentschuldigtFach', tsColumn: 'tsFehlstundenUnentschuldigt');
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'fachbezogeneBemerkungen', tsColumn: 'tsFehlstundenUnentschuldigtFach');
-				$this->updateByTimestamp(data: $row, model: $leistung, column: 'istGemahnt', tsColumn: 'tsIstGemahnt');
+				$this->updateByTimestamp($row, $leistung, 'note_id', 'tsNote', $noteId);
+				$this->updateByTimestamp($row, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
+				$this->updateByTimestamp(
+                    $row, $leistung, 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigt'
+                );
+				$this->updateByTimestamp(
+                    $row, $leistung, 'fachbezogeneBemerkungen', 'tsFehlstundenUnentschuldigtFach'
+                );
+				$this->updateByTimestamp($row, $leistung, 'istGemahnt', 'tsIstGemahnt');
 
 				$leistung->save();
 
@@ -570,11 +539,7 @@ class DataImportService
 				$row['note_id'] = $noteId;
 
 				$schueler->leistungen()->updateOrCreate(
-					attributes: ['id' => $row['id']],
-					values: Arr::except(
-						array: $row,
-						keys: ['teilleistungen', 'lerngruppenID'],
-					)
+					['id' => $row['id']], Arr::except($row, ['teilleistungen', 'lerngruppenID'])
 				);
 			}
 
@@ -606,46 +571,74 @@ class DataImportService
 	): void {
 		$timestamp = Carbon::parse(time: $data[$tsColumn]);
 
-		if ($timestamp->gt(date: $model->$tsColumn)) {
+		if ($timestamp->gt($model->$tsColumn)) {
 			$model->$column = $value ?? $data[$column];
-			$model->$tsColumn = $timestamp->format(format: 'Y-m-d H:i:s.u');
+			$model->$tsColumn = $timestamp->format('Y-m-d H:i:s.u');
 		}
 	}
 
-	private function start(string $text): void
+    /**
+     * Start timer
+     *
+     * @param string $text
+     * @return void
+     */
+    private function start(string $text): void
 	{
-		$this->microtime = microtime(as_float: true);
+		$this->microtime = microtime(true);
 		echo "- $text: ";
 	}
 
-	private function stop(): void
+    /**
+     * Stop timer
+     *
+     * @return void
+     */
+    private function stop(): void
 	{
-		$time = round(microtime(as_float: true) - $this->microtime, precision: 2);
+		$time = round(microtime(true) - $this->microtime, 2);
 		echo "done in {$time}s." . (app()->runningInConsole() ? "\r\n" : "<br>");
 	}
 
-	private function getValueFromArray(array $data, string $column, array $collection): int|null
+    /**
+     * Get value from array
+     *
+     * @param array $data
+     * @param string $column
+     * @param array $collection
+     * @return int|null
+     */
+    private function getValueFromArray(array $data, string $column, array $collection): int|null
 	{
-		if ($data[$column] !== null && array_key_exists(key: $data[$column], array: $collection)) {
+		if ($data[$column] !== null && array_key_exists($data[$column], $collection)) {
 			return $collection[$data[$column]];
 		}
 
 		return null;
 	}
 
-	private function trimWhitespaces(string $text): string
+    /**
+     * Trim whitespace
+     *
+     * @param string $text
+     * @return string
+     */
+    private function trimWhitespaces(string $text): string
 	{
-		return trim(string: preg_replace(
-			pattern: '/\s+/',
-			replacement: ' ' ,
-			subject: $text
-		));
+		return trim(preg_replace('/\s+/', ' ' , $text));
 	}
 
-	private function gender(array $data, array $allowed): string
+    /**
+     * Get gender
+     *
+     * @param array $data
+     * @param array $allowed
+     * @return string
+     */
+    private function gender(array $data, array $allowed): string
 	{
-		$condition = array_key_exists(key: 'geschlecht', array: $data)
-			&& in_array(needle: $data['geschlecht'], haystack: $allowed);
+		$condition = array_key_exists('geschlecht', $data)
+			&& in_array($data['geschlecht'], $allowed);
 
 		if ($condition) {
 			return $data['geschlecht'];
@@ -654,130 +647,22 @@ class DataImportService
 		return 'x';
 	}
 
-	private function formatEmail(string|null $email): string
+    /**
+     * Format email
+     * If none provided, generate a random one
+     *
+     * @param string|null $email
+     * @return string
+     */
+    private function formatEmail(string|null $email): string
 	{
-		$validator = Validator::make(
-			data: ['email' => $email],
-			rules: [
-				'email' => ['required', 'email:rfc,dns']
-			]
-		);
+		$validator = Validator::make(['email' => $email], ['email' => ['required', 'email:rfc,dns']]);
 
 		if ($validator->valid()) {
-			return strtolower(string: $email);
+			return strtolower($email);
 		}
 
-		return sprintf('%s@%s', Str::random(length: 32), Str::random(length: 32));
+		return sprintf('%s@%s', Str::random(32), Str::random(32));
 	}
-
-
-
-
-
-
-
-
-//    private function importDaten(): void
-//    {
-//        Daten::updateOrCreate(
-//            ['user_id' => Lehrer::where('ext_id', $this->json['lehrerID'])->firstOrFail()->id],
-//            [
-//                'enmRevision' => $this->json['enmRevision'],
-//                'schulnummer' => $this->json['schulnummer'],
-//                'schuljahr' => $this->json['schuljahr'],
-//                'anzahlAbschnitte' => $this->json['anzahlAbschnitte'],
-//                'aktuellerAbschnitt' => $this->json['aktuellerAbschnitt'],
-//                'publicKey' => $this->json['publicKey'],
-//                'lehrerID' => $this->json['lehrerID'],
-//                'fehlstundenEingabe' => $this->json['fehlstundenEingabe'],
-//                'fehlstundenSIFachbezogen' => $this->json['fehlstundenSIFachbezogen'],
-//                'fehlstundenSIIFachbezogen' => $this->json['fehlstundenSIIFachbezogen'],
-//                'schulform' => $this->json['schulform'],
-//                'mailadresse' => $this->json['mailadresse'],
-//            ]
-//        );
-//    }
-
-
-
-
-
-
-
-
-
-
-//    private function importSprachenfolge(Model|Schueler $model, array $data): void
-//    {
-//        foreach ($data['sprachenfolge'] as $row) {
-//            $sprachenfolge = $model->sprachenfolgen()->make(Arr::except($row, ['fachID', 'sprache', 'fachKuerzel']));
-//
-//            $sprachenfolge->fach_id = Fach::firstOrCreate(
-//                ['ext_id' => $row['fachID']],
-//                ['fachKuerzel' => $row['sprache'], 'kuerzelAnzeige' => $row['fachKuerzel']]
-//            )->id;
-//
-//            $sprachenfolge->save();
-//        }
-//    }
-//
-//
-//    public function importZp10(Model|Schueler $model, array $data): void
-//    {
-//        if (!$data['zp10']) {
-//            return;
-//        }
-//
-//        $row = $data['zp10'];
-//
-//        $zp10 = $model->zp10()->firstOrNew(['ext_id' => $row['id']], Arr::except($row, ['fachID']));
-//        $zp10->fach_id = $this->getRelation($row, Fach::class, 'vornote');
-//        $zp10->vornote = $this->getRelation($row, Note::class, 'vornote', 'kuerzel');
-//        $zp10->noteSchriftlichePruefung = $this->getRelation($row, Note::class, 'noteSchriftlichePruefung', 'kuerzel');
-//        $zp10->noteMuendlichePruefung = $this->getRelation($row, Note::class, 'noteMuendlichePruefung', 'kuerzel');
-//        $zp10->abschlussnote = $this->getRelation($row, Note::class, 'abschlussnote', 'kuerzel');
-//        $zp10->save();
-//    }
-//
-//    public function importBkAbschluss(Model|Schueler $model, array $data): void
-//    {
-//        if (!$data['bkabschluss']) {
-//            return;
-//        }
-//
-//        $row = $data['bkabschluss'];
-//        $excluded = ['notePraktischePruefung', 'noteKolloqium', 'noteFachpraxis', 'faecher'];
-//
-//        $bkAbschluss = $model->bkabschluss()->firstOrNew(['ext_id' => $row['id']], Arr::except($row, $excluded));
-//        $bkAbschluss->notePraktischePruefung = $this->getRelation($row, Note::class, 'notePraktischePruefung', 'kuerzel');
-//        $bkAbschluss->noteKolloqium = $this->getRelation($row, Note::class, 'noteKolloqium', 'kuerzel');
-//        $bkAbschluss->noteFachpraxis = $this->getRelation($row, Note::class, 'noteFachpraxis', 'kuerzel');
-//        $bkAbschluss->save();
-//
-//        $this->importBkAbschlussFach($bkAbschluss, $row['faecher']);
-//    }
-//
-//    public function importBkAbschlussFach(Model|BKAbschluss $model, array $data): void
-//    {
-//        if (!$data['faecher']) {
-//            return;
-//        }
-//
-//        $row = $data['faecher'];
-//
-//        $bkFach = $model->bkFaecher()->make(Arr::except($data, ['fachID', 'lehrerID']));
-//        $bkFach->fach_id = $this->getRelation($row, Fach::class, 'fachID');
-//        $bkFach->lehrer_id = $this->getRelation($row, Lehrer::class, 'lehrerID');
-//        $bkFach->vornote = $this->getRelation($row, Note::class, 'vornote', 'kuerzel');
-//        $bkFach->noteSchriftlichePruefung = $this->getRelation($row, Note::class, 'noteSchriftlichePruefung', 'kuerzel');
-//        $bkFach->noteMuendlichePruefung = $this->getRelation($row, Note::class, 'noteMuendlichePruefung', 'kuerzel');
-//        $bkFach->noteBerufsabschluss = $this->getRelation($row, Note::class, 'noteBerufsabschluss', 'kuerzel');
-//        $bkFach->abschlussnote = $this->getRelation($row, Note::class, 'abschlussnote', 'kuerzel');
-//        $bkFach->save();
-//    }
-
-
-
-
 }
 

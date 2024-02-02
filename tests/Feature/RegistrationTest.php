@@ -12,28 +12,41 @@ class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Test if registration screen can be rendered
+     *
+     * @return void
+     */
     public function test_registration_screen_can_be_rendered()
     {
         if (! Features::enabled(Features::registration())) {
             return $this->markTestSkipped('Registration support is not enabled.');
         }
 
-        $response = $this->get('/register');
-
-        $response->assertStatus(200);
+        $this->get('/register')
+            ->assertStatus(200);
     }
 
+    /**
+     * Test if registration screen cannot be rendered if support is disabled
+     *
+     * @return void
+     */
     public function test_registration_screen_cannot_be_rendered_if_support_is_disabled()
     {
         if (Features::enabled(Features::registration())) {
             return $this->markTestSkipped('Registration support is enabled.');
         }
 
-        $response = $this->get('/register');
-
-        $response->assertStatus(404);
+        $this->get('/register')
+            ->assertStatus(404);
     }
 
+    /**
+     * Test if new users can register
+     *
+     * @return void
+     */
     public function test_new_users_can_register()
     {
         if (! Features::enabled(Features::registration())) {
