@@ -8,7 +8,7 @@
             </header>
             <div class="content">
                 <section class="flex flex-col w-full gap-4">
-                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" @update:modelValue="updateIsDirty()">
+                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true">
                         <SvwsUiTooltip>
                             Die Klassenleitung darf alle Leistungsdaten bearbeiten.
                             <template #content>
@@ -96,40 +96,38 @@
                                         />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
-                                        <SvwsUiCheckbox v-model="klasse.editable_teilnoten" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_teilnoten" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
-                                        <SvwsUiCheckbox v-model="klasse.editable_noten" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_noten" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
-                                        <SvwsUiCheckbox v-model="klasse.editable_mahnungen" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_mahnungen" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
-                                        <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
                                         <SvwsUiRadioOption
                                             v-model="klasse.toggleable_fehlstunden"
                                             :value="true"
-                                            @update:modelValue="updateIsDirty()"
                                         >FS</SvwsUiRadioOption>
                                         <SvwsUiRadioOption
                                             v-model="klasse.toggleable_fehlstunden"
                                             :value="false"
-                                            @update:modelValue="updateIsDirty()"
                                         >GFS</SvwsUiRadioOption>
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
-                                        <SvwsUiCheckbox v-model="klasse.editable_fb" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_fb" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip" >
-                                        <SvwsUiCheckbox v-model="klasse.editable_asv" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_asv" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip"  >
-                                        <SvwsUiCheckbox v-model="klasse.editable_aue" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_aue" />
                                     </div>
                                     <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                        <SvwsUiCheckbox v-model="klasse.editable_zb" @update:modelValue="updateIsDirty()" />
+                                        <SvwsUiCheckbox v-model="klasse.editable_zb" />
                                     </div>
                                 </div>
                             </span>
@@ -348,40 +346,38 @@
                                             </div>
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_teilnoten" @update:modelValue="updateIsDirty()" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_teilnoten" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_noten" @update:modelValue="updateIsDirty()" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_noten" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_mahnungen" @update:modelValue="updateIsDirty()" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_mahnungen" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" @update:modelValue="updateIsDirty()" />
+                                            <SvwsUiCheckbox v-model="klasse.editable_fehlstunden" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
                                             <SvwsUiRadioOption
                                                 v-model="klasse.toggleable_fehlstunden"
                                                 :value="true"
-                                                @update:modelValue="updateIsDirty()"
                                             >FS</SvwsUiRadioOption>
                                             <SvwsUiRadioOption
                                                 v-model="klasse.toggleable_fehlstunden"
                                                 :value="false"
-                                                @update:modelValue="updateIsDirty()"
                                             >GFS</SvwsUiRadioOption>
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_fb" @update:modelValue="updateIsDirty()"/>
+                                            <SvwsUiCheckbox v-model="klasse.editable_fb" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_asv" @update:modelValue="updateIsDirty()"/>
+                                            <SvwsUiCheckbox v-model="klasse.editable_asv" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_aue" @update:modelValue="updateIsDirty()"/>
+                                            <SvwsUiCheckbox v-model="klasse.editable_aue" />
                                         </div>
                                         <div class="svws-ui-td" role="cell" :tooltip="cellTooltip">
-                                            <SvwsUiCheckbox v-model="klasse.editable_zb" @update:modelValue="updateIsDirty()"/>
+                                            <SvwsUiCheckbox v-model="klasse.editable_zb" />
                                         </div>
                                     </div>
                                 </span>
@@ -513,34 +509,6 @@
             .catch((error: any): void => apiError(error));
     })
 
-    watch((): boolean => settings.value.lehrer_can_override_fachlehrer, (): void => {
-        if (JSON.stringify(settings.value) == storedSettings.value) {
-            if (JSON.stringify(jahrgaenge.value) === storedJahrgaenge.value) {
-                isDirty.value = false;
-            }
-        }
-    });
-
-    watch((): Ref<JahrgangStructure> => jahrgaenge, (): void => {
-        if (JSON.stringify(jahrgaenge.value) === storedJahrgaenge.value) {
-            if (JSON.stringify(settings.value) == storedSettings.value) {
-                isDirty.value = false;
-            }
-        }
-    }, {
-        deep: true,
-    });
-
-    watch((): Ref<Klasse[]> => klassen, (): void => {
-        if (JSON.stringify(klassen.value) === storedKlassen.value) {
-            if (JSON.stringify(settings.value) == storedSettings.value) {
-                isDirty.value = false;
-            }
-        }
-    }, {
-        deep: true,
-    });
-
     // Creates the collapsed boolean table to switch the table toggles
     // with false, it is collapsed
     const setTableCollapseValues = (obj: Record<string, any[]>): void => Object.keys(obj).forEach((key: string) =>
@@ -556,6 +524,10 @@
 
         axios.put(route('api.settings.matrix.update'), {klassen: klassenArray})
             .then((): void => apiSuccess())
+            .then((): void  => { 
+                isDirty.value = false;
+                storedKlassen.value = JSON.stringify(klassen.value);
+            })
             .catch((error: any): void => apiError(
                 error,
                 'Ein Problem ist aufgetreten bei Speichern von der Matrix',
@@ -563,7 +535,10 @@
 
         axios.put(route('api.settings.bulk_update', {group: 'matrix'}), {settings: settings.value})
             .then((): void => apiSuccess())
-            .then((): boolean => isDirty.value = false)
+            .then((): void  => { 
+                isDirty.value = false;
+                storedSettings.value = JSON.stringify(settings.value);
+            })
             .catch((error: any): void => apiError(
                 error,
                 'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'
@@ -658,9 +633,16 @@
                 updateKlassenToggleState(jahrgang.klassen, jahrgangKlassenToggle);
             })
         })
+        if (JSON.stringify(settings.value) === storedSettings.value) {
+            isDirty.value = JSON.stringify(jahrgaenge.value) !== storedJahrgaenge.value;
+        }
     }, { deep: true });
 
-    const updateIsDirty = (): boolean => isDirty.value = true;
+    watch((): boolean => settings.value.lehrer_can_override_fachlehrer, (): void => {
+        if (JSON.stringify(jahrgaenge.value) === storedJahrgaenge.value) {
+            isDirty.value = JSON.stringify(settings.value) !== storedSettings.value;
+        }
+    });
 
     const toggleAllKlassen = (): void => klassen.value.forEach((klasse: Klasse): void =>
         checkboxes().forEach((column: ToggleableKeys): boolean => klasse[column] = klassenGlobalToggle.value === true)
@@ -670,28 +652,24 @@
         checkboxes().forEach((column: ToggleableKeys): boolean =>
             klasse[column] = klassenToggle.value[klasse.id] === true
         );
-        updateIsDirty();
     };
 
     const toggleKlassenColumn = (column: ToggleableKeys): void => {
         klassen.value.forEach((klasse: Klasse): boolean =>
             klasse[column] = klassenColumnsToggle.value[column] === true
         );
-        updateIsDirty();
     };
 
     const toggleJahrgangsColumn = (jahrgang: Jahrgang, column: ToggleableKeys): void => {
         jahrgang.klassen.forEach((klasse: Klasse): boolean =>
              klasse[column] = jahrgangsKlassenColumnsToggle.value[jahrgang.id][column] === true
         );
-        updateIsDirty();
     };
 
     const toggleJahrgangsKlassenRow = (klasse: Klasse): void => {
         checkboxes().forEach((column: ToggleableKeys): boolean =>
             klasse[column] = jahrgangKlassenToggle.value[klasse.id] === true
         );
-        updateIsDirty();
     };
 
     const toggleGroupColumn = (groupedJahrgaenge: Jahrgang[], column: ToggleableKeys, key: string) => {
@@ -714,7 +692,6 @@
         jahrgang.klassen.forEach((klasse: Klasse) => checkboxes().forEach((column: ToggleableKeys): boolean | string =>
             klasse[column] = jahrgangToggle.value[jahrgang.id] === true
         ));
-        updateIsDirty();
     };
 
     const updateKlassenToggleState = (klassen: Klasse[], toggle: any): void => klassen.forEach((klasse: Klasse): ToggleColumnType =>

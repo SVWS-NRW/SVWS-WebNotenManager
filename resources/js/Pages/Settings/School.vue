@@ -9,31 +9,31 @@
             <div class="content">
                 <div>
                     <h3 class="headline-3">Schule</h3>
-                    <SvwsUiTextInput v-model="settings.name" @input="updateIsDirty()"  placeholder="Name der Schule"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.address" @input="updateIsDirty()"  placeholder="Adresse der Schule"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.email" @input="updateIsDirty()"  placeholder="E-Mail Adresse der Schule"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.name" placeholder="Name der Schule"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.address" placeholder="Adresse der Schule"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.email" placeholder="E-Mail Adresse der Schule"></SvwsUiTextInput>
                 </div>
 
                 <div>
                     <h3 class="headline-3">Schulleitung</h3>
-                    <SvwsUiTextInput v-model="settings.management_name" @input="updateIsDirty()" placeholder="Name Schulleitung"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.management_telephone" @input="updateIsDirty()"  placeholder="Sekretariat"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.management_email" @input="updateIsDirty()"  placeholder="E-Mail-Adresse"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.management_name" placeholder="Name Schulleitung"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.management_telephone" placeholder="Sekretariat"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.management_email" placeholder="E-Mail-Adresse"></SvwsUiTextInput>
                 </div>
 
                 <div>
                     <h3 class="headline-3">Schulträger</h3>
-                    <SvwsUiTextInput v-model="settings.board_name" @input="updateIsDirty()"  placeholder="Name des Schulträgers"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.board_address" @input="updateIsDirty()"  placeholder="Anschrift des Schulträgers"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.board_contact" @input="updateIsDirty()"  placeholder="Kontaktdaten des Schulträgers"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.board_name" placeholder="Name des Schulträgers"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.board_address" placeholder="Anschrift des Schulträgers"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.board_contact" placeholder="Kontaktdaten des Schulträgers"></SvwsUiTextInput>
                 </div>
 
                 <div>
                     <h3 class="headline-3">Datenschutz</h3>
-                    <SvwsUiTextInput v-model="settings.gdpr_email" @input="updateIsDirty()"  placeholder="[Email des Datenschutzbeauftragten]"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.gdpr_address" @input="updateIsDirty()"  placeholder="[Anschrift des Datenschutzbeauftragten]"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.hosting_provider_name" @input="updateIsDirty()"  placeholder="[Name des Hosters]"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.hosting_provider_address" @input="updateIsDirty()"  placeholder="[Anschrift des Hosters]"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.gdpr_email" placeholder="[Email des Datenschutzbeauftragten]"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.gdpr_address" placeholder="[Anschrift des Datenschutzbeauftragten]"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.hosting_provider_name" placeholder="[Name des Hosters]"></SvwsUiTextInput>
+                    <SvwsUiTextInput v-model="settings.hosting_provider_address" placeholder="[Anschrift des Hosters]"></SvwsUiTextInput>
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
@@ -87,21 +87,20 @@
     const saveSettings = () => axios
         .put(route('api.settings.bulk_update', { group: 'general' }),  { settings: settings.value })
         .then((): void => apiSuccess())
-        .then((): boolean => isDirty.value = false)
+        .then((): void => {
+            isDirty.value = false;
+            storedSettings.value = JSON.stringify(settings.value);
+        })
         .catch((error: any): void => apiError(
             error,
             'Ein Problem ist aufgetreten bei Speichern von "Die Klassenleitung darf alle Leistungsdaten bearbeiten."'
         ));
 
     watch(() => settings.value, (): void => {
-        if (JSON.stringify(settings.value) == storedSettings.value) {
-            isDirty.value = false;
-        }
+        isDirty.value = JSON.stringify(settings.value) !== storedSettings.value;
     }, {
         deep: true,
     });
-    
-    const updateIsDirty = (): boolean => isDirty.value = true;
 </script>
 
 

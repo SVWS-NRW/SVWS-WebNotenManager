@@ -11,52 +11,51 @@
                     <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten
                     </SvwsUiCheckbox>
                 </div>
-                <!-- TODO: user feedback feature (isDirty and its updating...) is yet to be decided and therefore unused at the moment -->
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.mailer" :valid="() => !hasErrors('MAIL_MAILER')" type="text"
-                        @input="updateIsDirty()" placeholder="Mailer"></SvwsUiTextInput>
+                        placeholder="Mailer"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_MAILER')" class="error">
                         {{ getError('MAIL_MAILER') }}
                     </span>
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.host" :valid="() => !hasErrors('MAIL_HOST')" type="text"
-                        @input="updateIsDirty()" placeholder="HOST_URL"></SvwsUiTextInput>
+                        placeholder="HOST_URL"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_HOST')" class="error">
                         {{ getError('MAIL_HOST') }}
                     </span>
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.port" :valid="() => !hasErrors('MAIL_PORT')" type="text"
-                        @input="updateIsDirty()" placeholder="PORT"></SvwsUiTextInput>
+                        placeholder="PORT"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_PORT')" class="error">
                         {{ getError('MAIL_PORT') }}
                     </span>
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.username" :valid="() => !hasErrors('MAIL_USERNAME')" type="text"
-                        @input="updateIsDirty()" placeholder="Benutzername"></SvwsUiTextInput>
+                        placeholder="Benutzername"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_USERNAME')" class="error">
                         {{ getError('MAIL_USERNAME') }}
                     </span>
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.password" :valid="() => !hasErrors('MAIL_PASSWORD')" type="text"
-                        @input="updateIsDirty()" placeholder="Passwort"></SvwsUiTextInput>
+                        placeholder="Passwort"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_PASSWORD')" class="error">
                         {{ getError('MAIL_PASSWORD') }}
                     </span>
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.encryption" :valid="() => !hasErrors('MAIL_ENCRYPTION')" type="text"
-                        @input="updateIsDirty()" placeholder="Verschlüsselung"></SvwsUiTextInput>
+                        placeholder="Verschlüsselung"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_ENCRYPTION')" class="error">
                         {{ getError('MAIL_ENCRYPTION') }}
                     </span>
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.from_address" :valid="() => !hasErrors('MAIL_FROM_ADDRESS')"
-                        type="email" @input="updateIsDirty()" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
+                        type="email" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_FROM_ADDRESS')" class="error">
                         {{ getError('MAIL_FROM_ADDRESS') }}
                     </span>
@@ -64,7 +63,7 @@
 
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.from_name" :valid="() => !hasErrors('MAIL_FROM_NAME')" type="text"
-                        @input="updateIsDirty()" placeholder="Absender"></SvwsUiTextInput>
+                        placeholder="Absender"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_FROM_NAME')" class="error">
                         {{ getError('MAIL_FROM_NAME') }}
                     </span>
@@ -117,14 +116,13 @@
     const getError = (column: string): string => data.errors[column][0];
     const hasErrors = (column: string): boolean => column in data.errors;
 
-    //TODO: delete if user feedback feature is discarded
-    const storedSettings: Ref<String> = ref('');
+    const storedDataForm: Ref<String> = ref('');
     const isDirty: Ref<boolean> = ref(true);
 
     axios.get(route('api.settings.mail_send_credentials'))
         .then((response: AxiosResponse): void => {
             data.form = response.data;
-            storedSettings.value = JSON.stringify(data.form);
+            storedDataForm.value = JSON.stringify(data.form);
         });
 
     //TODO: save 2FA data too
@@ -140,25 +138,20 @@
             'MAIL_FROM_NAME': data.form.from_name,
         })
         .then((): void => apiSuccess())
-        //TODO: delete if feature unused
-        // .then((): boolean => isDirty.value = false)
+        .then((): void  => { 
+                isDirty.value = false;
+                storedDataForm.value = JSON.stringify(data.form);
+        })
         .catch((error: any): void => {
             apiError(error, 'Speichern der Änderungen fehlgeschlagen!');
             data.errors = error.response.data.errors;
         });
 
-    //old used to work with settings.value
     watch(() => data.form, (): void => {
-        if (JSON.stringify(data.form) == storedSettings.value) {
-            //TODO: to be decided if used
-            //isDirty.value = false;
-        }
+        isDirty.value = JSON.stringify(data.form) !== storedDataForm.value;
     }, {
         deep: true,
     });
-
-    //TODO: unused -> const updateIsDirty = (): boolean | void => //isDirty.value = true;
-    const updateIsDirty = (): void => console.log("value updated");
 </script>
 
 

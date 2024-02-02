@@ -27,7 +27,7 @@
                     <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fach" :value="1">Fach</SvwsUiCheckbox>
                 </div>
 
-                <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
+                <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
             </section>
         </template>
         <template #secondaryMenu>
@@ -38,7 +38,7 @@
 
 
 <script setup lang="ts">
-    import { Ref, ref } from 'vue'
+    import { Ref, ref, watch } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
     import axios, { AxiosResponse } from 'axios'
     import { apiError, apiSuccess } from '@/Helpers/api.helper'
@@ -72,10 +72,14 @@
     }
 
     const settings: Ref<Settings> = ref({} as Settings);
+    const storedSettings: Ref<String> = ref('');
+    const isDirty: Ref<boolean> = ref(false);
 
     axios.get(route('api.settings.filters'))
-        .then((response: AxiosResponse) => settings.value = response.data)
-    ;
+        .then((response: AxiosResponse): void => {
+            settings.value = response.data;
+            storedSettings.value = JSON.stringify(settings.value);
+        });
 
     const saveSettings = () => axios
         .post(route('api.settings.filters'),  {
@@ -100,10 +104,20 @@
             },
         })
         .then((): void => apiSuccess())
+        .then((): void => {
+            isDirty.value = false;
+            storedSettings.value = JSON.stringify(settings.value);
+        })
         .catch((error: any): void => apiError(
             error,
             'Ein Problem ist aufgetreten bei Speichern von Filtern'
         ));
+
+        watch(() => settings.value, (): void => {
+        isDirty.value = JSON.stringify(settings.value) !== storedSettings.value;
+    }, {
+        deep: true,
+    });
 </script>
 
 
