@@ -100,11 +100,6 @@
         });
 
     const adjustSettings = (): void => {
-        if (clientExists.value) {
-            axios.delete(route('passport.destroy', clientRecord.value.id))
-                .then((response: AxiosResponse) => response)
-                .catch((error: any): void => console.log("error: " + apiError(error)));
-        }
         axios.post(route('passport.store'), { 'name': newClientName + "_client" })
             .then((response: AxiosResponse) => {
                 clientRecord.value = response.data;

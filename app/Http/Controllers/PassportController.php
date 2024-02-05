@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PassportRequest;
 use Illuminate\Http\JsonResponse;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Passport;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,15 +30,16 @@ class PassportController extends Controller
     }
 
     /**
-     * Create a new OAuth client.
+     * Create a new OAuth client, delete existing clients.
      *
-     * @param PassportRequest $request
      * @return JsonResponse
      */
-    public function store(PassportRequest $request): JsonResponse
+    public function store(): JsonResponse
     {
+        Client::truncate();
+
         // Querying the Client model to get a list of clients with specific fields.
-        $client = (new ClientRepository)->create(null, $request->get('name'), '');
+        $client = (new ClientRepository)->create(null, 'SVWS-Server', '');
 
         return response()->json([
             'id' => $client->id,
@@ -46,20 +47,5 @@ class PassportController extends Controller
             'secret' => $client->secret,
             'created_at' => $client->created_at,
         ], Response::HTTP_CREATED);
-    }
-
-    /**
-     * Method to delete an OAuth client.
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function destroy(int $id): JsonResponse
-    {
-        $client = new Client();
-        $client = $client->find($id);
-        $client->delete();
-
-        return response()->json(status: Response::HTTP_NO_CONTENT);
     }
 }

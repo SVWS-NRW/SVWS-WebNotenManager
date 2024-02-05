@@ -39,7 +39,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 
         // Defines the Passport Oauth2 route group for administrators
         Route::resource('settings/passport', PassportController::class)
-            ->only('index', 'store', 'destroy');
+            ->only('index', 'store');
 
         // TODO: To be checked by Karol
         Route::controller(SettingsController::class)
