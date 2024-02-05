@@ -12,86 +12,103 @@ class NotenApiControllerTest extends TestCase
 {
 	use RefreshDatabase;
 
+    /**
+     * Endpoint url
+     *
+     * @var string
+     */
 	private string $url = 'api.noten';
 
-	public function test_users_can_set(): void
+    /**
+     * Test if users can set note
+     *
+     * @return void
+     */
+    public function test_users_can_set_note(): void
 	{
-		$this->actingAs(user: User::factory()->create());
-
 		$old = Note::factory()->create();
 		$new = Note::factory()->create();
+		$leistung = Leistung::factory()->create(['note_id' => $old->id]);
 
-		$leistung = Leistung::factory()->create(attributes: ['note_id' => $old->id]);
+        $this->actingAs(User::factory()->create())
+            ->postJson(route($this->url, $leistung), ['note' => $new->kuerzel])
+            ->assertNoContent();
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['note' => $new->kuerzel]);
-
-		$response->assertNoContent();
-
-		$this->assertDatabaseHas(table: 'leistungen', data: ['id' => $leistung->id, 'note_id' => $new->id])
-			->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'note_id' => $old->id]);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'note_id' => $new->id])
+			->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'note_id' => $old->id]);
 	}
 
+    /**
+     * Test if users can unset note
+     *
+     * @return void
+     */
 	public function test_users_can_unset(): void
 	{
-		$this->actingAs(user: User::factory()->create());
-
 		$note = Note::factory()->create();
+		$leistung = Leistung::factory()->create(['note_id' => $note->id]);
 
-		$leistung = Leistung::factory()->create(attributes: ['note_id' => $note->id]);
+        $this->actingAs(User::factory()->create())
+            ->postJson(route($this->url, $leistung), ['note' => ''])
+            ->assertNoContent();
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['note' => '']);
-
-		$response->assertNoContent();
-
-		$this->assertDatabaseHas(table: 'leistungen', data: ['id' => $leistung->id, 'note_id' => null])
-			->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'note_id' => $note->id]);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'note_id' => null])
+			->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'note_id' => $note->id]);
 	}
 
+    /**
+     * Test if user can only set a valid note
+     *
+     * @return void
+     */
 	public function test_user_can_only_set_a_valid_note(): void
 	{
-		$this->actingAs(user: User::factory()->create());
-
-		$validNote = Note::factory()->create(attributes: ['kuerzel' => 'Valid Note']);
 		$invalidNote = 'Invalid Note';
+		$validNote = Note::factory()->create(['kuerzel' => 'Valid Note']);
+		$leistung = Leistung::factory()->create(['note_id' => $validNote->id]);
 
-		$leistung = Leistung::factory()->create(attributes: ['note_id' => $validNote->id]);
+        $this->actingAs(User::factory()->create())
+            ->postJson(route($this->url, $leistung), ['note' => $invalidNote])
+            ->assertUnprocessable();
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['note' => $invalidNote]);
-
-		$response->assertUnprocessable();
-
-		$this->assertDatabaseHas(table: 'leistungen', data: ['id' => $leistung->id, 'note_id' => $validNote->id]);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'note_id' => $validNote->id]);
 	}
 
+    /**
+     * Test if guest cannot update
+     *
+     * @return void
+     */
 	public function test_guest_cannot_update(): void
 	{
 		$old = Note::factory()->create();
 		$new = Note::factory()->create();
+		$leistung = Leistung::factory()->create(['note_id' => $old->id]);
 
-		$leistung = Leistung::factory()->create(attributes: ['note_id' => $old->id]);
+		$this->postJson(route($this->url, $leistung), ['note_id' => $new->kuerzel])
+            ->assertUnauthorized();
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['note_id' => $new->kuerzel]);
-
-		$response->assertUnauthorized();
-
-		$this->assertDatabaseHas(table: 'leistungen', data: ['id' => $leistung->id, 'note_id' => $old->id])
-			->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'note_id' => $new->id]);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'note_id' => $old->id])
+			->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'note_id' => $new->id]);
 	}
 
+    /**
+     * Test if timestamp is being updated
+     *
+     * @return void
+     */
 	public function test_ts_is_being_updated(): void
 	{
-		$this->actingAs(user: User::factory()->create());
-		$timestamp = now()->subHour()->format(format: 'Y-m-d H:i:s.u');
+		$timestamp = now()->subHour()->format('Y-m-d H:i:s.u');
 
 		$old = Note::factory()->create();
 		$new = Note::factory()->create();
+		$leistung = Leistung::factory()->create(['note_id' => $old, 'tsNote' => $timestamp]);
 
-		$leistung = Leistung::factory()->create(attributes: ['note_id' => $old, 'tsNote' => $timestamp]);
+		$this->actingAs(User::factory()->create())
+            ->postJson(route($this->url, $leistung), ['note' => $new->kuerzel])
+            ->assertNoContent();
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['note' => $new->kuerzel]);
-
-		$response->assertNoContent();
-
-		$this->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'tsNote' => $timestamp]);
+		$this->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'tsNote' => $timestamp]);
 	}
 }

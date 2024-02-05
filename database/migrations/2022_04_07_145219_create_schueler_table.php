@@ -9,9 +9,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create('schueler', function (Blueprint $table) {
+        Schema::create('schueler', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(Jahrgang::class);
             $table->foreignIdFor(Klasse::class);
@@ -24,6 +29,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
         Schema::dropIfExists('schueler');

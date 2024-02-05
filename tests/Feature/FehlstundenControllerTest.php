@@ -15,352 +15,372 @@ class FehlstundenControllerTest extends TestCase
 {
 	use RefreshDatabase;
 
-	private string $urlLeistungFehlstundenGesamt = 'api.fehlstunden.leistung.gesamt';
+    /**
+     * Leistungen Fehlstunden gesamt Endpoint
+     *
+     * @var string
+     */
+    private string $urlLeistungFehlstundenGesamt = 'api.fehlstunden.leistung.gesamt';
+
+    /**
+     * Leistungen Fehlstunden unentschuldigt Endpoint
+     *
+     * @var string
+     */
 	private string $urlLeistungFehlstundenUnentschuldigt = 'api.fehlstunden.leistung.unentschuldigt';
+
+    /**
+     * Schueler Fehlstunden gesamt Endpoint
+     *
+     * @var string
+     */
 	private string $urlSchuelerFehlstundenGesamt = 'api.fehlstunden.schueler.gesamt';
+
+    /**
+     * Schueler Fehlstunden unentschuldigt Endpoint
+     *
+     * @var string
+     */
 	private string $urlSchuelerFehlstundenGesamtUnentschuldigt = 'api.fehlstunden.schueler.gesamt_unentschuldigt';
 
+    /**
+     * Test if user can set leistung fehlstunden facht
+     *
+     * @return void
+     */
 	public function test_user_can_set_leistung_fehlstunden_facht(): void
 	{
 		$lerngruppe = Lerngruppe::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->lerngruppen()->attach(id: $lerngruppe);
-
+		$user->lerngruppen()->attach($lerngruppe);
 		$leistung = Leistung::factory()
-			->for(factory: $lerngruppe)
-			->create(attributes: [
+			->for($lerngruppe)
+			->create([
 				'fehlstundenFach' => 3,
 				'fehlstundenUnentschuldigtFach' => 3,
 			]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlLeistungFehlstundenGesamt, parameters: $leistung),
-			data: ['value' => 5]
-		)->assertNoContent();
+		$this->actingAs($user)
+            ->postJson(route($this->urlLeistungFehlstundenGesamt,  $leistung), ['value' => 5])
+            ->assertNoContent();
 
-		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 5]
-		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 3]
-		);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'fehlstundenFach' => 5])
+            ->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'fehlstundenFach' => 3]);
 	}
 
+    /**
+     * Test if user can set leistung fehlstunden unentschuldigt fach
+     *
+     * @return void
+     */
 	public function test_user_can_set_leistung_fehlstunden_unentschuldigt_fach(): void
 	{
 		$lerngruppe = Lerngruppe::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->lerngruppen()->attach(id: $lerngruppe);
-
+		$user->lerngruppen()->attach($lerngruppe);
 		$leistung = Leistung::factory()
-			->for(factory: $lerngruppe)
-			->create(attributes: [
+			->for($lerngruppe)
+			->create([
 				'fehlstundenFach' => 5,
 				'fehlstundenUnentschuldigtFach' => 3,
 			]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlLeistungFehlstundenUnentschuldigt, parameters: $leistung),
-			data: ['value' => 5]
-		)->assertNoContent();
+		$this->actingAs($user)
+            ->postJson(route($this->urlLeistungFehlstundenUnentschuldigt, $leistung), ['value' => 5])
+            ->assertNoContent();
 
-		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]
-		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3]
-		);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5])
+            ->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3]);
 	}
 
-
+    /**
+     * Test if user can set schueler fehlstunden gesamt
+     *
+     * @return void
+     */
 	public function test_user_can_set_schueler_fehlstunden_gesamt(): void
 	{
 		$klasse = Klasse::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->klassen()->attach(id: $klasse);
-
-		$schueler = Schueler::factory()->for(factory: $klasse)->create();
-
+		$user->klassen()->attach($klasse);
+		$schueler = Schueler::factory()->for($klasse)->create();
 		Lernabschnitt::factory()
-			->for(factory: $schueler)
-			->create(attributes: [
+			->for($schueler)
+			->create([
 				'fehlstundenGesamt' => 3,
 				'fehlstundenGesamtUnentschuldigt' => 3,
 			]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlSchuelerFehlstundenGesamt, parameters: $schueler),
-			data: ['value' => 5]
-		)->assertNoContent();
+		$this->actingAs($user)
+            ->postJson(route($this->urlSchuelerFehlstundenGesamt, $schueler), ['value' => 5])
+            ->assertNoContent();
 
-		$this->assertDatabaseHas(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 5]
-		)->assertDatabaseMissing(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 3]
-		);
+		$this->assertDatabaseHas('lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 5])
+            ->assertDatabaseMissing('lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 3]);
 	}
 
+    /**
+     * Test if user can set schueler fehlstunden gesamt unentschuldigt
+     *
+     * @return void
+     */
 	public function test_user_can_set_schueler_fehlstunden_gesamt_unentschuldigt(): void
 	{
 		$klasse = Klasse::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->klassen()->attach(id: $klasse);
-
-		$schueler = Schueler::factory()->for(factory: $klasse)->create();
-
+		$user->klassen()->attach($klasse);
+		$schueler = Schueler::factory()->for($klasse)->create();
 		Lernabschnitt::factory()
-			->for(factory: $schueler)
-			->create(attributes: [
+			->for($schueler)
+			->create([
 				'fehlstundenGesamt' => 3,
 				'fehlstundenGesamtUnentschuldigt' => 1,
 			]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlSchuelerFehlstundenGesamtUnentschuldigt, parameters: $schueler),
-			data: ['value' => 3]
-		)->assertNoContent();
+		$this->actingAs($user)
+            ->postJson(route($this->urlSchuelerFehlstundenGesamtUnentschuldigt, $schueler), ['value' => 3])
+            ->assertNoContent();
 
 		$this->assertDatabaseHas(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 3]
+			'lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 3]
 		)->assertDatabaseMissing(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 1]
+			'lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 1]
 		);
 	}
 
+    /**
+     * Test if user cannot set leistung fehlstunden gesamt smaller than fehlstunden unentschuldigt
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_leistung_fehlstunden_gesamt_smaller_than_fehlstunden_unentschuldigt(): void
 	{
 		$lerngruppe = Lerngruppe::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->lerngruppen()->attach(id: $lerngruppe);
-
-		$leistung = Leistung::factory()->for(factory: $lerngruppe)->create(attributes: [
+		$user->lerngruppen()->attach($lerngruppe);
+		$leistung = Leistung::factory()->for($lerngruppe)->create([
 			'fehlstundenFach' => 3,
 			'fehlstundenUnentschuldigtFach' => 3,
 		]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlLeistungFehlstundenGesamt, parameters: $leistung),
-			data: ['value' => 1]
-		)->assertUnprocessable();
+		$this->actingAs($user)
+            ->postJson(route($this->urlLeistungFehlstundenGesamt, $leistung), ['value' => 1])
+            ->assertUnprocessable();
 
-		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 3]
-		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 1]
-		);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'fehlstundenFach' => 3])
+            ->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'fehlstundenFach' => 1]);
 	}
 
+    /**
+     * Test if user cannot set leistung fehlstunden unentschuldigt greater than fehlstunden gesamt
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_leistung_fehlstunden_unentschuldigt_greater_than_fehlstunden_gesamt(): void
 	{
 		$lerngruppe = Lerngruppe::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->lerngruppen()->attach(id: $lerngruppe);
-
-		$leistung = Leistung::factory()->for(factory: $lerngruppe)->create(attributes: [
+		$user->lerngruppen()->attach($lerngruppe);
+		$leistung = Leistung::factory()->for($lerngruppe)->create([
 			'fehlstundenFach' => 3,
 			'fehlstundenUnentschuldigtFach' => 3,
 		]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlLeistungFehlstundenUnentschuldigt, parameters: $leistung),
-			data: ['value' => 5]
-		)->assertUnprocessable();
+		$this->actingAs($user)
+            ->postJson(route($this->urlLeistungFehlstundenUnentschuldigt, $leistung), ['value' => 5])
+            ->assertUnprocessable();
 
-		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3]
-		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]
-		);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3])
+            ->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]);
 	}
 
+    /**
+     * Test if user cannot set schueler fehlstunden gesamt smaller than fehlstunden gesamt unentschuldigt
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_schueler_fehlstunden_gesamt_smaller_than_fehlstunden_gesamt_unentschuldigt(): void
 	{
 		$klasse = Klasse::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->klassen()->attach(id: $klasse);
-
-		$schueler = Schueler::factory()->for(factory: $klasse)->create();
-
+		$user->klassen()->attach($klasse);
+		$schueler = Schueler::factory()->for($klasse)->create();
 		Lernabschnitt::factory()
-			->for(factory: $schueler)
-			->create(attributes: [
+			->for($schueler)
+			->create([
 				'fehlstundenGesamt' => 3,
 				'fehlstundenGesamtUnentschuldigt' => 3,
 			]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlSchuelerFehlstundenGesamt, parameters: $schueler),
-			data: ['value' => 1]
-		)->assertUnprocessable();
+		$this->actingAs($user)
+            ->postJson(route($this->urlSchuelerFehlstundenGesamt, $schueler), ['value' => 1])->assertUnprocessable();
 
-		$this->assertDatabaseHas(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 3]
-		)->assertDatabaseMissing(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 1]
-		);
+		$this->assertDatabaseHas('lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 3])
+            ->assertDatabaseMissing('lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 1]);
 	}
 
+    /**
+     * Test if user cannot set schueler fehlstunden gesamt unentschuldigt greater than fehlstunden gesamt
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_schueler_fehlstunden_gesamt_unentschuldigt_greater_than_fehlstunden_gesamt(): void
 	{
 		$klasse = Klasse::factory()->create();
-
 		$user = User::factory()->lehrer()->create();
-		$user->klassen()->attach(id: $klasse);
-
-		$schueler = Schueler::factory()->for(factory: $klasse)->create();
-
+		$user->klassen()->attach($klasse);
+		$schueler = Schueler::factory()->for($klasse)->create();
 		Lernabschnitt::factory()
-			->for(factory: $schueler)
-			->create(attributes: [
+			->for($schueler)
+			->create([
 				'fehlstundenGesamt' => 3,
 				'fehlstundenGesamtUnentschuldigt' => 3,
 			]);
 
-		$this->actingAs(user: $user)->postJson(
-			uri: route(name: $this->urlSchuelerFehlstundenGesamtUnentschuldigt, parameters: $schueler),
-			data: ['value' => 5]
-		)->assertUnprocessable();
+		$this->actingAs($user)
+            ->postJson(route($this->urlSchuelerFehlstundenGesamtUnentschuldigt, $schueler), ['value' => 5])
+            ->assertUnprocessable();
 
 		$this->assertDatabaseHas(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 3]
+			'lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 3]
 		)->assertDatabaseMissing(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 5]
+			'lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 5]
 		);
 	}
 
+    /**
+     * Test if user cannot set leistung fehlstunden gesamt for leistung not in a common lerngruppe
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_leistung_fehlstunden_gesamt_for_leistung_not_in_a_common_lerngruppe(): void
 	{
-		$leistung = Leistung::factory()->create(attributes: [
-			'fehlstundenFach' => 3,
-		]);
+		$leistung = Leistung::factory()->create(['fehlstundenFach' => 3]);
 
-		$this->actingAs(user: User::factory()->lehrer()->create())
-			->postJson(
-				uri: route(name: $this->urlLeistungFehlstundenGesamt, parameters: $leistung),
-				data: ['value' => 5]
-			)->assertForbidden();
+		$this->actingAs(User::factory()->lehrer()->create())
+			->postJson(route($this->urlLeistungFehlstundenGesamt, $leistung), ['value' => 5])
+            ->assertForbidden();
 
 		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 3]
+			'leistungen', ['id' => $leistung->id, 'fehlstundenFach' => 3]
 		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenFach' => 5]
+			'leistungen', ['id' => $leistung->id, 'fehlstundenFach' => 5]
 		);
 	}
 
+    /**
+     * Test if user cannot set leistung fehlstunden unentschuldigt for leistung not in a common lerngruppe
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_leistung_fehlstunden_unentschuldigt_for_leistung_not_in_a_common_lerngruppe(): void
 	{
-		$leistung = Leistung::factory()->create(attributes: [
-			'fehlstundenUnentschuldigtFach' => 3,
-		]);
+		$leistung = Leistung::factory()->create(['fehlstundenUnentschuldigtFach' => 3]);
 
-		$this->actingAs(user: User::factory()->lehrer()->create())->postJson(
-			uri: route(name: $this->urlLeistungFehlstundenUnentschuldigt, parameters: $leistung),
-			data: ['value' => 5]
-		)->assertForbidden();
+		$this->actingAs(User::factory()->lehrer()->create())
+            ->postJson(route($this->urlLeistungFehlstundenUnentschuldigt, $leistung), ['value' => 5])
+            ->assertForbidden();
 
-		$this->assertDatabaseHas(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3]
-		)->assertDatabaseMissing(
-			table: 'leistungen', data: ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]
-		);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 3])
+            ->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'fehlstundenUnentschuldigtFach' => 5]);
 	}
 
+    /**
+     * Test if user cannot set schueler fehlstunden gesamt for schueler not in a common klasse
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_schueler_fehlstunden_gesamt_for_schueler_not_in_a_common_klasse(): void
 	{
 		$schueler = Schueler::factory()->create();
 
 		Lernabschnitt::factory()
-			->for(factory: $schueler)
-			->create(attributes: [
+			->for($schueler)
+			->create([
 				'fehlstundenGesamt' => 3,
 				'fehlstundenGesamtUnentschuldigt' => 3,
 			]);
 
-		$this->actingAs(user: User::factory()->lehrer()->create())
-			->postJson(
-				uri: route(name: $this->urlSchuelerFehlstundenGesamt, parameters: $schueler),
-				data: ['value' => 5]
-			)->assertForbidden();
+		$this->actingAs(User::factory()->lehrer()->create())
+			->postJson(route($this->urlSchuelerFehlstundenGesamt, $schueler), ['value' => 5])->assertForbidden();
 
-		$this->assertDatabaseHas(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 3]
-		)->assertDatabaseMissing(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 5]
-		);
+		$this->assertDatabaseHas('lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 3])
+            ->assertDatabaseMissing('lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamt' => 5]);
 	}
 
+    /**
+     * Test if user cannot set schueler fehlstunden gesamt unentschuldigt for schueler not in a common klasse
+     *
+     * @return void
+     */
 	public function test_user_cannot_set_schueler_fehlstunden_gesamt_unentschuldigt_for_schueler_not_in_a_common_klasse(): void
 	{
 		$schueler = Schueler::factory()->create();
-
 		Lernabschnitt::factory()
-			->for(factory: $schueler)
-			->create(attributes: [
+			->for($schueler)
+			->create([
 				'fehlstundenGesamt' => 3,
 				'fehlstundenGesamtUnentschuldigt' => 3,
 			]);
 
-		$this->actingAs(user: User::factory()->lehrer()->create())
-			->postJson(
-				uri: route(name: $this->urlSchuelerFehlstundenGesamtUnentschuldigt, parameters: $schueler),
-				data: ['value' => 5]
-			)->assertForbidden();
+		$this->actingAs(User::factory()->lehrer()->create())
+			->postJson(route($this->urlSchuelerFehlstundenGesamtUnentschuldigt, $schueler), ['value' => 5])
+            ->assertForbidden();
 
 		$this->assertDatabaseHas(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 3]
+			'lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 3]
 		)->assertDatabaseMissing(
-			table: 'lernabschnitte', data: ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 5]
+			'lernabschnitte', ['schueler_id' => $schueler->id, 'fehlstundenGesamtUnentschuldigt' => 5]
 		);
 	}
 
+    /**
+     * Test if guest cannot set leistung fehlstunden gesamt
+     *
+     * @return void
+     */
 	public function test_guest_cannot_set_leistung_fehlstunden_gesamt(): void
 	{
-		$this->postJson(
-			uri: route(
-				name: $this->urlLeistungFehlstundenGesamt,
-				parameters: Leistung::factory()->create()
-			),
-			data: ['value' => 5]
-		)->assertUnauthorized();
+		$this->postJson(route($this->urlLeistungFehlstundenGesamt, Leistung::factory()->create()), ['value' => 5])
+            ->assertUnauthorized();
 	}
 
+    /**
+     * Test if guest cannot set leistung fehlstunden unentschuldigt
+     *
+     * @return void
+     */
 	public function test_guest_cannot_set_leistung_fehlstunden_unentschuldigt(): void
 	{
 		$this->postJson(
-			uri: route(
-				name: $this->urlLeistungFehlstundenUnentschuldigt,
-				parameters: Leistung::factory()->create()
-			),
-			data: ['value' => 5]
+			route($this->urlLeistungFehlstundenUnentschuldigt, Leistung::factory()->create()),
+            ['value' => 5]
 		)->assertUnauthorized();
 	}
 
+    /**
+     * Test if guest cannot set schueler fehlstunden gesamt
+     *
+     * @return void
+     */
 	public function test_guest_cannot_set_schueler_fehlstunden_gesamt(): void
 	{
 		$this->postJson(
-			uri: route(
-				name: $this->urlSchuelerFehlstundenGesamt,
-				parameters: Leistung::factory()->create()
-			),
-			data: ['value' => 5]
+			route($this->urlSchuelerFehlstundenGesamt, Leistung::factory()->create()),
+			['value' => 5]
 		)->assertUnauthorized();
 	}
 
+    /**
+     * Test if guest cannot set schueler fehlstunden gesamt unentschuldigt
+     *
+     * @return void
+     */
 	public function test_guest_cannot_set_schueler_fehlstunden_gesamt_unentschuldigt(): void
 	{
 		$this->postJson(
-			uri: route(
-				name: $this->urlSchuelerFehlstundenGesamtUnentschuldigt,
-				parameters: Leistung::factory()->create()
-			),
-			data: ['value' => 5]
+			route($this->urlSchuelerFehlstundenGesamtUnentschuldigt, Leistung::factory()->create()),
+			['value' => 5]
 		)->assertUnauthorized();
 	}
-
-
 }

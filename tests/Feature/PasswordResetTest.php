@@ -13,17 +13,27 @@ class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Test if reset password link screen can be rendered
+     *
+     * @return void
+     */
     public function test_reset_password_link_screen_can_be_rendered()
     {
         if (! Features::enabled(Features::resetPasswords())) {
             return $this->markTestSkipped('Password updates are not enabled.');
         }
 
-        $response = $this->get('/forgot-password');
-
-        $response->assertStatus(200);
+        $this->get('/forgot-password')
+            ->assertStatus(200);
     }
 
+    /**
+     * Test if reset password link can be requested
+     *
+     * @return void
+     * @throws \Exception
+     */
     public function test_reset_password_link_can_be_requested()
     {
         if (! Features::enabled(Features::resetPasswords())) {
@@ -41,6 +51,12 @@ class PasswordResetTest extends TestCase
         Notification::assertSentTo($user, ResetPassword::class);
     }
 
+    /**
+     * Test if reset password screen can be rendered
+     *
+     * @return void
+     * @throws \Exception
+     */
     public function test_reset_password_screen_can_be_rendered()
     {
         if (! Features::enabled(Features::resetPasswords())) {
@@ -64,6 +80,12 @@ class PasswordResetTest extends TestCase
         });
     }
 
+    /**
+     * Test if password can be reset with valid token
+     *
+     * @return void
+     * @throws \Exception
+     */
     public function test_password_can_be_reset_with_valid_token()
     {
         if (! Features::enabled(Features::resetPasswords())) {

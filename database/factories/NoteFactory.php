@@ -6,10 +6,25 @@ use App\Models\Daten;
 use App\Models\Note;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating Note model instances.
+ *
+ * @package Database\Factories
+ */
 class NoteFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = Note::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -18,10 +33,15 @@ class NoteFactory extends Factory
         ];
     }
 
-    public function withNotenpunkte(): Factory
+    /**
+     * Indicate that the model has Notenpunkte.
+     *
+     * @return NoteFactory
+     */
+    public function withNotenpunkte(): NoteFactory
     {
         return $this->state(fn (): array  => [
-			'notenpunkte' => rand(min: 1, max: 15),
+			'notenpunkte' => rand(1, 15),
 		]);
     }
 }

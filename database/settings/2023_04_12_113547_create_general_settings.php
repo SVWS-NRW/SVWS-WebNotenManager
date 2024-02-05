@@ -4,7 +4,7 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class extends SettingsMigration
 {
-    public function up(): void
+    public function up(): void // TODO: To be reworked
 	{
 		$this->migrator->add(property: 'general.name', value: '[Name der Schule]');
 		$this->migrator->add(property: 'general.address', value: '[Adresse der Schule]');

@@ -6,28 +6,38 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'users', callback: function (Blueprint $table): void {
+        Schema::create('users', function (Blueprint $table): void {
 			$table->id();
-			$table->integer(column: 'ext_id')->unique()->nullable();
-			$table->string(column: 'kuerzel');
-			$table->string(column: 'vorname');
-			$table->string(column: 'nachname');
-			$table->string(column: 'geschlecht');
-			$table->string(column: 'email')->unique();
-			$table->timestamp(column: 'email_verified_at')->nullable();
-			$table->string(column: 'password');
-			$table->boolean(column: 'is_administrator')->default(value: false);
+			$table->integer('ext_id')->unique()->nullable();
+			$table->string('kuerzel');
+			$table->string('vorname');
+			$table->string('nachname');
+			$table->string('geschlecht');
+			$table->string('email')->unique();
+			$table->timestamp('email_verified_at')->nullable();
+			$table->string('password');
+			$table->boolean('is_administrator')->default(false);
 			$table->rememberToken();
-			$table->foreignId(column: 'current_team_id')->nullable();
-			$table->string(column: 'profile_photo_path', length: 2048)->nullable();
+			$table->foreignId('current_team_id')->nullable();
+			$table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'users');
+        Schema::dropIfExists('users');
     }
 };

@@ -8,14 +8,29 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 
 class EventServiceProvider extends ServiceProvider
 {
+    /**
+     * Define the events and their associated listeners
+     *
+     * @var array[]
+     */
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
     ];
 
+    /**
+     * The boot method of this provider
+     *
+     * @return void
+     */
     public function boot(): void {}
 
+    /**
+     * Determine whether events should be automatically discovered
+     *
+     * @return bool
+     */
     public function shouldDiscoverEvents(): bool
     {
         return false;

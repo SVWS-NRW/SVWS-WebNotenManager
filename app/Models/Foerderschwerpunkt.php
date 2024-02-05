@@ -7,35 +7,34 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * App\Models\Foerderschwerpunkt
+ * The `Foerderschwerpunkt` class represents a Laravel model for managing remarks associated with Foerderschwerpunkte.
  *
- * @property int $id
- * @property string $kuerzel
- * @property string $beschreibung
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Database\Factories\FoerderschwerpunktFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt query()
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereBeschreibung($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereKuerzel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @package App\Models
  */
 class Foerderschwerpunkt extends Model
 {
     use HasFactory;
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
     protected $table = 'foerderschwerpunkte';
 
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var string[]
+     */
     protected $fillable = [
-        'id',
-        'kuerzel',
-        'beschreibung',
+        'id', 'kuerzel', 'beschreibung',
     ];
 
+    /**
+     * Indicate that the model does not use timestamps.
+     *
+     * @var bool
+     */
 	public $timestamps = false;
 }

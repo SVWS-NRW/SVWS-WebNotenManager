@@ -11,59 +11,78 @@ class MahnungenApiControllerTest extends TestCase
 {
 	use RefreshDatabase;
 
+    /**
+     * Endpoint url
+     *
+     * @var string
+     */
 	private string $url = 'api.mahnung';
 
+    /**
+     * Test if users can set Mahnungen
+     *
+     * @return void
+     */
     public function test_users_can_set(): void
     {
-		$this->actingAs(user: User::factory()->create());
+		$leistung = Leistung::factory()->create(['istGemahnt' => false]);
 
-		$leistung = Leistung::factory()->create(attributes: ['istGemahnt' => false]);
+		$this->actingAs(User::factory()->create())
+            ->postJson(route($this->url, $leistung), ['istGemahnt' => true])
+            ->assertNoContent();
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['istGemahnt' => true]);
-
-		$response->assertNoContent();
-
-		$this->assertDatabaseHas(table: 'leistungen', data: ['id' => $leistung->id, 'istGemahnt' => true])
-			->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'istGemahnt' => false]);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'istGemahnt' => true])
+			->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'istGemahnt' => false]);
     }
 
+    /**
+     * Test if users can unset Mahnungen
+     *
+     * @return void
+     */
 	public function test_users_can_unset(): void
 	{
-		$this->actingAs(user: User::factory()->create());
+		$leistung = Leistung::factory()->create(['istGemahnt' => true]);
 
-		$leistung = Leistung::factory()->create(attributes: ['istGemahnt' => true]);
+		$this->actingAs(User::factory()->create())
+            ->postJson(route($this->url, $leistung), ['istGemahnt' => false])
+            ->assertNoContent();
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['istGemahnt' => false]);
-
-		$response->assertNoContent();
-
-		$this->assertDatabaseHas(table: 'leistungen', data: ['id' => $leistung->id, 'istGemahnt' => false])
-			->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'istGemahnt' => true]);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'istGemahnt' => false])
+			->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'istGemahnt' => true]);
 	}
 
+    /**
+     * Test if guest cannot set Mahnungen
+     *
+     * @return void
+     */
 	public function test_guest_cannot_update(): void
 	{
-		$leistung = Leistung::factory()->create(attributes: ['istGemahnt' => false]);
+		$leistung = Leistung::factory()->create(['istGemahnt' => false]);
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['istGemahnt' => true]);
+		$this->postJson(route($this->url, $leistung), ['istGemahnt' => true])
+            ->assertUnauthorized();
 
-		$response->assertUnauthorized();
-
-		$this->assertDatabaseHas(table: 'leistungen', data: ['id' => $leistung->id, 'istGemahnt' => false])
-			->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'fachbezogeneBemerkungen' => true]);
+		$this->assertDatabaseHas('leistungen', ['id' => $leistung->id, 'istGemahnt' => false])
+			->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'fachbezogeneBemerkungen' => true]);
 	}
 
+    /**
+     * Test if timestamp is being updated
+     *
+     * @return void
+     */
 	public function test_ts_is_being_updated(): void
 	{
-		$this->actingAs(user: User::factory()->create());
-		$timestamp = now()->subHour()->format(format: 'Y-m-d H:i:s.u');
+		$timestamp = now()->subHour()->format('Y-m-d H:i:s.u');
 
-		$leistung = Leistung::factory()->create(attributes: ['istGemahnt' => false, 'tsIstGemahnt' => $timestamp]);
+		$leistung = Leistung::factory()->create(['istGemahnt' => false, 'tsIstGemahnt' => $timestamp]);
 
-		$response = $this->postJson(uri: route(name: $this->url, parameters: $leistung), data: ['istGemahnt' => true]);
+		$this->actingAs(User::factory()->create())
+            ->postJson(route($this->url, $leistung), ['istGemahnt' => true])
+            ->assertNoContent();
 
-		$response->assertNoContent();
-
-		$this->assertDatabaseMissing(table: 'leistungen', data: ['id' => $leistung->id, 'tsIstGemahnt' => $timestamp]);
+		$this->assertDatabaseMissing('leistungen', ['id' => $leistung->id, 'tsIstGemahnt' => $timestamp]);
 	}
 }

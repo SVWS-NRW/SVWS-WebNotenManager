@@ -4,8 +4,19 @@ namespace App\Http\Resources\Export;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * The `KlasseResource` class is a JSON resource for formatting and presenting 'Klasse' data.
+ *
+ * @package App\Http\Resources\Export
+ */
 class KlasseResource extends JsonResource
 {
+    /**
+     * Transform the data into a JSON array.
+     *
+     * @param $request
+     * @return array
+     */
     public function toArray($request): array
     {
         return [
@@ -13,7 +24,7 @@ class KlasseResource extends JsonResource
             'kuerzel' => $this->kuerzel,
             'kuerzelAnzeige' => $this->kuerzelAnzeige,
             'sortierung' => $this->sortierung,
-            'klassenlehrer' => $this->klassenlehrer->pluck(key: 'id'),
+            'klassenlehrer' => $this->klassenlehrer->pluck('id'),
         ];
     }
 }

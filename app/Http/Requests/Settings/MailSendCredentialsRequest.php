@@ -7,13 +7,27 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * A FormRequest class to handle validation and authorization for requests related current resource.
+ */
 class MailSendCredentialsRequest extends FormRequest
 {
+    /**
+     * Determine if the given ability should be granted for the current user.
+     *
+     * @return bool
+     */
     public function authorize(): bool
     {
+        // Authorization passes if current user is an administrator
         return auth()->user()->is_administrator;
     }
 
+    /**
+     * Validation rules
+     *
+     * @return array
+     */
     public function rules(): array
     {
         return [
@@ -44,6 +58,11 @@ class MailSendCredentialsRequest extends FormRequest
         ];
     }
 
+    /**
+     * Validation attributes
+     *
+     * @return array
+     */
     public function attributes(): array
     {
         return [

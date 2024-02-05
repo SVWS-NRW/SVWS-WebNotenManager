@@ -3,12 +3,30 @@
 namespace Database\Factories;
 
 use App\Models\Foerderschwerpunkt;
+use App\Models\Lernabschnitt;
 use App\Models\Note;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating Lernabschnitt model instances.
+ *
+ * @package Database\Factories
+ */
 class LernabschnittFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    protected $model = Lernabschnitt::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -20,15 +38,4 @@ class LernabschnittFactory extends Factory
             'foerderschwerpunkt2' => Foerderschwerpunkt::factory(),
         ];
     }
-
-	private function withTimestamp(
-		string $column,
-		string|null $tsColumn = null,
-		string|bool|int|null $value = null
-	): LernabschnittFactory {
-		return $this->state(fn (): array => [
-			$column => $value ?? $this->faker->paragraph(),
-			$tsColumn ?? "ts{$column}" => now()->format(format: 'Y-m-d H:i:s.u'),
-		]);
-	}
 }

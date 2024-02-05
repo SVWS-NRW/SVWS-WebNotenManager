@@ -5,46 +5,52 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Leistung;
 use App\Models\Note;
-use App\Models\Setting;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Defining the Noten controller
+ */
 class Noten extends Controller
 {
-	public function __invoke(Leistung $leistung): JsonResponse
+    /**
+     * @param Leistung $leistung
+     * @return JsonResponse
+     */
+    public function __invoke(Leistung $leistung): JsonResponse
 	{
-		abort_unless($leistung->schueler->klasse->editable_noten, Response::HTTP_FORBIDDEN);
+        // Check if the class Klasse of the Schueler related to the Leistung is allowed to have editable Noten.
 
-		if (request()->note == '') {
+        abort_unless($leistung->schueler->klasse->editable_noten, Response::HTTP_FORBIDDEN);
+
+        // If the requested note is an empty string, call updateNote method without a specific note.
+        if (request()->note == '') {
 			return $this->updateNote($leistung);
 		}
 
-			$note = Note::query()
-				->where('kuerzel', '=', (string) request()->note)
-				->firstOrFail();
-//		try {
-//		} catch (ModelNotFoundException $e) {
-//			return response()->json(
-//				[
-//					'message' => $e->getMessage(),
-//					'note' => $leistung->note?->kuerzel
-//				],
-//				Response::HTTP_UNPROCESSABLE_ENTITY
-//			);
-//		}
+        // Retrieve the Note model based on the requested note's 'kuerzel'.
+        $note = Note::query()
+            ->where('kuerzel', '=', (string) request()->note)
+            ->firstOrFail();
 
-		return $this->updateNote($leistung, $note->id);
+        // Call updateNote method with the retrieved note's ID.
+        return $this->updateNote($leistung, $note->id);
     }
 
-	private function updateNote(Leistung $leistung, string|null $note = null): JsonResponse
+    /**
+     * @param Leistung $leistung
+     * @param string|null $note
+     * @return JsonResponse
+     */
+    private function updateNote(Leistung $leistung, string|null $note = null): JsonResponse
 	{
-		$leistung->update(attributes: [
+        // Updating the resource with an additional timestamp
+        $leistung->update([
 			'note_id' => $note,
 			'tsNote' => now()->format('Y-m-d H:i:s.u'),
 		]);
 
+        // Returning a JSON response with a 204 No Content status.
 		return response()->json(Response::HTTP_NO_CONTENT);
 	}
 }

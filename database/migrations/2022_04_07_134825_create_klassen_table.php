@@ -7,28 +7,38 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'klassen', callback: function (Blueprint $table): void {
+        Schema::create('klassen', function (Blueprint $table): void {
             $table->id();
-			$table->foreignIdFor(model: Jahrgang::class, column: 'idJahrgang')->nullable();
-            $table->string(column: 'kuerzel');
-            $table->string(column: 'kuerzelAnzeige');
-            $table->integer(column: 'sortierung');
-			$table->boolean(column: 'editable_teilnoten')->default(value: true);
-			$table->boolean(column: 'editable_noten')->default(value: true);
-			$table->boolean(column: 'editable_mahnungen')->default(value: true);
-			$table->boolean(column: 'editable_fehlstunden')->default(value: true);
-			$table->boolean(column: 'toggleable_fehlstunden')->default(value: true);
-			$table->boolean(column: 'editable_fb')->default(value: true);
-			$table->boolean(column: 'editable_asv')->default(value: true);
-			$table->boolean(column: 'editable_aue')->default(value: true);
-			$table->boolean(column: 'editable_zb')->default(value: true);
+			$table->foreignIdFor(Jahrgang::class, 'idJahrgang')->nullable();
+            $table->string('kuerzel');
+            $table->string('kuerzelAnzeige');
+            $table->integer('sortierung');
+			$table->boolean('editable_teilnoten')->default(true);
+			$table->boolean('editable_noten')->default(true);
+			$table->boolean('editable_mahnungen')->default(true);
+			$table->boolean('editable_fehlstunden')->default(true);
+			$table->boolean('toggleable_fehlstunden')->default(true);
+			$table->boolean('editable_fb')->default(true);
+			$table->boolean('editable_asv')->default(true);
+			$table->boolean('editable_aue')->default(true);
+			$table->boolean('editable_zb')->default(true);
 		});
     }
-    
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'klassen');
+        Schema::dropIfExists('klassen');
     }
 };

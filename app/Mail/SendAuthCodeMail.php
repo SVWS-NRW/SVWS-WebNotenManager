@@ -9,19 +9,39 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Class SendAuthCodeMail is a Mailable class responsible for creating and sending an email with an authentication code.
+ */
 class SendAuthCodeMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Email details
+     *
+     * @var $details
+     */
     public $details;
 
+    /**
+     * Create a new message instance.
+     *
+     * @param $details
+     */
     public function __construct($details)
     {
         $this->details = $details;
     }
-    
-    public function build()
+
+    /**
+     * Build the message.
+     *
+     * @return SendAuthCodeMail
+     */
+    public function build(): SendAuthCodeMail
     {
-        return $this->subject('Mail from WeNoM')
-                    ->view('emails.authCode');
+        // Setting up the email with a subject and the view representing the email's content.
+        return $this->subject('Mail from WeNoM')->view('emails.authCode');
     }
 }

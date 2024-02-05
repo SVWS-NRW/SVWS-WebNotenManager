@@ -8,6 +8,7 @@ use Spatie\LaravelSettings\Settings;
 
 class SicherheitSettings extends Settings
 {
+    // TODO: Check by Karol
 
     public bool $zwei_faktor_authentisierung;
 

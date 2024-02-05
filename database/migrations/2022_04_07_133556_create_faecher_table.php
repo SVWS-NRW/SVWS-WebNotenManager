@@ -6,19 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'faecher', callback: function (Blueprint $table): void {
+        Schema::create('faecher', function (Blueprint $table): void {
             $table->id();
-            $table->string(column: 'kuerzel');
-            $table->string(column: 'kuerzelAnzeige');
-            $table->integer(column: 'sortierung');
-            $table->boolean(column: 'istFremdsprache')->default(value: false);
+            $table->string('kuerzel');
+            $table->string('kuerzelAnzeige');
+            $table->integer('sortierung');
+            $table->boolean('istFremdsprache')->default(false);
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'faecher');
+        Schema::dropIfExists('faecher');
     }
 };

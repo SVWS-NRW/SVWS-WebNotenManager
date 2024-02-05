@@ -8,16 +8,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'lerngruppe_user', callback: function (Blueprint $table): void {
-            $table->foreignIdFor(model: User::class);
-            $table->foreignIdFor(model: Lerngruppe::class);
+        Schema::create('lerngruppe_user', function (Blueprint $table): void {
+            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(Lerngruppe::class);
         });
     }
-    
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'lerngruppe_user');
+        Schema::dropIfExists('lerngruppe_user');
     }
 };

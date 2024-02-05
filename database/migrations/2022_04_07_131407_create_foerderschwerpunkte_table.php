@@ -7,17 +7,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'foerderschwerpunkte', callback: function (Blueprint $table): void {
+        Schema::create('foerderschwerpunkte', function (Blueprint $table): void {
             $table->id();
-            $table->string(column: 'kuerzel')->unique();
-            $table->text(column: 'beschreibung');
+            $table->string('kuerzel')->unique();
+            $table->text('beschreibung');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'foerderschwerpunkte');
+        Schema::dropIfExists('foerderschwerpunkte');
     }
 };

@@ -4,8 +4,19 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * The `KlassenleitungResource` class is a JSON resource for formatting and presenting 'Klassenleitung' data.
+ *
+ * @package App\Http\Resources\Export
+ */
 class KlassenleitungResource extends JsonResource
 {
+    /**
+     * Transform the data into a JSON array.
+     *
+     * @param $request
+     * @return array
+     */
     public function toArray($request): array
     {
         return [

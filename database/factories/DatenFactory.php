@@ -6,58 +6,103 @@ use App\Models\Daten;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating Daten model instances.
+ *
+ * @package Database\Factories
+ */
 class DatenFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = Daten::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
-            'enmRevision' => rand(min: 1, max: 10),
-            'schuljahr' => rand(min: 2000, max: 2022),
-            'anzahlAbschnitte' => rand(min: 1, max: 4),
-            'aktuellerAbschnitt' => rand(min: 1, max: 4),
-            'lehrerID' => $this->faker->unique()->numberBetween(int1: 1, int2: 1_000_000),
+            'enmRevision' => rand(1, 10),
+            'schuljahr' => rand(2000, 2022),
+            'anzahlAbschnitte' => rand(1, 4),
+            'aktuellerAbschnitt' => rand(1, 4),
+            'lehrerID' => $this->faker->unique()->numberBetween(1, 1_000_000),
             'user_id' => User::factory(),
         ];
     }
 
-    public function withPublicKey(): Factory
+    /**
+     * Indicate that the model has Public Key.
+     *
+     * @return DatenFactory
+     */
+    public function withPublicKey(): DatenFactory
     {
         return $this->state(fn (): array  => [
 			'publicKey' => $this->faker->word,
 		]);
     }
 
-    public function withFehlstundenEingabe(): Factory
+    /**
+     * Indicate that the model has Fehlstunden Eingabe.
+     *
+     * @return DatenFactory
+     */
+    public function withFehlstundenEingabe(): DatenFactory
     {
         return $this->state(fn (): array  => [
 			'fehlstundenEingabe' => true,
 		]);
     }
 
-    public function withFehlstundenSIFachbezogen(): Factory
+    /**
+     * Indicate that the model has Fehlstunden SI Fachbezogen.
+     *
+     * @return DatenFactory
+     */
+    public function withFehlstundenSIFachbezogen(): DatenFactory
     {
         return $this->state(fn (): array  => [
 			'fehlstundenSIFachbezogen' => true,
 		]);
     }
 
-    public function withFehlstundenSIIFachbezogen(): Factory
+    /**
+     * Indicate that the model has Fehlstunden SII Fachbezogen.
+     *
+     * @return DatenFactory
+     */
+    public function withFehlstundenSIIFachbezogen(): DatenFactory
     {
         return $this->state(fn (): array  => [
 			'fehlstundenSIIFachbezogen' => true,
 		]);
     }
 
-    public function withSchulform(): Factory
+    /**
+     * Indicate that the model has Schulform.
+     *
+     * @return DatenFactory
+     */
+    public function withSchulform(): DatenFactory
     {
         return $this->state(fn (): array  => [
 			'schulform' => $this->faker->word(),
 		]);
     }
 
-    public function withMailadresse(): Factory
+    /**
+     * Indicate that the model has Mailadresse.
+     *
+     * @return DatenFactory
+     */
+    public function withMailadresse(): DatenFactory
     {
         return $this->state(fn (): array  => [
 			'mailadresse' => $this->faker->safeEmail(),
