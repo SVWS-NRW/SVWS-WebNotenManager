@@ -14,23 +14,32 @@ class FachbezogeneFloskelnApiControllerTest extends TestCase
 {
 	use RefreshDatabase;
 
-	private string $url = 'api.fachbezogene_floskeln';
+    /**
+     * Endpoint URL
+     *
+     * @var string
+     */
+    private string $url = 'api.fachbezogene_floskeln';
 
+    /**
+     * Test if users can read
+     *
+     * @return void
+     */
 	public function test_users_can_read(): void
 	{
-		$this->actingAs(user: User::factory()->create());
 
 		$fach = Fach::factory()->create();
-		$floskelgruppe = Floskelgruppe::factory()->create(attributes: ['kuerzel' => 'FACH']);
-		Floskel::factory(3)->for(factory: $floskelgruppe)->for(factory: $fach)->niveau()->jahrgang()->create();
+		$floskelgruppe = Floskelgruppe::factory()->create(['kuerzel' => 'FACH']);
+		Floskel::factory(3)->for($floskelgruppe)->for($fach)->niveau()->jahrgang()->create();
 
-		$response = $this->getJson(uri: route(name: $this->url, parameters: $fach));
-
-		$response->assertOk()
-			->assertJsonCount(count: 3, key: 'data')
-			->assertJsonCount(count: 3, key: 'niveau')
-			->assertJsonCount(count: 3, key: 'jahrgaenge')
-			->assertJsonStructure(structure: [
+		$this->actingAs(User::factory()->create())
+            ->getJson(route($this->url, $fach))
+            ->assertOk()
+			->assertJsonCount(3, 'data')
+			->assertJsonCount(3, 'niveau')
+			->assertJsonCount(3, 'jahrgaenge')
+			->assertJsonStructure([
 				'data' => [
 					'*' => ['kuerzel', 'text', 'niveau', 'jahrgang'],
 				],
@@ -39,14 +48,18 @@ class FachbezogeneFloskelnApiControllerTest extends TestCase
 			]);
 	}
 
+    /**
+     * Test if guests cannot read
+     *
+     * @return void
+     */
 	public function test_guests_cannot_read(): void
 	{
 		$fach = Fach::factory()->create();
-		$floskelgruppe = Floskelgruppe::factory()->create(attributes: ['kuerzel' => 'FACH']);
-		Floskel::factory(3)->for(factory: $floskelgruppe)->for(factory: $fach)->niveau()->jahrgang()->create();
+		$floskelgruppe = Floskelgruppe::factory()->create(['kuerzel' => 'FACH']);
+		Floskel::factory(3)->for($floskelgruppe)->for($fach)->niveau()->jahrgang()->create();
 
-		$response = $this->getJson(uri: route(name: $this->url, parameters: $fach));
-
-		$response->assertUnauthorized();
+		$this->getJson(route($this->url, $fach))
+            ->assertUnauthorized();
 	}
 }

@@ -9,21 +9,31 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'floskeln', callback: function (Blueprint $table): void {
+        Schema::create('floskeln', function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(model: Floskelgruppe::class);
-            $table->string(column: 'kuerzel');
-            $table->text(column: 'text');
-            $table->foreignIdFor(model: Fach::class)->nullable();
-            $table->foreignIdFor(model: Jahrgang::class)->nullable();
-            $table->integer(column: 'niveau')->nullable();
+            $table->foreignIdFor(Floskelgruppe::class);
+            $table->string('kuerzel');
+            $table->text('text');
+            $table->foreignIdFor(Fach::class)->nullable();
+            $table->foreignIdFor(Jahrgang::class)->nullable();
+            $table->integer('niveau')->nullable();
         });
     }
-    
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'floskeln');
+        Schema::dropIfExists('floskeln');
     }
 };

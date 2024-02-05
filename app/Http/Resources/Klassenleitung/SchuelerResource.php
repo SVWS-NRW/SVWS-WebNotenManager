@@ -4,8 +4,19 @@ namespace App\Http\Resources\Klassenleitung;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * The `SchuelerResource` class is a JSON resource for formatting and presenting 'Schueler' data.
+ *
+ * @package App\Http\Resources\Export
+ */
 class SchuelerResource extends JsonResource
 {
+    /**
+     * Transform the data into a JSON array.
+     *
+     * @param $request
+     * @return array
+     */
     public function toArray($request)
     {
         return [

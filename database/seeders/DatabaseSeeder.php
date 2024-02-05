@@ -12,6 +12,11 @@ use Illuminate\Database\Seeder;
  */
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Run the seeder.
+     *
+     * @return void
+     */
     public function run(): void
     {
         // Create a default administrator user

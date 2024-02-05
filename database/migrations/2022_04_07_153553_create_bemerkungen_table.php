@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
         Schema::create('bemerkungen', function (Blueprint $table) {
@@ -21,12 +26,18 @@ return new class extends Migration
             $table->string('LELS')->nullable();
             $table->string('schulformEmpf')->nullable();
             $table->string('individuelleVersetzungsbemerkungen')->nullable();
-			$table->timestamp('tsIndividuelleVersetzungsbemerkungen', 3)->default(now())->comment('Timestamp');
+			$table->timestamp('tsIndividuelleVersetzungsbemerkungen', 3)
+                ->default(now())->comment('Timestamp');
             $table->string('foerderbemerkungen')->nullable();
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
         Schema::dropIfExists('bemerkungen');

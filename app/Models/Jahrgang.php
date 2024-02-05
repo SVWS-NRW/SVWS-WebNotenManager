@@ -9,59 +9,54 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * App\Models\Jahrgang
+ * The `Jahrgang` class represents a Laravel model for managing remarks associated with Jahrgange.
  *
- * @property int $id
- * @property int $ext_id
- * @property string $kuerzel
- * @property string $kuerzelAnzeige
- * @property string $beschreibung
- * @property string $stufe
- * @property int|null $sortierung
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Database\Factories\JahrgangFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang query()
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereBeschreibung($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereExtId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereKuerzel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereKuerzelAnzeige($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereSortierung($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereStufe($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereUpdatedAt($value)
- * @property-read Collection<int, \App\Models\Klasse> $klassen
- * @property-read int|null $klassen_count
- * @property-read Collection<int, \App\Models\Klasse> $klassen
- * @property-read Collection<int, \App\Models\Klasse> $klassen
- * @mixin \Eloquent
+ * @package App\Models
  */
 class Jahrgang extends Model
 {
     use HasFactory;
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
     protected $table = 'jahrgaenge';
 
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var string[]
+     */
     protected $fillable = [
-        'id',
-        'kuerzel',
-        'kuerzelAnzeige',
-        'beschreibung',
-        'stufe',
-        'sortierung',
+        'id', 'kuerzel', 'kuerzelAnzeige', 'beschreibung', 'stufe', 'sortierung',
     ];
 
+    /**
+     * Indicate that the model does not use timestamps.
+     *
+     * @var bool
+     */
 	public $timestamps = false;
 
+    /**
+     * The related models that are owned by the model
+     *
+     * @return HasMany
+     */
 	public function klassen(): HasMany
 	{
-		return $this->hasMany(related: Klasse::class, foreignKey: 'idJahrgang');
+		return $this->hasMany(Klasse::class, 'idJahrgang');
 	}
 
-	public static function orderedWithKlassenOrdered(string $direction = 'asc'): Collection
+    /**
+     * Retrieve a collection of items ordered by 'sortierung' field and eager load related 'klassen' with sorting.
+     *
+     * @param string $direction
+     * @return Collection
+     */
+    public static function orderedWithKlassenOrdered(string $direction = 'asc'): Collection
 	{
 		return self::query()
 			->whereHas('klassen')

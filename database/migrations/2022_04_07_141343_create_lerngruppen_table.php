@@ -8,24 +8,34 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'lerngruppen', callback: function (Blueprint $table): void {
+        Schema::create('lerngruppen', function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(model: Klasse::class)->nullable();
-            $table->foreignIdFor(model: Fach::class);
-            $table->string(column: 'kID');
-            $table->integer(column: 'kursartID')->nullable();
-            $table->string(column: 'bezeichnung');
-            $table->string(column: 'kursartKuerzel')->nullable();
-            $table->string(column: 'bilingualeSprache')->nullable();
-            $table->integer(column: 'wochenstunden');
+            $table->foreignIdFor(Klasse::class)->nullable();
+            $table->foreignIdFor(Fach::class);
+            $table->string('kID');
+            $table->integer('kursartID')->nullable();
+            $table->string('bezeichnung');
+            $table->string('kursartKuerzel')->nullable();
+            $table->string('bilingualeSprache')->nullable();
+            $table->integer('wochenstunden');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'lerngruppen');
+        Schema::dropIfExists('lerngruppen');
     }
 };

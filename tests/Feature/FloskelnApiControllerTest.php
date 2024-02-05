@@ -12,44 +12,57 @@ class FloskelnApiControllerTest extends TestCase
 {
 	use RefreshDatabase;
 
-	private string $url = 'api.floskeln';
+    /**
+     * Endpoint URL
+     *
+     * @var string
+     */
+    private string $url = 'api.floskeln';
 
+    /**
+     * Test if users can read
+     *
+     * @return void
+     */
 	public function test_users_can_read(): void
 	{
-		$this->actingAs(user: User::factory()->create());
+		$floskelgruppe = Floskelgruppe::factory()
+            ->has(Floskel::factory(3), 'floskeln')
+            ->create();
 
-		$floskelgruppe = Floskelgruppe::factory()->has(
-			factory: Floskel::factory(3),
-			relationship: 'floskeln',
-		)->create();
-
-		$response = $this->getJson(uri: route(name: $this->url, parameters: $floskelgruppe->kuerzel));
-
-		$response->assertOk()
-			->assertJsonCount(count: 3)
-			->assertJsonStructure(structure: ['*' => ['id', 'kuerzel', 'text']]);
+		$this->actingAs(User::factory()->create())
+            ->getJson(route($this->url, $floskelgruppe->kuerzel))
+            ->assertOk()
+			->assertJsonCount(3)
+			->assertJsonStructure(['*' => ['id', 'kuerzel', 'text']]);
 	}
 
+    /**
+     * Test if users cannot read from not existing floskelgruppe
+     *
+     * @return void
+     */
 	public function test_users_cannot_read_from_not_existing_floskelgruppe(): void
 	{
-		$this->actingAs(user: User::factory()->create());
+		Floskelgruppe::factory()
+            ->has(Floskel::factory(3), 'floskeln')
+            ->create(['kuerzel' => 'lorem-ipsum']);
 
-		Floskelgruppe::factory()->has(
-			factory: Floskel::factory(3),
-			relationship: 'floskeln',
-		)->create(attributes: ['kuerzel' => 'lorem-ipsum']);
-
-		$response = $this->getJson(uri: route(name: $this->url, parameters: 'dolor-sit-amet'));
-
-		$response->assertNotFound();
+		$this->actingAs(User::factory()->create())
+            ->getJson(route($this->url, 'dolor-sit-amet'))
+            ->assertNotFound();
 	}
 
+    /**
+     * Test if guests cannot read
+     *
+     * @return void
+     */
 	public function test_guest_cannot_read(): void
     {
 		$floskelgruppe = Floskelgruppe::factory()->create();
 
-		$response = $this->getJson(uri: route(name: $this->url, parameters: $floskelgruppe->kuerzel));
-
-		$response->assertUnauthorized();
+		$this->getJson(route($this->url, $floskelgruppe->kuerzel))
+            ->assertUnauthorized();
     }
 }

@@ -6,9 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create('teilleistungsarten', function (Blueprint $table) {
+        Schema::create('teilleistungsarten', function (Blueprint $table): void {
             $table->id();
             $table->string('bezeichnung');
             $table->integer('sortierung')->nullable();
@@ -17,6 +22,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
         Schema::dropIfExists('teilleistungsarten');

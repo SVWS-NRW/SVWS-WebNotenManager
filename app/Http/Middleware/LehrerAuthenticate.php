@@ -15,7 +15,7 @@ class LehrerAuthenticate extends Middleware
 	protected function redirectTo($request)
 	{
 		if (! $request->expectsJson()) {
-			return route(name: 'login');
+			return route('login');
 		}
 	}
 }

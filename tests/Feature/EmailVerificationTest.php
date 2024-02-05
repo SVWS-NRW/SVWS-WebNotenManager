@@ -15,6 +15,11 @@ class EmailVerificationTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Test if email verification screen can be rendered
+     *
+     * @return void
+     */
     public function test_email_verification_screen_can_be_rendered()
     {
         if (! Features::enabled(Features::emailVerification())) {
@@ -28,6 +33,11 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(200);
     }
 
+    /**
+     * Test if email can be verified
+     *
+     * @return void
+     */
     public function test_email_can_be_verified()
     {
         if (! Features::enabled(Features::emailVerification())) {
@@ -52,6 +62,11 @@ class EmailVerificationTest extends TestCase
         $response->assertRedirect(RouteServiceProvider::HOME.'?verified=1');
     }
 
+    /**
+     * Test if email cannot be verified with invalid hash
+     *
+     * @return void
+     */
     public function test_email_can_not_verified_with_invalid_hash()
     {
         if (! Features::enabled(Features::emailVerification())) {
