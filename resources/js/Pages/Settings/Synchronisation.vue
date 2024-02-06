@@ -83,9 +83,20 @@
 
     const closeModal = (): boolean => _showModal.value = false;
 
-    const copyToClipboard = (receivedClientDataInfo: HTMLDivElement) => {
-        navigator.clipboard.writeText(receivedClientDataInfo.innerText);
+    const copyToClipboard = (receivedClientDataInfo: HTMLDivElement): void => {
+        const formattedJsonToPaste: string = formatJsonString(receivedClientDataInfo);
+        navigator.clipboard.writeText(formattedJsonToPaste);
     };
+
+    const formatJsonString = (receivedClientDataInfo: HTMLDivElement) => {
+        const trimmedAndFilteredText: string[] = receivedClientDataInfo.innerText.slice(74).split("\n").filter(line => line.trim() !== "");
+        const commaSeparatedString: string = "{ " + trimmedAndFilteredText.join(", ") + " }";
+        const allQuotedJson: string = commaSeparatedString.replaceAll(new RegExp('([A-Z][a-zA-Z0-9\\s]+):\\s([a-zA-Z0-9-]+)', 'g'), `"$1": "$2"`);
+        //integer values should not be quoted
+        const finalJsonString: string = allQuotedJson.replace(new RegExp('"([0-9]+)"', 'g'), `$1`);
+        return finalJsonString;
+    };
+
 
     axios.get(route('passport.index'))
         .then((response: AxiosResponse): void => {
