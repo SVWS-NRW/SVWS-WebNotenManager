@@ -59,20 +59,20 @@
                     <template #cell(lehrer)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
-
-                    <template #cell(note)="{ value, rowData }">
-                        <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" />
+                    
+                    <template #cell(note)="{ value, rowData, rowIndex }">
+                        <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" />
                     </template>
                     <template #cell(istGemahnt)="{ value, rowData }">
                         <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" />
                     </template>
 
-                    <template #cell(fs)="{ value, rowData }">
-                        <FehlstundenInput column="fs" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" />
+                    <template #cell(fs)="{ value, rowData, rowIndex }">
+                        <FehlstundenInput column="fs" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" :row-index="rowIndex" />
                     </template>
 
-                    <template #cell(fsu)="{ value, rowData }">
-                        <FehlstundenInput column="fsu" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" />
+                    <template #cell(fsu)="{ value, rowData, rowIndex }">
+                        <FehlstundenInput column="fsu" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" :row-index="rowIndex" />
                     </template>
 
                     <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">

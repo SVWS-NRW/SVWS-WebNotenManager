@@ -31,11 +31,11 @@
                             :floskelgruppe="selectedFloskelgruppe"
                         />
                     </template>
-                    <template #cell(gfs)="{ value, rowData }">
-                        <FehlstundenInput column="gfs" :model="rowData" :disabled="!rowData.editable.fehlstunden" />
+                    <template #cell(gfs)="{ value, rowData, rowIndex }">
+                        <FehlstundenInput column="gfs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
                     </template>
-                    <template #cell(gfsu)="{ value, rowData }">
-                        <FehlstundenInput column="gfsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" />
+                    <template #cell(gfsu)="{ value, rowData, rowIndex }">
+                        <FehlstundenInput column="gfsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
                     </template>
                     <template #cell(asv)="{ value, rowData }">
                         <BemerkungIndicator

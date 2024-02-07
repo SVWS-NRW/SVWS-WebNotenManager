@@ -62,8 +62,9 @@
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'note' -->
-                    <template #cell(note)="{ value, rowData }">
-                        <NoteInput :leistung="rowData" :disabled="false" />
+                    <!-- map setting not working -->
+                    <template #cell(note)="{ value, rowData, rowIndex }">
+                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'istGemahnt' -->
@@ -72,13 +73,13 @@
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'fs' -->
-                    <template #cell(fs)="{ value, rowData }">
-                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
+                    <template #cell(fs)="{ value, rowData, rowIndex }">
+                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'fsu' -->
-                    <template #cell(fsu)="{ value, rowData }">
-                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
+                    <template #cell(fsu)="{ value, rowData,  rowIndex}">
+                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'fachbezogeneBemerkungen' -->
