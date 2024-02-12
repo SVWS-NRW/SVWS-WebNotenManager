@@ -18,39 +18,28 @@
         </template>
     </svws-ui-modal>
 
+    <!-- function on click added because readonly seems to have no effect -->
     <span v-if="props.disabled">
         <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-            <span class="icon green" aria-hidden="true">
-                <ri-checkbox-line ></ri-checkbox-line>
-            </span>
+            <SvwsUiCheckbox v-model="selectedCheckbox" @click="readonlyCheckbox($event)" color="success" readonly></SvwsUiCheckbox>
         </span>
         <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <span class="icon red" aria-hidden="true">
-                <ri-checkbox-line></ri-checkbox-line>
-            </span>
+            <SvwsUiCheckbox v-model="selectedCheckbox" @click="readonlyCheckbox($event)" color="error" readonly></SvwsUiCheckbox>
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
-            <span class="icon" aria-hidden="true">
-                <ri-checkbox-blank-line></ri-checkbox-blank-line>
-            </span>
+                <SvwsUiCheckbox v-model="blankCheckbox" @click="readonlyCheckbox($event)" readonly></SvwsUiCheckbox>
         </span>
     </span>
 
     <button v-else @click="props.leistung.mahndatum ? open() : toggleMahnung()">
         <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-           <span class="icon green" aria-hidden="true">
-                <ri-checkbox-line ></ri-checkbox-line>
-           </span>
+            <SvwsUiCheckbox v-model="selectedCheckbox" color="success"></SvwsUiCheckbox>
         </span>
         <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <span class="icon red" aria-hidden="true">
-               <ri-checkbox-line></ri-checkbox-line>
-           </span>
+            <SvwsUiCheckbox v-model="selectedCheckbox" color="error"></SvwsUiCheckbox>
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
-           <span class="icon" aria-hidden="true">
-               <ri-checkbox-blank-line></ri-checkbox-blank-line>
-           </span>
+            <SvwsUiCheckbox v-model="blankCheckbox" readonly></SvwsUiCheckbox>
         </span>
     </button>
 </template>
@@ -61,7 +50,7 @@
     import axios from 'axios';
     import moment from 'moment';
     import { Leistung } from '@/Interfaces/Interface';
-    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui';
+    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
 
     const props = defineProps<{
         leistung: Leistung,
@@ -72,6 +61,17 @@
     const modal = (): Ref<boolean> => modalVisible;
     const open = () => modal().value = true;
     const close = () => modal().value = false;
+
+    //TODO: restructure conditional rendering up there and thus these two values?
+    const blankCheckbox: boolean = false;
+    const selectedCheckbox: boolean = true;
+
+    const readonlyCheckbox = (event: Event): void => {
+        if (event) {
+            event.preventDefault();
+        }
+        console.log("Checkbox value is readonly.")
+    }
 
     const leistung: Ref<Leistung> = ref(props.leistung);
 

@@ -1,10 +1,6 @@
 <template>
     <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
-        <span>
-            <ri-checkbox-line v-if="props.bemerkung"></ri-checkbox-line>
-            <ri-checkbox-blank-line v-else></ri-checkbox-blank-line>
-        </span>
-
+            <SvwsUiCheckbox v-model="selectedCheckbox"></SvwsUiCheckbox>
         <span class="bemerkung">
             {{ formatBasedOnGender(props.bemerkung, props.model) }}
         </span>
@@ -17,6 +13,7 @@
     import { Leistung } from '@/Interfaces/Leistung';
     import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
     import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
+    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
 
     interface EmitsOptions {
         (event: 'clicked'): void,
@@ -27,6 +24,8 @@
         bemerkung: string | null,
         floskelgruppe: 'asv' | 'aue' | 'zb' | 'fb',
     }>();
+
+    const selectedCheckbox: boolean = props.bemerkung ? true : false;
 
     const bemerkungButtonAriaLabel = (schueler: Schueler): string => {
         return `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`;
