@@ -5,15 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SecureImportRequest;
 use App\Http\Resources\Export\SchuelerResource;
 use App\Models\Schueler;
-use App\Services\AesService;
-
-use App\Services\EnvService;
-
-use App\Services\DataImportService;
-use App\Services\GzipService;
+use App\Services\{DataImportService, GzipService};
 use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\{JsonResponse, Response};
 use Symfony\Component\HttpFoundation\Response as Status;
 
 /**
@@ -35,17 +29,15 @@ class SecureTransferController extends Controller
      * Method for importing data securely.
      *
      * @param SecureImportRequest $request
-     * @param AesService $aesService
      * @param DataImportService $importService
      * @param GzipService $gzipService
-     * @return JsonResponse
+     * @return JsonResponse|Response
      */
     public function import(
 		SecureImportRequest $request,
-		AesService $aesService,
 		DataImportService $importService,
         GzipService $gzipService,
-	): JsonResponse {
+	): Response|JsonResponse {
         // Retrieving the uploaded file from the request.
         $file = $request->file('file');
 
@@ -58,17 +50,8 @@ class SecureTransferController extends Controller
             ], Status::HTTP_BAD_REQUEST);
 		}
 
-        // Attempt to decrypt the decompressed data.
-		try {
-			$decryptedData = $aesService->decrypt($decodedData);
-		} catch (Exception $e) {
-            return response()->json([
-                'message' => 'Ein Fehler ist beim Base64 Entschlüsseln aufgetreten: '. $e->getMessage(),
-            ], Status::HTTP_BAD_REQUEST);
-		}
-
         // Decoding the decrypted data from JSON.
-        $json = json_decode($decryptedData, true);
+        $json = json_decode($decodedData, true);
 
         // Check for JSON decoding errors.
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -86,40 +69,27 @@ class SecureTransferController extends Controller
 		$importService->execute($json);
 
         // Returning a successful response.
-		return response()->json();
+		return response();
 	}
 
     /**
      * Method for exporting data securely.
      *
-     * @param AesService $aesService
-     * @param EnvService $gzipService
+     * @param GzipService $gzipService
      * @return Response
      */
-    public function export(AesService $aesService, EnvService $gzipService): Response
+    public function export(GzipService $gzipService): Response
 	{
         // Fetching data to be exported and converting it to JSON.
         $data = SchuelerResource::collection(Schueler::exportCollection())->toJson();
 
-        // Attempt to encrypt the data.
-        try {
-			$encryptedData = $aesService->encrypt($data);
-		} catch (Exception $e) {
-			return response([
-                'message' => 'Ein Fehler ist beim AES-CBC Verschlüsseln aufgetreten: ' .$e->getMessage(),
-            ], Status::HTTP_INTERNAL_SERVER_ERROR);
-		}
-
         // Attempt to GZIP encode the encrypted data.
         try {
-            $encodedData = $gzipService->encode($encryptedData);
+            return response($gzipService->encode($data));
 		} catch (Exception $e) {
 			return response([
-                'message' => 'Ein Fehler ist beim Komprimieren der Daten aufgetreten: '. $e->getMessage(),
+                'message' => "Ein Fehler ist beim Komprimieren der Daten aufgetreten: {$e->getMessage()}",
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
 		}
-
-        // Returning the encoded data with a successful HTTP status.
-		return response($encodedData);
 	}
 }
