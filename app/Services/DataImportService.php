@@ -37,6 +37,7 @@ class DataImportService
 		private array $teilleistungsarten = [],
 		private array $schueler = [],
 	) {
+
 		$this->lehrer = $data['lehrer'] ?? [];
 		$this->foerderschwerpunkte = $data['foerderschwerpunkte'] ?? [];
 		$this->klassen = $data['klassen'] ?? [];
@@ -47,6 +48,8 @@ class DataImportService
 		$this->lerngruppen = $data['lerngruppen'] ?? [];
 		$this->teilleistungsarten = $data['teilleistungsarten'] ?? [];
 		$this->schueler = $data['schueler'] ?? [];
+
+        $this->importLehrer($data);
 	}
 
     // TODO: TO be removed by karol
@@ -100,7 +103,7 @@ class DataImportService
 
     public function import(): void
     {
-        $this->importLehrer();
+        $this->importLehrer($this->data);
         $this->importKlassen();
         $this->importNoten();
         $this->importFoerderschwerpunkte();
@@ -115,41 +118,23 @@ class DataImportService
 //        $this->importDaten();
     }
 
-	/**
-	 * Creates the Lehrer model.
-     * The model can be updated anytime.
-	 * If the model does not exist yet, sets a new password depending on if in production or not.
-	 * Sets a random email if not provided.
-	 *
-	 * @return void
-	 */
-	public function importLehrer(): void
+    /**
+     * Creates or updates the Lehrer model.
+     *
+     * @param array $data
+     * @return void
+     */
+	public function importLehrer(array $data): void
 	{
-		if (is_null($this->lehrer)) {
-			return;
-		}
-
-		$this->start('Lehrer');
-
-		foreach ($this->lehrer as $row) {
-			$row['email'] = $this->formatEmail($row['eMailDienstlich']);
-			$row['geschlecht'] = $this->gender($row, User::GENDERS);
-
-			unset($row['eMailDienstlich']);
-
-			try {
-				User::where('ext_id', '=', $row['id'])->firstOrFail();
-			} catch (ModelNotFoundException $e) {
-				$row['password'] = app()->environment('production')
-					? Str::random()
-					: Hash::make(value: 'password');
-				report($e);
-			}
-
-			User::updateOrCreate(['ext_id' => $row['id']], $row);
-		}
-
-		$this->stop();
+        collect($data['lehrer'] ?? [])
+            ->map(fn(array $row): array => [
+                ...$row,
+                'email' => $row['eMailDienstlich'] ?? null
+            ])
+            ->each(fn (array $row): User => User::updateOrCreate(
+                ['ext_id' => $row['id']],
+                Arr::only($row, ['kuerzel', 'vorname', 'nachname', 'geschlecht', 'email'])
+            ));
 	}
 
 	/**
@@ -440,10 +425,10 @@ class DataImportService
 		$bemerkung->schulformEmpf = $data['schulformEmpf'];
 		$bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
 
-		$this->updateByTimestamp($data, $bemerkung, 'ASV', 'tsASV');
-		$this->updateByTimestamp($data, $bemerkung, 'AUE', 'tsAUE');
-		$this->updateByTimestamp($data, $bemerkung, 'ZB', 'tsZB');
-		$this->updateByTimestamp(
+		$this->updateWhenRecent($data, $bemerkung, 'ASV', 'tsASV');
+		$this->updateWhenRecent($data, $bemerkung, 'AUE', 'tsAUE');
+		$this->updateWhenRecent($data, $bemerkung, 'ZB', 'tsZB');
+		$this->updateWhenRecent(
 			$data,
 			$bemerkung,
 			'individuelleVersetzungsbemerkungen',
@@ -470,9 +455,9 @@ class DataImportService
 
 			$lernabschnitt->schueler_id = $schueler->id;
 
-			$this->updateByTimestamp($data, $lernabschnitt, 'fehlstundenGesamt', 'tsFehlstundenGesamt');
+			$this->updateWhenRecent($data, $lernabschnitt, 'fehlstundenGesamt', 'tsFehlstundenGesamt');
 
-			$this->updateByTimestamp(
+			$this->updateWhenRecent(
                 $data,
                 $lernabschnitt,
                 'fehlstundenGesamtUnentschuldigt',
@@ -521,15 +506,15 @@ class DataImportService
 			try {
 				$leistung = Leistung::findOrFail($row['id']);
 
-				$this->updateByTimestamp($row, $leistung, 'note_id', 'tsNote', $noteId);
-				$this->updateByTimestamp($row, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
-				$this->updateByTimestamp(
+				$this->updateWhenRecent($row, $leistung, 'note_id', 'tsNote', $noteId);
+				$this->updateWhenRecent($row, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
+				$this->updateWhenRecent(
                     $row, $leistung, 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigt'
                 );
-				$this->updateByTimestamp(
+				$this->updateWhenRecent(
                     $row, $leistung, 'fachbezogeneBemerkungen', 'tsFehlstundenUnentschuldigtFach'
                 );
-				$this->updateByTimestamp($row, $leistung, 'istGemahnt', 'tsIstGemahnt');
+				$this->updateWhenRecent($row, $leistung, 'istGemahnt', 'tsIstGemahnt');
 
 				$leistung->save();
 
@@ -562,14 +547,14 @@ class DataImportService
 	 * @param int|null $value
 	 * @return void
 	 */
-	private function updateByTimestamp(
+	private function updateWhenRecent(
 		array $data,
 		Leistung|Lernabschnitt|Bemerkung $model,
 		string $column,
 		string $tsColumn,
 		int|null $value = null
 	): void {
-		$timestamp = Carbon::parse(time: $data[$tsColumn]);
+		$timestamp = Carbon::parse( $data[$tsColumn]);
 
 		if ($timestamp->gt($model->$tsColumn)) {
 			$model->$column = $value ?? $data[$column];
@@ -637,14 +622,11 @@ class DataImportService
      */
     private function gender(array $data, array $allowed): string
 	{
-		$condition = array_key_exists('geschlecht', $data)
-			&& in_array($data['geschlecht'], $allowed);
-
-		if ($condition) {
+		if (array_key_exists('geschlecht', $data) && in_array($data['geschlecht'], $allowed)) {
 			return $data['geschlecht'];
 		}
 
-		return 'x';
+		return User::FALLBACK_GENDER;
 	}
 
     /**
@@ -656,7 +638,10 @@ class DataImportService
      */
     private function formatEmail(string|null $email): string
 	{
-		$validator = Validator::make(['email' => $email], ['email' => ['required', 'email:rfc,dns']]);
+		$validator = Validator::make(
+            ['email' => $email],
+            ['email' => ['required', 'email:rfc,dns']]
+        );
 
 		if ($validator->valid()) {
 			return strtolower($email);

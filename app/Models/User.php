@@ -31,6 +31,13 @@ class User extends Authenticatable
      */
 	const GENDERS = ['m', 'w', 'd', 'x'];
 
+    /*
+    * Define the fallback gender
+    *
+    * @return string
+    */
+    const FALLBACK_GENDER = 'x';
+
     /**
      * Define the fillable attributes for mass assignment
      *
