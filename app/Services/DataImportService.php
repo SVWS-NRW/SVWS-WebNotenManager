@@ -25,7 +25,7 @@ class DataImportService
 	private int $microtime;
 
     public function __construct(
-		array $data = [],
+		private array $data = [],
 		private array $lehrer = [],
 		private array $foerderschwerpunkte = [],
 		private array $klassen = [],
@@ -37,7 +37,6 @@ class DataImportService
 		private array $teilleistungsarten = [],
 		private array $schueler = [],
 	) {
-
 		$this->lehrer = $data['lehrer'] ?? [];
 		$this->foerderschwerpunkte = $data['foerderschwerpunkte'] ?? [];
 		$this->klassen = $data['klassen'] ?? [];
@@ -49,7 +48,8 @@ class DataImportService
 		$this->teilleistungsarten = $data['teilleistungsarten'] ?? [];
 		$this->schueler = $data['schueler'] ?? [];
 
-        $this->importLehrer($data);
+        $this->importLehrer();
+        $this->importKlassen();
 	}
 
     // TODO: TO be removed by karol
@@ -103,7 +103,7 @@ class DataImportService
 
     public function import(): void
     {
-        $this->importLehrer($this->data);
+        $this->importLehrer();
         $this->importKlassen();
         $this->importNoten();
         $this->importFoerderschwerpunkte();
@@ -121,12 +121,11 @@ class DataImportService
     /**
      * Creates or updates the Lehrer model.
      *
-     * @param array $data
      * @return void
      */
-	public function importLehrer(array $data): void
+	public function importLehrer(): void
 	{
-        collect($data['lehrer'] ?? [])
+        collect($this->data['lehrer'] ?? [])
             ->map(fn(array $row): array => [
                 ...$row,
                 'email' => $row['eMailDienstlich'] ?? null
@@ -147,21 +146,25 @@ class DataImportService
 	 */
 	public function importKlassen(): void
 	{
-		if (is_null($this->klassen)) {
-			return;
-		}
+        // Get only the Klassenlehrer that exist
+        $klassenlehrer = fn (array $row): array => User::query()
+            ->whereIn('ext_id', (array) $row['klassenlehrer'])
+            ->pluck('ext_id')
+            ->toArray();
 
-		$this->start('Klassen');
-
-		foreach($this->klassen as $row) {
-			$klasse = Klasse::firstOrCreate(['id' => $row['id']], Arr::except($row, ['klassenlehrer']));
-
-			if ($klasse->wasRecentlyCreated === true) {
-				$klasse->klassenlehrer()->attach($row['klassenlehrer']);
-			}
-		}
-
-		$this->stop();
+        collect($this->data['klassen'] ?? [])
+            // Filter out Klassen without klassenlehrer assigned
+            ->filter(fn (array $row): bool =>
+                array_key_exists('klassenlehrer', $row) && count($row['klassenlehrer'])
+            )
+            ->each(fn (array $row): Klasse => tap(
+                Klasse::firstOrCreate(['id' => $row['id']], $row),
+                fn (Klasse $klasse): array =>
+                    $klasse->wasRecentlyCreated && count($row['klassenlehrer'])
+                        ? $klasse->klassenlehrer()->sync($klassenlehrer($row))
+                        : []
+                )
+            );
 	}
 
 	/**
