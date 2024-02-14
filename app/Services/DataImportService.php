@@ -50,6 +50,7 @@ class DataImportService
 
         $this->importLehrer();
         $this->importKlassen();
+        $this->importNoten();
 	}
 
     // TODO: TO be removed by karol
@@ -167,7 +168,7 @@ class DataImportService
             );
 	}
 
-	/**
+    /**
 	 * Creates the Note model.
      * The model will not be updated with future requests.
 	 * Resources with an negative id are filtered out. Relatable models are nullable.
@@ -178,19 +179,15 @@ class DataImportService
 	 */
 	public function importNoten(): void
     {
-		if (is_null($this->noten)) {
-			return;
-		}
-
-		$this->start('Noten');
-
-		collect($this->noten)
-			->filter(fn (array $row): bool => $row['id'] >= 0)
+		collect($this->data['noten'] ?? [])
+            // Remove notes with negative id
+            ->filter(fn (array $row): bool => array_key_exists('id', $row) && is_int($row['id']) && $row['id'] >= 0)
+            // Remove notes without kuerzel
+            ->filter(fn (array $row): bool => array_key_exists('kuerzel', $row) && null !== $row['kuerzel'])
+            // Model can only be created
 			->each(fn (array $row): Note => Note::firstOrCreate(['id' => $row['id']], $row));
 
-		$this->existingNoten = $this->getExistingNoten(); // TODO: To be removed
-
-		$this->stop();
+		$this->existingNoten = $this->getExistingNoten(); // TODO: To be removed when IMPORT_LERNABSCHNITTE IS FIXED
     }
 
 	/**
