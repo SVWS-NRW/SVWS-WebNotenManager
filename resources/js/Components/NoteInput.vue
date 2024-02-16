@@ -3,27 +3,27 @@
         <span v-if="props.disabled">
             {{ note }}
         </span>
-
         <SvwsUiTextInput
             v-else
             v-model="note"
             :disabled="props.disabled"
             :valid="() => valid()"
             style="font-weight: bold;"
-            @keydown.up.stop.prevent="navigate('up')"
-            @keydown.down.stop.prevent="navigate('down')"
-            @keydown.enter.stop.prevent="navigate('down')"
-            :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
+            :ref="(el) => updateItemRefs(rowIndex, el as Element, 'itemRefsNoteInput')"
+            @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
+            @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
+            @keydown.enter.stop.prevent="navigate('next', props.rowIndex)"
         ></SvwsUiTextInput>
     </strong>
 </template>
 
 
 <script setup lang="ts">
-    import { watch, ref, Ref } from 'vue';
+    import { watch, ref, Ref, VNodeRef, onMounted } from 'vue';
     import axios, { AxiosPromise } from 'axios';
     import { Leistung } from '@/Interfaces/Interface';
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    //TODO: remove if finally unused
     import { CellRef, setCellRefs, navigateTable, selectItem } from '../Helpers/tableNavigationHelper'
 
     const props = defineProps<{
@@ -32,7 +32,18 @@
         rowIndex: number,
     }>();
 
-    let element: CellRef = undefined;
+    const emit = defineEmits(['navigated','updatedItemRefs'])
+
+    const navigated = ( direction: string, rowIndex: number, itemRefsNoteInputName: string) : void => emit("navigated", direction, rowIndex, itemRefsNoteInputName)
+
+    //corresponding itemRefs map in the parent gets a new pair every time the NoteInput "itemRefsNoteInputName" is uploaded
+    const updateItemRefs = (rowIndex: number, el: Element, itemRefsNoteInputName: string): void => {
+        emit("updatedItemRefs", rowIndex, el, itemRefsNoteInputName)
+    }
+
+    const navigate = (direction: string, rowIndex: number): void => {
+        navigated(direction, rowIndex, "itemRefsNoteInput");
+    }
 
     const lowScoreArray: Array<string> = ['6', '5-', '5', '5+', '4-'];
     const note: Ref<string | null> = ref(props.leistung.note);
@@ -53,8 +64,6 @@
                 return note.value = props.leistung.note
             }
         });
-
-    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
 
     const valid = (): boolean => !lowScoreArray.includes(note.value as string);
 </script>

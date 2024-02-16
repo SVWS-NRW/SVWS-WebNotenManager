@@ -38,7 +38,7 @@ const navigateTable = async (direction: string, rowIndex: number, element: any):
 
   if (target) {
     if (target.input) {
-      target.input.select();
+      target.input.focus();
     } else {
       target.focus();
     }  

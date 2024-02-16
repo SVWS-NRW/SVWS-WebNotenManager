@@ -7,11 +7,10 @@
         v-else
         v-model="model"
         :disabled="props.disabled"
-        @keydown.up.stop.prevent="navigate('up')"
-        @keydown.down.stop.prevent="navigate('down')"
-        @keydown.enter.stop.prevent="navigate('down')"
-        :ref="(el: CellRef): CellRef => {element = el; setCellRefs(element, props.rowIndex); return el}"
-
+        :ref="(el) => updateItemRefs(rowIndex, el as Element, itemRefsName)"
+        @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
+        @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
+        @keydown.enter.stop.prevent="navigate('next', props.rowIndex)"
     ></SvwsUiTextInput>
 </template>
 
@@ -21,6 +20,7 @@
     import axios, {AxiosPromise, AxiosResponse} from 'axios';
     import { Leistung, Schueler } from '@/Interfaces/Interface';
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    //TODO: remove if finally unused
     import { CellRef, setCellRefs, navigateTable, selectItem } from '../Helpers/tableNavigationHelper'
 
 
@@ -31,7 +31,20 @@
         rowIndex: number,
     }>();
 
-    let element: CellRef = undefined
+    const emit = defineEmits(['navigated','updatedItemRefs'])
+
+    const itemRefsName: string = 'itemRefs' + props.column;
+
+    const navigated = ( direction: string, rowIndex: number, itemRefs: string) : void => emit("navigated", direction, rowIndex, itemRefsName)
+
+    //corresponding itemRefs map in the parent gets a new pair every time the FehlstundenInput "itemRefsName" is uploaded
+    const updateItemRefs = (rowIndex: number, el: Element, itemRefsName: string): void => {
+        emit("updatedItemRefs", rowIndex, el, itemRefsName)
+    }
+
+    const navigate = (direction: string, rowIndex: number): void => {
+        navigated(direction, rowIndex, itemRefsName);
+    }
     
     const model: Ref<number|string> = ref(props.model[props.column]);
 
@@ -49,8 +62,6 @@
             .then((): number => props.model[props.column] = model.value)
             .catch((): number => model.value = props.model[props.column]);
     }
-
-    const navigate = (direction: string): Promise<void> => navigateTable(direction, props.rowIndex, element)
 </script>
 
 

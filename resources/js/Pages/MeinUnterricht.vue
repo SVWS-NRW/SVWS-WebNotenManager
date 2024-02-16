@@ -62,9 +62,9 @@
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'note' -->
-                    <!-- map setting not working -->
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" />
+                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        ></NoteInput>
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'istGemahnt' -->
@@ -74,12 +74,14 @@
 
                     <!-- BemerkungButton in der Zelle 'fs' -->
                     <template #cell(fs)="{ value, rowData, rowIndex }">
-                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
+                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'fsu' -->
                     <template #cell(fsu)="{ value, rowData,  rowIndex}">
-                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
+                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'fachbezogeneBemerkungen' -->
@@ -100,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, onMounted, Ref, ref } from 'vue';
+    import { computed, onMounted, Ref, ref, toRaw, VNodeRef } from 'vue';
     import axios, { AxiosPromise, AxiosResponse } from 'axios';
     import { Head } from '@inertiajs/inertia-vue3';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
@@ -111,13 +113,17 @@
     import { handleExport } from '@/Helpers/exportHelper';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
 
-    // Seitentitel
     const title = 'Notenmanager - mein Unterricht';
 
-    // Daten
+    //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
+    const itemRefsNoteInput = ref(new Map());
+    const itemRefsfs = ref(new Map());
+    const itemRefsfsu = ref(new Map());
+
+    // Data received from DB
     const rows: Ref<Leistung[]> = ref([]);
 
-    // Datenfilter
+    // The different filters on top of the screen may get input and thus the data from DB will be filtered and then displayed
     const rowsFiltered = computed((): Leistung[] => {
         return rows.value.filter((leistung: Leistung): boolean => {
             return searchHelper(leistung, ['name'], searchFilter.value || '')
@@ -129,7 +135,7 @@
         })
     });
 
-    // Schalter für Tabellenspalten
+    // some columns may be displayed/hidden on demand
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
         mahnungen: false,
@@ -179,10 +185,9 @@
         return result;
     });
 
-    // ...
+    // when clicked on, Leistung is "selected"
     const selectedLeistung: Ref<Leistung | null> = ref(null);
 
-    // ...
     const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null =>
         selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null;
 
@@ -229,11 +234,58 @@
         noteItems.value = mapFilterOptionsHelper(rows.value, 'note');
     };
 
+    //input html element and reference map name are determined by child
+    function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
+        switch (itemRefsName) {
+            case "itemRefsNoteInput":
+                itemRefsNoteInput.value.set(rowIndex, el);
+                break;
+            case "itemRefsfs":
+                itemRefsfs.value.set(rowIndex, el);
+                break;
+            case "itemRefsfsu":
+                itemRefsfsu.value.set(rowIndex, el);
+                break;
+            default:
+                console.log("Map not found.")
+        }
+	}
+
+    //table navigation actions (go up/down within the column)
+	function next(id: number, itemRefs: Ref) {
+		const el = itemRefs.value.get(id + 1);
+		if (el)
+            el.input.focus();
+	}
+
+	const previous = (id: number, itemRefs: Ref) => {
+        const el = itemRefs.value.get(id - 1);
+		if (el)
+        el.input.focus();
+	}
+
+    //direction (up/down within the column) and map name are received from child component
+    const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
+        switch (itemRefsName) {
+            case "itemRefsNoteInput":
+                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
+                break;
+            case "itemRefsfs":
+                direction === "next" ? next(rowIndex, itemRefsfs) : previous(rowIndex, itemRefsfs);
+                break;
+            case "itemRefsfsu":
+                direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
+                break;
+            default:
+                console.log("itemRefs map not found");
+        }	
+	}    
+
     /**
      * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
      * @param type - Der Exporttyp ('csv' oder 'excel').
      */
-     const exportToFile = (type: string): void => {
+    const exportToFile = (type: string): void => {
         // Bestimme die zu exportierenden Spalten basierend auf den Benutzereinstellungen
         const visibleColumns: string[] = [
             "klasse",
