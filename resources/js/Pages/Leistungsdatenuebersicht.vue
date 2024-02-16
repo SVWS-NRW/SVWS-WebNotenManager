@@ -61,18 +61,18 @@
                     </template>
                     
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" />
+                        <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
                     <template #cell(istGemahnt)="{ value, rowData }">
                         <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" />
                     </template>
 
                     <template #cell(fs)="{ value, rowData, rowIndex }">
-                        <FehlstundenInput column="fs" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" :row-index="rowIndex" />
+                        <FehlstundenInput column="fs" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
                     <template #cell(fsu)="{ value, rowData, rowIndex }">
-                        <FehlstundenInput column="fsu" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" :row-index="rowIndex" />
+                        <FehlstundenInput column="fsu" :model="rowData" :disabled="inputDisabled(rowData.editable.fehlstunden)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
                     <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
@@ -102,6 +102,11 @@
     import { handleExport } from '@/Helpers/exportHelper';
 
     const title = 'Notenmanager - Leistungsdatenübersicht';
+
+    //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
+    const itemRefsNoteInput = ref(new Map());
+    const itemRefsfs = ref(new Map());
+    const itemRefsfsu = ref(new Map());
 
     const rows: Ref<Leistung[]> = ref([]);
 
@@ -232,7 +237,54 @@
         fachFilter.value = [];
         kursFilter.value = [];
         noteFilter.value = [];
-    };
+    }
+
+    //input html element and reference map name are determined by child
+    function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
+        switch (itemRefsName) {
+            case "itemRefsNoteInput":
+                itemRefsNoteInput.value.set(rowIndex, el);
+                break;
+            case "itemRefsfs":
+                itemRefsfs.value.set(rowIndex, el);
+                break;
+            case "itemRefsfsu":
+                itemRefsfsu.value.set(rowIndex, el);
+                break;
+            default:
+                console.log("Map not found.")
+        }
+	}
+
+    //table navigation actions (go up/down within the column)
+	function next(id: number, itemRefs: Ref) {
+		const el = itemRefs.value.get(id + 1);
+		if (el)
+            el.input.focus();
+	}
+
+	const previous = (id: number, itemRefs: Ref) => {
+        const el = itemRefs.value.get(id - 1);
+		if (el)
+        el.input.focus();
+	}
+
+    //direction (up/down within the column) and map name are received from child component
+    const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
+        switch (itemRefsName) {
+            case "itemRefsNoteInput":
+                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
+                break;
+            case "itemRefsfs":
+                direction === "next" ? next(rowIndex, itemRefsfs) : previous(rowIndex, itemRefsfs);
+                break;
+            case "itemRefsfsu":
+                direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
+                break;
+            default:
+                console.log("itemRefs map not found");
+        }	
+	}
 
     /**
      * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
