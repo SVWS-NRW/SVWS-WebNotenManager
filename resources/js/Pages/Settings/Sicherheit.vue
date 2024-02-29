@@ -47,11 +47,7 @@
                     </span>
                 </div>
                 <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.encryption" :valid="() => !hasErrors('MAIL_ENCRYPTION')" type="text"
-                        placeholder="Verschlüsselung"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_ENCRYPTION')" class="error">
-                        {{ getError('MAIL_ENCRYPTION') }}
-                    </span>
+                    <SvwsUiSelect v-model="data.form.encryption" :items="verschluesselungOptions" :item-text="item => item" label="Verschlüsselung"></SvwsUiSelect>
                 </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.from_address" :valid="() => !hasErrors('MAIL_FROM_ADDRESS')"
@@ -84,7 +80,7 @@
     import axios, { AxiosResponse } from 'axios';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiSelect } from '@svws-nrw/svws-ui';
     import { MailSendCredentialsFormData as MailSendCredentials } from '../../Interfaces/FormData';
     import { isJSDocReadonlyTag } from 'typescript';
 
@@ -112,6 +108,8 @@
         //TODO: unused
         successMessage: false,
     });
+
+    const verschluesselungOptions: string[] = ["", "tls", "ssl"];
 
     const getError = (column: string): string => data.errors[column][0];
     const hasErrors = (column: string): boolean => column in data.errors;
