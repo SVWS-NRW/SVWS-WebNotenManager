@@ -1,6 +1,7 @@
 import { Schueler } from './Schueler'
 
 export interface Leistung {
+	[index: string]: any,
 	id: number,
 	klasse: string|Number|null,
 	name: string,

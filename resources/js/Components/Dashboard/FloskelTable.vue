@@ -36,6 +36,7 @@
     };
 
     type Filter = {
+        [index: string]: any,
         niveau: Number|string,
         jahrgang_id: Number|string,
     };

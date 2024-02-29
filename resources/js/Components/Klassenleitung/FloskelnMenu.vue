@@ -72,8 +72,8 @@
         ],
     });
 
-    watch(() => props.selected, (selected: Selected): void => {
-        state.schueler = selected?.schueler;
+    watch(() => props.selected, (selected: Selected | undefined | null): void => {
+        state.schueler = selected?.schueler || null;
         state.bemerkung = state.storedBemerkung = selected?.schueler[selected?.floskelgruppe];
         state.floskelgruppen = props.floskelgruppen;
     });
@@ -89,17 +89,17 @@
         let schueler = state.schueler;
 
         let pronouns: Pronoun = { m: 'Er', w: 'Sie' };
-        let pronoun: string | null = pronouns[schueler.geschlecht] !== undefined ? pronouns[schueler.geschlecht] : null;
+        let pronoun: string | null = pronouns[schueler!.geschlecht] !== undefined ? pronouns[schueler!.geschlecht] : null;
 
         let initialOccurrence: Occurrence = {
-            "$vorname$ $nachname$": [schueler.vorname, schueler.nachname].join(' '),
-            "$vorname$": schueler.vorname,
-            "$nachname$": schueler.nachname,
+            "$vorname$ $nachname$": [schueler!.vorname, schueler!.nachname].join(' '),
+            "$vorname$": schueler!.vorname,
+            "$nachname$": schueler!.nachname,
         };
 
         let succeedingOccurrences: Occurrence = {
-            "$vorname$ $nachname$": pronoun ?? schueler.vorname,
-            "$vorname$": pronoun ?? schueler.vorname,
+            "$vorname$ $nachname$": pronoun ?? schueler!.vorname,
+            "$vorname$": pronoun ?? schueler!.vorname,
             "$nachname$": null
         };
 
@@ -114,11 +114,11 @@
 
     const updateBemerkung = (bemerkung: string): string => state.bemerkung = bemerkung;
 
-    const setBemerkungen = (): AxiosPromise => axios
+    const setBemerkungen = (): Promise<void> => axios
         .post(
-            route('set_schueler_bemerkung', state.schueler.id),
+            route('set_schueler_bemerkung', state.schueler!.id),
             {key: props.selected?.floskelgruppe, value: state.bemerkung}
-        ).then((): AxiosResponse => {
+        ).then(() => {
             emit('updated');
             state.storedBemerkung = state.bemerkung;
             state.isDirty = false;
@@ -126,7 +126,7 @@
         });
 
     const currentFloskelGruppe = computed((): Floskelgruppe | undefined => state.floskelgruppen.find(
-        floskelgruppe => floskelgruppe.kuerzel == props.selected.floskelgruppe
+        floskelgruppe => floskelgruppe.kuerzel == props.selected!.floskelgruppe
     ));
 
     const addFloskeln = (bemerkung: string): string => state.bemerkung = [state.bemerkung, bemerkung].join(' ').trim();

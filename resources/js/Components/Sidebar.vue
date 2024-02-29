@@ -70,7 +70,7 @@
     const close = (): null => state.leistung = null;
 
     onMounted((): AxiosPromise => axios
-        .get("/api/getFloskeln") // TODO: Check
+        .get("/api/getFloskeln")
         .then((response: AxiosResponse): AxiosResponse => state.floskelgruppen = response.data)
     );
 

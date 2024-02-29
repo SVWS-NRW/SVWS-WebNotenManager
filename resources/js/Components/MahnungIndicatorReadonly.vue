@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <!-- TODO: check if deprecated -->
+    <!-- TODO: check if can be ignored/deleted because SvwsUiModal is supposed to be deprecated  -->
     <SvwsUiModal ref="modal">
         <template #modalTitle>
             {{ leistung.vorname }} {{ leistung.nachname }}

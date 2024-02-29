@@ -25,7 +25,7 @@
                         <h2 class="headline-4">Zwei-Faktor Authentifizierung</h2>
                         <div class="form-control">
                             <SvwsUiTextInput v-model="data.form.email" v-on:keyup.enter="submit"
-                                :valid="!hasErrors('twoFACode')" :disabled="data.processing" type="text"
+                                :valid="() => !hasErrors('twoFACode')" :disabled="data.processing" type="text"
                                 placeholder="2FA Code" required ></SvwsUiTextInput>
 
                             <span v-if="hasErrors('twoFACode')" class="error">
@@ -46,7 +46,7 @@
 
 
 <script setup lang="ts">
-    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton, InputDataType } from '@svws-nrw/svws-ui';
     import { Head, Link } from '@inertiajs/inertia-vue3';
     import { Errors, Inertia } from '@inertiajs/inertia';
     import { reactive } from 'vue';
@@ -56,6 +56,7 @@
     let data: TwoFA= reactive({
         form: {
             twoFACode: '',
+            email:''
         },
         processing: false,
         successMessage: false,

@@ -68,6 +68,7 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 	});
 }
 
+//TODO: check if this function is actually not needed anymore (seems to be the case)
 const tableFilter = (
 	floskel: FachbezogeneFloskel,
 	column: string,
@@ -82,7 +83,7 @@ const tableFilter = (
 		return true;
 	}
 
-	return floskel[column] == value.value['index'];
+	return floskel[column as keyof Floskel] == value.value["index"];
 };
 
 const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {

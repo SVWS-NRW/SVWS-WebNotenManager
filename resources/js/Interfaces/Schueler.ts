@@ -1,4 +1,6 @@
 export interface Schueler {
+//this interface also accepts other properties (eg. ZB uppercase on BemerkungEditor)
+	[index: string]: any,
 	id: number,
 	vorname: string,
 	nachname: string,
@@ -13,6 +15,7 @@ export interface Schueler {
 	gfs: Number,
 	gfsu: Number,
 	editable: {
+		[index: string]: boolean,
 		fehlstunden: boolean,
 		asv: boolean,
 		aue: boolean,

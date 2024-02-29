@@ -59,7 +59,7 @@
             model.value = '';
         }
         axios.post(route(`api.fehlstunden.${props.column}`, props.model), {value: model.value})
-            .then((): number => props.model[props.column] = model.value)
+            .then((): number|string => props.model[props.column] = model.value)
             .catch((): number => model.value = props.model[props.column]);
     }
 </script>
