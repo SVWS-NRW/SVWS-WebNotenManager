@@ -7,10 +7,6 @@
                 </div>
             </header>
             <div class="form-control-area">
-                <div>
-                    <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten
-                    </SvwsUiCheckbox>
-                </div>
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.mailer" :valid="() => !hasErrors('MAIL_MAILER')" type="text"
                         placeholder="Mailer"></SvwsUiTextInput>
@@ -64,6 +60,12 @@
                         {{ getError('MAIL_FROM_NAME') }}
                     </span>
                 </div>
+
+                <div>
+                    <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung
+                    </SvwsUiCheckbox>
+                </div>
+
                 <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
             </div>
         </template>
@@ -183,7 +185,7 @@
     }
 
     .form-control-area {
-        @apply flex flex-col gap-10 max-w-[32rem] px-6
+        @apply flex flex-col gap-10 max-w-[32rem] px-6 pt-8
     }
 
     .form-control {
