@@ -527,6 +527,7 @@
             .then((): void  => { 
                 isDirty.value = false;
                 storedKlassen.value = JSON.stringify(klassen.value);
+                storedJahrgaenge.value = JSON.stringify(jahrgaenge.value);
             })
             .catch((error: any): void => apiError(
                 error,
