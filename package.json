@@ -38,7 +38,7 @@
         "vue-template-compiler": "^2.7.15"
     },
     "dependencies": {
-        "@svws-nrw/svws-ui": "^0.8.9",
+        "@svws-nrw/svws-ui": "^0.8.10",
         "exceljs": "^4.4.0",
         "moment": "^2.29.4",
         "remixicon": "^4.0.1",
