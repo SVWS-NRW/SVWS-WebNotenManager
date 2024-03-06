@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\TestMailController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +48,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::inertia('/filter', 'UserSettings/UserSettingsFilter')
         ->prefix('benutzereinstellungen')
         ->name('user_settings.filter');
+
+    // Sends a test mail to username address
+    Route::get('send-testmail', [TestMailController::class, 'sendTestMail'])
+        ->name('send_testmail');;
 });
 
 /*

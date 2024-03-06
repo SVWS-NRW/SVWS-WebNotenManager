@@ -60,6 +60,7 @@
                         {{ getError('MAIL_FROM_NAME') }}
                     </span>
                 </div>
+                <SvwsUiButton @click="sendTestmail" >Testmail senden</SvwsUiButton>
 
                 <div>
                     <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung
@@ -80,11 +81,11 @@
     import { Ref, ref, watch, reactive } from 'vue';
     import AppLayout from '@/Layouts/AppLayout.vue';
     import axios, { AxiosResponse } from 'axios';
+    import { Inertia } from '@inertiajs/inertia';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
     import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiSelect } from '@svws-nrw/svws-ui';
     import { MailSendCredentialsFormData as MailSendCredentials } from '../../Interfaces/FormData';
-    import { isJSDocReadonlyTag } from 'typescript';
 
     let props = defineProps({
         auth: Object,
@@ -146,6 +147,8 @@
             apiError(error, 'Speichern der Änderungen fehlgeschlagen!');
             data.errors = error.response.data.errors;
         });
+
+    const sendTestmail = (): void => Inertia.get(route('send_testmail'));
 
     watch(() => data.form, (): void => {
         isDirty.value = JSON.stringify(data.form) !== storedDataForm.value;
