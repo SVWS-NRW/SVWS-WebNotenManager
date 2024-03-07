@@ -23,6 +23,7 @@
                         <p>Diese Information wird Ihnen einmalig in diesem Fenster eingeblendet.</p>
                         <br />
                         <p><span class="client-data-fields">Client ID:</span> {{ clientRecord.id }} </p>
+                        <p><span class="client-data-fields">authServer:</span> https://wenom2.svws-nrw.de </p>
                         <p><span class="client-data-fields">Client Name:</span> {{ clientRecord.name }} </p>
                         <p><span class="client-data-fields">Client Secret:</span> {{ clientRecord.secret }} </p>
                         <br />
@@ -66,6 +67,7 @@
         created_at: Date,
     }
 
+    //TODO: name is always SVWS-Server now, so some things here are not necessary anymore
     const newClientName: string = usePage().props.value.schoolName as string;
     const clientRecord: Ref<ClientRecord> = ref({} as ClientRecord);
     const clientExists: Ref<boolean> = ref(false);
@@ -91,7 +93,7 @@
     const formatJsonString = (receivedClientDataInfo: HTMLDivElement) => {
         const trimmedAndFilteredText: string[] = receivedClientDataInfo.innerText.slice(74).split("\n").filter(line => line.trim() !== "");
         const commaSeparatedString: string = "{ " + trimmedAndFilteredText.join(", ") + " }";
-        const allQuotedJson: string = commaSeparatedString.replaceAll(new RegExp('([A-Z][a-zA-Z0-9\\s]+):\\s([a-zA-Z0-9-]+)', 'g'), `"$1": "$2"`);
+        const allQuotedJson: string = commaSeparatedString.replaceAll(new RegExp('([A-Zauth][a-zA-Z0-9\\s]+):\\s([a-zA-Z0-9-:\/\/.]+)', 'g'), `"$1": "$2"`);
         //integer values should not be quoted
         const finalJsonString: string = allQuotedJson.replace(new RegExp('"([0-9]+)"', 'g'), `$1`);
         return finalJsonString;
