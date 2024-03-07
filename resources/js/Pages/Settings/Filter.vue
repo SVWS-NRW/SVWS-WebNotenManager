@@ -1,9 +1,12 @@
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
-            <section>
-                <h2 class="text-headline">Einstellungen - Filter</h2>
-
+            <header>
+                <div id="headline">
+                    <h2 class="text-headline">Einstellungen - Filter</h2>
+                </div>
+            </header>
+            <div class="content">
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
                     <SvwsUiCheckbox v-model="settings.meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
@@ -28,7 +31,7 @@
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
-            </section>
+            </div>
         </template>
         <template #secondaryMenu>
             <SettingsMenu></SettingsMenu>
@@ -38,12 +41,12 @@
 
 
 <script setup lang="ts">
-    import { Ref, ref, watch } from 'vue'
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, { AxiosResponse } from 'axios'
-    import { apiError, apiSuccess } from '@/Helpers/api.helper'
-    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui'
-    import SettingsMenu from '@/Components/SettingsMenu.vue'
+    import { Ref, ref, watch } from 'vue';
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import axios, { AxiosResponse } from 'axios';
+    import SettingsMenu from '@/Components/SettingsMenu.vue';
+    import { apiError, apiSuccess } from '@/Helpers/api.helper';
+    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
 
     let props = defineProps({
         auth: Object,
@@ -122,15 +125,23 @@
 
 
 <style scoped>
-    section {
-        @apply p-6 space-y-12
+    header {
+        @apply flex flex-col gap-4 p-6
     }
 
-    section > div {
-        @apply flex flex-col gap-3 items-start
+    header #headline {
+        @apply flex items-center justify-start gap-6
     }
 
-    button {
+    .content {
+        @apply px-6 flex flex-col gap-12 max-w-lg
+    }
+
+    .content > div {
+        @apply flex flex-col gap-5 justify-start
+    }
+
+    .button {
         @apply self-start
     }
 </style>

@@ -49,7 +49,7 @@
 <script setup lang="ts">
     import { ref, Ref, watch } from 'vue';
     import AppLayout from '@/Layouts/AppLayout.vue';
-    import axios, {AxiosResponse} from 'axios';
+    import axios, { AxiosResponse } from 'axios';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
     import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
