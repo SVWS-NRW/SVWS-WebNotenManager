@@ -3,7 +3,7 @@
         <template #main>
             <header>
                 <div id="headline">
-                    <h2 class="text-headline">Einstellungen - Schule</h2>
+                    <h2 class="text-headline">Schuldaten</h2>
                 </div>
             </header>
             <div class="content">

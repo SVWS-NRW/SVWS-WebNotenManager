@@ -3,7 +3,7 @@
         <template #main>
             <header>
                 <div id="headline">
-                    <h2 class="text-headline">Einstellungen - Synchronisationseinstellungen für den SVWS-Server</h2>
+                    <h2 class="text-headline">Synchronisation</h2>
                 </div>
             </header>
             <br />

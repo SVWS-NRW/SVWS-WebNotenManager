@@ -3,7 +3,7 @@
         <template #main>
             <header>
                 <div id="headline">
-                    <h2 class="text-headline">Einstellungen - Sicherheit</h2>
+                    <h2 class="text-headline">Mailkonfiguration</h2>
                 </div>
             </header>
             <div class="form-control-area">
