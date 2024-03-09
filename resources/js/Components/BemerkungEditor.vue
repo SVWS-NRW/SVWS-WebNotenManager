@@ -1,17 +1,9 @@
 <template>
-    <SvwsUiContentCard>
-        <div class="content">
-            <h1>{{ props.schueler.name }}</h1>
-            <h2>{{ floskelgruppen[props.floskelgruppe] }}</h2>
+    <SvwsUiContentCard :title="`${props.schueler.vorname} ${props.schueler.nachname}, ${floskelgruppen[props.floskelgruppe]}`">
+        <SvwsUiInputWrapper :grid="1">
 
-            <SvwsUiTextareaInput
-                v-model="bemerkung"
-                placeholder="Bemerkung"
-                resizeable="vertical"
-                :disabled="!isEditable"
-                @input="bemerkung = $event.target.value"
-                @keydown="onKeyDown"
-            />
+            <SvwsUiTextareaInput v-model="bemerkung" placeholder="Bemerkung" resizeable="vertical" :disabled="!isEditable"
+                @input="bemerkung = $event.target.value" @keydown="onKeyDown" />
 
             <div class="buttons">
                 <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
@@ -19,15 +11,15 @@
                 <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
             </div>
 
-            <SvwsUiTable
-                v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" :clickable="true" :selectable="isEditable"
-                :count="true" :filtered="filtered()" :filterReset="filterReset"
-            >
+            <SvwsUiTable v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" :clickable="true" :selectable="isEditable"
+                :count="true" :filtered="filtered()" :filterReset="filterReset">
                 <template #filterAdvanced>
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
                 </template>
             </SvwsUiTable>
-        </div>
+
+        </SvwsUiInputWrapper>
+
     </SvwsUiContentCard>
 </template>
 
@@ -132,9 +124,9 @@
     .content {
         @apply p-6 flex flex-col gap-6
     }
-    
+
     .buttons {
-        @apply flex justify-end gap-3
+        @apply flex justify-end gap-3 mt-3 mb-3
     }
 
 </style>

@@ -18,7 +18,7 @@
                     <SvwsUiMultiSelect v-if="niveauItems.length" label="Niveau" :items="niveauItems" :item-text="item => item" v-model="niveauFilter" />
                     <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
                 </template>
-            </SvwsUiTable>            
+            </SvwsUiTable>
         </SvwsUiInputWrapper>
     </SvwsUiContentCard>
 </template>
@@ -143,6 +143,6 @@
 
 <style scoped>
     .buttons {
-        @apply flex justify-end gap-3 mt-3
+        @apply flex justify-end gap-3 mt-3 mb-3
     }
 </style>

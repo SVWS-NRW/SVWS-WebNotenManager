@@ -16,20 +16,10 @@
                         />
                     </template>
                     <template #cell(klasse)="{ value, rowData }">
-                        <BemerkungButton
-                            :value="value"
-                            :model="rowData"
-                            :floskelgruppe="selectedFloskelgruppe"
-                            @clicked="selectSchueler(rowData, '')"
-                        />
+                        <BemerkungButton :value="value" :model="rowData" :floskelgruppe="selectedFloskelgruppe" @clicked="selectSchueler(rowData, '')" />
                     </template>
                     <template #cell(name)="{ value, rowData }">
-                        <BemerkungButton
-                            @clicked="selectSchueler(rowData, '')"
-                            :value="value"
-                            :model="rowData"
-                            :floskelgruppe="selectedFloskelgruppe"
-                        />
+                        <BemerkungButton @clicked="selectSchueler(rowData, '')" :value="value" :model="rowData" :floskelgruppe="selectedFloskelgruppe" />
                     </template>
                     <template #cell(gfs)="{ value, rowData, rowIndex }">
                         <FehlstundenInput column="gfs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
@@ -38,28 +28,13 @@
                         <FehlstundenInput column="gfsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" />
                     </template>
                     <template #cell(asv)="{ value, rowData }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['ASV']"
-                            @clicked="selectSchueler(rowData, 'asv')"
-                            floskelgruppe="asv"
-                        />
+                        <BemerkungIndicator :model="rowData" :bemerkung="rowData['ASV']" @clicked="selectSchueler(rowData, 'asv')" floskelgruppe="asv" />
                     </template>
                     <template #cell(aue)="{ value, rowData }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['AUE']"
-                            @clicked="selectSchueler(rowData, 'aue')"
-                            floskelgruppe="aue"
-                        />
+                        <BemerkungIndicator :model="rowData" :bemerkung="rowData['AUE']" @clicked="selectSchueler(rowData, 'aue')" floskelgruppe="aue" />
                     </template>
                     <template #cell(zb)="{ value, rowData }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['ZB']"
-                            @clicked="selectSchueler(rowData, 'zb')"
-                            floskelgruppe="zb"
-                        />
+                        <BemerkungIndicator :model="rowData" :bemerkung="rowData['ZB']" @clicked="selectSchueler(rowData, 'zb')" floskelgruppe="zb" />
                     </template>
                 </SvwsUiTable>
             </div>
@@ -67,13 +42,8 @@
 
         <template v-slot:aside v-if="selectedSchueler">
             <!-- TODO: correct this -->
-            <BemerkungEditor
-                :schueler="selectedSchueler"
-                :floskelgruppe="selectedFloskelgruppe"
-                :bemerkung="selectedSchueler[selectedFloskelgruppe.toUpperCase()] "
-                @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event;"
-                @close="selectedSchueler = null"
-            ></BemerkungEditor>
+            <BemerkungEditor :schueler="selectedSchueler" :floskelgruppe="selectedFloskelgruppe" :bemerkung="selectedSchueler[selectedFloskelgruppe.toUpperCase()]"
+                @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event;" @close="selectedSchueler = null"></BemerkungEditor>
         </template>
     </AppLayout>
 </template>
