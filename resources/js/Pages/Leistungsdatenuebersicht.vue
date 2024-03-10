@@ -28,8 +28,7 @@
                         <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                        <SvwsUiButton class="export-button" type="transparent" @click="exportToFile('csv')">CSV</SvwsUiButton>
-                        <SvwsUiButton class="export-button" type="transparent" @click="exportToFile('excel')">Excel</SvwsUiButton>
+                        <SvwsUiButton class="export-button" type="secondary" @click="exportToFile('csv')">CSV</SvwsUiButton>
                     </template>
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
