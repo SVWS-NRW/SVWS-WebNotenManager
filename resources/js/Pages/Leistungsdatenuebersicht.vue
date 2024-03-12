@@ -171,7 +171,7 @@
     // columns used for sorting the data
     const default_cols : DataTableColumn[] = [
         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, fixedWidth: 6, disabled: false },
-        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 16, disabled: false },
     ];
 
     // the other columns received from DB

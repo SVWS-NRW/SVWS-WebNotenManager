@@ -2,7 +2,7 @@ import { Column } from '@/Interfaces/Column';
 
 const baseColumns: Array<Column> = [
 	{ key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6 },
-	{ key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10 },
+	{ key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 16 },
 	{ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5 },
 	{ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5 },
 ];
