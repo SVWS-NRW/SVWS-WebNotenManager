@@ -9,25 +9,25 @@
             <div class="content">
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.kurs" :value="1">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.note" :value="1">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.meinunterricht.fach" :value="1">Fach</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.kurs" :value="1">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.note" :value="1">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.fach" :value="1">Fach</SvwsUiCheckbox>
                 </div>
 
                 <div>
                     <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.kurs" :value="1">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.note" :value="1">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="settings.leistungsdatenuebersicht.fach" :value="1">Fach</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.kurs" :value="1">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.note" :value="1">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fach" :value="1">Fach</SvwsUiCheckbox>
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
@@ -52,74 +52,81 @@
         auth: Object,
     });
 
-    interface Settings {
-        meinunterricht: {
-            teilleistungen: boolean,
-            mahnungen: boolean,
-            fehlstunden: boolean,
-            bemerkungen: boolean,
-            kurs: boolean,
-            note: boolean,
-            fach: boolean,
-        },
-        leistungsdatenuebersicht: {
-            teilleistungen: boolean,
-            fachlehrer: boolean,
-            mahnungen: boolean,
-            fehlstunden: boolean,
-            bemerkungen: boolean,
-            kurs: boolean,
-            note: boolean,
-            fach: boolean,
-        }
+    //two different interfaces are used here because the usage of one interface with 2 depth levels caused a reload
+    //of the whole settings page that we do not want
+    interface MeinunterrichtSettings {
+        teilleistungen: boolean,
+        mahnungen: boolean,
+        fehlstunden: boolean,
+        bemerkungen: boolean,
+        kurs: boolean,
+        note: boolean,
+        fach: boolean,
     }
 
-    const settings: Ref<Settings> = ref({} as Settings);
-    const storedSettings: Ref<String> = ref('');
+    interface LeistungsdatenuebersichtSettings {
+        teilleistungen: boolean,
+        fachlehrer: boolean,
+        mahnungen: boolean,
+        fehlstunden: boolean,
+        bemerkungen: boolean,
+        kurs: boolean,
+        note: boolean,
+        fach: boolean,
+    }
+
+    const meinunterrichtSettings: Ref<MeinunterrichtSettings> = ref({} as MeinunterrichtSettings);
+    const leistungsdatenuebersichtSettings: Ref<LeistungsdatenuebersichtSettings> = ref({} as LeistungsdatenuebersichtSettings);
+    const storedMeinunterrichtSettings: Ref<String> = ref('');
+    const storedLeistungsdatenuebersichtSettings: Ref<String> = ref('');
     const isDirty: Ref<boolean> = ref(false);
 
     axios.get(route('api.settings.filters'))
         .then((response: AxiosResponse): void => {
-            settings.value = response.data;
-            storedSettings.value = JSON.stringify(settings.value);
+            meinunterrichtSettings.value = response.data.meinunterricht;
+            leistungsdatenuebersichtSettings.value = response.data.leistungsdatenuebersicht;
+            storedMeinunterrichtSettings.value = JSON.stringify(meinunterrichtSettings.value);
+            storedLeistungsdatenuebersichtSettings.value = JSON.stringify(leistungsdatenuebersichtSettings.value);
         });
 
     const saveSettings = () => axios
         .post(route('api.settings.filters'),  {
             'filters_meinunterricht': {
-                'mahnungen': settings.value.meinunterricht.mahnungen,
-                'bemerkungen': settings.value.meinunterricht.bemerkungen,
-                'fehlstunden': settings.value.meinunterricht.fehlstunden,
-                'teilleistungen': settings.value.meinunterricht.teilleistungen,
-                'kurs': settings.value.meinunterricht.kurs,
-                'note': settings.value.meinunterricht.note,
-                'fach': settings.value.meinunterricht.fach,
+                'mahnungen': meinunterrichtSettings.value.mahnungen,
+                'bemerkungen': meinunterrichtSettings.value.bemerkungen,
+                'fehlstunden': meinunterrichtSettings.value.fehlstunden,
+                'teilleistungen': meinunterrichtSettings.value.teilleistungen,
+                'kurs': meinunterrichtSettings.value.kurs,
+                'note': meinunterrichtSettings.value.note,
+                'fach': meinunterrichtSettings.value.fach,
             },
             'filters_leistungsdatenuebersicht': {
-                'mahnungen': settings.value.leistungsdatenuebersicht.mahnungen,
-                'fachlehrer': settings.value.leistungsdatenuebersicht.fachlehrer,
-                'bemerkungen': settings.value.leistungsdatenuebersicht.bemerkungen,
-                'fehlstunden': settings.value.leistungsdatenuebersicht.fehlstunden,
-                'teilleistungen': settings.value.leistungsdatenuebersicht.teilleistungen,
-                'kurs': settings.value.leistungsdatenuebersicht.kurs,
-                'note': settings.value.leistungsdatenuebersicht.note,
-                'fach': settings.value.leistungsdatenuebersicht.fach,
+                'mahnungen': leistungsdatenuebersichtSettings.value.mahnungen,
+                'fachlehrer': leistungsdatenuebersichtSettings.value.fachlehrer,
+                'bemerkungen': leistungsdatenuebersichtSettings.value.bemerkungen,
+                'fehlstunden': leistungsdatenuebersichtSettings.value.fehlstunden,
+                'teilleistungen': leistungsdatenuebersichtSettings.value.teilleistungen,
+                'kurs': leistungsdatenuebersichtSettings.value.kurs,
+                'note': leistungsdatenuebersichtSettings.value.note,
+                'fach': leistungsdatenuebersichtSettings.value.fach,
             },
         })
         .then((): void => apiSuccess())
         .then((): void => {
             isDirty.value = false;
-            storedSettings.value = JSON.stringify(settings.value);
+            storedMeinunterrichtSettings.value = JSON.stringify(meinunterrichtSettings.value);
+            storedLeistungsdatenuebersichtSettings.value = JSON.stringify(leistungsdatenuebersichtSettings.value);
         })
         .catch((error: any): void => apiError(
             error,
             'Ein Problem ist aufgetreten bei Speichern von Filtern'
         ));
 
-        watch(() => settings.value, (): void => {
-        isDirty.value = JSON.stringify(settings.value) !== storedSettings.value;
+    watch(() => [meinunterrichtSettings.value, leistungsdatenuebersichtSettings.value], (): void => {
+        isDirty.value = JSON.stringify(meinunterrichtSettings.value) !== storedMeinunterrichtSettings.value
+        || JSON.stringify(leistungsdatenuebersichtSettings.value) !== storedLeistungsdatenuebersichtSettings.value;
     }, {
-        deep: true,
+         deep: true,
     });
 </script>
 

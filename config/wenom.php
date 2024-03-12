@@ -17,7 +17,8 @@ return [
         'from_name' => env('MAIL_FROM_NAME'),
     ],
     'filters' => [
-        'meinunterricht' => [
+        'meinunterricht' =>
+         [
             'teilleistungen' => env('FILTERS_MEINUNTERRICHT_TEILLEISTUNGEN', false),
             'mahnungen' => env('FILTERS_MEINUNTERRICHT_MAHNUNGEN', true),
             'fehlstunden' => env('FILTERS_MEINUNTERRICHT_FEHLSTUNDEN', false),
