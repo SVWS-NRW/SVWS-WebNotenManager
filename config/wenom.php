@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'version' => '0.1.4',
+    'version' => '0.1.5',
     'npm' => '0.8.10',
     'schulnummer' => env('SCHULNUMMER'),
     'aes_password' => env('AES_PASSWORD'),
