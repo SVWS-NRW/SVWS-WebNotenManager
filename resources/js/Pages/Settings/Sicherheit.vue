@@ -36,7 +36,7 @@
                     </span>
                 </div>
                 <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.password" :valid="() => !hasErrors('MAIL_PASSWORD')" type="text"
+                    <SvwsUiTextInput v-model="data.form.password" :valid="() => !hasErrors('MAIL_PASSWORD')" type="password"
                         placeholder="Passwort"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_PASSWORD')" class="error">
                         {{ getError('MAIL_PASSWORD') }}
