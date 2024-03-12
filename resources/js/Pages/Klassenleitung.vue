@@ -116,11 +116,11 @@
 
 <style scoped>
     header {
-        @apply flex flex-col gap-4 p-6
+        @apply flex flex-col gap-4 p-6 ml-6
     }
 
     .content-area {
-        @apply mx-4 overflow-auto
+        @apply mx-4 overflow-auto ml-6
     }
 </style>
 

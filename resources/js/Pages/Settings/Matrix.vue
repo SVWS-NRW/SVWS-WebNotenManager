@@ -724,7 +724,7 @@
 
 /* TODO: check if redundant */
     header #headline {
-        @apply flex items-center justify-start gap-6
+        @apply flex items-center justify-start gap-6 ml-6
     }
 
     table {
@@ -736,7 +736,7 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12 items-start w-full overflow-auto
+        @apply px-6 flex flex-col gap-12 items-start w-full overflow-auto ml-6
     }
 
     .button {

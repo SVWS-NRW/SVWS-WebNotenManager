@@ -106,7 +106,7 @@
 
 <style scoped>
     section {
-        @apply p-6 space-y-12
+        @apply p-6 space-y-12 ml-6
     }
 
     section > div {
