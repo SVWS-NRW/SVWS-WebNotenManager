@@ -111,8 +111,12 @@
         @apply hover:cursor-pointer
     }
 
-    .app--layout--wenom :global(.app--content-container) {
-	    @apply rounded-2xl;
+    .app--layout--wenom :global(.app--content) {
+	    @apply rounded-2xl
+    }
+
+    .app--layout--wenom :global(.app--sidebar + .app--content) {
+	    @apply rounded-none
     }
 
 
