@@ -37,7 +37,7 @@
 
 <style scoped>
     .container {
-        @apply flex flex-col gap-3
+        @apply flex flex-col gap-3 ml-[1.1rem]
     }
 
 </style>
