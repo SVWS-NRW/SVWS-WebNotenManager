@@ -259,13 +259,13 @@
 	function next(id: number, itemRefs: Ref) {
 		const el = itemRefs.value.get(id + 1);
 		if (el)
-            el.input.focus();
+            el.input.select();
 	}
 
 	const previous = (id: number, itemRefs: Ref) => {
         const el = itemRefs.value.get(id - 1);
 		if (el)
-        el.input.focus();
+        el.input.select();
 	}
 
     //direction (up/down within the column) and map name are received from child component
