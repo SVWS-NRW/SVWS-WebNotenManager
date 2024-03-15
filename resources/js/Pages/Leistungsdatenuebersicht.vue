@@ -15,7 +15,7 @@
                     :filterOpen="true" :sortByAndOrder="{ key: 'klasse', order: true}">
                     <template #filter>
                         <div class="edition-pencil-button">
-                            <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer" 
+                            <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator" 
                                 :type="leistungEditable ? 'primary' : 'secondary'" size="big">
                                 <ri-pencil-fill></ri-pencil-fill>
                             </SvwsUiButton>
@@ -99,6 +99,11 @@
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
     import { handleExport } from '@/Helpers/exportHelper';
+    import { Auth } from '@/Interfaces/Auth';
+
+    let props = defineProps<{
+        auth: Auth
+    }>();
 
     const title = 'Notenmanager - Leistungsdatenübersicht';
 
