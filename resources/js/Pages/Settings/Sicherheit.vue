@@ -63,7 +63,7 @@
                 <SvwsUiButton @click="sendTestmail" >Testmail senden</SvwsUiButton>
 
                 <div>
-                    <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung
+                    <SvwsUiCheckbox v-model="enabled" :value="true" type="toggle">Zweifaktor Authentisierung
                     </SvwsUiCheckbox>
                 </div>
 
