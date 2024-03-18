@@ -60,7 +60,7 @@
                         {{ getError('MAIL_FROM_NAME') }}
                     </span>
                 </div>
-                <SvwsUiButton @click="sendTestmail" >Testmail senden</SvwsUiButton>
+                <SvwsUiButton @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton>
 
                 <div>
                     <SvwsUiCheckbox v-model="enabled" :value="true" type="toggle">Zweifaktor Authentisierung
