@@ -9,25 +9,25 @@
             <div class="content">
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.kurs" :value="1">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.note" :value="1">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.fach" :value="1">Fach</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.teilleistungen" :value="true" type="toggle">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.mahnungen" :value="1" type="toggle">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.fehlstunden" :value="1" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.bemerkungen" :value="1" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.kurs" :value="1" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.note" :value="1" type="toggle">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.fach" :value="1" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
 
                 <div>
                     <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fachlehrer" :value="1">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.mahnungen" :value="1">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fehlstunden" :value="1">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.bemerkungen" :value="1">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.kurs" :value="1">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.note" :value="1">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fach" :value="1">Fach</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.teilleistungen" :value="true" type="toggle">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fachlehrer" :value="1" type="toggle">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.mahnungen" :value="1" type="toggle">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fehlstunden" :value="1" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.bemerkungen" :value="1" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.kurs" :value="1" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.note" :value="1" type="toggle">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fach" :value="1" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
 
                 <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>

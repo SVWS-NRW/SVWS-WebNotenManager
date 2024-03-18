@@ -8,7 +8,7 @@
             </header>
             <div class="content">
                 <section class="flex flex-col w-full gap-4">
-                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true">
+                    <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" type="toggle">
                         <SvwsUiTooltip>
                             Die Klassenleitung darf alle Leistungsdaten bearbeiten.
                             <template #content>

@@ -5,24 +5,24 @@
                 <h2 class="text-headline">Spalteneinstellungen</h2>
                 <h3 class="text-headline-md">Mein Unterricht</h3>
                 <div>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.kurs">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.note">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fach">Fach</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen" type="toggle">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen" type="toggle">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.kurs" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.note" type="toggle">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fach" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
                 <div>
                     <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.teilleistungen">Teilleistungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fachlehrer">Fachlehrer</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.mahnungen">Mahnungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fehlstunden">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.bemerkungen">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.kurs">Kurs</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note">Note</SvwsUiCheckbox>
-                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach">Fach</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.teilleistungen" type="toggle">Teilleistungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fachlehrer" type="toggle">Fachlehrer</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.mahnungen" type="toggle">Mahnungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fehlstunden" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.bemerkungen" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.kurs" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note" type="toggle">Note</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
             </section>
