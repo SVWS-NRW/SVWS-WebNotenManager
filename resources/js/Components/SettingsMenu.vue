@@ -1,7 +1,7 @@
 <template>
     <SvwsUiSecondaryMenu>
         <template #headline>
-            Einstellungen
+            Globale Einstellungen
         </template>
         <template #content>
             <div class="container">

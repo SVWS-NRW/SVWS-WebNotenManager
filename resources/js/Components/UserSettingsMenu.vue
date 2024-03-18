@@ -6,7 +6,7 @@
         <template #content>
             <div class="container">
                 <SvwsUiMenuItem @click="navigate('user_settings.filter')" :active="route().current('user_settings.filter')">
-                    <template #label>Filter bearbeiten</template>
+                    <template #label>Spalteneinstellungen</template>
                 </SvwsUiMenuItem>
             </div>
         </template>
