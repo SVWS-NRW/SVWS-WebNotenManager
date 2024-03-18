@@ -3,7 +3,7 @@
         <template #main>
             <header>
                 <div id="headline">
-                    <h2 class="text-headline">Filter</h2>
+                    <h2 class="text-headline">Spalteneinstellungen</h2>
                 </div>
             </header>
             <div class="content">

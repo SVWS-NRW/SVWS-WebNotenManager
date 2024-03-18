@@ -9,7 +9,7 @@
                     <template #label>Schreibrechte</template>
                 </SvwsUiMenuItem>
                 <SvwsUiMenuItem @click="navigate('settings.filter')" :active="route().current('settings.filter')">
-                    <template #label>Filter</template>
+                    <template #label>Spalteneinstellungen</template>
                 </SvwsUiMenuItem>
                 <SvwsUiMenuItem @click="navigate('settings.school')" :active="route().current('settings.school')">
                     <template #label>Schuldaten</template>
