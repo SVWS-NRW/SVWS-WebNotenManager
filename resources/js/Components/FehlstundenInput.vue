@@ -8,6 +8,7 @@
         v-model="model"
         :disabled="props.disabled"
         :ref="(el) => updateItemRefs(rowIndex, el as Element, itemRefsName)"
+        @click="$event.target.select()"
         @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
         @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
         @keydown.enter.stop.prevent="navigate('next', props.rowIndex)"
