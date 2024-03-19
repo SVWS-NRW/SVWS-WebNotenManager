@@ -131,7 +131,7 @@
     let leistungEditable: Ref<boolean> = ref(false);
 
     const leistungEditableToggle = (): void => {
-        if (true === lehrerCanOverrideFachlehrer.value) {
+        if (true === lehrerCanOverrideFachlehrer.value || props.auth.administrator) {
             leistungEditable.value = !leistungEditable.value;
         }
     };
