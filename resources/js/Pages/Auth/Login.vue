@@ -27,7 +27,6 @@
                             :disabled="data.processing"
                             type="email"
                             placeholder="E-Mail-Adresse"
-                            required
                             autocomplete="email"
                         ></SvwsUiTextInput>
 
@@ -44,17 +43,16 @@
                             :disabled="data.processing"
                             type="password"
                             placeholder="Passwort"
-                            required
                         ></SvwsUiTextInput>
 
                         <span v-if="hasErrors('password')" class="error">
                             {{ getError('password') }}
                         </span>
                     </div>
-
+                    <!-- Earlier:
                     <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing" v-on:keyup.enter="submit">
                         Angemeldet bleiben
-                    </SvwsUiCheckbox>
+                    </SvwsUiCheckbox> -->
 
                     <div id="buttons">
                         <SvwsUiButton @click="submit()" :disabled="data.processing">Anmelden</SvwsUiButton>
@@ -129,7 +127,7 @@
     }
 
     #buttons {
-        @apply flex gap-6 justify-between
+        @apply flex gap-6 justify-between mt-6
     }
 
     .form-control {
