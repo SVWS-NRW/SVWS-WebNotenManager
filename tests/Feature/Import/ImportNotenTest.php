@@ -41,62 +41,6 @@ class ImportNotenTest extends TestCase
     }
 
     /**
-     * It does not create noten with negative id
-     *
-     * @return void
-     */
-    public function test_it_does_not_creates_noten_with_negative_id(): void
-    {
-        $data = json_decode('{
-            "noten": [
-                 {
-                    "id": -1,
-                    "kuerzel": "negative",
-                    "notenpunkte": -1,
-                    "text": "negative"
-                },
-                {
-                    "id": 1,
-                    "kuerzel": "5-",
-                    "notenpunkte": 1,
-                    "text": "Lorem ipsum dolor sit amet"
-                }
-            ]
-        }', true);
-
-        new DataImportService($data);
-
-        $this->assertDatabaseMissing('noten', [
-            'kuerzel' => 'negative',
-            'text' => 'negative',
-        ])
-        ->assertDatabaseCount('noten', 1);
-    }
-
-    /**
-     * It does not create noten with non-integer id
-     *
-     * @return void
-     */
-    public function test_it_does_not_creates_noten_with_non_integer_id(): void
-    {
-        $data = json_decode('{
-            "noten": [
-                 {
-                    "id": "Z",
-                    "kuerzel": "51",
-                    "notenpunkte": 1,
-                    "text": "Lorem ipsum dolor sit amet"
-                }
-            ]
-        }', true);
-
-        new DataImportService($data);
-
-        $this->assertDatabaseCount('noten', 0);
-    }
-
-    /**
      * It creates noten with text and notenpunkte missing
      *
      * @return void
@@ -150,6 +94,62 @@ class ImportNotenTest extends TestCase
             'text' => null,
         ])
         ->assertDatabaseCount('noten', 1);
+    }
+
+    /**
+     * It does not create noten with negative id
+     *
+     * @return void
+     */
+    public function test_it_does_not_create_noten_with_negative_id(): void
+    {
+        $data = json_decode('{
+            "noten": [
+                 {
+                    "id": -1,
+                    "kuerzel": "negative",
+                    "notenpunkte": -1,
+                    "text": "negative"
+                },
+                {
+                    "id": 1,
+                    "kuerzel": "5-",
+                    "notenpunkte": 1,
+                    "text": "Lorem ipsum dolor sit amet"
+                }
+            ]
+        }', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseMissing('noten', [
+            'kuerzel' => 'negative',
+            'text' => 'negative',
+        ])
+        ->assertDatabaseCount('noten', 1);
+    }
+
+    /**
+     * It does not create noten with non-integer id
+     *
+     * @return void
+     */
+    public function test_it_does_not_create_noten_with_non_integer_id(): void
+    {
+        $data = json_decode('{
+            "noten": [
+                 {
+                    "id": "Z",
+                    "kuerzel": "51",
+                    "notenpunkte": 1,
+                    "text": "Lorem ipsum dolor sit amet"
+                }
+            ]
+        }', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseCount('noten', 0);
     }
 
     /**
@@ -223,7 +223,7 @@ class ImportNotenTest extends TestCase
      *
      * @return void
      */
-    public function test_it_does_note_create_note_with_empty_kuerzel(): void
+    public function test_it_does_not_create_note_with_empty_kuerzel(): void
     {
         $data = json_decode('{
             "noten": [
@@ -244,7 +244,7 @@ class ImportNotenTest extends TestCase
      *
      * @return void
      */
-    public function test_it_does_note_create_note_with_missing_kuerzel(): void
+    public function test_it_does_not_create_note_with_missing_kuerzel(): void
     {
         $data = json_decode('{
             "noten": [

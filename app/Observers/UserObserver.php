@@ -17,7 +17,6 @@ class UserObserver
      */
     public function creating(User $user): void
     {
-
         $user->password = app()->environment('production')
             ? Str::random(32)
             : Hash::make('password');
@@ -25,6 +24,7 @@ class UserObserver
         $user->email = $this->validateEmail($user->email, $this->safeEmail(32));
         $user->geschlecht = $this->validateGender($user->geschlecht, User::FALLBACK_GENDER);
     }
+
     /**
      * Handle the User "updating" event.
      *
