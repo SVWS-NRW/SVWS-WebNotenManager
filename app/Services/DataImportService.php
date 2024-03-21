@@ -17,6 +17,9 @@ use Schema;
 
 class DataImportService
 {
+    private array $success = [];
+    private array $error = [];
+
     // TODO: TO be removed by karol
 	private array $existingNoten = [];
     // TODO: TO be removed by karol
@@ -51,7 +54,16 @@ class DataImportService
         $this->importLehrer();
         $this->importKlassen();
         $this->importNoten();
-	}
+        $this->renderResponse();
+    }
+
+    public function renderResponse(): JsonResponse
+    {
+        return response()->json([
+            'error' => $this->error,
+            'success' => $this->success,
+        ]);
+    }
 
     // TODO: TO be removed by karol
 	public function truncate(): void
