@@ -72,10 +72,10 @@ class SecureTransferControllerTest extends TestCase
     {
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $this->obtainToken()])
             ->postJson(route('secure.truncate'))
-            ->assertJsonPath('message.tables.truncated', 32)
-            ->assertJsonPath('message.tables.kept', 3)
+            ->assertJsonPath('message.tables.truncated', 31)
+            ->assertJsonPath('message.tables.kept', 4)
             ->assertJsonPath('message.tables.kept_tables', [
-                'migrations', 'users', 'oauth_clients',
+                'migrations', 'users', 'oauth_clients', 'settings',
             ]);
     }
 }
