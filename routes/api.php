@@ -18,11 +18,13 @@ use Illuminate\Support\Facades\Route;
  */
 Route::controller(SecureTransferController::class)
 	->middleware('client')
-	->prefix('secure')
+    ->prefix('secure')
+    ->name('secure.')
 	->group(function (): void {
-		Route::get('check', 'check');
-		Route::get('export', 'export');
-		Route::post('import', 'import');
+		Route::get('check', 'check')->name('check');
+		Route::get('export', 'export')->name('export');
+		Route::post('import', 'import')->name('import');
+		Route::post('truncate', 'truncate')->name('truncate');
 	});
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'administrator'])
@@ -153,5 +155,5 @@ Route::get('import/gzip', [ImportController::class, 'gzipEnm']);
 Route::post('import/gzip', [ImportController::class, 'gzip']);
 Route::post('import', [ImportController::class, 'request']);
 Route::get('import', [ImportController::class, 'curl']);
-Route::get('truncate', [DataImportService::class, 'truncate']);
+//Route::get('truncate', [SecureTransferController::class, 'truncate']); // Use secure route
 Route::get('import/aes', AesController::class);

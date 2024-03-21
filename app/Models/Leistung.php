@@ -13,6 +13,54 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * The `Leistung` class represents a Laravel model for managing remarks associated with Leistungen.
  *
  * @package App\Models
+ * @property int $id
+ * @property int $schueler_id
+ * @property int $lerngruppe_id
+ * @property int|null $note_id
+ * @property string $tsNote
+ * @property int $istSchriftlich
+ * @property string|null $abiturfach
+ * @property int|null $fehlstundenFach
+ * @property string $tsFehlstundenFach
+ * @property int|null $fehlstundenUnentschuldigtFach
+ * @property string $tsFehlstundenUnentschuldigtFach
+ * @property string|null $fachbezogeneBemerkungen
+ * @property string $tsFachbezogeneBemerkungen
+ * @property string|null $neueZuweisungKursart
+ * @property bool $istGemahnt
+ * @property string $tsIstGemahnt
+ * @property \Illuminate\Support\Carbon|null $mahndatum
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Lerngruppe|null $lerngruppe
+ * @property-read \App\Models\Note|null $note
+ * @property-read \App\Models\Schueler|null $schueler
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Teilleistung> $teilleistungen
+ * @property-read int|null $teilleistungen_count
+ * @method static \Database\Factories\LeistungFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereAbiturfach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereFachbezogeneBemerkungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereFehlstundenFach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereFehlstundenUnentschuldigtFach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereIstGemahnt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereIstSchriftlich($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereLerngruppeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereMahndatum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereNeueZuweisungKursart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereNoteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereSchuelerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFachbezogeneBemerkungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFehlstundenFach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsFehlstundenUnentschuldigtFach($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsIstGemahnt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Leistung extends Model
 {

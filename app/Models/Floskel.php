@@ -10,6 +10,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * The `Floskel` class represents a Laravel model for managing remarks associated with Floskeln.
  *
  * @package App\Models
+ * @property int $id
+ * @property int $floskelgruppe_id
+ * @property string $kuerzel
+ * @property string $text
+ * @property int|null $fach_id
+ * @property int|null $jahrgang_id
+ * @property int|null $niveau
+ * @property-read \App\Models\Fach|null $fach
+ * @property-read \App\Models\Floskelgruppe|null $floskelgruppe
+ * @property-read \App\Models\Jahrgang|null $jahrgang
+ * @method static \Database\Factories\FloskelFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereFachId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereFloskelgruppeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereJahrgangId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereKuerzel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereNiveau($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Floskel whereText($value)
+ * @mixin \Eloquent
  */
 class Floskel extends Model
 {

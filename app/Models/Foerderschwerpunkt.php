@@ -10,6 +10,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * The `Foerderschwerpunkt` class represents a Laravel model for managing remarks associated with Foerderschwerpunkte.
  *
  * @package App\Models
+ * @property int $id
+ * @property string $kuerzel
+ * @property string $beschreibung
+ * @method static \Database\Factories\FoerderschwerpunktFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereBeschreibung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Foerderschwerpunkt whereKuerzel($value)
+ * @mixin \Eloquent
  */
 class Foerderschwerpunkt extends Model
 {

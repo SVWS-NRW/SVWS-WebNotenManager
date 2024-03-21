@@ -12,6 +12,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * The `Jahrgang` class represents a Laravel model for managing remarks associated with Jahrgange.
  *
  * @package App\Models
+ * @property int $id
+ * @property string $kuerzel
+ * @property string $kuerzelAnzeige
+ * @property string $beschreibung
+ * @property string $stufe
+ * @property int $sortierung
+ * @property-read Collection<int, \App\Models\Klasse> $klassen
+ * @property-read int|null $klassen_count
+ * @method static \Database\Factories\JahrgangFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereBeschreibung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereKuerzel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereKuerzelAnzeige($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereSortierung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Jahrgang whereStufe($value)
+ * @mixin \Eloquent
  */
 class Jahrgang extends Model
 {

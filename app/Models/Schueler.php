@@ -14,6 +14,39 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * The `Schueler` class represents a Laravel model for managing remarks associated with Schueler.
  *
  * @package App\Models
+ * @property int $id
+ * @property int $jahrgang_id
+ * @property int $klasse_id
+ * @property string $nachname
+ * @property string $vorname
+ * @property string $geschlecht
+ * @property \App\Models\Fach|null $bilingualeSprache
+ * @property int $istZieldifferent
+ * @property int $istDaZFoerderung
+ * @property-read \App\Models\Bemerkung|null $bemerkung
+ * @property-read \App\Models\BKAbschluss|null $bkabschluss
+ * @property-read \App\Models\Jahrgang|null $jahrgang
+ * @property-read \App\Models\Klasse|null $klasse
+ * @property-read Collection<int, \App\Models\Leistung> $leistungen
+ * @property-read int|null $leistungen_count
+ * @property-read \App\Models\Lernabschnitt|null $lernabschnitt
+ * @property-read Collection<int, \App\Models\Sprachenfolge> $sprachenfolgen
+ * @property-read int|null $sprachenfolgen_count
+ * @property-read \App\Models\Zp10|null $zp10
+ * @method static \Database\Factories\SchuelerFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereBilingualeSprache($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereGeschlecht($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereIstDaZFoerderung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereIstZieldifferent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereJahrgangId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereKlasseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereNachname($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereVorname($value)
+ * @mixin \Eloquent
  */
 class Schueler extends Model
 {

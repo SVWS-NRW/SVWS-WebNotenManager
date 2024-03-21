@@ -30,13 +30,14 @@ class UserFactory extends Factory
 	public function definition(): array
 	{
 		return [
-			'kuerzel' => $this->faker->unique->word(),
+            'kuerzel' => $this->faker->unique->word(),
 			'vorname' => $this->faker->firstName(),
 			'nachname' => $this->faker->lastName(),
 			'geschlecht' => $this->faker->randomElement(User::GENDERS),
 			'email' => $this->faker->unique()->safeEmail(),
 			'email_verified_at' => now(),
 			'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+			'is_administrator' => false,
 			'remember_token' => Str::random(10),
 		];
 	}
@@ -48,9 +49,7 @@ class UserFactory extends Factory
      */
 	public function unverified(): UserFactory
 	{
-		return $this->state(fn (): array  => [
-			'email_verified_at' => null,
-		]);
+		return $this->state(fn (): array  => ['email_verified_at' => null]);
 	}
 
     /**

@@ -13,6 +13,44 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * The `Klasse` class represents a Laravel model for managing remarks associated with Klassen.
  *
  * @package App\Models
+ * @property int $id
+ * @property int|null $idJahrgang
+ * @property string $kuerzel
+ * @property string $kuerzelAnzeige
+ * @property int $sortierung
+ * @property bool $editable_teilnoten
+ * @property bool $editable_noten
+ * @property bool $editable_mahnungen
+ * @property bool $editable_fehlstunden
+ * @property bool $toggleable_fehlstunden
+ * @property bool $editable_fb
+ * @property bool $editable_asv
+ * @property bool $editable_aue
+ * @property bool $editable_zb
+ * @property-read \App\Models\Jahrgang|null $jahrgang
+ * @property-read Collection<int, \App\Models\User> $klassenlehrer
+ * @property-read int|null $klassenlehrer_count
+ * @property-read Collection<int, \App\Models\Lerngruppe> $lerngruppen
+ * @property-read int|null $lerngruppen_count
+ * @method static \Database\Factories\KlasseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableAsv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableAue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableFb($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableFehlstunden($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableMahnungen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableNoten($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableTeilnoten($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereEditableZb($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereIdJahrgang($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereKuerzel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereKuerzelAnzeige($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereSortierung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereToggleableFehlstunden($value)
+ * @mixin \Eloquent
  */
 class Klasse extends Model
 {

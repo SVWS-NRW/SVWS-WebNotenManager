@@ -11,6 +11,46 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * The `BKAbschluss` class represents a Laravel model for managing remarks associated with BKAbschlüsse.
  *
  * @package App\Models
+ * @property int $id
+ * @property int $schueler_id
+ * @property int $hatZulassung
+ * @property int $hatBestanden
+ * @property int $hatZulassungErweiterteBeruflicheKenntnisse
+ * @property int $hatErworbenErweiterteBeruflicheKenntnisse
+ * @property \App\Models\Note|null $notePraktischePruefung
+ * @property \App\Models\Note|null $noteKolloqium
+ * @property int $hatZulassungBerufsabschlusspruefung
+ * @property int $hatBestandenBerufsabschlusspruefung
+ * @property string $themaAbschlussarbeit
+ * @property int $istVorhandenBerufsabschlusspruefung
+ * @property \App\Models\Note|null $noteFachpraxis
+ * @property int $istFachpraktischerTeilAusreichend
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BKFach> $bkFaecher
+ * @property-read int|null $bk_faecher_count
+ * @property-read \App\Models\Schueler|null $schueler
+ * @method static \Database\Factories\BKAbschlussFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereHatBestanden($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereHatBestandenBerufsabschlusspruefung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereHatErworbenErweiterteBeruflicheKenntnisse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereHatZulassung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereHatZulassungBerufsabschlusspruefung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereHatZulassungErweiterteBeruflicheKenntnisse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereIstFachpraktischerTeilAusreichend($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereIstVorhandenBerufsabschlusspruefung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereNoteFachpraxis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereNoteKolloqium($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereNotePraktischePruefung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereSchuelerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereThemaAbschlussarbeit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class BKAbschluss extends Model
 {

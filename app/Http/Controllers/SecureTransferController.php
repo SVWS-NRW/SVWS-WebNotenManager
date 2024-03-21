@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SecureImportRequest;
 use App\Http\Resources\Export\SchuelerResource;
 use App\Models\Schueler;
+use App\Models\User;
 use App\Services\{DataImportService, GzipService};
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\{DB, Schema};
 use Symfony\Component\HttpFoundation\Response as Status;
 
 /**
@@ -34,21 +37,21 @@ class SecureTransferController extends Controller
      * @return JsonResponse|Response
      */
     public function import(
-		SecureImportRequest $request,
-		DataImportService $importService,
+        SecureImportRequest $request,
+        DataImportService $importService,
         GzipService $gzipService,
-	): Response|JsonResponse {
+    ): Response|JsonResponse {
         // Retrieving the uploaded file from the request.
         $file = $request->file('file');
 
         // Attempt to decompress the file content using GZIP.
         try {
-			$decodedData = $gzipService->decode($file->getContent());
-		} catch (Exception $e) {
-			return response()->json([
+            $decodedData = $gzipService->decode($file->getContent());
+        } catch (Exception $e) {
+            return response()->json([
                 'message' => 'Ein Fehler ist beim Dekomprimieren der Daten aufgetreten: '. $e->getMessage(),
             ], Status::HTTP_BAD_REQUEST);
-		}
+        }
 
         // Decoding the decrypted data from JSON.
         $json = json_decode($decodedData, true);
@@ -61,16 +64,16 @@ class SecureTransferController extends Controller
         }
 
         // Validating the 'schulnummer' from the decoded JSON.
-		if ($json['schulnummer'] != config('wenom.schulnummer')) {
-			return response()->json(['message' => 'Schulnummer nicht gültig'], Status::HTTP_BAD_REQUEST);
-		}
+        if ($json['schulnummer'] != config('wenom.schulnummer')) {
+            return response()->json(['message' => 'Schulnummer nicht gültig'], Status::HTTP_BAD_REQUEST);
+        }
 
         // Executing the import service with the validated data.
-		$importService->execute($json);
+        $importService->execute($json);
 
         // Returning a successful response.
-		return response();
-	}
+        return response();
+    }
 
     /**
      * Method for exporting data securely.
@@ -79,17 +82,65 @@ class SecureTransferController extends Controller
      * @return Response
      */
     public function export(GzipService $gzipService): Response
-	{
+    {
         // Fetching data to be exported and converting it to JSON.
         $data = SchuelerResource::collection(Schueler::exportCollection())->toJson();
 
         // Attempt to GZIP encode the encrypted data.
         try {
             return response($gzipService->encode($data));
-		} catch (Exception $e) {
-			return response([
+        } catch (Exception $e) {
+            return response([
                 'message' => "Ein Fehler ist beim Komprimieren der Daten aufgetreten: {$e->getMessage()}",
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
-		}
-	}
+        }
+    }
+
+    /**
+     * Truncate the database.
+     * Deletes all imported users except the system users (missing ext_id)
+     * Does not truncate oauth_clients in order to keep the Oauth2 connection.
+     *
+     * @return JsonResponse
+     */
+    public function truncate(): JsonResponse
+    {
+        // List of tables not to be truncated
+        $excludedTables = [
+            'migrations', 'users', 'oauth_clients',
+        ];
+
+        // Disable foreign key checks to avoid constraint violations
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Preparing tables from the schema to be truncated, skips excluded tables.
+        $tablesToTruncate = Arr::where(
+            Schema::getConnection()->getDoctrineSchemaManager()->listTableNames(),
+            fn (string $tableName): bool => !in_array($tableName, $excludedTables)
+        );
+        // Truncate the tables
+        collect($tablesToTruncate)->each(fn (string $tableName) => DB::table($tableName)->truncate());
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Remove all imported users
+        $usersToDelete = User::lehrer();
+        $deletedUserCount = $usersToDelete->count();
+        $usersToDelete->each(fn (User $user) => $user->delete());
+
+        return response()->json([
+            'message' => [
+                'tables' => [
+                    'kept' => count($excludedTables),
+                    'kept_tables' => $excludedTables,
+                    'truncated' => count($tablesToTruncate),
+                ],
+                'users' => [
+                    'kept' => User::count(),
+                    'deleted' => $deletedUserCount,
+                ],
+            ],
+        ]);
+    }
 }
