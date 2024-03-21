@@ -28,7 +28,7 @@ class NoteFactory extends Factory
     public function definition(): array
     {
         return [
-            'kuerzel' => $this->faker->unique(reset: false)->word(),
+            'kuerzel' => $this->faker->unique(false)->word(),
             'text' => $this->faker->word(),
         ];
     }
