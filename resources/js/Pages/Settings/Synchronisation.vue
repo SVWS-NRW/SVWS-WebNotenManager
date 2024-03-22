@@ -22,10 +22,10 @@
                     <div ref="newClientDataInfo" class="client-data-block" v-if="newClientCreated">
                         <p>Diese Information wird Ihnen einmalig in diesem Fenster eingeblendet.</p>
                         <br />
-                        <p><span class="client-data-fields">Client ID:</span> {{ clientRecord.id }} </p>
+                        <p><span class="client-data-fields">id:</span> {{ clientRecord.id }} </p>
                         <p><span class="client-data-fields">authServer:</span> https://wenom2.svws-nrw.de </p>
-                        <p><span class="client-data-fields">Client Name:</span> {{ clientRecord.name }} </p>
-                        <p><span class="client-data-fields">Client Secret:</span> {{ clientRecord.secret }} </p>
+                        <p><span class="client-data-fields">clientID:</span> {{ clientRecord.id }} </p>
+                        <p><span class="client-data-fields">clientSecret:</span> {{ clientRecord.secret }} </p>
                         <br />
                     </div>
                     <p v-else>{{ adjustSettingsInfo }}</p>
@@ -92,10 +92,11 @@
 
     const formatJsonString = (receivedClientDataInfo: HTMLDivElement) => {
         const trimmedAndFilteredText: string[] = receivedClientDataInfo.innerText.slice(74).split("\n").filter(line => line.trim() !== "");
-        const commaSeparatedString: string = "{ " + trimmedAndFilteredText.join(", ") + " }";
-        const allQuotedJson: string = commaSeparatedString.replaceAll(new RegExp('([A-Zauth][a-zA-Z0-9\\s]+):\\s([a-zA-Z0-9-:\/\/.]+)', 'g'), `"$1": "$2"`);
-        //integer values should not be quoted
-        const finalJsonString: string = allQuotedJson.replace(new RegExp('"([0-9]+)"', 'g'), `$1`);
+        const commaSeparatedString: string = "{\n " + trimmedAndFilteredText.join(", ") + "\n}";
+        const allQuotedJson: string = commaSeparatedString.replaceAll(new RegExp('([A-Za-z][a-zA-Z0-9\\s]+):\\s([a-zA-Z0-9-:\/\/.]+)', 'g'), `"$1": "$2"`);
+        //Remove quotes around integer values; they should not be quoted
+        const oneLineJsonString: string = allQuotedJson.replace(new RegExp('"([0-9]+)"', 'g'), `$1`);
+        const finalJsonString: string = oneLineJsonString.replace(new RegExp('(,\\s*)', 'g'), `,\n `);
         return finalJsonString;
     };
 
