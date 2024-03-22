@@ -16,11 +16,11 @@ return new class extends Migration
     {
         Schema::create('jahrgaenge', function (Blueprint $table) {
             $table->id();
-            $table->string('kuerzel');
+            $table->string('kuerzel')->unique();
             $table->string('kuerzelAnzeige');
             $table->string('beschreibung');
             $table->string('stufe');
-            $table->integer('sortierung');
+            $table->integer('sortierung')->unique();
         });
     }
 

@@ -61,11 +61,11 @@ class ImportKlassenTest extends TestCase
     }
 
     /**
-     * Creates Klasse without Klassenlehrer if they were not created previously
+     * Creates klasse with related klassenlehrer only if klassenlehrer exists
      *
      * @return void
      */
-    public function test_it_creates_klasse_without_klassenlehrer_if_they_were_not_created_previously(): void
+    public function test_it_creates_klasse_with_related_klassenlehrer_only_if_klassenlehrer_exists(): void
     {
         // Prepare Lehrer before importing
         collect([100, 101])->each(fn (int $id): User =>
@@ -81,7 +81,7 @@ class ImportKlassenTest extends TestCase
                     "idJahrgang": 16,
                     "sortierung": 150,
                     "klassenlehrer": [
-                        100, 102 
+                        100, 102
                     ]
                 }
             ]
@@ -217,7 +217,7 @@ class ImportKlassenTest extends TestCase
                     "idJahrgang": 16,
                     "sortierung": 150,
                     "klassenlehrer": [
-                        2 
+                        2
                     ]
                 }
             ]

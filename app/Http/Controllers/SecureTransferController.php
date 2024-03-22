@@ -68,11 +68,9 @@ class SecureTransferController extends Controller
             return response()->json(['message' => 'Schulnummer nicht gültig'], Status::HTTP_BAD_REQUEST);
         }
 
-        // Executing the import service with the validated data.
-        $importService->execute($json);
+        // Executing the import service with the validated data and returning a response.
+        return $importService->execute($json);
 
-        // Returning a successful response.
-        return response();
     }
 
     /**
