@@ -11,6 +11,8 @@ class ImportNotenTest extends TestCase
 {
     use RefreshDatabase;
 
+    const TABLE = 'noten';
+
     /**
      * It creates noten
      *
@@ -31,13 +33,13 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('noten', [
-            'id' => 1,
-            'kuerzel' => '5-',
-            'notenpunkte' => '1',
-            'text' => 'lorem',
-        ])
-        ->assertDatabaseCount('noten', 1);
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'id' => 1,
+                'kuerzel' => '5-',
+                'notenpunkte' => '1',
+                'text' => 'lorem',
+            ]);
     }
 
     /**
@@ -58,13 +60,13 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('noten', [
-            'id' => 1,
-            'kuerzel' => '5-',
-            'notenpunkte' => null,
-            'text' => null,
-        ])
-        ->assertDatabaseCount('noten', 1);
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'id' => 1,
+                'kuerzel' => '5-',
+                'notenpunkte' => null,
+                'text' => null,
+            ]);
     }
 
     /**
@@ -87,13 +89,13 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('noten', [
-            'id' => 1,
-            'kuerzel' => '5-',
-            'notenpunkte' => null,
-            'text' => null,
-        ])
-        ->assertDatabaseCount('noten', 1);
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'id' => 1,
+                'kuerzel' => '5-',
+                'notenpunkte' => null,
+                'text' => null,
+            ]);
     }
 
     /**
@@ -122,11 +124,11 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseMissing('noten', [
-            'kuerzel' => 'negative',
-            'text' => 'negative',
-        ])
-        ->assertDatabaseCount('noten', 1);
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseMissing(self::TABLE, [
+                'kuerzel' => 'negative',
+                'text' => 'negative',
+            ]);
     }
 
     /**
@@ -149,7 +151,7 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('noten', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -159,7 +161,7 @@ class ImportNotenTest extends TestCase
      */
     public function test_it_does_not_create_noten_with_existing_kurzel(): void
     {
-        $note = Note::factory()->create([
+        Note::factory()->create([
             'kuerzel' => 'existingKuerzel',
         ]);
 
@@ -174,7 +176,7 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('noten', 1);
+        $this->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -194,7 +196,7 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('noten', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -215,7 +217,7 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('noten', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -236,7 +238,7 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('noten', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -256,7 +258,7 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('noten', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -266,7 +268,7 @@ class ImportNotenTest extends TestCase
      */
     public function test_it_does_not_update_noten(): void
     {
-        $note = Note::factory()->create([
+        Note::factory()->create([
             'id' => 1,
             'kuerzel' => 'old_kuerzel',
             'notenpunkte' => 'old_notenpunkte',
@@ -286,14 +288,14 @@ class ImportNotenTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('noten', 1)
-            ->assertDatabaseHas('noten', [
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
                 'id' => 1,
                 'kuerzel' => 'old_kuerzel',
                 'notenpunkte' => 'old_notenpunkte',
                 'text' => 'old_text',
             ])
-            ->assertDatabaseMissing('noten', [
+            ->assertDatabaseMissing(self::TABLE, [
                 'id' => 1,
                 'kuerzel' => 'new_kuerzel',
                 'notenpunkte' => 'new_notenpunkte',

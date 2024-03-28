@@ -7,6 +7,7 @@ use App\Models\{
     Schueler, Teilleistungsart, User,
 };
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Arr, Str};
@@ -69,17 +70,18 @@ class DataImportService
 
         $this->import();
         $this->importLehrer();
+        $this->importJahrgaenge();
         $this->importKlassen();
         $this->importNoten();
+        $this->importFoerderschwerpunkte();
+        $this->importFaecher();
 
         return response()->json($this->status);
     }
 
     public function import(): void
     {
-        $this->importFoerderschwerpunkte();
-        $this->importJahrgaenge();
-        $this->importFaecher();
+
         $this->importFloskelgruppen();
         $this->importLerngruppen();
         $this->importTeilleistungsarten();
@@ -131,8 +133,9 @@ class DataImportService
             ->toArray();
 
         foreach($this->data['klassen'] ?? [] as $row) {
-            if (!array_key_exists('klassenlehrer', $row)) {
-                $this->setStatus($row, 'klassen', '"klassenlehrer" nicht vorhanden');
+            $klassen = Klasse::all();
+
+            if ($this->hasInvalidKey($row, 'klassenlehrer', 'klassen')) {
                 continue;
             }
 
@@ -141,8 +144,24 @@ class DataImportService
                 continue;
             }
 
-            if (Klasse::find($row['id'])) {
-                $this->setStatus($row, 'klassen', 'Klasse bereits existiert');
+            if ($this->hasInvalidId($row, 'klassen', $klassen)) {
+                continue;
+            }
+
+            if ($this->hasInvalidKuerzel($row, 'klassen', $klassen)) {
+                continue;
+            }
+
+            if ($this->hasInvalidSortierung($row, 'klassen', $klassen)) {
+                continue;
+            }
+
+            if ($this->hasInvalidKey($row, 'idJahrgang', 'klassen')) {
+                continue;
+
+            }
+            if (Jahrgang::where(['id' => $row['idJahrgang']])->doesntExist()) {
+                $this->setStatus($row, 'klassen', 'Jahrgang mit id ' . $row['idJahrgang'] . ' existiert nicht.');
                 continue;
             }
 
@@ -165,38 +184,13 @@ class DataImportService
     public function importNoten(): void
     {
         foreach($this->data['noten'] ?? [] as $row) {
-            if (!array_key_exists('id', $row)) {
-                $this->setStatus($row, 'noten', '"id" nicht vorhanden');
+            $noten = Note::all();
+
+            if ($this->hasInvalidId($row, 'noten', $noten)) {
                 continue;
             }
 
-            if (!is_int($row['id'])) {
-                $this->setStatus($row, 'noten', '"id" ist keine Zahl');
-                continue;
-            }
-
-            if ($row['id'] < 0) {
-                $this->setStatus($row, 'noten', '"id" ist negativ');
-                continue;
-            }
-
-            if (Note::find($row['id'])) {
-                $this->setStatus($row, 'noten', 'Note mit diesen "id" existiert bereits');
-                continue;
-            }
-
-            if (!array_key_exists('kuerzel', $row)) {
-                $this->setStatus($row, 'noten', '"keurzel" nicht vorhanden');
-                continue;
-            }
-
-            if (is_null($row['kuerzel'])) {
-                $this->setStatus($row, 'noten', '"keurzel" ist leer');
-                continue;
-            }
-
-            if (Note::where(['kuerzel' => $row['kuerzel']])->exists()) {
-                $this->setStatus($row, 'noten', 'Note mit diesen "kuerzel" existiert bereits');
+            if ($this->hasInvalidKuerzel($row, 'noten', $noten)) {
                 continue;
             }
 
@@ -218,48 +212,17 @@ class DataImportService
     public function importFoerderschwerpunkte(): void
     {
         foreach($this->data['foerderschwerpunkte'] ?? [] as $row) {
-            if (!array_key_exists('id', $row)) {
-                $this->setStatus($row, 'foerderschwerpunkte', '"id" nicht vorhanden');
+            $foerderschwerpunkte = Foerderschwerpunkt::all();
+
+            if ($this->hasInvalidId($row, 'foerderschwerpunkte', $foerderschwerpunkte)) {
                 continue;
             }
 
-            if (!is_int($row['id'])) {
-                $this->setStatus($row, 'foerderschwerpunkte', '"id" ist keine Zahl');
+            if ($this->hasInvalidKuerzel($row, 'foerderschwerpunkte', $foerderschwerpunkte)) {
                 continue;
             }
 
-            if ($row['id'] < 0) {
-                $this->setStatus($row, 'foerderschwerpunkte', '"id" ist negativ');
-                continue;
-            }
-
-            if (Foerderschwerpunkt::find($row['id'])) {
-                $this->setStatus($row, 'foerderschwerpunkte', 'Foerderschwerpunkt mit diesen "id" existiert bereits');
-                continue;
-            }
-
-            if (!array_key_exists('kuerzel', $row)) {
-                $this->setStatus($row, 'foerderschwerpunkte', '"keurzel" nicht vorhanden');
-                continue;
-            }
-
-            if (is_null($row['kuerzel'])) {
-                $this->setStatus($row, 'foerderschwerpunkte', '"keurzel" ist leer');
-                continue;
-            }
-
-            if (Foerderschwerpunkt::where(['kuerzel' => $row['kuerzel']])->exists()) {
-                $this->setStatus($row, 'foerderschwerpunkte', 'Note mit diesen "kuerzel" existiert bereits');
-                continue;
-            }
-
-            if (!array_key_exists('beschreibung', $row)) {
-                $this->setStatus($row, 'foerderschwerpunkte', '"beschreibung" nicht vorhanden');
-                continue;
-            }
-
-            if (is_null($row['beschreibung'])) {
-                $this->setStatus($row, 'foerderschwerpunkte', '"beschreibung" ist leer');
+            if ($this->hasInvalidKey($row, 'beschreibung', 'foerderschwerpunkte')) {
                 continue;
             }
 
@@ -269,7 +232,6 @@ class DataImportService
 
         $this->existingFoerderschwerpunkte = $this->getExistingFoerderschwerpunkte(); // TODO: To be removed
     }
-
 
     /**
      * Creates the Jahrgang model.
@@ -282,58 +244,29 @@ class DataImportService
     public function importJahrgaenge(): void
     {
         foreach($this->data['jahrgaenge'] ?? [] as $row) {
-            if (!array_key_exists('id', $row)) {
-                $this->setStatus($row, 'jahrgaenge', '"id" nicht vorhanden');
+            $jahrgaenge = Jahrgang::all();
+
+            if ($this->hasInvalidId($row, 'jahrgaenge', $jahrgaenge)) {
                 continue;
             }
 
-            if (!is_int($row['id'])) {
-                $this->setStatus($row, 'jahrgaenge', '"id" ist keine Zahl');
+            if ($this->hasInvalidKuerzel($row, 'jahrgaenge', $jahrgaenge)) {
                 continue;
             }
 
-            if ($row['id'] < 0) {
-                $this->setStatus($row, 'jahrgaenge', '"id" ist negativ');
+            if ($this->hasInvalidSortierung($row, 'jahrgaenge', $jahrgaenge)) {
                 continue;
             }
 
-            if (Jahrgang::find($row['id'])) {
-                $this->setStatus($row, 'jahrgaenge', 'Jahrgang mit diesen "id" existiert bereits');
+            if ($this->hasInvalidKey($row, 'kuerzelAnzeige', 'jahrgaenge')) {
                 continue;
             }
 
-            if (!array_key_exists('kuerzel', $row)) {
-                $this->setStatus($row, 'jahrgaenge', '"kuerzel" nicht vorhanden');
+            if ($this->hasInvalidKey($row, 'stufe', 'jahrgaenge')) {
                 continue;
             }
 
-            if (is_null($row['kuerzel'])) {
-                $this->setStatus($row, 'jahrgaenge', '"kuerzel" ist leer');
-                continue;
-            }
-
-            if (Jahrgang::where(['kuerzel' => $row['kuerzel']])->exists()) {
-                $this->setStatus($row, 'jahrgaenge', 'Jahrgang mit diesen "kuerzel" bereits existiert');
-                continue;
-            }
-
-            if (!array_key_exists('kuerzelAnzeige', $row)) {
-                $this->setStatus($row, 'jahrgaenge', '"kuerzelAnzeige" nicht vorhanden');
-                continue;
-            }
-
-            if (is_null($row['kuerzelAnzeige'])) {
-                $this->setStatus($row, 'jahrgaenge', '"kuerzelAnzeige" ist leer');
-                continue;
-            }
-
-            if (!array_key_exists('beschreibung', $row)) {
-                $this->setStatus($row, 'jahrgaenge', '"kuerzelAnzeige" nicht vorhanden');
-                continue;
-            }
-
-            if (is_null($row['beschreibung'])) {
-                $this->setStatus($row, 'jahrgaenge', '"beschreibung" ist leer');
+            if ($this->hasInvalidKey($row, 'beschreibung', 'jahrgaenge')) {
                 continue;
             }
 
@@ -342,36 +275,6 @@ class DataImportService
             if (substr($beschreibung, 0, 1) === " " || $beschreibung !== ltrim($beschreibung)) {
                 $row['beschreibung'] = $this->trimWhitespaces($row['beschreibung']);
                 $this->setStatus($row, 'jahrgaenge', 'Potentieles whitespace Problem in Beschreibung');
-            }
-
-            if (!array_key_exists('stufe', $row)) {
-                $this->setStatus($row, 'jahrgaenge', '"stufe" nicht vorhanden');
-                continue;
-            }
-
-            if (is_null($row['stufe'])) {
-                $this->setStatus($row, 'jahrgaenge', '"stufe" ist leer');
-                continue;
-            }
-
-            if (!array_key_exists('sortierung', $row)) {
-                $this->setStatus($row, 'jahrgaenge', '"sortierung" nicht vorhanden');
-                continue;
-            }
-
-            if (is_null($row['sortierung'])) {
-                $this->setStatus($row, 'jahrgaenge', '"sortierung" ist leer');
-                continue;
-            }
-
-            if (!is_int($row['sortierung'])) {
-                $this->setStatus($row, 'jahrgaenge', '"sortierung" ist keine Zahl');
-                continue;
-            }
-
-            if (Jahrgang::where(['sortierung' => $row['sortierung']])->exists()) {
-                $this->setStatus($row, 'jahrgaenge', 'Jahrgang mit diesen "sortierung" bereits existiert');
-                continue;
             }
 
             Jahrgang::create($row);
@@ -387,17 +290,28 @@ class DataImportService
      */
     public function importFaecher(): void
     {
-        if (is_null($this->faecher)) {
-            return;
+        foreach($this->data['faecher'] ?? [] as $row) {
+            $faecher = Fach::all();
+
+            if ($this->hasInvalidId($row, 'faecher', $faecher)) {
+                continue;
+            }
+
+            if ($this->hasInvalidKuerzel($row, 'faecher', $faecher)) {
+                continue;
+            }
+
+            if ($this->hasInvalidSortierung($row, 'faecher', $faecher)) {
+                continue;
+            }
+
+            if ($this->hasInvalidKey($row, 'istFremdsprache', 'faecher')) {
+                continue;
+            }
+
+            Fach::create($row);
+            $this->setStatus($row, 'faecher', 'Erfolgreich angelegt', 'success');
         }
-
-        $this->start('Fächer');
-
-        foreach($this->faecher as $row) {
-            Fach::firstOrCreate(['id' => $row['id']], $row);
-        }
-
-        $this->stop();
     }
 
     /**
@@ -409,12 +323,6 @@ class DataImportService
      */
     public function importFloskelgruppen(): void
     {
-        if (is_null($this->floskelgruppen)) {
-            return;
-        }
-
-        $this->start(text: 'Floskelgruppen mit Floskeln');
-
         foreach($this->floskelgruppen as $row) {
             $floskelgruppe = Floskelgruppe::firstOrCreate(
                 ['kuerzel' => $row['kuerzel']],
@@ -435,7 +343,6 @@ class DataImportService
             }
         }
 
-        $this->stop();
     }
 
     /**
@@ -817,5 +724,124 @@ class DataImportService
             ->orderBy('kuerzel')
             ->pluck('id', 'kuerzel')
             ->toArray();
+    }
+
+    /**
+     * Checks if given element has invalid id
+     *
+     * @param array $row
+     * @param string $model
+     * @param Collection $existing
+     * @return bool
+     */
+    private function hasInvalidId(array $row, string $context, Collection $existing): bool
+    {
+        if (!array_key_exists('id', $row)) {
+            $this->setStatus($row, $context, '"id" nicht vorhanden');
+            return true;
+        }
+
+        if (!is_int($row['id'])) {
+            $this->setStatus($row, $context, '"id" ist keine Zahl');
+            return true;
+        }
+
+        if ($row['id'] < 0) {
+            $this->setStatus($row, $context, '"id" ist negativ');
+            return true;
+        }
+
+        if ($existing->contains($row['id'])) {
+            $this->setStatus($row, $context, 'Ressource mit diesen "id" existiert bereits');
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Checks if given element has invalid kuerzel
+     *
+     * @param array $row
+     * @param string $model
+     * @param Collection $existing
+     * @return bool
+     */
+    private function hasInvalidKuerzel(array $row, string $context, Collection $existing): bool
+    {
+        if (!array_key_exists('kuerzel', $row)) {
+            $this->setStatus($row, $context, '"keurzel" nicht vorhanden');
+            return true;
+        }
+
+        if (is_null($row['kuerzel'])) {
+            $this->setStatus($row, $context, '"keurzel" ist leer');
+            return true;
+        }
+
+        if ($existing->filter(fn (mixed $item): bool => $item['kuerzel'] ==  $row['kuerzel'])->count() > 0) {
+            $this->setStatus($row, $context, 'Ressource mit diesen "kuerzel" existiert bereits');
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given element has invalid sortierung
+     *
+     * @param array $row
+     * @param string $model
+     * @param Collection $existing
+     * @return bool
+     */
+    private function hasInvalidSortierung(array $row, string $context, Collection $existing): bool
+    {
+
+        if (!array_key_exists('sortierung', $row)) {
+            $this->setStatus($row, $context, '"sortierung" nicht vorhanden');
+            return true;
+        }
+
+        if (is_null($row['sortierung'])) {
+            $this->setStatus($row, $context, '"sortierung" ist leer');
+            return true;
+        }
+
+        if (!is_int($row['sortierung'])) {
+            $this->setStatus($row, $context, '"sortierung" ist keine Zahl');
+            return true;
+        }
+
+        if ($existing->filter(fn (mixed $item): bool => $item['sortierung'] == $row['sortierung'])->count() > 0) {
+            $this->setStatus($row, $context, 'Ressource mit diesen "sortierung" bereits existiert');
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given element has invalid key
+     *
+     * @param array $row
+     * @param string $key
+     * @param string $context
+     * @return bool
+     */
+    private function hasInvalidKey(array $row, string $key, string $context): bool
+    {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($row, $context, "{$key} nicht vorhanden");
+            return true;
+        }
+
+        if (is_null($row[$key])) {
+            $this->setStatus($row, $context, "{$key} ist leer");
+            return true;
+        }
+
+        return false;
     }
 }

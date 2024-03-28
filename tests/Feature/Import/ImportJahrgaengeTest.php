@@ -11,6 +11,8 @@ class ImportJahrgaengeTest extends TestCase
 {
     use RefreshDatabase;
 
+    const TABLE = 'jahrgaenge';
+
     /**
      * It creates jahrgaenge
      *
@@ -33,8 +35,8 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 1)
-            ->assertDatabaseHas('jahrgaenge', [
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
                 'id' => 1,
                 'kuerzel' => 'Q2',
                 'kuerzelAnzeige' => 'Q2',
@@ -65,7 +67,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -90,7 +92,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -115,7 +117,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -149,11 +151,11 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 1)
-            ->assertDatabaseHas('jahrgaenge', [
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
                 'id' => 1,
                 'kuerzel' => 'Q2',
-            ])->assertDatabaseMissing('jahrgaenge', [
+            ])->assertDatabaseMissing(self::TABLE, [
                 'id' => 1,
                 'kuerzel' => 'Q3',
             ]);
@@ -180,7 +182,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -205,7 +207,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -234,10 +236,10 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 1)
-            ->assertDatabaseHas('jahrgaenge', [
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
                 'kuerzel' => 'Q2',
-            ])->assertDatabaseMissing('jahrgaenge', [
+            ])->assertDatabaseMissing(self::TABLE, [
                 'kuerzel' => 'Q3',
             ]);
     }
@@ -263,7 +265,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -288,7 +290,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -312,7 +314,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -337,7 +339,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -362,8 +364,8 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 1)
-            ->assertDatabaseHas('jahrgaenge', [
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
                 'id' => 1,
                 'kuerzel' => 'Q2',
                 'kuerzelAnzeige' => 'Q2',
@@ -394,7 +396,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -419,7 +421,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -443,7 +445,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -468,7 +470,7 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /**
@@ -498,8 +500,8 @@ class ImportJahrgaengeTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseCount('jahrgaenge', 1)
-            ->assertDatabaseMissing('jahrgaenge', [
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseMissing(self::TABLE, [
                 'id' => 2,
                 'sortierung' => 12
             ]);

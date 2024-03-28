@@ -11,6 +11,8 @@ class ImportLehrerTest extends TestCase
 {
     use RefreshDatabase;
 
+    const TABLE = 'users';
+
     /**
      * Creates new Lehrer
      *
@@ -33,14 +35,14 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'ext_id' => 155,
             'kuerzel' => 'ÖA',
             'nachname' => 'Ölschläger',
             'vorname' => 'Kevin',
             'geschlecht' => 'm',
             'email' => 'öa@svws-nrw.de'
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -64,9 +66,9 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseMissing('users', [
+        $this->assertDatabaseMissing(self::TABLE, [
             'eMailDienstlich' => ''
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -91,9 +93,9 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseMissing('users', [
+        $this->assertDatabaseMissing(self::TABLE, [
             'eMailDienstlich' => ''
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -118,9 +120,9 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseMissing('users', [
+        $this->assertDatabaseMissing(self::TABLE, [
             'eMailDienstlich' => 'incorrect#email'
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -146,11 +148,11 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'geschlecht' => User::FALLBACK_GENDER,
-        ])->assertDatabaseMissing('users', [
+        ])->assertDatabaseMissing(self::TABLE, [
             'geschlecht' => 'incorrect'
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -175,11 +177,11 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'geschlecht' => User::FALLBACK_GENDER,
-        ])->assertDatabaseMissing('users', [
+        ])->assertDatabaseMissing(self::TABLE, [
             'geschlecht' => ''
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -213,21 +215,21 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'ext_id' => 155,
             'kuerzel' => 'ÖA',
             'nachname' => 'Ölschläger',
             'vorname' => 'Kevin',
             'geschlecht' => 'm',
             'email' => 'öa@svws-nrw.de'
-        ])->assertDatabaseMissing('users', [
+        ])->assertDatabaseMissing(self::TABLE, [
             'ext_id' => 155,
             'kuerzel' => 'MM',
             'nachname' => 'Max',
             'vorname' => 'Mustermann',
             'geschlecht' => 'd',
             'email' => 'mm@svws-nrw.de'
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -257,11 +259,11 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'email' => 'öa@svws-nrw.de'
-        ])->assertDatabaseMissing('users', [
+        ])->assertDatabaseMissing(self::TABLE, [
             'email' => 'invalid@email.com'
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -290,11 +292,11 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'email' => 'öa@svws-nrw.de'
-        ])->assertDatabaseMissing('users', [
+        ])->assertDatabaseMissing(self::TABLE, [
             'email' => ''
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -324,11 +326,11 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'geschlecht' => 'd'
-        ])->assertDatabaseMissing('users', [
+        ])->assertDatabaseMissing(self::TABLE, [
             'geschlecht' => 'Q'
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
     /**
@@ -357,10 +359,10 @@ class ImportLehrerTest extends TestCase
 
         new DataImportService($data);
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas(self::TABLE, [
             'geschlecht' => 'd'
-        ])->assertDatabaseMissing('users', [
+        ])->assertDatabaseMissing(self::TABLE, [
             'geschlecht' => ''
-        ])->assertDatabaseCount('users', 1);
+        ])->assertDatabaseCount(self::TABLE, 1);
     }
 }
