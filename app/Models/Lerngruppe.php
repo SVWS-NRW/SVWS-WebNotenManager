@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereKursartKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Lerngruppe whereWochenstunden($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $lehrer
  * @mixin \Eloquent
  */
 class Lerngruppe extends Model

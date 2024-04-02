@@ -506,4 +506,34 @@ class ImportJahrgaengeTest extends TestCase
                 'sortierung' => 12
             ]);
     }
+
+    /**
+     * It returns when the "jahrgaenge" array is empty
+     *
+     * @return void
+     */
+    public function test_it_returns_when_the_jahrgaenge_array_is_missing(): void
+    {
+        $data = json_decode('{}', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It returns when the "jahrgaenge" array is empty
+     *
+     * @return void
+     */
+    public function test_it_returns_when_the_jahrgaenge_array_is_empty(): void
+    {
+        $data = json_decode('{
+            "jahrgaenge": []
+        }', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
 }

@@ -67,6 +67,12 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTwoFactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereVorname($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Klasse> $klassen
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lerngruppe> $lerngruppen
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
+ * @method static Builder|User administrator()
+ * @method static Builder|User lehrer()
  * @mixin \Eloquent
  */
 class User extends Authenticatable

@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereSchuelerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereThemaAbschlussarbeit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BKFach> $bkFaecher
  * @mixin \Eloquent
  */
 class BKAbschluss extends Model

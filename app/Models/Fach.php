@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereKuerzelAnzeige($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereSortierung($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Floskel> $floskeln
  * @mixin \Eloquent
  */
 class Fach extends Model

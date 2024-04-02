@@ -302,4 +302,34 @@ class ImportNotenTest extends TestCase
                 'text' => 'new_text',
             ]);
     }
+
+    /**
+     * It returns when the "noten" array is empty
+     *
+     * @return void
+     */
+    public function test_it_returns_when_the_noten_array_is_missing(): void
+    {
+        $data = json_decode('{}', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It returns when the "noten" array is empty
+     *
+     * @return void
+     */
+    public function test_it_returns_when_the_noten_array_is_empty(): void
+    {
+        $data = json_decode('{
+            "noten": []
+        }', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
 }

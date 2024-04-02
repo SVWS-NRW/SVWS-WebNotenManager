@@ -3,12 +3,11 @@
 namespace App\Services;
 
 use App\Models\{
-    Bemerkung, Fach, Floskelgruppe, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe, Note,
-    Schueler, Teilleistungsart, User,
+    Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe,
+    Note, Schueler, Teilleistungsart, User,
 };
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\{Collection, ModelNotFoundException};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Arr, Str};
 use Illuminate\Support\Facades\Validator;
@@ -25,67 +24,36 @@ class DataImportService
     private array $existingNoten = [];
     // TODO: TO be removed by karol
     private array $existingFoerderschwerpunkte = [];
-    // TODO: TO be removed by karol
-    private int $microtime;
 
-    public function __construct(
-        private array $data = [],
-        private array $lehrer = [],
-        private array $foerderschwerpunkte = [],
-        private array $klassen = [],
-        private array $noten = [],
-        private array $jahrgaenge = [],
-        private array $faecher = [],
-        private array $floskelgruppen = [],
-        private array $lerngruppen = [],
-        private array $teilleistungsarten = [],
-        private array $schueler = [],
-    ) {
-        $this->lehrer = $data['lehrer'] ?? [];
-        $this->foerderschwerpunkte = $data['foerderschwerpunkte'] ?? [];
-        $this->klassen = $data['klassen'] ?? [];
-        $this->noten = $data['noten'] ?? [];
-        $this->jahrgaenge = $data['jahrgaenge'] ?? [];
-        $this->faecher = $data['faecher'] ?? [];
-        $this->floskelgruppen = $data['floskelgruppen'] ?? [];
-        $this->lerngruppen = $data['lerngruppen'] ?? [];
-        $this->teilleistungsarten = $data['teilleistungsarten'] ?? [];
-        $this->schueler = $data['schueler'] ?? [];
-        $this->execute($data);
+    /**
+     * Class constructor
+     *
+     * @param array $data
+     */
+    public function __construct(private array $data = [])
+    {
+        $this->execute();
     }
 
-
-    public function execute(array $data): JsonResponse
+    /**
+     * Import execution
+     *
+     * @return JsonResponse
+     */
+    public function execute(): JsonResponse
     {
-        $this->lehrer = $data['lehrer'] ?? [];
-        $this->foerderschwerpunkte = $data['foerderschwerpunkte'] ?? [];
-        $this->klassen = $data['klassen'] ?? [];
-        $this->noten = $data['noten'] ?? [];
-        $this->jahrgaenge = $data['jahrgaenge'] ?? [];
-        $this->faecher = $data['faecher'] ?? [];
-        $this->floskelgruppen = $data['floskelgruppen'] ?? [];
-        $this->lerngruppen = $data['lerngruppen'] ?? [];
-        $this->teilleistungsarten = $data['teilleistungsarten'] ?? [];
-        $this->schueler = $data['schueler'] ?? [];
-
-        $this->import();
         $this->importLehrer();
         $this->importJahrgaenge();
         $this->importKlassen();
         $this->importNoten();
         $this->importFoerderschwerpunkte();
         $this->importFaecher();
-
-        return response()->json($this->status);
-    }
-
-    public function import(): void
-    {
-
         $this->importFloskelgruppen();
         $this->importLerngruppen();
-        $this->importTeilleistungsarten();
         $this->importSchueler();
+        $this->importBemerkungen();
+
+        return response()->json($this->status);
     }
 
     /**
@@ -96,7 +64,11 @@ class DataImportService
      */
     public function importLehrer(): void
     {
-        foreach($this->data['lehrer'] ?? [] as $row) {
+        if ($this->hasInvalidKey($this->data, 'lehrer', 'global')) {
+            return;
+        }
+
+        foreach($this->data['lehrer'] as $row) {
             // Remaps the email and falls back to null
             $email = $row['email'] = $row['eMailDienstlich'] ?? null;
 
@@ -126,13 +98,17 @@ class DataImportService
      */
     public function importKlassen(): void
     {
-        // Existing klassenlehrer
+        if ($this->hasInvalidKey($this->data, 'klassen', 'global')) {
+            return;
+        }
+
+        // Existing "Klassenlehrer"
         $klassenlehrer = fn (array $row): array => User::query()
             ->whereIn('ext_id', (array) $row['klassenlehrer'])
             ->pluck('ext_id')
             ->toArray();
 
-        foreach($this->data['klassen'] ?? [] as $row) {
+        foreach($this->data['klassen'] as $row) {
             $klassen = Klasse::all();
 
             if ($this->hasInvalidKey($row, 'klassenlehrer', 'klassen')) {
@@ -158,8 +134,9 @@ class DataImportService
 
             if ($this->hasInvalidKey($row, 'idJahrgang', 'klassen')) {
                 continue;
-
             }
+
+            // Check if the "Jahrgang" already exists in the database
             if (Jahrgang::where(['id' => $row['idJahrgang']])->doesntExist()) {
                 $this->setStatus($row, 'klassen', 'Jahrgang mit id ' . $row['idJahrgang'] . ' existiert nicht.');
                 continue;
@@ -183,7 +160,11 @@ class DataImportService
      */
     public function importNoten(): void
     {
-        foreach($this->data['noten'] ?? [] as $row) {
+        if ($this->hasInvalidKey($this->data, 'noten', 'global')) {
+            return;
+        }
+
+        foreach($this->data['noten'] as $row) {
             $noten = Note::all();
 
             if ($this->hasInvalidId($row, 'noten', $noten)) {
@@ -211,7 +192,11 @@ class DataImportService
      */
     public function importFoerderschwerpunkte(): void
     {
-        foreach($this->data['foerderschwerpunkte'] ?? [] as $row) {
+        if ($this->hasInvalidKey($this->data, 'foerderschwerpunkte', 'global')) {
+            return;
+        }
+
+        foreach($this->data['foerderschwerpunkte'] as $row) {
             $foerderschwerpunkte = Foerderschwerpunkt::all();
 
             if ($this->hasInvalidId($row, 'foerderschwerpunkte', $foerderschwerpunkte)) {
@@ -243,7 +228,11 @@ class DataImportService
      */
     public function importJahrgaenge(): void
     {
-        foreach($this->data['jahrgaenge'] ?? [] as $row) {
+        if ($this->hasInvalidKey($this->data, 'jahrgaenge', 'global')) {
+            return;
+        }
+
+        foreach($this->data['jahrgaenge'] as $row) {
             $jahrgaenge = Jahrgang::all();
 
             if ($this->hasInvalidId($row, 'jahrgaenge', $jahrgaenge)) {
@@ -290,7 +279,11 @@ class DataImportService
      */
     public function importFaecher(): void
     {
-        foreach($this->data['faecher'] ?? [] as $row) {
+        if ($this->hasInvalidKey($this->data, 'faecher', 'global')) {
+            return;
+        }
+
+        foreach($this->data['faecher'] as $row) {
             $faecher = Fach::all();
 
             if ($this->hasInvalidId($row, 'faecher', $faecher)) {
@@ -317,32 +310,94 @@ class DataImportService
     /**
      * Creates the Floskelgruppe model.
      * The model will not be updated with future requests.
-     * Related floskel will be created only if the Floskelgruppe model was recently created.
      *
      * @return void
      */
     public function importFloskelgruppen(): void
     {
-        foreach($this->floskelgruppen as $row) {
-            $floskelgruppe = Floskelgruppe::firstOrCreate(
-                ['kuerzel' => $row['kuerzel']],
-                Arr::except($row, ['floskeln'])
-            );
+        if ($this->hasInvalidKey($this->data, 'floskelgruppen', 'global')) {
+            return;
+        }
 
-            if ($floskelgruppe->wasRecentlyCreated === false) {
+        foreach($this->data['floskelgruppen'] as $row) {
+            $floskelgruppen = Floskelgruppe::all();
+
+            if ($this->hasInvalidKuerzel($row, 'floskelgruppe', $floskelgruppen)) {
                 continue;
             }
 
-            foreach ($row['floskeln'] as $floskel) {
-                $floskel['fach_id'] = $floskel['fachID'];
-                $floskel['jahrgang_id'] = $floskel['jahrgangID'];
-
-                unset($floskel['fachID'], $floskel['jahrgangID']);
-
-                $floskelgruppe->floskeln()->create($floskel);
+            if ($this->hasInvalidKey($row, 'bezeichnung', 'floskelgruppe')) {
+                continue;
             }
-        }
 
+            if ($this->hasInvalidKey($row, 'hauptgruppe', 'floskelgruppe')) {
+                continue;
+            }
+
+            $floskelgruppe = Floskelgruppe::create(Arr::except($row, ['floskeln']));
+
+            if ($this->hasInvalidKey($row, 'floskeln', 'floskelgruppe')) {
+                continue;
+            }
+
+            if (count($row['floskeln']) <= 0) {
+                $this->setStatus($row, 'floskelgruppen', 'Keine Floskeln vorhanden.');
+                continue;
+            }
+
+            $this->setStatus($row, 'floskelgruppe', 'Erfolgreich angelegt', 'success');
+
+            $this->importFloskeln($floskelgruppe, $row['floskeln']);
+        }
+    }
+
+    /**
+     * Import floskeln into floskelgruppen
+     *
+     * @param Floskelgruppe $floskelgruppe
+     * @param array $floskeln
+     * @return void
+     */
+    private function importFloskeln(Floskelgruppe $floskelgruppe, array $floskeln): void
+    {
+        foreach($floskeln as $row) {
+            $floskeln = Floskel::all();
+
+            if ($this->hasInvalidKuerzel($row, 'floskel', $floskeln)) {
+                continue;
+            }
+
+            if ($this->hasInvalidKey($row, 'text', 'floskel')) {
+                continue;
+            }
+
+            if (!array_key_exists('fachID', $row)) {
+                $this->setStatus($row, 'floskel', "'jahrgangID' nicht vorhanden");
+                continue;
+            }
+
+            if (!is_null($row['fachID']) && Fach::where(['id' => $row['fachID']])->doesntExist()) {
+                $this->setStatus($row, 'floskel', 'Fach mit id ' . $row['fachID'] . ' existiert nicht.');
+                continue;
+            }
+
+            if (!array_key_exists('jahrgangID', $row)) {
+                $this->setStatus($row, 'floskel', "'jahrgangID' nicht vorhanden");
+                continue;
+            }
+
+            if (!is_null($row['jahrgangID']) && Jahrgang::where(['id' => $row['jahrgangID']])->doesntExist()) {
+                $this->setStatus($row, 'floskel', 'Jahrgang mit id ' . $row['jahrgangID'] . ' existiert nicht.');
+                continue;
+            }
+
+            $row['fach_id'] = $row['fachID'];
+            $row['jahrgang_id'] = $row['jahrgangID'];
+            unset($row['fachID'], $row['jahrgangID']);
+
+            $floskelgruppe->floskeln()->create($row);
+            $this->setStatus($row, 'floskel', 'Erfolgreich angelegt', 'success');
+        }
     }
 
     /**
@@ -355,50 +410,74 @@ class DataImportService
      */
     public function importLerngruppen(): void
     {
-        if (is_null($this->lerngruppen)) {
+        if ($this->hasInvalidKey($this->data, 'lerngruppen', 'global')) {
             return;
         }
 
-        $this->start('Lerngruppen');
+        foreach ($this->data['lerngruppen'] as $row) {
+            $lerngruppen = Lerngruppe::all();
 
-        foreach ($this->lerngruppen as $row) {
+            // Check if following fields are present and properly formatted.
+            if ($this->hasInvalidId($row, 'lerngruppe', $lerngruppen)) {
+                continue;
+            }
+            if ($this->hasInvalidKey($row, 'bezeichnung', 'lerngruppe')) {
+                continue;
+            }
+            if ($this->hasInvalidInt($row, 'wochenstunden', 'lerngruppe')) {
+                continue;
+            }
+
+            // Check if "fachID" is present and properly formatted.
+            if ($this->hasInvalidKey($row, 'fachID', 'lerngruppe')) {
+                continue;
+            }
+            // Check if corresponding "Fach exists"
+            if (Fach::where(['id' => $row['fachID']])->doesntExist()) {
+                $this->setStatus($row, 'lerngruppe', 'Fach mit id ' . $row['fachID'] . ' existiert nicht.');
+                continue;
+            }
+            // Remap the keys and unset unused valued
             $row['fach_id'] = $row['fachID'];
+            unset($row['fachID']);
 
+            // Check if "kID" is present and properly formatted.
+            if ($this->hasInvalidInt($row, 'kID', 'lerngruppe')) {
+                continue;
+            }
+            // Check if "kursartID" is set to NULL which indicates this "Lerngruppe" is assigned to a class.
+            // Therefor we dont need the kursartID anymore.
             if (is_null($row['kursartID'])) {
                 $row['klasse_id'] = $row['kID'];
                 unset($row['kursartID']);
+
+                // Check if "Klasse" exists
+                if (Klasse::where(['id' => $row['kID']])->doesntExist()) {
+                    $this->setStatus($row, 'lerngruppe', 'Klasse mit id ' . $row['kID'] . ' existiert nicht.');
+                    continue;
+                }
             }
 
-            unset($row['fachID']);
-
-            $lerngruppe = Lerngruppe::firstOrCreate(['id' => $row['id']], Arr::except($row, ['lehrerID']));
-
-            if ($lerngruppe->wasRecentlyCreated === true) {
-                $lerngruppe->lehrer()->attach($row['lehrerID']);
+            // Check if "lehrerID" is present and is properly formatted
+            if ($this->hasInvalidKey($row, 'lehrerID', 'lerngruppe')) {
+                continue;
             }
+            // Filter out non integer values
+            $lehrerIds = array_filter($row['lehrerID'], fn (int|string|null $value): bool => is_int($value));
+            // Check if there are any IDs in the element
+            if (0 === count($lehrerIds)) {
+                $this->setStatus($row, 'lerngruppen', '"lehrerID" ist leer.');
+                continue;
+            }
+            // Check if all users with corresponding lehrerID exists. If not, log and continue.
+            if (User::whereIn('ext_id', $lehrerIds)->count() !== count($lehrerIds)) {
+                $this->setStatus($row, 'lerngruppen', 'Nicht alle Lehrer existieren bereits.');
+                continue;
+            }
+
+            $lerngruppe = Lerngruppe::create(Arr::except($row, ['lehrerID']));
+            $lerngruppe->lehrer()->attach($row['lehrerID']);
         }
-
-        $this->stop();
-    }
-
-    /**
-     * Creates the Teilleistungen model.
-     *
-     * @return void
-     */
-    public function importTeilleistungsarten(): void
-    {
-        if (is_null($this->teilleistungsarten)) {
-            return;
-        }
-
-        $this->start('Teilleistungsarten');
-
-        foreach ($this->teilleistungsarten as $row) {
-            Teilleistungsart::updateOrCreate(['id' => $row['id']], $row);
-        }
-
-        $this->stop();
     }
 
     /**
@@ -410,63 +489,138 @@ class DataImportService
      */
     public function importSchueler(): void
     {
-        if (is_null($this->schueler)) {
+        if ($this->hasInvalidKey($this->data, 'schueler', 'global')) {
             return;
         }
 
-        $this->start('Schüler mit Leistungsdaten und Lernabschnitte');
+        foreach ($this->data['schueler'] as $row) {
+            $schueler = Schueler::all();
 
-        foreach ($this->schueler as $row) {
+            // Check if following fields are present and properly formatted.
+            if ($this->hasInvalidId($row, 'schueler', $schueler)) {
+                continue;
+            }
+
+            // Check if "jahrgangID" is present and properly formatted.
+            if ($this->hasInvalidInt($row, 'jahrgangID', 'schueler')) {
+                continue;
+            }
+            // Check if corresponding "Jahrgang" exists
+            if (Jahrgang::where(['id' => $row['jahrgangID']])->doesntExist()) {
+                $this->setStatus($row, 'schueler', 'Jahrgang mit id ' . $row['jahrgangID'] . ' existiert nicht.');
+                continue;
+            }
+            // Remap the keys and unset unused valued
             $row['jahrgang_id'] = $row['jahrgangID'];
-            $row['klasse_id'] = $row['klasseID'];
-            $row['geschlecht'] = $this->gender($row, Schueler::GENDERS);
+            unset($row['jahrgangID']);
 
-            unset($row['klasseID'], $row['jahrgangID']);
+            // Check if "klasseID" is present and properly formatted.
+            if ($this->hasInvalidInt($row, 'klasseID', 'schueler')) {
+                continue;
+            }
+            // Check if corresponding "Klasse" exists
+            if (Klasse::where(['id' => $row['klasseID']])->doesntExist()) {
+                $this->setStatus($row, 'schueler', 'Klasse mit id ' . $row['klasseID'] . ' existiert nicht.');
+                continue;
+            }
+            // Remap the keys and unset unused valued
+            $row['klasse_id'] = $row['klasseID'];
+            unset($row['klasseID']);
+
+            // Check if "geschlecht" is present and is properly formatted
+            if ($this->hasInvalidKey($row, 'geschlecht', 'lerngruppe')) {
+                continue;
+            }
+            $row['geschlecht'] = $this->gender($row, Schueler::GENDERS);
 
             // TODO: Temporary unset. TO BE CLEARED
             unset($row['sprachenfolge'], $row['zp10'], $row['bkabschluss']);
 
-            $schueler = Schueler::firstOrCreate(
-                ['id' => $row['id']],
+            $schueler = Schueler::create(
                 Arr::except($row, ['bemerkungen', 'lernabschnitt', 'leistungsdaten'])
             );
 
-            $this->importBemerkungen($schueler, $row['bemerkungen']);
-            $this->importLernabschnitte($schueler, $row['lernabschnitt']);
-            $this->importLeistungsdaten($schueler, $row['leistungsdaten']);
-
-
-
-            //
-
-            //	TODO: Still missing in json
-            //			$this->importSprachenfolge($schueler, $row);
-            //			$this->importZp10($schueler, $row);
-            //			$this->importBkAbschluss($schueler, $row);
+            // $this->importBemerkungen($schueler, $row['bemerkungen']);
+            //$this->importLernabschnitte($schueler, $row['lernabschnitt']);
+            //$this->importLeistungsdaten($schueler, $row['leistungsdaten']);
         }
-
-        $this->stop();
     }
 
-    private function importBemerkungen(Schueler $schueler, array $data): void
+    /**
+     * Import "Schueler" "Bemerkungen"
+     *
+     * @param Schueler $schueler
+     * @param array $data
+     * @return void
+     */
+    public function importBemerkungen(): void
     {
-        $bemerkung = Bemerkung::firstOrNew(['schueler_id' => $schueler->id]);
+        if ($this->hasInvalidKey($this->data, 'schueler', 'global')) {
+            return;
+        }
 
-        $bemerkung->LELS = $data['LELS'];
-        $bemerkung->schulformEmpf = $data['schulformEmpf'];
-        $bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
+        foreach ($this->data['schueler'] as $row) {
+            // Check if "Schueler" exists
+            $schueler = Schueler::find($row['id']);
+            if (!$schueler) {
+                $this->setStatus($row, 'bemerkungen', 'Schuler mit id ' . $row['id'] . ' existiert nicht.');
+                continue;
 
-        $this->updateWhenRecent($data, $bemerkung, 'ASV', 'tsASV');
-        $this->updateWhenRecent($data, $bemerkung, 'AUE', 'tsAUE');
-        $this->updateWhenRecent($data, $bemerkung, 'ZB', 'tsZB');
-        $this->updateWhenRecent(
-            $data,
-            $bemerkung,
-            'individuelleVersetzungsbemerkungen',
-            'tsIndividuelleVersetzungsbemerkungen'
-        );
+            }
+            // Check if "Bemerkungen" are present and formatted
+            if ($this->hasInvalidKey($row, 'bemerkungen', 'bemerkungen')) {
+                continue;
+            }
 
-        $bemerkung->save();
+            // Check if "Bemerkung" already exists. If not, create a new one.
+            $bemerkung = Bemerkung::firstOrNew(['schueler_id' => $schueler->id]);
+
+            $data = $row['bemerkungen'];
+            $bemerkung->LELS = $data['LELS'];
+            $bemerkung->schulformEmpf = $data['schulformEmpf'];
+            $bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
+
+            // Update the following columns only if the value is present and timestamp is latter.
+            if ($this->hasMissingKey($data, 'ASV', 'bemerkungen')) {
+                continue;
+            }
+            if ($this->hasInvalidKey($data, 'tsASV', 'bemerkungen')) {
+                continue;
+            }
+            $this->updateWhenRecent($data, $bemerkung, 'ASV', 'tsASV');
+
+            if ($this->hasMissingKey($data, 'AUE', 'bemerkungen')) {
+                continue;
+            }
+            if ($this->hasInvalidKey($data, 'tsAUE', 'bemerkungen')) {
+                continue;
+            }
+            $this->updateWhenRecent($data, $bemerkung, 'AUE', 'tsAUE');
+
+            if ($this->hasMissingKey($data, 'ZB', 'bemerkungen')) {
+                continue;
+            }
+            if ($this->hasInvalidKey($data, 'tsZB', 'bemerkungen')) {
+                continue;
+            }
+            $this->updateWhenRecent($data, $bemerkung, 'ZB', 'tsZB');
+
+            if ($this->hasMissingKey($data, 'individuelleVersetzungsbemerkungen', 'bemerkungen')) {
+                continue;
+            }
+            if ($this->hasInvalidKey($data, 'tsIndividuelleVersetzungsbemerkungen', 'bemerkungen')) {
+                continue;
+            }
+            $this->updateWhenRecent(
+                $data,
+                $bemerkung,
+                'individuelleVersetzungsbemerkungen',
+                'tsIndividuelleVersetzungsbemerkungen'
+            );
+
+            $bemerkung->save();
+            $this->setStatus($row, 'bemerkung', 'Erfolgreich gespeichert', 'success');
+        }
     }
 
     /**
@@ -605,30 +759,14 @@ class DataImportService
         if ($timestamp->gt($model->$tsColumn)) {
             $model->$column = $value ?? $data[$column];
             $model->$tsColumn = $timestamp->format('Y-m-d H:i:s.u');
+
+            $this->setStatus(
+                $data,
+                'timestamp',
+                'Datensatz wurde aktualisiert da es einen neuren Timestamp hat',
+                'success',
+            );
         }
-    }
-
-    /**
-     * Start timer
-     *
-     * @param string $text
-     * @return void
-     */
-    private function start(string $text): void
-    {
-        $this->microtime = microtime(true);
-        //echo "- $text: ";
-    }
-
-    /**
-     * Stop timer
-     *
-     * @return void
-     */
-    private function stop(): void
-    {
-        $time = round(microtime(true) - $this->microtime, 2);
-        //echo "done in {$time}s." . (app()->runningInConsole() ? "\r\n" : "<br>");
     }
 
     /**
@@ -823,6 +961,24 @@ class DataImportService
     }
 
     /**
+     * Checks if given element has a key mising
+     *
+     * @param array $row
+     * @param string $key
+     * @param string $context
+     * @return bool
+     */
+    private function hasMissingKey(array $row, string $key, string $context): bool
+    {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($row, $context, "{$key} nicht vorhanden");
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if given element has invalid key
      *
      * @param array $row
@@ -839,6 +995,40 @@ class DataImportService
 
         if (is_null($row[$key])) {
             $this->setStatus($row, $context, "{$key} ist leer");
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given element has invalid integer
+     *
+     * @param array $row
+     * @param string $key
+     * @param string $context
+     * @return bool
+     */
+    private function hasInvalidInt(array $row, string $key, string $context): bool
+    {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($row, $context, "{$key} nicht vorhanden");
+            return true;
+        }
+
+        if (is_null($row[$key])) {
+            $this->setStatus($row, $context, "{$key} ist leer");
+            return true;
+        }
+
+
+        if (!is_int($row[$key])) {
+            $this->setStatus($row, $context, "{$key} kein Zahl");
+            return true;
+        }
+
+        if (0 > $row[$key]) {
+            $this->setStatus($row, $context, "{$key} ist negativ");
             return true;
         }
 

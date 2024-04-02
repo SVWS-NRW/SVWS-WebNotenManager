@@ -365,4 +365,34 @@ class ImportLehrerTest extends TestCase
             'geschlecht' => ''
         ])->assertDatabaseCount(self::TABLE, 1);
     }
+
+    /**
+     * It returns when the lehrer array is empty
+     *
+     * @return void
+     */
+    public function test_it_returns_when_the_lehrer_array_is_missing(): void
+    {
+        $data = json_decode('{}', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It returns when the lehrer array is empty
+     *
+     * @return void
+     */
+    public function test_it_returns_when_the_lehrer_array_is_empty(): void
+    {
+        $data = json_decode('{
+            "lehrer": []
+        }', true);
+
+        new DataImportService($data);
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
 }

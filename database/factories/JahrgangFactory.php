@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Daten;
 use App\Models\Jahrgang;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -32,7 +31,7 @@ class JahrgangFactory extends Factory
             'kuerzelAnzeige' => $this->faker->word(),
             'beschreibung' => $this->faker->catchPhrase(),
             'stufe' => $this->faker->word(),
-			'sortierung' => rand(min: 1, max: 15)
+            'sortierung' => rand(min: 1, max: 15)
         ];
     }
 }

@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereHauptgruppe($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Floskelgruppe whereKuerzel($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Floskel> $floskeln
  * @mixin \Eloquent
  */
 class Floskelgruppe extends Model

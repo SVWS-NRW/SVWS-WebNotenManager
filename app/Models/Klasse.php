@@ -50,6 +50,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereKuerzelAnzeige($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereSortierung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Klasse whereToggleableFehlstunden($value)
+ * @property-read Collection<int, \App\Models\User> $klassenlehrer
+ * @property-read Collection<int, \App\Models\Lerngruppe> $lerngruppen
  * @mixin \Eloquent
  */
 class Klasse extends Model

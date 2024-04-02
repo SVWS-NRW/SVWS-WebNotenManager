@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereSortierung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistungsart whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Teilleistung> $teilleistungen
  * @mixin \Eloquent
  */
 class Teilleistungsart extends Model

@@ -54,11 +54,11 @@ class Bemerkung extends Model
     /*
      * Define a list of allowed bemerkungen
      *
-     * @return string[]
+     * @return array<int, string> ALLOWED_BEMERKUNGEN
      */
-    const ALLOWED_BEMERKUNGEN = [
-		'ASV', 'AUE', 'ZB',
-	];
+    public const ALLOWED_BEMERKUNGEN = [
+        'ASV', 'AUE', 'ZB',
+    ];
 
     /**
      * Specify the database table name
@@ -70,11 +70,23 @@ class Bemerkung extends Model
     /**
      * Define the fillable attributes for mass assignment
      *
-     * @var string[]
+     * @var array<int, string> $fillable
      */
     protected $fillable = [
         'schueler_id', 'ASV', 'tsASV', 'AUE', 'tsAUE', 'ZB', 'tsZB', 'LELS', 'schulformEmpf',
         'individuelleVersetzungsbemerkungen', 'tsIndividuelleVersetzungsbemerkungen', 'foerderbemerkungen',
+    ];
+
+    /**
+     * Casts to types
+     *
+     * @var array<string, string> $casts
+     */
+    protected $casts = [
+        'tsASV' => 'datetime',
+        'tsAUE' => 'datetime',
+        'tsZB' => 'datetime',
+        'tsIndividuelleVersetzungsbemerkungen' => 'datetime',
     ];
 
     /**

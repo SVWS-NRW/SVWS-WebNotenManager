@@ -60,6 +60,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsIstGemahnt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereTsNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Leistung whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Teilleistung> $teilleistungen
  * @mixin \Eloquent
  */
 class Leistung extends Model

@@ -46,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereKlasseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereNachname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Schueler whereVorname($value)
+ * @property-read Collection<int, \App\Models\Leistung> $leistungen
+ * @property-read Collection<int, \App\Models\Sprachenfolge> $sprachenfolgen
  * @mixin \Eloquent
  */
 class Schueler extends Model
