@@ -1,6 +1,6 @@
 <template>
     <strong  :class="{ 'low-score' : !valid() }">
-        <span v-if="props.disabled">
+        <span style="padding: 0px 0.7em; font-weight: bold;" v-if="props.disabled">
             {{ note }}
         </span>
         <SvwsUiTextInput

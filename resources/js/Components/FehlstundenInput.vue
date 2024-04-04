@@ -1,5 +1,5 @@
 <template>
-    <span v-if="props.disabled">
+    <span style="padding: 0px 0.7em;" v-if="props.disabled">
         {{ model }}
     </span>
 
