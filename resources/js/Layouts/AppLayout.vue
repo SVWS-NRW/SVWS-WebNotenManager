@@ -103,6 +103,7 @@
     const logout = (): void => Inertia.post(route('logout'));
     const activePage = (routeName: string): boolean => route().current(routeName);
     const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ');
+    console.log(document.cookie);
 </script>
 
 
