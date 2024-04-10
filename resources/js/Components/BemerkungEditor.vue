@@ -27,8 +27,7 @@
 <script setup lang="ts">
     import { computed, onMounted, Ref, ref, watch } from 'vue';
     import axios, { AxiosError, AxiosResponse } from 'axios';
-    import { Floskel } from '@/Interfaces/Floskel';
-    import { Schueler } from '@/Interfaces/Schueler';
+    import { Schueler, Floskel } from '@/Interfaces/Interface';
     import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
     import {
         SvwsUiTextareaInput, SvwsUiTextInput, SvwsUiButton, SvwsUiTable, DataTableColumn, SvwsUiContentCard

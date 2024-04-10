@@ -51,7 +51,7 @@
     import { Errors, Inertia } from '@inertiajs/inertia';
     import { reactive } from 'vue';
     import AuthLayout from '../Layouts/AuthLayout.vue';
-    import { TwoFA } from '@/Interfaces/FormData';
+    import { TwoFA } from '@/Interfaces/Interface';
 
     let data: TwoFA= reactive({
         form: {

@@ -34,7 +34,7 @@
 <script setup lang="ts">
     import AuthLayout from '../Layouts/AuthLayout.vue';
     import { Head } from '@inertiajs/inertia-vue3';
-    import { Settings } from '@/Interfaces/Settings';
+    import { Settings } from '@/Interfaces/Interface';
     import { PropType } from 'vue';
 
     let props = defineProps({

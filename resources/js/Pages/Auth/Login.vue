@@ -70,7 +70,7 @@
     import axios, { AxiosError } from 'axios';
     import { Inertia } from '@inertiajs/inertia';
     import { PropType, reactive } from 'vue';
-    import { Settings } from '@/Interfaces/Settings'
+    import { Settings } from '@/Interfaces/Interface'
     import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { Head } from '@inertiajs/inertia-vue3';
     import { LoginFormData as Login } from '../../Interfaces/FormData';

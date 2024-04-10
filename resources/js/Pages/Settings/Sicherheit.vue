@@ -85,7 +85,7 @@
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
     import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiSelect } from '@svws-nrw/svws-ui';
-    import { MailSendCredentialsFormData as MailSendCredentials } from '../../Interfaces/FormData';
+    import { MailSendCredentialsFormData as MailSendCredentials } from '../../Interfaces/Interface';
 
     let props = defineProps({
         auth: Object,

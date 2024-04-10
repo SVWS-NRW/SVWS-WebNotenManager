@@ -77,7 +77,7 @@
     import { ref, useSlots } from 'vue';
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import { Auth } from '@/Interfaces/Auth'
+    import { Auth } from '@/Interfaces/Interface'
     import Toast from '@/Components/Toast.vue';
     import { SvwsUiAppLayout, SvwsUiMenu, SvwsUiMenuHeader, SvwsUiMenuItem } from '@svws-nrw/svws-ui';
 

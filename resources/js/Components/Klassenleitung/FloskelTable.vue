@@ -18,9 +18,7 @@
 <script setup lang="ts">// TODO: TBR
     import {computed, reactive} from 'vue';
 
-    import { Floskel } from '@/Interfaces/Floskel';
-    import { Floskelgruppe } from '@/Interfaces/Floskelgruppe';
-    import { Column } from '@/Interfaces/Column';
+    import { Floskel, Floskelgruppe, Column } from '@/Interfaces/Interface';
 
     const emit = defineEmits(['added']);
 

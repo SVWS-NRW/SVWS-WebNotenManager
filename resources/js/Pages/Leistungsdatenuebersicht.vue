@@ -99,7 +99,7 @@
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
     import { handleExport } from '@/Helpers/exportHelper';
-    import { Auth } from '@/Interfaces/Auth';
+    import { Auth } from '@/Interfaces/Interface';
 
     let props = defineProps<{
         auth: Auth
