@@ -13,7 +13,7 @@
     import { Leistung } from '@/Interfaces/Leistung';
     import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
     import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
-    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+    import { SvwsUiCheckbox } from '@svws-nrw/svws-ui';
     import { computed, Ref, ref } from 'vue';
     
 

@@ -33,7 +33,7 @@
     // TODO: TBR
     // TODO: Check if this file is still being used (it seems it isn't)
 
-    import { ref, watch, computed, reactive, onMounted } from 'vue';
+    import { ref, computed, reactive, onMounted } from 'vue';
     import { useStore } from '../store'
     import axios from 'axios';
     import MahnungIndicator from "./MahnungIndicator.vue";

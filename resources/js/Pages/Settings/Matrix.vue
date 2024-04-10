@@ -397,7 +397,7 @@
 
 
 <script setup lang="ts">
-    import { computed, ref, Ref, onBeforeMount, watch } from 'vue';
+    import { ref, Ref, onBeforeMount, watch } from 'vue';
     import axios, { AxiosResponse } from 'axios';
     import AppLayout from '@/Layouts/AppLayout.vue';
     import SettingsMenu from '@/Components/SettingsMenu.vue';

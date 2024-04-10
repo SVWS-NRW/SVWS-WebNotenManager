@@ -20,12 +20,9 @@
 
 
 <script setup lang="ts">
-    import { watch, ref, Ref, VNodeRef, onMounted } from 'vue';
-    import axios, { AxiosPromise } from 'axios';
+    import { watch, ref, Ref } from 'vue';
     import { Leistung } from '@/Interfaces/Interface';
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui';
-    //TODO: remove if finally unused
-    import { CellRef, setCellRefs, navigateTable, selectItem } from '../Helpers/tableNavigationHelper'
 
     const props = defineProps<{
         leistung: Leistung,

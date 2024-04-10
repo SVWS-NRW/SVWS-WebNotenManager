@@ -16,7 +16,6 @@
 <script setup lang="ts">
     import { Schueler } from '@/Interfaces/Schueler';
     import { Leistung } from '@/Interfaces/Leistung';
-    import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
     import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
 
     interface EmitsOptions {

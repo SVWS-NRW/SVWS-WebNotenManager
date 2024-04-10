@@ -37,7 +37,7 @@
 
 <script setup lang="ts">// TODO: TBR
     import {computed, reactive, watch} from "vue";
-    import axios, { AxiosPromise, AxiosResponse } from "axios";
+    import axios from "axios";
     import { Column } from '@/Interfaces/Column'
     import { Schueler } from '@/Interfaces/Schueler'
     import { Floskelgruppe } from '@/Interfaces/Floskelgruppe'

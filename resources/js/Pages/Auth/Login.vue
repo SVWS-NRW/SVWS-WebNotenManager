@@ -67,11 +67,11 @@
 
 <script setup lang="ts">
     import AuthLayout from '../../Layouts/AuthLayout.vue';
-    import axios, { AxiosError, AxiosResponse } from 'axios';
+    import axios, { AxiosError } from 'axios';
     import { Inertia } from '@inertiajs/inertia';
     import { PropType, reactive } from 'vue';
     import { Settings } from '@/Interfaces/Settings'
-    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { Head } from '@inertiajs/inertia-vue3';
     import { LoginFormData as Login } from '../../Interfaces/FormData';
 
