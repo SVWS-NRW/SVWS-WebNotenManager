@@ -51,7 +51,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -109,7 +109,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $format = 'Y-m-d H:i:s.v';
         $bemerkung = Bemerkung::first();
@@ -167,7 +167,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -208,7 +208,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -248,7 +248,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -289,7 +289,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -329,7 +329,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -370,7 +370,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -410,7 +410,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -451,7 +451,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -490,7 +490,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -529,7 +529,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -568,7 +568,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -607,7 +607,7 @@ class ImportBemerkungenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }

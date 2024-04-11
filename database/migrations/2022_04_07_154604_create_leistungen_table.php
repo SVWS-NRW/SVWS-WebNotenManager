@@ -1,8 +1,6 @@
 <?php
 
-use App\Models\Lerngruppe;
-use App\Models\Note;
-use App\Models\Schueler;
+use App\Models\{Lerngruppe, Note, Schueler};
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

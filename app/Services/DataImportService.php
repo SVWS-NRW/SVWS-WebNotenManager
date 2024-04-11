@@ -4,14 +4,13 @@ namespace App\Services;
 
 use App\Models\{
     Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe,
-    Note, Schueler, Teilleistungsart, User,
+    Note, Schueler, User,
 };
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\{Collection, ModelNotFoundException};
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Arr, Str};
 use Illuminate\Support\Facades\Validator;
-use Schema;
 
 class DataImportService
 {
@@ -31,16 +30,14 @@ class DataImportService
      * @param array $data
      */
     public function __construct(private array $data = [])
-    {
-        $this->execute();
-    }
+    {}
 
     /**
      * Import execution
      *
      * @return JsonResponse
      */
-    public function execute(): JsonResponse
+    public function execute(): static
     {
         $this->importLehrer();
         $this->importJahrgaenge();
@@ -48,11 +45,22 @@ class DataImportService
         $this->importNoten();
         $this->importFoerderschwerpunkte();
         $this->importFaecher();
-        $this->importFloskelgruppen();
         $this->importLerngruppen();
         $this->importSchueler();
+        $this->importLeistungsdaten();
         $this->importBemerkungen();
+        $this->importFloskelgruppen();
 
+        return $this;
+    }
+
+    /**
+     * Retrieve the response
+     *
+     * @return JsonResponse
+     */
+    public function response(): JsonResponse
+    {
         return response()->json($this->status);
     }
 
@@ -64,28 +72,66 @@ class DataImportService
      */
     public function importLehrer(): void
     {
-        if ($this->hasInvalidKey($this->data, 'lehrer', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'lehrer', 'global')) {
             return;
         }
 
-        foreach($this->data['lehrer'] as $row) {
-            // Remaps the email and falls back to null
+        // Check if email is correct. If not, fallback to temporary random email that will be updated in the future.
+        $checkEmail = function (array $row): array {
+            // Maps the email and falls back to null
             $email = $row['email'] = $row['eMailDienstlich'] ?? null;
 
-            // Sets notification that the email is not valid.
-            // A temporary email will be set in UserObserver
+            // Sets notification that the email is not valid. A temporary email will be assigned in UserObserver
             if (!$email || $email == '' || is_null($email)) {
-                $this->setStatus($row, 'lehrer', '"eMailDienstlich" ist leer oder ungueltig');
+                $this->setStatus('lehrer', '"eMailDienstlich" ist leer oder ungueltig', $row['id']);
             }
 
-            $user = User::updateOrCreate(
-                ['ext_id' => $row['id']],
-                Arr::only($row, ['kuerzel', 'vorname', 'nachname', 'geschlecht', 'email']),
-            );
+            return $row;
+        };
 
-            $status = $user->wasRecentlyCreated ? 'Erfolgreich angelegt' : 'Erfolgreich aktualisiert';
-            $this->setStatus($user->ext_id, 'lehrer', $status, 'success');
+        collect($this->data['lehrer'])
+            ->map($checkEmail)
+            ->each(fn (array $array): User => User::updateOrCreate(['ext_id' => $array['id']], $array));
+    }
+
+    /**
+     * Creates the Jahrgang model.
+     * The model will not be updated with future requests.
+     *
+     * TODO: On customers site there were formatting problems with whitespaces.
+     *
+     * @return void
+     */
+    public function importJahrgaenge(): void
+    {
+        if ($this->keyMissingOrEmpty($this->data, 'jahrgaenge', 'global')) {
+            return;
         }
+
+        $jahrgaenge = Jahrgang::all();
+
+        $trimBeschreibung = function (array $array) {
+            // In past there was an issue with additional whitespace. This function takes care of it and notifies about.
+            $beschreibung = $array['beschreibung'];
+            if (preg_match('/\s{2,}/', $beschreibung)) {
+                $this->setStatus('jahrgaenge', 'Potentieles whitespace Problem in Beschreibung', $array['beschreibung']);
+                $array['beschreibung'] = $this->trimWhitespaces($array['beschreibung']);
+            }
+
+            return $array;
+        };
+
+        collect($this->data['jahrgaenge'])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'jahrgaenge', $jahrgaenge))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'jahrgaenge', $jahrgaenge, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'jahrgaenge', $jahrgaenge, 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzelAnzeige'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'stufe'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'beschreibung'))
+            ->map($trimBeschreibung)
+            ->each(fn (array $array) =>  Jahrgang::create($array));
     }
 
     /**
@@ -98,7 +144,7 @@ class DataImportService
      */
     public function importKlassen(): void
     {
-        if ($this->hasInvalidKey($this->data, 'klassen', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'klassen', 'global')) {
             return;
         }
 
@@ -108,45 +154,36 @@ class DataImportService
             ->pluck('ext_id')
             ->toArray();
 
-        foreach($this->data['klassen'] as $row) {
-            $klassen = Klasse::all();
+        $klassen = Klasse::all();
 
-            if ($this->hasInvalidKey($row, 'klassenlehrer', 'klassen')) {
-                continue;
-            }
+        collect($this->data['klassen'])
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'klassenlehrer'))
+            ->filter(function (array $array): bool {
+                if (count($array['klassenlehrer']) <= 0) {
+                    $this->setStatus('klassen', '"klassenlehrer" ist leer', $array['klassenlehrer']);
+                    return false;
+                }
 
-            if (count($row['klassenlehrer']) <= 0) {
-                $this->setStatus($row, 'klassen', '"klassenlehrer" ist leer');
-                continue;
-            }
+                return true;
+            })
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'klassen', $klassen))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'klassen', $klassen, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'klassen', $klassen, 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'idJahrgang'))
+            ->filter(function (array $array): bool {
+                if (Jahrgang::where(['id' => $array['idJahrgang']])->doesntExist()) {
+                    $this->setStatus('klassen', 'Jahrgang mit id ' . $array['idJahrgang'] . ' existiert nicht.');
+                    return false;
+                }
 
-            if ($this->hasInvalidId($row, 'klassen', $klassen)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKuerzel($row, 'klassen', $klassen)) {
-                continue;
-            }
-
-            if ($this->hasInvalidSortierung($row, 'klassen', $klassen)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'idJahrgang', 'klassen')) {
-                continue;
-            }
-
-            // Check if the "Jahrgang" already exists in the database
-            if (Jahrgang::where(['id' => $row['idJahrgang']])->doesntExist()) {
-                $this->setStatus($row, 'klassen', 'Jahrgang mit id ' . $row['idJahrgang'] . ' existiert nicht.');
-                continue;
-            }
-
-            $klasse = Klasse::create($row);
-            $klasse->klassenlehrer()->sync($klassenlehrer($row));
-
-            $this->setSuccessStatus($row, 'klassen', 'Erfolgreich angeleg, klassenlehrer wurden zugewiesen');
-        }
+                return true;
+            })
+            ->each(function (array $array) use ($klassenlehrer): void {
+                $klasse = Klasse::create($array);
+                $klasse->klassenlehrer()->sync($klassenlehrer($array));
+            });
     }
 
     /**
@@ -160,24 +197,17 @@ class DataImportService
      */
     public function importNoten(): void
     {
-        if ($this->hasInvalidKey($this->data, 'noten', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'noten', 'global')) {
             return;
         }
 
-        foreach($this->data['noten'] as $row) {
-            $noten = Note::all();
+        $noten = Note::all();
 
-            if ($this->hasInvalidId($row, 'noten', $noten)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKuerzel($row, 'noten', $noten)) {
-                continue;
-            }
-
-            Note::create($row);
-            $this->setStatus($row, 'noten', 'Erfolgreich angelegt', 'success');
-        }
+        collect($this->data['noten'])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'noten', $noten))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'noten', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'noten', $noten, 'kuerzel'))
+            ->each(fn (array $array): Note => Note::create($array));
 
         $this->existingNoten = $this->getExistingNoten(); // TODO: To be removed when IMPORT_LERNABSCHNITTE IS FIXED
     }
@@ -192,83 +222,20 @@ class DataImportService
      */
     public function importFoerderschwerpunkte(): void
     {
-        if ($this->hasInvalidKey($this->data, 'foerderschwerpunkte', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'foerderschwerpunkte', 'global')) {
             return;
         }
 
-        foreach($this->data['foerderschwerpunkte'] as $row) {
-            $foerderschwerpunkte = Foerderschwerpunkt::all();
+        $foerderschwerpunkte = Foerderschwerpunkt::all();
 
-            if ($this->hasInvalidId($row, 'foerderschwerpunkte', $foerderschwerpunkte)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKuerzel($row, 'foerderschwerpunkte', $foerderschwerpunkte)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'beschreibung', 'foerderschwerpunkte')) {
-                continue;
-            }
-
-            Foerderschwerpunkt::create($row);
-            $this->setStatus($row, 'foerderschwerpunkte', 'Erfolgreich angelegt', 'success');
-        }
+        collect($this->data['foerderschwerpunkte'])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'foerderschwerpunkte', $foerderschwerpunkte))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'foerderschwerpunkte', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'foerderschwerpunkte', $foerderschwerpunkte, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'foerderschwerpunkte', 'beschreibung'))
+            ->each(fn (array $array): Foerderschwerpunkt => Foerderschwerpunkt::create($array));
 
         $this->existingFoerderschwerpunkte = $this->getExistingFoerderschwerpunkte(); // TODO: To be removed
-    }
-
-    /**
-     * Creates the Jahrgang model.
-     * The model will not be updated with future requests.
-     *
-     * TODO: On customers site there were formatting problems with whitespaces.
-     *
-     * @return void
-     */
-    public function importJahrgaenge(): void
-    {
-        if ($this->hasInvalidKey($this->data, 'jahrgaenge', 'global')) {
-            return;
-        }
-
-        foreach($this->data['jahrgaenge'] as $row) {
-            $jahrgaenge = Jahrgang::all();
-
-            if ($this->hasInvalidId($row, 'jahrgaenge', $jahrgaenge)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKuerzel($row, 'jahrgaenge', $jahrgaenge)) {
-                continue;
-            }
-
-            if ($this->hasInvalidSortierung($row, 'jahrgaenge', $jahrgaenge)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'kuerzelAnzeige', 'jahrgaenge')) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'stufe', 'jahrgaenge')) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'beschreibung', 'jahrgaenge')) {
-                continue;
-            }
-
-            // In past there was an issue with additional whitespace. This function takes care of it and notifies about.
-            $beschreibung = $row['beschreibung'];
-            if (substr($beschreibung, 0, 1) === " " || $beschreibung !== ltrim($beschreibung)) {
-                $row['beschreibung'] = $this->trimWhitespaces($row['beschreibung']);
-                $this->setStatus($row, 'jahrgaenge', 'Potentieles whitespace Problem in Beschreibung');
-            }
-
-            Jahrgang::create($row);
-            $this->setStatus($row, 'jahrgaenge', 'Erfolgreich angelegt', 'success');
-        }
     }
 
     /**
@@ -279,125 +246,20 @@ class DataImportService
      */
     public function importFaecher(): void
     {
-        if ($this->hasInvalidKey($this->data, 'faecher', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'faecher', 'global')) {
             return;
         }
 
-        foreach($this->data['faecher'] as $row) {
-            $faecher = Fach::all();
+        $faecher = Fach::all();
 
-            if ($this->hasInvalidId($row, 'faecher', $faecher)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKuerzel($row, 'faecher', $faecher)) {
-                continue;
-            }
-
-            if ($this->hasInvalidSortierung($row, 'faecher', $faecher)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'istFremdsprache', 'faecher')) {
-                continue;
-            }
-
-            Fach::create($row);
-            $this->setStatus($row, 'faecher', 'Erfolgreich angelegt', 'success');
-        }
-    }
-
-    /**
-     * Creates the Floskelgruppe model.
-     * The model will not be updated with future requests.
-     *
-     * @return void
-     */
-    public function importFloskelgruppen(): void
-    {
-        if ($this->hasInvalidKey($this->data, 'floskelgruppen', 'global')) {
-            return;
-        }
-
-        foreach($this->data['floskelgruppen'] as $row) {
-            $floskelgruppen = Floskelgruppe::all();
-
-            if ($this->hasInvalidKuerzel($row, 'floskelgruppe', $floskelgruppen)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'bezeichnung', 'floskelgruppe')) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'hauptgruppe', 'floskelgruppe')) {
-                continue;
-            }
-
-            $floskelgruppe = Floskelgruppe::create(Arr::except($row, ['floskeln']));
-
-            if ($this->hasInvalidKey($row, 'floskeln', 'floskelgruppe')) {
-                continue;
-            }
-
-            if (count($row['floskeln']) <= 0) {
-                $this->setStatus($row, 'floskelgruppen', 'Keine Floskeln vorhanden.');
-                continue;
-            }
-
-            $this->setStatus($row, 'floskelgruppe', 'Erfolgreich angelegt', 'success');
-
-            $this->importFloskeln($floskelgruppe, $row['floskeln']);
-        }
-    }
-
-    /**
-     * Import floskeln into floskelgruppen
-     *
-     * @param Floskelgruppe $floskelgruppe
-     * @param array $floskeln
-     * @return void
-     */
-    private function importFloskeln(Floskelgruppe $floskelgruppe, array $floskeln): void
-    {
-        foreach($floskeln as $row) {
-            $floskeln = Floskel::all();
-
-            if ($this->hasInvalidKuerzel($row, 'floskel', $floskeln)) {
-                continue;
-            }
-
-            if ($this->hasInvalidKey($row, 'text', 'floskel')) {
-                continue;
-            }
-
-            if (!array_key_exists('fachID', $row)) {
-                $this->setStatus($row, 'floskel', "'jahrgangID' nicht vorhanden");
-                continue;
-            }
-
-            if (!is_null($row['fachID']) && Fach::where(['id' => $row['fachID']])->doesntExist()) {
-                $this->setStatus($row, 'floskel', 'Fach mit id ' . $row['fachID'] . ' existiert nicht.');
-                continue;
-            }
-
-            if (!array_key_exists('jahrgangID', $row)) {
-                $this->setStatus($row, 'floskel', "'jahrgangID' nicht vorhanden");
-                continue;
-            }
-
-            if (!is_null($row['jahrgangID']) && Jahrgang::where(['id' => $row['jahrgangID']])->doesntExist()) {
-                $this->setStatus($row, 'floskel', 'Jahrgang mit id ' . $row['jahrgangID'] . ' existiert nicht.');
-                continue;
-            }
-
-            $row['fach_id'] = $row['fachID'];
-            $row['jahrgang_id'] = $row['jahrgangID'];
-            unset($row['fachID'], $row['jahrgangID']);
-
-            $floskelgruppe->floskeln()->create($row);
-            $this->setStatus($row, 'floskel', 'Erfolgreich angelegt', 'success');
-        }
+        collect($this->data['faecher'])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'faecher', $faecher))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'faecher', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'faecher', $faecher, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'faecher', 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'faecher', $faecher, 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'faecher', 'istFremdsprache'))
+            ->each(fn (array $array): Fach => Fach::create($array));
     }
 
     /**
@@ -410,74 +272,100 @@ class DataImportService
      */
     public function importLerngruppen(): void
     {
-        if ($this->hasInvalidKey($this->data, 'lerngruppen', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'lerngruppen', 'global')) {
             return;
         }
 
-        foreach ($this->data['lerngruppen'] as $row) {
-            $lerngruppen = Lerngruppe::all();
+        $lerngruppen = Lerngruppe::all();
 
-            // Check if following fields are present and properly formatted.
-            if ($this->hasInvalidId($row, 'lerngruppe', $lerngruppen)) {
-                continue;
-            }
-            if ($this->hasInvalidKey($row, 'bezeichnung', 'lerngruppe')) {
-                continue;
-            }
-            if ($this->hasInvalidInt($row, 'wochenstunden', 'lerngruppe')) {
-                continue;
-            }
-
-            // Check if "fachID" is present and properly formatted.
-            if ($this->hasInvalidKey($row, 'fachID', 'lerngruppe')) {
-                continue;
-            }
-            // Check if corresponding "Fach exists"
-            if (Fach::where(['id' => $row['fachID']])->doesntExist()) {
-                $this->setStatus($row, 'lerngruppe', 'Fach mit id ' . $row['fachID'] . ' existiert nicht.');
-                continue;
-            }
-            // Remap the keys and unset unused valued
-            $row['fach_id'] = $row['fachID'];
-            unset($row['fachID']);
-
+        collect($this->data['lerngruppen'])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'lerngruppen', $lerngruppen))
+            ->filter(fn (array $array): bool => $this->hasValidInt($array, 'lerngruppen', 'kID'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'lerngruppen', 'bezeichnung'))
             // Check if "kID" is present and properly formatted.
-            if ($this->hasInvalidInt($row, 'kID', 'lerngruppe')) {
-                continue;
-            }
+            ->filter(fn (array $array): bool => $this->hasValidInt($array, 'lerngruppen', 'wochenstunden'))
+            // Check if relate "Fach exists"
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'lerngruppen', 'fachID'))
+            ->filter(function (array $array): bool {
+                if (Fach::where(['id' => $array['fachID']])->doesntExist()) {
+                    $this->setStatus('lerngruppe', 'Fach mit id ' . $array['fachID'] . ' existiert nicht.', $array['id']);
+                    return false;
+                }
+
+                return true;
+            })
+            // Remap the keys and unset unused valued
+            ->map(function (array $array): array {
+                $array['fach_id'] = $array['fachID'];
+                unset($array['fachID']);
+                return $array;
+            })
             // Check if "kursartID" is set to NULL which indicates this "Lerngruppe" is assigned to a class.
-            // Therefor we dont need the kursartID anymore.
-            if (is_null($row['kursartID'])) {
-                $row['klasse_id'] = $row['kID'];
-                unset($row['kursartID']);
+            // Check if "klasse" exists
+            ->filter(function (array $array): bool {
+                if (!is_null($array['kursartID'])) {
+                    return true;
+                }
 
                 // Check if "Klasse" exists
-                if (Klasse::where(['id' => $row['kID']])->doesntExist()) {
-                    $this->setStatus($row, 'lerngruppe', 'Klasse mit id ' . $row['kID'] . ' existiert nicht.');
-                    continue;
+                if (Klasse::where(['id' => $array['kID']])->doesntExist()) {
+                    $this->setStatus('lerngruppe', 'Klasse mit id ' . $array['kID'] . ' existiert nicht.', $array['id']);
+                    return false;
                 }
-            }
 
-            // Check if "lehrerID" is present and is properly formatted
-            if ($this->hasInvalidKey($row, 'lehrerID', 'lerngruppe')) {
-                continue;
-            }
-            // Filter out non integer values
-            $lehrerIds = array_filter($row['lehrerID'], fn (int|string|null $value): bool => is_int($value));
-            // Check if there are any IDs in the element
-            if (0 === count($lehrerIds)) {
-                $this->setStatus($row, 'lerngruppen', '"lehrerID" ist leer.');
-                continue;
-            }
-            // Check if all users with corresponding lehrerID exists. If not, log and continue.
-            if (User::whereIn('ext_id', $lehrerIds)->count() !== count($lehrerIds)) {
-                $this->setStatus($row, 'lerngruppen', 'Nicht alle Lehrer existieren bereits.');
-                continue;
-            }
+                return true;
+            })
+            // Check if "kursartID" is set to NULL which indicates this "Lerngruppe" is assigned to a class.
+            // Therefor we dont need the kursartID anymore.
+            ->map(function (array $array): array {
+                if (is_null($array['kursartID'])) {
+                    $array['klasse_id'] = $array['kID'];
+                    unset($array['kursartID']);
+                }
 
-            $lerngruppe = Lerngruppe::create(Arr::except($row, ['lehrerID']));
-            $lerngruppe->lehrer()->attach($row['lehrerID']);
+                return $array;
+            })
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'lerngruppen', 'lehrerID'))
+            ->filter(function (array $array): bool {
+                // Filter out non integer values
+                $lehrerIds = array_filter($array['lehrerID'], fn (int|string|null $value): bool => is_int($value));
+
+                // Check if there are any IDs in the element
+                if (0 === count($lehrerIds)) {
+                    $this->setStatus('lerngruppen', '"lehrerID" ist leer.', $array['id']);
+                    return false;
+                }
+
+                // Check if all users with corresponding lehrerID exists. If not, log and continue.
+                if (User::whereIn('ext_id', $lehrerIds)->count() !== count($lehrerIds)) {
+                    $this->setStatus('lerngruppen', 'Nicht alle Lehrer existieren bereits.', $array['id']);
+                    return false;
+                }
+
+                return true;
+            })
+            ->each(function (array $array): void {
+                $lerngruppe = Lerngruppe::create($array);
+                $lerngruppe->lehrer()->attach($array['lehrerID']);
+            });
+    }
+
+
+    public function importFloskelgruppen(): void
+    {
+        if ($this->keyMissingOrEmpty($this->data, 'floskelgruppen', 'global')) {
+            return;
         }
+
+        $floskelgruppen = Floskelgruppe::all();
+
+        collect($this->data['floskelgruppen'])
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'floskelgruppen', $floskelgruppen, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'bezeichnung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'hauptgruppe'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'floskeln'))
+            ->each(fn (array $array): Floskelgruppe => Floskelgruppe::create($array));
     }
 
     /**
@@ -489,61 +377,113 @@ class DataImportService
      */
     public function importSchueler(): void
     {
-        if ($this->hasInvalidKey($this->data, 'schueler', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'schueler', 'global')) {
             return;
         }
 
-        foreach ($this->data['schueler'] as $row) {
-            $schueler = Schueler::all();
+        $schueler = Schueler::all();
 
-            // Check if following fields are present and properly formatted.
-            if ($this->hasInvalidId($row, 'schueler', $schueler)) {
-                continue;
-            }
+        collect($this->data['schueler'])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'schueler', $schueler))
+            // Check if "Jahrgang" is set and exists in database.
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'schueler', 'jahrgangID'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'schueler', 'geschlecht'))
+            ->filter(function (array $array): bool {
+                if (Jahrgang::where(['id' => $array['jahrgangID']])->doesntExist()) {
+                    $this->setStatus('schueler', 'Jahrgang mit id ' . $array['jahrgangID'] . ' existiert nicht.', $array['id']);
+                    return false;
+                }
 
-            // Check if "jahrgangID" is present and properly formatted.
-            if ($this->hasInvalidInt($row, 'jahrgangID', 'schueler')) {
-                continue;
-            }
-            // Check if corresponding "Jahrgang" exists
-            if (Jahrgang::where(['id' => $row['jahrgangID']])->doesntExist()) {
-                $this->setStatus($row, 'schueler', 'Jahrgang mit id ' . $row['jahrgangID'] . ' existiert nicht.');
-                continue;
-            }
+                return true;
+            })
             // Remap the keys and unset unused valued
-            $row['jahrgang_id'] = $row['jahrgangID'];
-            unset($row['jahrgangID']);
+            ->map(function (array $array): array {
+                $array['jahrgang_id'] = $array['jahrgangID'];
+                unset($array['jahrgangID']);
+                return $array;
+            })
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'schueler', 'klasseID'))
+            ->filter(function (array $array): bool {
+                if (Klasse::where(['id' => $array['klasseID']])->doesntExist()) {
+                    $this->setStatus('schueler', 'Klasse mit id ' . $array['klasseID'] . ' existiert nicht.', $array['id']);
+                    return false;
+                }
 
-            // Check if "klasseID" is present and properly formatted.
-            if ($this->hasInvalidInt($row, 'klasseID', 'schueler')) {
-                continue;
-            }
-            // Check if corresponding "Klasse" exists
-            if (Klasse::where(['id' => $row['klasseID']])->doesntExist()) {
-                $this->setStatus($row, 'schueler', 'Klasse mit id ' . $row['klasseID'] . ' existiert nicht.');
-                continue;
-            }
+                return true;
+            })
             // Remap the keys and unset unused valued
-            $row['klasse_id'] = $row['klasseID'];
-            unset($row['klasseID']);
+            ->map(function (array $array): array {
+                $array['klasse_id'] = $array['klasseID'];
+                $array['geschlecht'] = $this->gender($array, Schueler::GENDERS);
 
-            // Check if "geschlecht" is present and is properly formatted
-            if ($this->hasInvalidKey($row, 'geschlecht', 'lerngruppe')) {
-                continue;
-            }
-            $row['geschlecht'] = $this->gender($row, Schueler::GENDERS);
+                unset($array['klasseID']);
+                // TODO: Temporary unset. TO BE CLEARED
+                unset($array['sprachenfolge'], $array['zp10'], $array['bkabschluss']);
 
-            // TODO: Temporary unset. TO BE CLEARED
-            unset($row['sprachenfolge'], $row['zp10'], $row['bkabschluss']);
-
-            $schueler = Schueler::create(
-                Arr::except($row, ['bemerkungen', 'lernabschnitt', 'leistungsdaten'])
+                return $array;
+            })
+            ->each(fn (array $array): Schueler =>
+                Schueler::create(Arr::except($array, ['bemerkungen', 'lernabschnitt', 'leistungsdaten']))
             );
+    }
 
-            // $this->importBemerkungen($schueler, $row['bemerkungen']);
-            //$this->importLernabschnitte($schueler, $row['lernabschnitt']);
-            //$this->importLeistungsdaten($schueler, $row['leistungsdaten']);
+    /**
+     * Creates the Leistung model. The model will be updated with future requests.
+     * The timestamp will be compared to check if the data was updated on the SVWS server.
+     * TODO: ^^^ Date missing. To be cleared which timestamp for which columns should be valid.
+     *
+     * @return void
+     */
+    public function importLeistungsdaten(): void
+    {
+        // Check if "Schueler" are set
+        if ($this->keyMissingOrEmpty($this->data, 'schueler', 'leistungsdaten')) {
+            return;
         }
+
+        // Prefetch some data
+        $lerngruppen = Lerngruppe::all()->pluck('id', 'id')->toArray();
+        $leistungen = Leistung::all()->pluck('id', 'id')->toArray();
+        $noten = Note::all()->pluck('id', 'kuerzel')->toArray();
+        $schueler = Schueler::all()->pluck('id', 'id')->toArray();
+
+        // Perfom the upsert
+        $upsert = function (array $array, $schueler) use ($noten): void {
+            // Remap some fields to Laravel notation
+            $array['note_id'] = $noten[$array['note']] ?? null;
+            $array['lerngruppe_id'] = $array['lerngruppenID'];
+
+            $leistung = Leistung::firstOrNew(['id' => $array['id'], 'schueler_id' => $schueler['id']], $array);
+
+            // Check if timestamps for some fields are latter than the ones stored in DB.
+            $this->updateWhenRecent($array, $leistung, 'note_id', 'tsNote');
+            $this->updateWhenRecent($array, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
+            $this->updateWhenRecent($array, $leistung, 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigtFach');
+            $this->updateWhenRecent($array, $leistung, 'fachbezogeneBemerkungen', 'tsFachbezogeneBemerkungen');
+            $this->updateWhenRecent($array, $leistung, 'istGemahnt', 'tsIstGemahnt');
+
+            $leistung->save();
+        };
+
+        collect($this->data['schueler'])
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'leistungsdaten', 'leistungsdaten'))
+            ->filter(fn (array $array): bool => in_array($array['id'], $schueler))
+            ->each(function (array $schueler) use ($upsert, $noten, $leistungen, $lerngruppen): void {
+                collect($schueler['leistungsdaten'])
+                    ->filter(fn (array $array): bool => $this->hasValidInt($array, 'leistungsdaten', 'id'))
+                    // Check if "lerngruppenID is set
+                    ->filter(fn (array $array): bool => $this->hasValidValue($array, 'leistungsdaten', 'lerngruppenID'))
+                    // Chech if a "Lerngruppe" with the id exists
+                    ->filter(fn (array $array): bool => array_key_exists($array['lerngruppenID'], $lerngruppen))
+                    // Check if "Note is set"
+                    ->filter(fn (array $array): bool => array_key_exists('note', $array))
+                    // Check if either "Note" is empty, or one of already created "Noten"
+                    ->filter(fn (array $array): bool =>
+                        in_array($array['note'], ['', null]) || array_key_exists($array['note'], $noten)
+                    )
+                    // Perform the upsert
+                    ->each(fn (array $array) => $upsert($array, $schueler));
+        });
     }
 
     /**
@@ -555,72 +495,40 @@ class DataImportService
      */
     public function importBemerkungen(): void
     {
-        if ($this->hasInvalidKey($this->data, 'schueler', 'global')) {
+        if ($this->keyMissingOrEmpty($this->data, 'schueler', 'global')) {
             return;
         }
 
-        foreach ($this->data['schueler'] as $row) {
-            // Check if "Schueler" exists
-            $schueler = Schueler::find($row['id']);
-            if (!$schueler) {
-                $this->setStatus($row, 'bemerkungen', 'Schuler mit id ' . $row['id'] . ' existiert nicht.');
-                continue;
+        $schueler = Schueler::all();
 
-            }
-            // Check if "Bemerkungen" are present and formatted
-            if ($this->hasInvalidKey($row, 'bemerkungen', 'bemerkungen')) {
-                continue;
-            }
+        collect($this->data['schueler'])
+            ->filter(fn (array $array): bool => $schueler->contains($array['id']))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'bemerkungen', 'bemerkungen'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsASV'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsAUE'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsZB'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsIndividuelleVersetzungsbemerkungen'))
+            ->each(function (array $array): void {
+                // Check if "Bemerkung" already exists. If not, create a new one.
+                $bemerkung = Bemerkung::firstOrNew(['schueler_id' => $array['id']]);
 
-            // Check if "Bemerkung" already exists. If not, create a new one.
-            $bemerkung = Bemerkung::firstOrNew(['schueler_id' => $schueler->id]);
+                $data = $array['bemerkungen'];
+                $bemerkung->LELS = $data['LELS'];
+                $bemerkung->schulformEmpf = $data['schulformEmpf'];
+                $bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
 
-            $data = $row['bemerkungen'];
-            $bemerkung->LELS = $data['LELS'];
-            $bemerkung->schulformEmpf = $data['schulformEmpf'];
-            $bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
+                $this->updateWhenRecent($data, $bemerkung, 'ASV', 'tsASV');
+                $this->updateWhenRecent($data, $bemerkung, 'AUE', 'tsAUE');
+                $this->updateWhenRecent($data, $bemerkung, 'ZB', 'tsZB');
+                $this->updateWhenRecent(
+                    $data,
+                    $bemerkung,
+                    'individuelleVersetzungsbemerkungen',
+                    'tsIndividuelleVersetzungsbemerkungen'
+                );
 
-            // Update the following columns only if the value is present and timestamp is latter.
-            if ($this->hasMissingKey($data, 'ASV', 'bemerkungen')) {
-                continue;
-            }
-            if ($this->hasInvalidKey($data, 'tsASV', 'bemerkungen')) {
-                continue;
-            }
-            $this->updateWhenRecent($data, $bemerkung, 'ASV', 'tsASV');
-
-            if ($this->hasMissingKey($data, 'AUE', 'bemerkungen')) {
-                continue;
-            }
-            if ($this->hasInvalidKey($data, 'tsAUE', 'bemerkungen')) {
-                continue;
-            }
-            $this->updateWhenRecent($data, $bemerkung, 'AUE', 'tsAUE');
-
-            if ($this->hasMissingKey($data, 'ZB', 'bemerkungen')) {
-                continue;
-            }
-            if ($this->hasInvalidKey($data, 'tsZB', 'bemerkungen')) {
-                continue;
-            }
-            $this->updateWhenRecent($data, $bemerkung, 'ZB', 'tsZB');
-
-            if ($this->hasMissingKey($data, 'individuelleVersetzungsbemerkungen', 'bemerkungen')) {
-                continue;
-            }
-            if ($this->hasInvalidKey($data, 'tsIndividuelleVersetzungsbemerkungen', 'bemerkungen')) {
-                continue;
-            }
-            $this->updateWhenRecent(
-                $data,
-                $bemerkung,
-                'individuelleVersetzungsbemerkungen',
-                'tsIndividuelleVersetzungsbemerkungen'
-            );
-
-            $bemerkung->save();
-            $this->setStatus($row, 'bemerkung', 'Erfolgreich gespeichert', 'success');
-        }
+                $bemerkung->save();
+            });
     }
 
     /**
@@ -679,64 +587,6 @@ class DataImportService
     }
 
     /**
-     * Creates the Leistung model. The model will be updated with future requests.
-     * The timestamp will be compared to check if the data was updated on the SVWS server.
-     * TODO: ^^^ Date missing. To be cleared which timestamp for which columns should be valid.
-     *
-     * @param Schueler $schueler
-     * @param array $data
-     * @return void
-     */
-    private function importLeistungsdaten(Schueler $schueler, array $data): void
-    {
-        foreach ($data as $row) {
-            $row['lerngruppe_id'] = $row['lerngruppenID'];
-            unset($row['lerngruppenID']);
-
-            $noteId = $this->getValueFromArray(data: $row, column: 'note', collection: $this->getExistingNoten());
-            unset($row['note']);
-
-            try {
-                $leistung = Leistung::findOrFail($row['id']);
-
-                $this->updateWhenRecent($row, $leistung, 'note_id', 'tsNote', $noteId);
-                $this->updateWhenRecent($row, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
-                $this->updateWhenRecent(
-                    $row,
-                    $leistung,
-                    'fehlstundenUnentschuldigtFach',
-                    'tsFehlstundenUnentschuldigt'
-                );
-                $this->updateWhenRecent(
-                    $row,
-                    $leistung,
-                    'fachbezogeneBemerkungen',
-                    'tsFehlstundenUnentschuldigtFach'
-                );
-                $this->updateWhenRecent($row, $leistung, 'istGemahnt', 'tsIstGemahnt');
-
-                $leistung->save();
-
-            } catch (ModelNotFoundException $e) {
-                report($e);
-
-                $row['note_id'] = $noteId;
-
-                $schueler->leistungen()->updateOrCreate(
-                    ['id' => $row['id']],
-                    Arr::except($row, ['teilleistungen', 'lerngruppenID'])
-                );
-            }
-
-            //TODO: To be cleared what the structure ist
-            //foreach($leistungsdaten['teilleistungen'] as $teilleistung) {
-            //	$leistung->teilleistungen()->create($teilleistung);
-            //}
-        }
-    }
-
-
-    /**
      * Fill selected row with a value only if the timestamp is newer than the one stored in the database.
      * If value parameter is provided, value will be used instead of the column value
      *
@@ -749,24 +599,25 @@ class DataImportService
      */
     private function updateWhenRecent(
         array $data,
-        Leistung|Lernabschnitt|Bemerkung $model,
+        Leistung|Lernabschnitt|Bemerkung &$model,
         string $column,
         string $tsColumn,
         int|null $value = null
-    ): void {
+    ): Leistung|Lernabschnitt|Bemerkung {
         $timestamp = Carbon::parse($data[$tsColumn]);
 
         if ($timestamp->gt($model->$tsColumn)) {
             $model->$column = $value ?? $data[$column];
             $model->$tsColumn = $timestamp->format('Y-m-d H:i:s.u');
 
-            $this->setStatus(
-                $data,
+            $this->setSuccessStatus(
                 'timestamp',
                 'Datensatz wurde aktualisiert da es einen neuren Timestamp hat',
-                'success',
+                $data,
             );
         }
+
+        return $model;
     }
 
     /**
@@ -834,12 +685,12 @@ class DataImportService
         return sprintf('%s@%s', Str::random(32), Str::random(32));
     }
 
-    private function setSuccessStatus(array|string|int $data, string $id, string $message): void
+    private function setSuccessStatus(string $id, string $message, array|string|int|null $data = null): void
     {
-        $this->setStatus($data, $id, $message, 'success');
+        $this->setStatus($id, $message, $data, 'success');
     }
 
-    private function setStatus(array|string|int $data, string $id, string $message, string $type = 'errors'): void
+    private function setStatus(string $id, string $message, array|string|int|null $data = null, string $type = 'errors'): void
     {
         $this->status[$type][$id][] = [
             'message' => $message,
@@ -897,7 +748,6 @@ class DataImportService
         return false;
     }
 
-
     /**
      * Checks if given element has invalid kuerzel
      *
@@ -936,7 +786,6 @@ class DataImportService
      */
     private function hasInvalidSortierung(array $row, string $context, Collection $existing): bool
     {
-
         if (!array_key_exists('sortierung', $row)) {
             $this->setStatus($row, $context, '"sortierung" nicht vorhanden');
             return true;
@@ -986,15 +835,15 @@ class DataImportService
      * @param string $context
      * @return bool
      */
-    private function hasInvalidKey(array $row, string $key, string $context): bool
+    private function keyMissingOrEmpty(array $row, string $key, string $context): bool
     {
         if (!array_key_exists($key, $row)) {
-            $this->setStatus($row, $context, "{$key} nicht vorhanden");
+            $this->setStatus($context, "{$key} nicht vorhanden", $row);
             return true;
         }
 
         if (is_null($row[$key])) {
-            $this->setStatus($row, $context, "{$key} ist leer");
+            $this->setStatus($context, "{$key} ist leer", $row);
             return true;
         }
 
@@ -1033,5 +882,119 @@ class DataImportService
         }
 
         return false;
+    }
+
+    /**
+     * Checks if given element has valid id
+     *
+     * @param array $row
+     * @param string $model
+     * @param Collection $existing
+     * @param string $key
+     * @return bool
+     */
+    private function hasValidId(array $row, string $context, Collection $existing, string $key = 'id'): bool
+    {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($context, "'{$key}' nicht vorhanden");
+            return false;
+        }
+
+        $id = $row[$key];
+
+        if (!is_int($id)) {
+            $this->setStatus($context, "'{$key}' ist keine Zahl", $id);
+            return false;
+        }
+
+        if ($id <= 0) {
+            $this->setStatus($context, "'{$key}' ist nicht positiv", $id);
+            return false;
+        }
+
+        if ($existing->contains($id)) {
+            $this->setStatus($context, "Ressource mit diesen '{$key}' existiert bereits", $id);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if given element has valid key
+     *
+     * @param array $row
+     * @param string $model
+     * @param Collection $existing
+     * @param string $key
+     * @return bool
+     */
+    private function hasValidValue(array $row, string $context, string $key): bool
+    {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($context, "'{$key}' nicht vorhanden");
+            return false;
+        }
+
+        if (is_null($row[$key])) {
+            $this->setStatus($context, "'{$key}' ist leer", $row[$key]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if given element has an unique key
+     *
+     * @param array $row
+     * @param string $model
+     * @param Collection $existing
+     * @param string $key
+     * @return bool
+     */
+    private function hasUniqueValue(array $row, string $context, Collection $existing, string $key): bool
+    {
+        if ($existing->filter(fn (mixed $item): bool => $item[$key] ==  $row[$key])->count() > 0) {
+            $this->setStatus($context, "Ressource mit diesen '{$key}' existiert bereits", $row[$key]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if given element has valid integer
+     *
+     * @param array $row
+     * @param string $key
+     * @param string $context
+     * @return bool
+     */
+    private function hasValidInt(array $row, string $context, string $key): bool
+    {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($context, "{$key} nicht vorhanden");
+            return false;
+        }
+
+        $value = $row[$key];
+
+        if (is_null($value)) {
+            $this->setStatus($context, "{$key} ist leer", $value);
+            return false;
+        }
+
+        if (!is_int($value)) {
+            $this->setStatus($context, "{$key} kein Zahl", $value);
+            return false;
+        }
+
+        if (0 > $value) {
+            $this->setStatus($context, "{$key} ist negativ", $value);
+            return false;
+        }
+
+        return true;
     }
 }

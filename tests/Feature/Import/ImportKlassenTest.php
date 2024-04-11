@@ -42,7 +42,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -90,7 +90,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::RELATED_TABLE, 1)
             ->assertDatabaseHas(self::RELATED_TABLE, [
@@ -125,7 +125,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0)
             ->assertDatabaseCount(self::RELATED_TABLE, 0);
@@ -153,7 +153,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0)
             ->assertDatabaseCount(self::RELATED_TABLE, 0);
@@ -180,7 +180,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0)
             ->assertDatabaseCount(self::RELATED_TABLE, 0);
@@ -215,7 +215,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseHas(self::TABLE, [
             'id' => 61,
@@ -262,7 +262,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::RELATED_TABLE, 1)
             ->assertDatabaseHas(self::RELATED_TABLE, [
@@ -299,7 +299,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseMissing(self::TABLE, [
             'kuerzel' => 'negative',
@@ -330,7 +330,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -358,7 +358,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -387,7 +387,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -420,7 +420,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1);
     }
@@ -449,7 +449,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -477,7 +477,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -510,7 +510,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1);
     }
@@ -539,7 +539,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -567,7 +567,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -594,7 +594,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -620,7 +620,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -662,7 +662,7 @@ class ImportKlassenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -681,7 +681,7 @@ class ImportKlassenTest extends TestCase
     {
         $data = json_decode('{}', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -697,7 +697,7 @@ class ImportKlassenTest extends TestCase
             "klassen": []
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }

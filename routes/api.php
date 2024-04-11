@@ -7,10 +7,7 @@ use App\Http\Controllers\Api\{
 use App\Http\Controllers\Api\Settings\{
     EnvController, MatrixController, SettingsController, UserSettingsController
 };
-use App\Http\Controllers\{
-    AesController, ExportController, ImportController, PassportController, SecureTransferController
-};
-use App\Services\DataImportService;
+use App\Http\Controllers\{PassportController, SecureTransferController};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -148,12 +145,3 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::get('klassenleitung', Klassenleitung::class)
 		->name('api.klassenleitung');
 });
-
-// TODO: To be removed, temporary testing route #239 by Karol
-Route::get('export', ExportController::class)->name('api.export'); // Rename namespace?
-Route::get('import/gzip', [ImportController::class, 'gzipEnm']);
-Route::post('import/gzip', [ImportController::class, 'gzip']);
-Route::post('import', [ImportController::class, 'request']);
-Route::get('import', [ImportController::class, 'curl']);
-//Route::get('truncate', [SecureTransferController::class, 'truncate']); // Use secure route
-Route::get('import/aes', AesController::class);

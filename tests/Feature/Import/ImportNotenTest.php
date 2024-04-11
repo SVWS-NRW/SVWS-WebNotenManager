@@ -31,7 +31,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -58,7 +58,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -87,7 +87,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -112,19 +112,13 @@ class ImportNotenTest extends TestCase
                     "kuerzel": "negative",
                     "notenpunkte": -1,
                     "text": "negative"
-                },
-                {
-                    "id": 1,
-                    "kuerzel": "5-",
-                    "notenpunkte": 1,
-                    "text": "Lorem ipsum dolor sit amet"
                 }
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
-        $this->assertDatabaseCount(self::TABLE, 1)
+        $this->assertDatabaseCount(self::TABLE, 0)
             ->assertDatabaseMissing(self::TABLE, [
                 'kuerzel' => 'negative',
                 'text' => 'negative',
@@ -149,7 +143,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -174,7 +168,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1);
     }
@@ -194,7 +188,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -215,7 +209,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -236,7 +230,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -256,7 +250,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -286,7 +280,7 @@ class ImportNotenTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -312,7 +306,7 @@ class ImportNotenTest extends TestCase
     {
         $data = json_decode('{}', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -328,7 +322,7 @@ class ImportNotenTest extends TestCase
             "noten": []
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }

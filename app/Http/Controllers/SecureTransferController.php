@@ -32,15 +32,10 @@ class SecureTransferController extends Controller
      * Method for importing data securely.
      *
      * @param SecureImportRequest $request
-     * @param DataImportService $importService
      * @param GzipService $gzipService
      * @return JsonResponse|Response
      */
-    public function import(
-        SecureImportRequest $request,
-        DataImportService $importService,
-        GzipService $gzipService,
-    ): Response|JsonResponse {
+    public function import(SecureImportRequest $request, GzipService $gzipService): Response|JsonResponse {
         // Retrieving the uploaded file from the request.
         $file = $request->file('file');
 
@@ -67,10 +62,8 @@ class SecureTransferController extends Controller
         if ($json['schulnummer'] != config('wenom.schulnummer')) {
             return response()->json(['message' => 'Schulnummer nicht gültig'], Status::HTTP_BAD_REQUEST);
         }
-
         // Executing the import service with the validated data and returning a response.
-        return $importService->execute($json);
-
+        return (new DataImportService($json))->execute()->response();
     }
 
     /**

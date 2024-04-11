@@ -40,7 +40,7 @@ class ImportSchuelerTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -382,7 +382,7 @@ class ImportSchuelerTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -413,7 +413,7 @@ class ImportSchuelerTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -444,7 +444,7 @@ class ImportSchuelerTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [

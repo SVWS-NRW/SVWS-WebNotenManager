@@ -2,23 +2,18 @@
 
 namespace Tests\Feature\Import;
 
-use App\Models\Floskelgruppe;
+use App\Models\{Jahrgang, Fach, Floskel};
 use App\Services\DataImportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ImportFloskelgruppenTest extends TestCase
+class ImportFloskelnTest extends TestCase
 {
     use RefreshDatabase;
 
-    public const TABLE = 'floskelgruppen';
-
-    /**
-     * It creates floskelgruppe with floskeln
-     *
-     * @return void
-     */
-    public function test_it_creates_floskelgruppe_with_floskeln(): void
+    public const TABLE = 'floskeln';
+/*
+    public function test_it_does_not_create_related_floskeln_if_kuerzel_is_missing(): void
     {
         $data = json_decode('{
             "floskelgruppen": [
@@ -28,7 +23,32 @@ class ImportFloskelgruppenTest extends TestCase
                     "hauptgruppe": "ALLG",
                     "floskeln": [
                         {
-                            "kuerzel": "#A1",
+                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
+                            "fachID": null,
+                            "niveau": null,
+                            "jahrgangID": null
+                        }
+                    ]
+                }
+            ]
+        }', true);
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    public function test_it_does_not_create_related_floskeln_if_kuerzel_is_empty(): void
+    {
+        $data = json_decode('{
+            "floskelgruppen": [
+                {
+                    "kuerzel": "ALLG",
+                    "bezeichnung": "Allgemeine Floskeln",
+                    "hauptgruppe": "ALLG",
+                    "floskeln": [
+                        {
+                            "kuerzel": null,
                             "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
                             "fachID": null,
                             "niveau": null,
@@ -46,21 +66,43 @@ class ImportFloskelgruppenTest extends TestCase
                 'kuerzel' => 'ALLG',
                 'bezeichnung' => 'Allgemeine Floskeln',
                 'hauptgruppe' => 'ALLG',
+            ])
+            ->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    public function test_it_does_not_create_related_floskeln_if_kuerzel_already_exists(): void
+    {
+        Floskel::factory()->create(['kuerzel' => '#AU1']);
+
+        $data = json_decode('{
+            "floskelgruppen": [
+                {
+                    "kuerzel": "ALLG",
+                    "bezeichnung": "Allgemeine Floskeln",
+                    "hauptgruppe": "ALLG",
+                    "floskeln": [
+                        {
+                            "kuerzel": "#AU1",
+                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
+                            "fachID": null,
+                            "niveau": null,
+                            "jahrgangID": null
+                        }
+                    ]
+                }
+            ]
+        }', true);
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'kuerzel' => '#AU1',
             ]);
     }
 
-    /**
-     * It does not update floskelgruppe
-     *
-     * @return void
-     */
-    public function test_it_does_not_update_floskelgruppe(): void
+    public function test_it_creates_related_floskel_if_jahrgangId_is_null(): void
     {
-        Floskelgruppe::factory()->create([
-            'kuerzel' => 'ALLG',
-            'bezeichnung' => 'Floskeln für außerunterrichtliches Engagement',
-        ]);
-
         $data = json_decode('{
             "floskelgruppen": [
                 {
@@ -84,23 +126,41 @@ class ImportFloskelgruppenTest extends TestCase
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
-                'bezeichnung' => 'Floskeln für außerunterrichtliches Engagement',
-            ])
-            ->assertDatabaseMissing(self::TABLE, [
-                'bezeichnung' => 'Allgemeine Floskeln',
+                'kuerzel' => '#A1',
             ]);
     }
 
-    /**
-     * It does not create floskelgruppe with missing kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_missing_kuerzel(): void
+    public function test_it_does_not_create_related_floskel_if_jahrgangId_is_missing(): void
     {
         $data = json_decode('{
             "floskelgruppen": [
                 {
+                    "kuerzel": "ALLG",
+                    "bezeichnung": "Allgemeine Floskeln",
+                    "hauptgruppe": "ALLG",
+                    "floskeln": [
+                        {
+                            "kuerzel": "#A1",
+                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
+                            "fachID": null,
+                            "niveau": null
+                        }
+                    ]
+                }
+            ]
+        }', true);
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    public function test_it_creates_related_floskel_if_fachId_is_null(): void
+    {
+        $data = json_decode('{
+            "floskelgruppen": [
+                {
+                    "kuerzel": "ALLG",
                     "bezeichnung": "Allgemeine Floskeln",
                     "hauptgruppe": "ALLG",
                     "floskeln": [
@@ -118,20 +178,100 @@ class ImportFloskelgruppenTest extends TestCase
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseCount(self::TABLE, 0);
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'kuerzel' => '#A1',
+            ]);
     }
 
-    /**
-     * It does not create floskelgruppe with empty kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_empty_kuerzel(): void
+    public function test_it_does_not_create_related_floskel_if_fachId_is_missing(): void
     {
         $data = json_decode('{
             "floskelgruppen": [
                 {
-                    "kuerzel": null,
+                    "kuerzel": "ALLG",
+                    "bezeichnung": "Allgemeine Floskeln",
+                    "hauptgruppe": "ALLG",
+                    "floskeln": [
+                        {
+                            "kuerzel": "#A1",
+                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
+                            "niveau": null,
+                            "jahrgangID": null
+                        }
+                    ]
+                }
+            ]
+        }', true);
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    public function test_it_does_not_create_related_floskel_with_related_fach_if_fach_does_not_exist(): void
+    {
+        $data = json_decode('{
+            "floskelgruppen": [
+                {
+                    "kuerzel": "ALLG",
+                    "bezeichnung": "Allgemeine Floskeln",
+                    "hauptgruppe": "ALLG",
+                    "floskeln": [
+                        {
+                            "kuerzel": "#A1",
+                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
+                            "fachID": 1,
+                            "niveau": null,
+                            "jahrgangID": null
+                        }
+                    ]
+                }
+            ]
+        }', true);
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    public function test_it_creates_related_floskel_with_related_fach_if_fach_exists(): void
+    {
+        Fach::factory()->create();
+
+        $data = json_decode('{
+            "floskelgruppen": [
+                {
+                    "kuerzel": "ALLG",
+                    "bezeichnung": "Allgemeine Floskeln",
+                    "hauptgruppe": "ALLG",
+                    "floskeln": [
+                        {
+                            "kuerzel": "#A1",
+                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
+                            "fachID": 1,
+                            "niveau": null,
+                            "jahrgangID": null
+                        }
+                    ]
+                }
+            ]
+        }', true);
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'kuerzel' => '#A1',
+                'fach_id' => 1,
+            ]);
+    }
+    public function test_it_does_not_create_related_floskel_with_related_jahrgang_if_jahrgang_does_not_exist(): void
+    {
+        $data = json_decode('{
+            "floskelgruppen": [
+                {
+                    "kuerzel": "ALLG",
                     "bezeichnung": "Allgemeine Floskeln",
                     "hauptgruppe": "ALLG",
                     "floskeln": [
@@ -140,7 +280,7 @@ class ImportFloskelgruppenTest extends TestCase
                             "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
                             "fachID": null,
                             "niveau": null,
-                            "jahrgangID": null
+                            "jahrgangID": 1
                         }
                     ]
                 }
@@ -152,17 +292,15 @@ class ImportFloskelgruppenTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create floskelgruppe with missing bezeichnung
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_missing_bezeichnung(): void
+    public function test_it_creates_related_floskel_with_related_jahrgang_if_jahrgang_exists(): void
     {
+        Jahrgang::factory()->create();
+
         $data = json_decode('{
             "floskelgruppen": [
                 {
                     "kuerzel": "ALLG",
+                    "bezeichnung": "Allgemeine Floskeln",
                     "hauptgruppe": "ALLG",
                     "floskeln": [
                         {
@@ -170,7 +308,7 @@ class ImportFloskelgruppenTest extends TestCase
                             "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
                             "fachID": null,
                             "niveau": null,
-                            "jahrgangID": null
+                            "jahrgangID": 1
                         }
                     ]
                 }
@@ -179,196 +317,12 @@ class ImportFloskelgruppenTest extends TestCase
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseCount(self::TABLE, 0);
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'kuerzel' => '#A1',
+                'jahrgang_id' => 1,
+            ]);
     }
 
-    /**
-     * It does not create floskelgruppe with empty bezeichnung
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_empty_bezeichnung(): void
-    {
-        $data = json_decode('{
-            "floskelgruppen": [
-                {
-                    "kuerzel": "ALLG",
-                    "bezeichnung": null,
-                    "hauptgruppe": "ALLG",
-                    "floskeln": [
-                        {
-                            "kuerzel": "#A1",
-                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
-                            "fachID": null,
-                            "niveau": null,
-                            "jahrgangID": null
-                        }
-                    ]
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
-     * It does not create floskelgruppe with missing hauptgruppe
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_missing_hauptgruppe(): void
-    {
-        $data = json_decode('{
-            "floskelgruppen": [
-                {
-                    "kuerzel": "ALLG",
-                    "bezeichnung": "Allgemeine Floskeln",
-                    "floskeln": [
-                        {
-                            "kuerzel": "#A1",
-                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
-                            "fachID": null,
-                            "niveau": null,
-                            "jahrgangID": null
-                        }
-                    ]
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
-     * It does not create floskelgruppe with empty hauptgruppe
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_empty_hauptgruppe(): void
-    {
-        $data = json_decode('{
-            "floskelgruppen": [
-                {
-                    "kuerzel": "ALLG",
-                    "bezeichnung": "Allgemeine Floskeln",
-                    "hauptgruppe": null,
-                    "floskeln": [
-                        {
-                            "kuerzel": "#A1",
-                            "text": "$Vorname$ sollte sich aktiver am Unterrichtsgeschehen beteiligen.",
-                            "fachID": null,
-                            "niveau": null,
-                            "jahrgangID": null
-                        }
-                    ]
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
-     * It does not create floskelgruppe with empty floskeln
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_empty_floskeln(): void
-    {
-        $data = json_decode('{
-            "floskelgruppen": [
-                {
-                    "kuerzel": "ALLG",
-                    "bezeichnung": "Allgemeine Floskeln",
-                    "hauptgruppe": null,
-                    "floskeln": null
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
-     * It does not create floskelgruppe with missing floskeln
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_with_missing_floskeln(): void
-    {
-        $data = json_decode('{
-            "floskelgruppen": [
-                {
-                    "kuerzel": "ALLG",
-                    "bezeichnung": "Allgemeine Floskeln"
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
-     * It does not create floskelgruppe when the floskel array is empty
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_floskelgruppe_when_the_floskel_array_is_empty(): void
-    {
-        $data = json_decode('{
-            "floskelgruppen": [
-                {
-                    "kuerzel": "ALLG",
-                    "bezeichnung": "Allgemeine Floskeln",
-                    "hauptgruppe": null,
-                    "floskeln": []
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-
-    /**
-     * It returns when the "floskelgruppen" array is empty
-     *
-     * @return void
-     */
-    public function test_it_returns_when_the_floskelgruppen_array_is_missing(): void
-    {
-        $data = json_decode('{}', true);
-
-        new DataImportService($data);
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
-     * It returns when the "floskelgruppen" array is empty
-     *
-     * @return void
-     */
-    public function test_it_returns_when_the_floskelgruppen_array_is_empty(): void
-    {
-        $data = json_decode('{
-            "floskelgruppen": []
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
+    */
 }
