@@ -14,19 +14,21 @@
             </header>
             <div class="content-area">
                 <!-- Tabelle mit SvwsUiTable -->
-                <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count :sortByAndOrder= "{ key: 'klasse', order: true}"
-                :filtered="isFiltered()" :filterReset="filterReset" filterOpen>
+                <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count :sortByAndOrder= "{ key: 'klasse', order: true}"
+                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" filterOpen>
 
                     <!-- Basis-Filteroptionen -->
+                    <!-- TODO: remove once automatic toggle works for table component -->
+                    <!-- Unused now:  -->
                     <template #filter>
-                        <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
+                        <!-- <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.kurs" :value="true">Kurs</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.note" :value="true">Note</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                        <SvwsUiButton class="export-button" type="secondary" @click="exportToFile('csv')">CSV</SvwsUiButton>
+                        <SvwsUiButton class="export-button" type="secondary" @click="exportToFile('csv')">CSV</SvwsUiButton> -->
                     </template>
 
                     <!-- Erweiterte Filteroptionen -->
@@ -112,6 +114,18 @@
     import { handleExport } from '@/Helpers/exportHelper';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
 
+        //Correlation filter names and column names on this page
+    interface MeinUnterrichtFiltersToCols {
+        [index: string]: string,
+        fach: string,
+        kurs: string,
+        teilleistungen: string,
+        note: string,
+        mahnungen: string,
+        fehlstunden: string,
+        bemerkungen: string,
+    };
+
     const title = 'Notenmanager - mein Unterricht';
 
     //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
@@ -152,37 +166,51 @@
         .then((response: AxiosResponse): void => {
             rows.value = response.data.data;
             toggles.value = response.data.toggles;
+            getHiddenColumns(toggles);
         })
         .finally((): void => mapFilters())
     );
 
     // Standard-Spalten für die Tabelle
     const default_cols : DataTableColumn[] = [
-        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, fixedWidth: 6, disabled: false },
-        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 16, disabled: false },
+        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, fixedWidth: 6, disabled: false, toggleInvisible:true },
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 16, disabled: false, toggleInvisible:true },
     ];
 
      // Ein- und Ausblendbare Spalten
     const cols = computed((): DataTableColumn[] => {
         const result = [...default_cols];
-        if (toggles.value.fach)
-            result.push({ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false });
-        if (toggles.value.kurs)
-            result.push({ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false });
-        if (toggles.value.teilleistungen)
-            result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15 });
-        if (toggles.value.note)
-            result.push({ key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5 });
-        if (toggles.value.mahnungen)
-            result.push({ key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8});
-        if (toggles.value.fehlstunden) {
-            result.push({ key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6 });
-            result.push({ key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6 });
-        }
-        if (toggles.value.bemerkungen)
-            result.push({ key: 'fachbezogeneBemerkungen', label: 'FB', sortable: true, span: 12, minWidth: 4 });
+            result.push({ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false, toggle: true });
+            result.push({ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false, toggle: true });
+            result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15, toggle: true });
+            result.push({ key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5, toggle: true });
+            result.push({ key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8, toggle: true });
+            result.push({ key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6,  tooltip: "Fachbezogene Fehlstunden", toggle: true });
+            result.push({ key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6,  tooltip: "Unentschuldigte fachbezogene Fehlstunden", toggle: true });
+            result.push({ key: 'fachbezogeneBemerkungen', label: 'FB', sortable: true, span: 12, minWidth: 4,  tooltip: "Fachbezogene Bemerkungen", toggle: true });
         return result;
     });
+    
+    //filters from settings or user settings determine whether columns are hidden or shown in the table
+    const hiddenColumns = ref<Set<string>>(new Set<string>());
+    //filter names from DB do not match our cols; TODO: check whether it may be corrected at some point
+    const filtersToCols: MeinUnterrichtFiltersToCols = {
+        fach: 'fach',
+        kurs: 'kurs',
+        teilleistungen: 'teilnoten',
+        note: 'note',
+        mahnungen: 'istGemahnt',
+        fehlstunden: 'fs',
+        bemerkungen: 'fachbezogeneBemerkungen',
+    };
+
+    const getHiddenColumns = (toggles: Ref<TableColumnToggle>) => {
+        for (const filter in toggles.value) {
+            if (toggles.value[filter] === false) {
+                hiddenColumns.value.add(filtersToCols[filter]);
+            }
+        }
+    }
 
     // when clicked on, Leistung is "selected"
     const selectedLeistung: Ref<Leistung | null> = ref(null);

@@ -30,7 +30,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseHas('foerderschwerpunkte', [
             'id' => 1,
@@ -62,7 +62,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -98,7 +98,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseMissing(self::TABLE, [
             'kuerzel' => 'negative',
@@ -123,7 +123,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -143,7 +143,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -164,7 +164,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -189,7 +189,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1);
     }
@@ -210,7 +210,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -230,7 +230,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -251,7 +251,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseMissing(self::TABLE, [
             'id' => 1,
@@ -277,7 +277,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseMissing(self::TABLE, [
             'id' => 1,
@@ -296,7 +296,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
     {
         $data = json_decode('{}', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
@@ -312,7 +312,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
             "foerderschwerpunkte": []
         }', true);
 
-        new DataImportService($data);
+        (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
