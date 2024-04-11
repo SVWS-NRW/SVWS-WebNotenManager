@@ -9,11 +9,10 @@
 
 
 <script setup lang="ts">
-    import { Schueler } from '@/Interfaces/Schueler';
-    import { Leistung } from '@/Interfaces/Leistung';
+    import { Schueler, Leistung } from '@/Interfaces/Interface';
     import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
     import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
-    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+    import { SvwsUiCheckbox } from '@svws-nrw/svws-ui';
     import { computed, Ref, ref } from 'vue';
     
 

@@ -77,7 +77,7 @@
     import { ref, useSlots } from 'vue';
     import { Inertia } from '@inertiajs/inertia'
     import { usePage } from '@inertiajs/inertia-vue3'
-    import { Auth } from '@/Interfaces/Auth'
+    import { Auth } from '@/Interfaces/Interface'
     import Toast from '@/Components/Toast.vue';
     import { SvwsUiAppLayout, SvwsUiMenu, SvwsUiMenuHeader, SvwsUiMenuItem } from '@svws-nrw/svws-ui';
 
@@ -103,6 +103,7 @@
     const logout = (): void => Inertia.post(route('logout'));
     const activePage = (routeName: string): boolean => route().current(routeName);
     const currentUser = (): string => [auth.user.vorname, auth.user.nachname].join(' ');
+    console.log(document.cookie);
 </script>
 
 

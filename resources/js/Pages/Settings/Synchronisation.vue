@@ -50,10 +50,10 @@
 <script setup lang="ts">
     import { Ref, ref, watch } from 'vue';
     import AppLayout from '@/Layouts/AppLayout.vue';
-    import axios, { AxiosPromise, AxiosResponse } from 'axios';
+    import axios, { AxiosResponse } from 'axios';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
-    import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiButton, SvwsUiModal, SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import { apiError } from '@/Helpers/api.helper';
+    import { SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui';
     import { usePage } from '@inertiajs/inertia-vue3';
 
     let props = defineProps({

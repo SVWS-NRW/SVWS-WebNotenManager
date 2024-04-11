@@ -55,8 +55,7 @@
     import { computed, onMounted, Ref, ref } from 'vue';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
-    import { Schueler } from '@/Interfaces/Interface';
-    import { Klassenleitung } from '../Interfaces/Klassenleitung';
+    import { Schueler, Klassenleitung } from '@/Interfaces/Interface';
     import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components';
 
     const title = 'Notenmanager - Klassenleitung';

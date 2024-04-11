@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
     import { reactive, ref } from 'vue';
-    import { Leistung } from '@/Interfaces/Leistung';
+    import { Leistung } from '@/Interfaces/Interface';
     import { CellRef, setCellRefs, navigateTable } from '@/Helpers/tableNavigationHelper';
     import { SvwsUiBadge, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui';
     import moment from 'moment';

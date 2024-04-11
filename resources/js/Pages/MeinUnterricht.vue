@@ -101,8 +101,8 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, onMounted, Ref, ref, toRaw, VNodeRef } from 'vue';
-    import axios, { AxiosPromise, AxiosResponse } from 'axios';
+    import { computed, onMounted, Ref, ref } from 'vue';
+    import axios, { AxiosResponse } from 'axios';
     import { Head } from '@inertiajs/inertia-vue3';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import AppLayout from '@/Layouts/AppLayout.vue';

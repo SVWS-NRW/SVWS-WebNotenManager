@@ -48,8 +48,7 @@
     import { onMounted, reactive, watch} from 'vue';
     import axios, {AxiosPromise, AxiosResponse} from 'axios';
 
-    import { Leistung } from '../Interfaces/Leistung';
-    import { Floskel } from '../Interfaces/Floskel';
+    import { Leistung, Floskel } from '../Interfaces/Interface';
 
     let props = defineProps<{
         leistung: Leistung

@@ -92,14 +92,14 @@
     import AppLayout from '../Layouts/AppLayout.vue';
     import { Head } from '@inertiajs/inertia-vue3';
     import { computed, onMounted, ref, Ref } from 'vue';
-    import axios, { AxiosPromise, AxiosResponse } from 'axios';
+    import axios, { AxiosResponse } from 'axios';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
     import { handleExport } from '@/Helpers/exportHelper';
-    import { Auth } from '@/Interfaces/Auth';
+    import { Auth } from '@/Interfaces/Interface';
 
     let props = defineProps<{
         auth: Auth

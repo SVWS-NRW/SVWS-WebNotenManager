@@ -33,7 +33,7 @@
 
 
 <script setup lang="ts">
-    import { Ref, ref, computed } from 'vue';
+    import { Ref, ref } from 'vue';
     import axios from 'axios';
     import moment from 'moment';
     import { Leistung } from '@/Interfaces/Interface';

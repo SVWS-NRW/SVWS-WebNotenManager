@@ -58,7 +58,7 @@
 // TODO: TBR
     import { useStore } from '@/store';
     import { Inertia } from '@inertiajs/inertia';
-    import { Auth } from '@/Interfaces/Auth'
+    import { Auth } from '@/Interfaces/Interface'
 
     const store = useStore();
 

@@ -18,12 +18,9 @@
 
 <script setup lang="ts">
     import {watch, ref, Ref} from 'vue';
-    import axios, {AxiosPromise, AxiosResponse} from 'axios';
+    import axios from 'axios';
     import { Leistung, Schueler } from '@/Interfaces/Interface';
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui';
-    //TODO: remove if finally unused
-    import { CellRef, setCellRefs, navigateTable, selectItem } from '../Helpers/tableNavigationHelper'
-
 
     let props = defineProps<{
         model: Leistung | Schueler,

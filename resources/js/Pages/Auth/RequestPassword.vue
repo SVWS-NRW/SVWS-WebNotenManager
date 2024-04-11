@@ -98,12 +98,12 @@
 
 
 <script setup lang="ts">
-    import { SvwsUiTextInput, SvwsUiCheckbox, SvwsUiButton } from '@svws-nrw/svws-ui';
-    import { Head, Link } from '@inertiajs/inertia-vue3';
+    import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { Head } from '@inertiajs/inertia-vue3';
     import { Errors, Inertia } from '@inertiajs/inertia';
     import { reactive } from 'vue';
     import AuthLayout from '../../Layouts/AuthLayout.vue';
-    import { PasswordRequestFormData as PasswordRequest } from '../../Interfaces/FormData';
+    import { PasswordRequestFormData as PasswordRequest } from '../../Interfaces/Interface';
 
     let data: PasswordRequest = reactive({
         form: {

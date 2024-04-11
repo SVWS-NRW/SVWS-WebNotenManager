@@ -37,12 +37,8 @@
 
 <script setup lang="ts">// TODO: TBR
     import {computed, reactive, watch} from "vue";
-    import axios, { AxiosPromise, AxiosResponse } from "axios";
-    import { Column } from '@/Interfaces/Column'
-    import { Schueler } from '@/Interfaces/Schueler'
-    import { Floskelgruppe } from '@/Interfaces/Floskelgruppe'
-    import { Occurrence } from '@/Interfaces/Occurrence'
-    import { Pronoun } from '@/Interfaces/Pronoun'
+    import axios from "axios";
+    import { Column, Schueler, Floskelgruppe, Occurrence, Pronoun } from '@/Interfaces/Interface'
 
     type Selected = {
         floskelgruppe: string,

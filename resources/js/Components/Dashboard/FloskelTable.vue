@@ -27,8 +27,7 @@
 
     const emit = defineEmits(['added']);
 
-    import { Column } from '@/Interfaces/Column';
-    import { Floskel } from '@/Interfaces/Floskel';
+    import { Column, Floskel } from '@/Interfaces/Interface';
 
     type Selected = {
         text: string,

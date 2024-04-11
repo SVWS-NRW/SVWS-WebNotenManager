@@ -27,8 +27,7 @@
 <script setup lang="ts">
     import { computed, onMounted, ref, Ref, watch } from 'vue';
     import axios, { AxiosError, AxiosResponse } from 'axios';
-    import { Leistung } from '@/Interfaces/Leistung';
-    import { FachbezogeneFloskel } from '@/Interfaces/FachbezogeneFloskel';
+    import { Leistung, FachbezogeneFloskel } from '@/Interfaces/Interface';
     import {
         DataTableColumn, SvwsUiButton, SvwsUiMultiSelect, SvwsUiTable, SvwsUiTextareaInput, SvwsUiTextInput, SvwsUiContentCard,
     } from '@svws-nrw/svws-ui';
