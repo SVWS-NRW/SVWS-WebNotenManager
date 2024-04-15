@@ -11,7 +11,7 @@
                 </div>
             </header>
             <div class="content-area">
-                <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"  
+                <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"  
                     :filterOpen="true" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
                     <template #filter>
                         <div class="edition-pencil-button">

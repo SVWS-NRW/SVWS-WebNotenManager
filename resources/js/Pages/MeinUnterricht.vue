@@ -14,7 +14,7 @@
             </header>
             <div class="content-area">
                 <!-- Tabelle mit SvwsUiTable -->
-                <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count :sortByAndOrder= "{ key: 'klasse', order: true}"
+                <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" filterOpen>
 
                     <!-- Basis-Filteroptionen -->
