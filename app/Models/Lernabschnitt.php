@@ -64,7 +64,7 @@ class Lernabschnitt extends Model
      * @var string[]
      */
     protected $fillable = [
-        'id', 'schuler_id', 'fehlstundenGesamt', 'tsFehlstundenGesamt', 'fehlstundenGesamtUnentschuldigt',
+        'id', 'schueler_id', 'fehlstundenGesamt', 'tsFehlstundenGesamt', 'fehlstundenGesamtUnentschuldigt',
         'tsFehlstundenGesamtUnentschuldigt', 'pruefungsordnung', 'lernbereich1note', 'lernbereich2note',
         'foerderschwerpunkt1', 'foerderschwerpunkt2',
     ];
