@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeinUnterricht\LeistungResource;
 use App\Models\Leistung;
-use App\Models\UserSetting;
-use App\Settings\FilterSettings;
+use App\Models\Note;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -50,10 +49,18 @@ class MeinUnterricht extends Controller
                 'schueler.klasse.kuerzel', 'schueler.nachname', 'lerngruppe.fach.kuerzelAnzeige',
             ]);
 
+        //Get all notes present in the noten DB table
+        $allNotes = Note::query()
+            ->orderBy('kuerzel')
+            ->pluck('kuerzel')
+            ->toArray();
+
+
         // Return the collection of Leistung resources, with additional data.
 		return LeistungResource::collection($leistungen)
             ->additional([
                 'toggles' => auth()->user()->filters('meinunterricht'),
+                'allNotes' => $allNotes,
             ]);
 	}
 }

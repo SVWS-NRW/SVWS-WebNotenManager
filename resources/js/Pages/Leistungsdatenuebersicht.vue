@@ -31,6 +31,7 @@
                         <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
                         <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
                         <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="item => item" v-model="noteFilter" />
+
                     </template>
 
                     <template #cell(klasse)="{ value, rowData }">
@@ -85,13 +86,12 @@
 <script setup lang="ts">
     import AppLayout from '../Layouts/AppLayout.vue';
     import { Head } from '@inertiajs/inertia-vue3';
-    import { computed, onMounted, ref, Ref } from 'vue';
+    import { computed, onMounted, ref, Ref, toRaw } from 'vue';
     import axios, { AxiosResponse } from 'axios';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
-    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
+    import { DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
-    import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
     import { handleExport } from '@/Helpers/exportHelper';
     import { Auth } from '@/Interfaces/Interface';
 
@@ -167,6 +167,8 @@
     const kursItems: Ref<string[]> = ref([]);
     const jahrgangItems: Ref<string[]> = ref([]);
     const noteItems: Ref<string[]> = ref([]);
+    const allNotes: Ref<string[]> = ref([]);
+
 
     const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value);
 
@@ -177,6 +179,7 @@
             toggles.value = response.data.toggles;
             getHiddenColumns(toggles);
             lehrerCanOverrideFachlehrer.value = response.data.lehrerCanOverrideFachlehrer;
+            allNotes.value = response.data.allNotes;
         })
         .finally((): void => mapFilters())
     );
@@ -252,7 +255,7 @@
         fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
         kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs');
         jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang');
-        noteItems.value = mapFilterOptionsHelper(rows.value, 'note');
+        noteItems.value = Array.from(Object.values(allNotes.value));
     }
 
     const filterReset = (): void => {

@@ -160,12 +160,16 @@
         fach: false,
     });
 
+    // all notes present in the noten DB table
+    const allNotes: Ref<string[]> = ref([]);
+
     // Api Call - Daten für meinUnterricht
     onMounted((): Promise<void> => axios
         .get(route('api.mein_unterricht'))
         .then((response: AxiosResponse): void => {
             rows.value = response.data.data;
             toggles.value = response.data.toggles;
+            allNotes.value = response.data.allNotes;
             getHiddenColumns(toggles);
         })
         .finally((): void => mapFilters())
@@ -258,7 +262,7 @@
         fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
         kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs');
         jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang');
-        noteItems.value = mapFilterOptionsHelper(rows.value, 'note');
+        noteItems.value = Array.from(Object.values(allNotes.value));
     };
 
     //input html element and reference map name are determined by child

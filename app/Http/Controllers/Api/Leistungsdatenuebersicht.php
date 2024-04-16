@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeinUnterricht\LeistungResource;
 use App\Models\Leistung;
-use App\Settings\FilterSettings;
+use App\Models\Note;
 use App\Settings\MatrixSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -58,11 +58,19 @@ class Leistungsdatenuebersicht extends Controller
             // Sort the results by the specified columns.
             ->sortBy($sortByColumns);
 
+        //Get all notes present in noten DB table
+        $allNotes = Note::query()
+            ->orderBy('kuerzel')
+            ->pluck('kuerzel')
+            ->toArray();
+
+
         // Return the collection of Leistung resources.
         return LeistungResource::collection($leistungen)
             ->additional([
                 'toggles' => auth()->user()->filters('leistungsdatenuebersicht'),
                 'lehrerCanOverrideFachlehrer' => $matrix->lehrer_can_override_fachlehrer,
+                'allNotes' => $allNotes,
             ]);
     }
 }
