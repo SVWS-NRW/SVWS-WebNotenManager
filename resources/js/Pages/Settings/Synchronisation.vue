@@ -22,8 +22,8 @@
                     <div ref="newClientDataInfo" class="client-data-block" v-if="newClientCreated">
                         <p>Diese Information wird Ihnen einmalig in diesem Fenster eingeblendet.</p>
                         <br />
-                        <p><span class="client-data-fields">id:</span> {{ clientRecord.id }} </p>
-                        <p><span class="client-data-fields">authServer:</span> https://wenom2.svws-nrw.de </p>
+                        <p><span class="client-data-fields">id:</span> 1 </p>
+                        <p><span class="client-data-fields">authServer:</span> {{ url }} </p>
                         <p><span class="client-data-fields">clientID:</span> {{ clientRecord.id }} </p>
                         <p><span class="client-data-fields">clientSecret:</span> {{ clientRecord.secret }} </p>
                         <br />
@@ -67,9 +67,10 @@
         created_at: Date,
     }
 
-    //TODO: name is always SVWS-Server now, so some things here are not necessary anymore
+    //TODO: name is always SVWS-Server now, so some things here are probably not necessary anymore
     const newClientName: string = usePage().props.value.schoolName as string;
     const clientRecord: Ref<ClientRecord> = ref({} as ClientRecord);
+    const url: string = usePage().props.value.appUrl as string;
     const clientExists: Ref<boolean> = ref(false);
     const convertedClientRecordTimestamp: Ref<string> = ref("");
     const newClientCreated: Ref<boolean> = ref(false);

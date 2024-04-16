@@ -50,6 +50,8 @@ class HandleInertiaRequests extends Middleware
             'auth.administrator' => $request->user() ? $request->user()->is_administrator : false,
             // Share the school's name from configuration.
             'schoolName' => config('app.school_name'),
+            // Share url from configuration.
+            'appUrl' => config('app.url'),
             // Share various application settings.
             'settings' => [
 				'general' => app(GeneralSettings::class),
