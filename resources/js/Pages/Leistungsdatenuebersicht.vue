@@ -17,7 +17,7 @@
                         <div class="edition-pencil-button">
                             <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator" 
                                 :class="'opacity-50 hover:opacity-100 focus-visible:opacity-100'"
-                                :type="leistungEditable ? 'transparent' : 'transparent'" size="big">
+                                :type="leistungEditable ? 'primary' : 'secondary'" size="big">
                                 <ri-pencil-fill></ri-pencil-fill>
                             </SvwsUiButton>
                         </div>
