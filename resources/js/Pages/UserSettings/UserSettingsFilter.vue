@@ -3,8 +3,8 @@
         <template #main>
             <section>
                 <h2 class="text-headline">Spalteneinstellungen</h2>
-                <h3 class="text-headline-md">Mein Unterricht</h3>
                 <div>
+                <h3 class="text-headline-md">Mein Unterricht</h3>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.teilleistungen" type="toggle">Teilleistungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.mahnungen" type="toggle">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
