@@ -12,6 +12,8 @@ class FilterSettings extends Settings
 	public bool $mein_unterricht_fehlstunden;
 	public bool $mein_unterricht_bemerkungen;
 	public bool $mein_unterricht_kurs;
+
+	public bool $mein_unterricht_quartalnoten;
 	public bool $mein_unterricht_note;
 	public bool $mein_unterricht_fach;
 
@@ -21,6 +23,8 @@ class FilterSettings extends Settings
 	public bool $leistungdatenuebersicht_fehlstunden;
 	public bool $leistungdatenuebersicht_bemerkungen;
 	public bool $leistungdatenuebersicht_kurs;
+
+	public bool $leistungdatenuebersicht_quartalnoten;
 	public bool $leistungdatenuebersicht_note;
 	public bool $leistungdatenuebersicht_fach;
 

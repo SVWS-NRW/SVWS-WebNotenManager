@@ -49,13 +49,13 @@ class EnvController extends Controller
     }
 
     /**
-     * Retrieves the user filters from the configuration.
+     * Retrieves the general user filters from the configuration.
      *
      * @return JsonResponse
      */
     public function getFilters(): JsonResponse
     {
-        // Fetching the user filters from the application's configuration file and returning them in a JSON response.
+        // Fetching the general user filters from the application's configuration file and returning them in a JSON response.
         return response()->json(config('wenom.filters'));
     }
 

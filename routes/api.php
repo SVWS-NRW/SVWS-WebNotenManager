@@ -61,7 +61,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
                     Route::put('bulk-update/{group}', 'bulkUpdate')->name('bulk_update');
                 });
 
-                // Defines the .nnv settings controller route group for administrators
+                // Defines the .env settings controller route group for administrators
                 Route::controller(EnvController::class)->group(function (): void {
                     Route::get('mail-send-credentials', 'getMailSendCredentials')
                         ->name('mail_send_credentials');
