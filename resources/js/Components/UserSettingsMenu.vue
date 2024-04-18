@@ -1,7 +1,11 @@
 <template>
     <SvwsUiSecondaryMenu>
         <template #headline>
-            Persönliche Einstellungen
+            <div>
+                <h2>Persönliche Einstellungen</h2>
+                <p class="login">Letzter Login: {{ props.lastLogin }}</p>
+                <p class="login">Ihre E-Mail-Adresse: {{ props.email }}</p>
+            </div>
         </template>
         <template #content>
             <div class="container">
@@ -19,12 +23,28 @@
     import { SvwsUiSecondaryMenu, SvwsUiMenuItem } from '@svws-nrw/svws-ui';
 
     const navigate = (routeName: string): void => Inertia.get(route(routeName));
+
+    const props = defineProps({
+        lastLogin: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+            required: true,
+        },
+    });
+
 </script>
 
 
 <style scoped>
     .container {
         @apply flex flex-col gap-3 ml-[1.1rem]
+    }
+
+    .login {
+        @apply text-sm text-gray-500;
     }
     
 </style>

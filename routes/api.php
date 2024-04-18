@@ -107,6 +107,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('filters', 'setFilters')->name('set_filters');
             Route::get('filters', 'getAllFilters')->name('get_all_filters');
             Route::get('filters/{group}', 'getFilters')->name('get_filters');
+            Route::get('user-data', 'getLastLogin')->name('get_last_login');
         });
 
     // Defines the Fachbezogene Bemerkung controller route group

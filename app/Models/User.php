@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -231,5 +232,15 @@ class User extends Authenticatable
         return $this->userSettings()->exists()
             ? json_decode(json_encode($this->userSettings->$filterColumn), true)
             : config("wenom.filters.{$column}");
+    }
+
+    /**
+     * Get the login logs for the user.
+     *
+     * @return HasMany
+     */
+    public function loginLogs(): HasMany
+    {
+        return $this->hasMany(UserLogin::class);
     }
 }
