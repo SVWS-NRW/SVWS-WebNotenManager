@@ -30,23 +30,23 @@
             </section>
         </template>
         <template #secondaryMenu>
-            <UserSettingsMenu></UserSettingsMenu>
+            <UserSettingsMenu :lastLogin="props.auth.lastLogin" :email="props.auth.user.email"></UserSettingsMenu>
         </template>
     </AppLayout>
 </template>
 
-
 <script setup lang="ts">
-    import { Ref, ref } from 'vue'
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, { AxiosResponse } from 'axios'
-    import { apiError, apiSuccess } from '@/Helpers/api.helper'
-    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui'
-    import UserSettingsMenu from '@/Components/UserSettingsMenu.vue'
+    import { Ref, ref } from 'vue';
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import axios, { AxiosResponse } from 'axios';
+    import { apiError, apiSuccess } from '@/Helpers/api.helper';
+    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+    import UserSettingsMenu from '@/Components/UserSettingsMenu.vue';
+    import { Auth } from '@/Interfaces/Interface';
 
-    let props = defineProps({
-        auth: Object,
-    })
+    const props = defineProps<{
+        auth: Auth
+    }>();
 
     interface UserSettings {
         filters_meinunterricht: {
@@ -69,15 +69,15 @@
             quartalnoten: boolean,
             note: boolean,
             fach: boolean,
-        }
+        },
     }
 
     const user_settings: Ref<UserSettings> = ref({} as UserSettings);
 
     axios.get(route('user_settings.get_all_filters'))
-        .then((response: AxiosResponse): AxiosResponse => user_settings.value = response.data)
-    ;
-
+        .then((response: AxiosResponse): AxiosResponse => user_settings.value = response.data
+    );
+    
     const saveSettings = () => axios
         .post(route('user_settings.set_filters'), {
             'filters_meinunterricht': {

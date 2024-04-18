@@ -42,12 +42,23 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $lastLogin = null;
+
+        if ($user) {
+            $loginLogs = $user->loginLogs()->latest()->skip(1)->first(); // Second last Login-Entry
+            if ($loginLogs) {
+                $lastLogin = $loginLogs->login?->format('d.m.Y H:i').' Uhr';
+            }
+        }
+
         return array_merge(parent::share($request), [
-            'auth.user' => fn (): array|null => $request->user()
-				? $request->user()->only('id', 'vorname', 'nachname', 'email', 'klassen', 'lerngruppen')
+            'auth.user' => fn (): array|null => $user
+				? $user->only('id', 'vorname', 'nachname', 'email', 'klassen', 'lerngruppen')
 				: null,
             // Share whether the authenticated user is an administrator.
-            'auth.administrator' => $request->user() ? $request->user()->is_administrator : false,
+            'auth.administrator' => $user ? $user->is_administrator : false,
+            'auth.lastLogin' => $lastLogin,
             // Share the school's name from configuration.
             'schoolName' => config('app.school_name'),
             // Share url from configuration.
