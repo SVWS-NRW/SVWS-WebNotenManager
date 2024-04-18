@@ -14,6 +14,7 @@
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.fehlstunden" :value="1" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.bemerkungen" :value="1" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.kurs" :value="1" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="meinunterrichtSettings.quartalnoten" :value="1" type="toggle">Quartal</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.note" :value="1" type="toggle">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.fach" :value="1" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
@@ -26,6 +27,7 @@
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fehlstunden" :value="1" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.bemerkungen" :value="1" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.kurs" :value="1" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.quartalnoten" :value="1" type="toggle">Quartal</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.note" :value="1" type="toggle">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fach" :value="1" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
@@ -60,6 +62,7 @@
         fehlstunden: boolean,
         bemerkungen: boolean,
         kurs: boolean,
+        quartalnoten: boolean,
         note: boolean,
         fach: boolean,
     }
@@ -71,6 +74,7 @@
         fehlstunden: boolean,
         bemerkungen: boolean,
         kurs: boolean,
+        quartalnoten: boolean,
         note: boolean,
         fach: boolean,
     }
@@ -97,6 +101,7 @@
                 'fehlstunden': meinunterrichtSettings.value.fehlstunden,
                 'teilleistungen': meinunterrichtSettings.value.teilleistungen,
                 'kurs': meinunterrichtSettings.value.kurs,
+                'quartalnoten': meinunterrichtSettings.value.quartalnoten,
                 'note': meinunterrichtSettings.value.note,
                 'fach': meinunterrichtSettings.value.fach,
             },
@@ -107,6 +112,7 @@
                 'fehlstunden': leistungsdatenuebersichtSettings.value.fehlstunden,
                 'teilleistungen': leistungsdatenuebersichtSettings.value.teilleistungen,
                 'kurs': leistungsdatenuebersichtSettings.value.kurs,
+                'quartalnoten': leistungsdatenuebersichtSettings.value.quartalnoten,
                 'note': leistungsdatenuebersichtSettings.value.note,
                 'fach': leistungsdatenuebersichtSettings.value.fach,
             },

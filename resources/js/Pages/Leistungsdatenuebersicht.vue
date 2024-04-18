@@ -57,6 +57,11 @@
                     <template #cell(note)="{ value, rowData, rowIndex }">
                         <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
+
+                    <template #cell(quartal)="{ value, rowData, rowIndex }">
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                    </template>
+
                     <template #cell(istGemahnt)="{ value, rowData }">
                         <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" />
                     </template>
@@ -106,6 +111,7 @@
         kurs: string,
         fachlehrer: string,
         teilleistungen: string,
+        quartalnoten: string,
         note: string,
         mahnungen: string,
         fehlstunden: string,
@@ -146,6 +152,7 @@
     //these columns can be hidden/displayed on the page, which can overwrite the platform general settings under Einstellungen/Filter
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
+        quartalnoten: false,
         fachlehrer: false,
         mahnungen: false,
         fehlstunden: false,
@@ -197,6 +204,7 @@
         result.push({ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false, toggle: true });
         result.push({ key: 'lehrer', label: 'Fachlehrer', sortable: true, span: 2, minWidth: 7, toggle: true });
         result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 6, toggle: true });
+        result.push({ key: 'quartalnoten', label: 'Quartal', sortable: true, span: 1, minWidth: 6, toggle: true });
         result.push({ key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 6, toggle: true });
         result.push({ key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8, toggle: true });
         result.push({ key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6, tooltip: "Fachbezogene Fehlstunden", toggle: true });
@@ -213,6 +221,7 @@
         kurs: 'kurs',
         fachlehrer: 'lehrer',
         teilleistungen: 'teilnoten',
+        quartalnoten: "quartalnoten",
         note: 'note',
         mahnungen: 'istGemahnt',
         fehlstunden: 'fs',

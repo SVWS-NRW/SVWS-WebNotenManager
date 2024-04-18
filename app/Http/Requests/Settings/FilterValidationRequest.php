@@ -33,6 +33,7 @@ class FilterValidationRequest extends FormRequest
             'filters_meinunterricht.fehlstunden' => ['required', 'boolean'],
             'filters_meinunterricht.teilleistungen' => ['required', 'boolean'],
             'filters_meinunterricht.kurs' => ['required', 'boolean'],
+            'filters_meinunterricht.quartalnoten' => ['required', 'boolean'],
             'filters_meinunterricht.note' => ['required', 'boolean'],
             'filters_meinunterricht.fach' => ['required', 'boolean'],
 
@@ -42,6 +43,7 @@ class FilterValidationRequest extends FormRequest
             'filters_leistungsdatenuebersicht.fehlstunden' => ['required', 'boolean'],
             'filters_leistungsdatenuebersicht.teilleistungen' => ['required', 'boolean'],
             'filters_leistungsdatenuebersicht.kurs' => ['required', 'boolean'],
+            'filters_leistungsdatenuebersicht.quartalnoten' => ['required', 'boolean'],
             'filters_leistungsdatenuebersicht.note' => ['required', 'boolean'],
             'filters_leistungsdatenuebersicht.fach' => ['required', 'boolean'],
         ];

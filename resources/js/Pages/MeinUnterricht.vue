@@ -7,7 +7,6 @@
     <AppLayout>
         <template #main>
             <header>
-                <!-- Überschrift des Headers -->
                 <div id="headline">
                     <h2 class="text-headline">{{ title }}</h2>
                 </div>
@@ -16,20 +15,6 @@
                 <!-- Tabelle mit SvwsUiTable -->
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" filterOpen>
-
-                    <!-- Basis-Filteroptionen -->
-                    <!-- TODO: remove once automatic toggle works for table component -->
-                    <!-- Unused now:  -->
-                    <template #filter>
-                        <!-- <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.kurs" :value="true">Kurs</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.note" :value="true">Note</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                        <SvwsUiButton class="export-button" type="secondary" @click="exportToFile('csv')">CSV</SvwsUiButton> -->
-                    </template>
 
                     <!-- Erweiterte Filteroptionen -->
                     <template #filterAdvanced>
@@ -61,6 +46,12 @@
                     <template #cell(kurs)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
+
+                    <!-- TODO: ticket 260; nothing comes from db yet -->
+                    <template #cell(quartal)="{ value, rowData, rowIndex }">
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                    </template>
+
 
                     <!-- BemerkungButton in der Zelle 'note' -->
                     <template #cell(note)="{ value, rowData, rowIndex }">
@@ -114,12 +105,13 @@
     import { handleExport } from '@/Helpers/exportHelper';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
 
-        //Correlation filter names and column names on this page
+    //Correlation filter names and column names on this page
     interface MeinUnterrichtFiltersToCols {
         [index: string]: string,
         fach: string,
         kurs: string,
         teilleistungen: string,
+        quartalnoten: string,
         note: string,
         mahnungen: string,
         fehlstunden: string,
@@ -151,6 +143,7 @@
     // some columns may be displayed/hidden on demand
     const toggles: Ref<TableColumnToggle> = ref({
         teilleistungen: false,
+        quartalnoten: false,
         mahnungen: false,
         bemerkungen: false,
         fehlstunden: false,
@@ -187,6 +180,7 @@
             result.push({ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false, toggle: true });
             result.push({ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false, toggle: true });
             result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15, toggle: true });
+            result.push({ key: 'quartalnoten', label: 'Quartal', sortable: true, span: 1, minWidth: 6, toggle: true });
             result.push({ key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5, toggle: true });
             result.push({ key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8, toggle: true });
             result.push({ key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6,  tooltip: "Fachbezogene Fehlstunden", toggle: true });
@@ -202,6 +196,7 @@
         fach: 'fach',
         kurs: 'kurs',
         teilleistungen: 'teilnoten',
+        quartalnoten: 'quartalnoten',
         note: 'note',
         mahnungen: 'istGemahnt',
         fehlstunden: 'fs',

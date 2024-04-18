@@ -10,6 +10,7 @@
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fehlstunden" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.bemerkungen" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.kurs" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.quartalnoten" type="toggle">Quartal</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.note" type="toggle">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_meinunterricht.fach" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
@@ -21,6 +22,7 @@
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fehlstunden" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.bemerkungen" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.kurs" type="toggle">Kurs</SvwsUiCheckbox>
+                    <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.quartalnoten" type="toggle">Quartal</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note" type="toggle">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
@@ -53,6 +55,7 @@
             fehlstunden: boolean,
             bemerkungen: boolean,
             kurs: boolean,
+            quartalnoten: boolean,
             note: boolean,
             fach: boolean,
         },
@@ -63,6 +66,7 @@
             fehlstunden: boolean,
             bemerkungen: boolean,
             kurs: boolean,
+            quartalnoten: boolean,
             note: boolean,
             fach: boolean,
         }
@@ -82,6 +86,7 @@
                 'fehlstunden': user_settings.value.filters_meinunterricht.fehlstunden,
                 'teilleistungen': user_settings.value.filters_meinunterricht.teilleistungen,
                 'kurs': user_settings.value.filters_meinunterricht.kurs,
+                'quartalnoten': user_settings.value.filters_meinunterricht.quartalnoten,
                 'note': user_settings.value.filters_meinunterricht.note,
                 'fach': user_settings.value.filters_meinunterricht.fach,
             },
@@ -92,6 +97,7 @@
                 'fehlstunden': user_settings.value.filters_leistungsdatenuebersicht.fehlstunden,
                 'teilleistungen': user_settings.value.filters_leistungsdatenuebersicht.teilleistungen,
                 'kurs': user_settings.value.filters_leistungsdatenuebersicht.kurs,
+                'quartalnoten': user_settings.value.filters_leistungsdatenuebersicht.quartalnoten,
                 'note': user_settings.value.filters_leistungsdatenuebersicht.note,
                 'fach': user_settings.value.filters_leistungsdatenuebersicht.fach,
             },
@@ -99,7 +105,7 @@
         .then((): void => apiSuccess())
         .catch((error: any): void => apiError(
             error,
-            'Ein Problem ist aufgetreten bei Speichern von Filtern'
+            'Ein Problem ist aufgetreten bei Speichern von Persönlichen Filtern'
         ))
 </script>
 
