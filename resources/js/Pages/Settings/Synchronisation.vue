@@ -8,11 +8,12 @@
             </header>
             <br />
             <div class="content">
-                <p v-if="clientExists">Letzte Tokengenerierung: {{ convertedClientRecordTimestamp }}</p>
-                <p>Klicken Sie auf den Button, um einen neuen Access Token für den SVWS-Server zu generieren.</p>
-                <SvwsUiButton @click="openModal()" type="secondary">
-                    Generieren
-                </SvwsUiButton>
+                <p v-if="clientExists">Letzte Änderung: {{ convertedClientRecordTimestamp }}</p>
+                <div>Klicken Sie auf den Button, um einen neuen Zugang für den SVWS-Server einzurichten.
+                    <SvwsUiButton @click="openModal()" type="secondary">
+                        Generieren
+                    </SvwsUiButton>
+                </div>
             </div>
             <SvwsUiModal id="clientModal" ref="modal" :show="showModal" size="medium">
                 <template #modalTitle>
@@ -20,12 +21,10 @@
                 </template>
                 <template #modalContent>
                     <div ref="newClientDataInfo" class="client-data-block" v-if="newClientCreated">
-                        <p>Diese Information wird Ihnen einmalig in diesem Fenster eingeblendet.</p>
+                        <p style="margin-bottom: 1.1em;">Diese Information wird Ihnen einmalig in diesem Fenster eingeblendet.</p>
                         <br />
-                        <p><span class="client-data-fields">id:</span> 1 </p>
-                        <p><span class="client-data-fields">authServer:</span> {{ url }} </p>
-                        <p><span class="client-data-fields">clientID:</span> {{ clientRecord.id }} </p>
-                        <p><span class="client-data-fields">clientSecret:</span> {{ clientRecord.secret }} </p>
+                        <p style="margin-bottom: 1em;"><span class="client-data-fields">URL:</span> {{ url }} <ri-file-copy-line class="copy-button" @click="copyToClipboard(newClientDataInfo, 0)"></ri-file-copy-line></p>
+                        <p><span class="client-data-fields">Secret:</span> {{ clientRecord.secret }} <ri-file-copy-line class="copy-button" @click="copyToClipboard(newClientDataInfo, 1)"></ri-file-copy-line></p>
                         <br />
                     </div>
                     <p v-else>{{ adjustSettingsInfo }}</p>
@@ -34,7 +33,6 @@
                     <div class="buttons-block">
                         <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
                         </SvwsUiButton>
-                        <SvwsUiButton v-if="newClientCreated" @click="copyToClipboard(newClientDataInfo)" type="secondary">Kopieren</SvwsUiButton>
                         <SvwsUiButton @click="closeModal()" type="secondary">Schließen</SvwsUiButton>
                     </div>
                 </template>
@@ -60,6 +58,7 @@
         auth: Object,
     });
 
+    //TODO: remove whatever if finally unused/unnecessary
     interface ClientRecord {
         id: number,
         name: string,
@@ -86,43 +85,36 @@
 
     const closeModal = (): boolean => _showModal.value = false;
 
-    const copyToClipboard = (receivedClientDataInfo: HTMLDivElement): void => {
-        const formattedJsonToPaste: string = formatJsonString(receivedClientDataInfo);
-        navigator.clipboard.writeText(formattedJsonToPaste);
-    };
-
-    const formatJsonString = (receivedClientDataInfo: HTMLDivElement) => {
-        const trimmedAndFilteredText: string[] = receivedClientDataInfo.innerText.slice(74).split("\n").filter(line => line.trim() !== "");
-        const commaSeparatedString: string = "{\n " + trimmedAndFilteredText.join(", ") + "\n}";
-        const allQuotedJson: string = commaSeparatedString.replaceAll(new RegExp('([A-Za-z][a-zA-Z0-9\\s]+):\\s([a-zA-Z0-9-:\/\/.]+)', 'g'), `"$1": "$2"`);
-        //Remove quotes around integer values; they should not be quoted
-        const oneLineJsonString: string = allQuotedJson.replace(new RegExp('"([0-9]+)"', 'g'), `$1`);
-        const finalJsonString: string = oneLineJsonString.replace(new RegExp('(,\\s*)', 'g'), `,\n `);
-        return finalJsonString;
+    const copyToClipboard = (receivedClientDataInfo: HTMLDivElement, position: number): void => {
+        const textToCopy: string[] = receivedClientDataInfo.innerText.slice(74).split(" \n");
+        navigator.clipboard.writeText(textToCopy[position].replace(new RegExp('(URL: |Secret: )'), ""));
     };
 
 
     axios.get(route('passport.index'))
         .then((response: AxiosResponse): void => {
             for (let record in response.data) {
-                if (response.data[record].name == newClientName + "_client") {
+                if (response.data[record].name == "SVWS-Server") {
                     clientRecord.value = response.data[record];
                     convertedClientRecordTimestamp.value =
-                        new Date(clientRecord.value.created_at).toLocaleString('de-DE');
+                        new Date(clientRecord.value.created_at).toLocaleString('de-DE').replace(", ", ", Uhr ");
                     clientExists.value = true;
                 }
             }
         });
 
     const adjustSettings = (): void => {
-        axios.post(route('passport.store'), { 'name': newClientName + "_client" })
+        axios.post(route('passport.store'))
             .then((response: AxiosResponse) => {
                 clientRecord.value = response.data;
                 convertedClientRecordTimestamp.value =
-                    new Date(clientRecord.value.created_at).toLocaleString('de-DE');
+                    new Date(clientRecord.value.created_at).toLocaleString('de-DE', {
+                        dateStyle: "medium",
+                        timeStyle: "medium"
+                    }).replace(", ", ", Uhr ");
                 clientExists.value = true;
                 newClientCreated.value = true;
-                modalTitle.value = "Neuer Client erfolgreich angelegt";
+                modalTitle.value = "Neuer Zugang erfolgreich angelegt";
             })
             .catch((error: any): void => apiError(error));
     }
@@ -167,5 +159,9 @@
 
     .button {
         @apply self-start
+    }
+    
+    .copy-button { 
+        @apply inline hover:text-black hover:border-black active:text-sortingblue
     }
 </style>
