@@ -40,7 +40,7 @@
 
 <style scoped>
     .container {
-        @apply flex flex-col gap-3 ml-[1.1rem]
+        @apply flex flex-col gap-3 mx-[1.1rem]
     }
 
     .login {
