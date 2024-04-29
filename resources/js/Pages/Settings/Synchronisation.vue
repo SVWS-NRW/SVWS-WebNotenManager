@@ -31,7 +31,7 @@
                 </template>
                 <template #modalActions>
                     <div class="buttons-block">
-                        <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Neuer Token
+                        <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Generieren
                         </SvwsUiButton>
                         <SvwsUiButton @click="closeModal()" type="secondary">Schließen</SvwsUiButton>
                     </div>
