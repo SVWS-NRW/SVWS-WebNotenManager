@@ -9,7 +9,7 @@
 
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :clickable="true" :count="true" :filtered="isFiltered()"
-                    :filterReset="filterReset" :filterOpen="true" :sortByAndOrder="{ key: 'klasse', order: true}">
+                    :filterReset="filterReset" :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}">
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
                         <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter"

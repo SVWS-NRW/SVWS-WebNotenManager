@@ -12,17 +12,20 @@
             </header>
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"  
-                    :filterOpen="true" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
+                    :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
                     <template #filter>
-                        <div class="edition-pencil-button">
-                            <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator" 
-                                :class="'opacity-50 hover:opacity-100 focus-visible:opacity-100'"
-                                :type="leistungEditable ? 'primary' : 'secondary'" size="big">
-                                <ri-pencil-fill></ri-pencil-fill>
-                            </SvwsUiButton>
+                        <div class="filter-area-icon">
+                        <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator" 
+                            :class="'hover:opacity-100 focus-visible:opacity-100'"
+                            :type="leistungEditable ? 'primary' : 'transparent'" size="big">
+                            <ri-pencil-fill></ri-pencil-fill>
+                        </SvwsUiButton>
                         </div>
-                        <SvwsUiButton class="export-button" type="transparent" 
-                        :class="'opacity-50 hover:opacity-100 focus-visible:opacity-100'" @click="exportToFile('csv')">CSV</SvwsUiButton>
+                        <div class="filter-area-icon">
+                        <SvwsUiButton class="export-button" type="transparent" size="big"
+                        :class="'hover:opacity-100 focus-visible:opacity-100'" @click="exportToFile('csv')"><ri-download-2-line></ri-download-2-line>
+                        </SvwsUiButton>
+                        </div>
                     </template>
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
@@ -354,16 +357,16 @@
         @apply flex flex-col gap-4 p-6
     }
 
-    .edition-pencil-button {
-        @apply mr-4
-    }
-
     header #headline {
         @apply flex items-center justify-start gap-6 ml-6
     }
 
     .content-area {
         @apply mx-4 overflow-auto ml-6
+    }
+
+    .filter-area-icon {
+        @apply -m-1.5
     }
 
     .export-button {
