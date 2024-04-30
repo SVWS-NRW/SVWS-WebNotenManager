@@ -7,6 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    RiArrowDownSLine: typeof import('~icons/ri/arrow-down-s-line')['default']
+    RiArrowRightSLine: typeof import('~icons/ri/arrow-right-s-line')['default']
     RiBook2Line: typeof import('~icons/ri/book2-line')['default']
     RiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
     RiDownload2Line: typeof import('~icons/ri/download2-line')['default']

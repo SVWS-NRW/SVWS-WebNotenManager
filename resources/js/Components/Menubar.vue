@@ -32,7 +32,7 @@
         </template>
 
         <template #footer>
-            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.index')" v-if="props.auth.administrator">
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.matrix')" v-if="props.auth.administrator">
                 <template #label>Einstellungen</template>
                 <template #icon>
                     <span class="icon">

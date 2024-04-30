@@ -37,7 +37,7 @@
                 <template #footer>
                     <SvwsUiMenuItem
                         v-if="visible('settings')"
-                        @click="navigate('settings.index')"
+                        @click="navigate('settings.matrix')"
                     >
                         <template #icon>
                            <ri-settings-3-line />

@@ -11,7 +11,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     ->prefix('einstellungen')
     ->name('settings.')
     ->group(function (): void {
-        Route::inertia('/', 'Settings/Matrix')->name('index');
+        // unused at the moment because we want matrix as default and marked in blue
+        // Route::inertia('/', 'Settings/Matrix')->name('index');
         Route::inertia('schule', 'Settings/School')->name('school');
         Route::inertia('filter', 'Settings/Filter')->name('filter');
         Route::inertia('matrix', 'Settings/Matrix')->name('matrix');
