@@ -110,17 +110,6 @@ class DataImportService
 
         $jahrgaenge = Jahrgang::all();
 
-        $trimBeschreibung = function (array $array) {
-            // In past there was an issue with additional whitespace. This function takes care of it and notifies about.
-            $beschreibung = $array['beschreibung'];
-            if (preg_match('/\s{2,}/', $beschreibung)) {
-                $this->setStatus('jahrgaenge', 'Potentieles whitespace Problem in Beschreibung', $array['beschreibung']);
-                $array['beschreibung'] = $this->trimWhitespaces($array['beschreibung']);
-            }
-
-            return $array;
-        };
-
         collect($this->data['jahrgaenge'])
             ->filter(fn (array $array): bool => $this->hasValidId($array, 'jahrgaenge', $jahrgaenge))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzel'))
@@ -130,7 +119,6 @@ class DataImportService
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzelAnzeige'))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'stufe'))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'beschreibung'))
-            ->map($trimBeschreibung)
             ->each(fn (array $array) =>  Jahrgang::create($array));
     }
 

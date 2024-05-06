@@ -343,39 +343,6 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It creates jahrgaenge with trimmed whitespaces in beschreibung
-     *
-     * @return void
-     */
-    public function test_it_creates_jahrgaenge_with_trimmed_whitespaces_in_beschreibung(): void
-    {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "     Qualifikationsphase 2      ",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas(self::TABLE, [
-                'id' => 1,
-                'kuerzel' => 'Q2',
-                'kuerzelAnzeige' => 'Q2',
-                'beschreibung' => 'Qualifikationsphase 2',
-                'stufe' => 'SII-3',
-                'sortierung' => 12
-            ]);
-    }
-
-    /**
      * It does not create jahrgaenge with stufe missing
      *
      * @return void
