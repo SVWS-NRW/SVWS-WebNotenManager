@@ -59,9 +59,7 @@ class UserFactory extends Factory
      */
 	public function administrator(): UserFactory
 	{
-		return $this->state(fn (): array  => [
-			'is_administrator' => true,
-		]);
+		return $this->state(fn (): array  => ['is_administrator' => true]);
 	}
 
     /**
@@ -71,9 +69,7 @@ class UserFactory extends Factory
      */
 	public function lehrer(): UserFactory
 	{
-		return $this->state(fn (): array  => [
-			'is_administrator' => false,
-		]);
+		return $this->state(fn (): array  => ['is_administrator' => false]);
 	}
 
     /**
