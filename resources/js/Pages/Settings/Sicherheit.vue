@@ -1,11 +1,9 @@
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Mailkonfiguration</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="form-control-area">
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.mailer" :valid="() => !hasErrors('MAIL_MAILER')" type="text"
@@ -84,12 +82,14 @@
     import { Inertia } from '@inertiajs/inertia';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiSelect } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiSelect } from '@svws-nrw/svws-ui';
     import { MailSendCredentialsFormData as MailSendCredentials } from '../../Interfaces/Interface';
 
     let props = defineProps({
         auth: Object,
     });
+
+    const title = 'Mailkonfiguration';
 
     //TODO: fetch 2FA data from backend
     const enabled = ref(false);
@@ -203,7 +203,7 @@
     }
 
     .form-control-area {
-        @apply flex flex-col gap-10 max-w-[32rem] px-6 pt-8
+        @apply flex flex-col gap-10 max-w-[32rem] px-11 pt-6
     }
 
     .form-control {

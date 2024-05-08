@@ -1,11 +1,9 @@
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Spalteneinstellungen</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="content">
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
@@ -48,7 +46,7 @@
     import axios, { AxiosResponse } from 'axios';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
 
     let props = defineProps({
         auth: Object,
@@ -78,6 +76,8 @@
         note: boolean,
         fach: boolean,
     }
+
+    const title = 'Spalteneinstellungen';
 
     const meinunterrichtSettings: Ref<MeinunterrichtSettings> = ref({} as MeinunterrichtSettings);
     const leistungsdatenuebersichtSettings: Ref<LeistungsdatenuebersichtSettings> = ref({} as LeistungsdatenuebersichtSettings);

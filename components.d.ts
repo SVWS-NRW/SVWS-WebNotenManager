@@ -12,6 +12,7 @@ declare module 'vue' {
     RiBook2Line: typeof import('~icons/ri/book2-line')['default']
     RiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
     RiDownload2Line: typeof import('~icons/ri/download2-line')['default']
+    RiFileCopyLine: typeof import('~icons/ri/file-copy-line')['default']
     RiLogoutCircleLine: typeof import('~icons/ri/logout-circle-line')['default']
     RiPencilFill: typeof import('~icons/ri/pencil-fill')['default']
     RiSettings3Line: typeof import('~icons/ri/settings3-line')['default']

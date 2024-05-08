@@ -5,11 +5,9 @@
 
     <AppLayout>
          <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"  
                     :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
@@ -98,7 +96,7 @@
     import axios, { AxiosResponse } from 'axios';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
-    import { DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
     import { handleExport } from '@/Helpers/exportHelper';
     import { Auth } from '@/Interfaces/Interface';

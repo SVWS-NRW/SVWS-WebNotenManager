@@ -1,11 +1,9 @@
 <template>
     <AppLayout title="Klassenleitung">
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
 
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :clickable="true" :count="true" :filtered="isFiltered()"
@@ -54,7 +52,7 @@
     import axios, { AxiosPromise, AxiosResponse } from 'axios';
     import { computed, onMounted, Ref, ref } from 'vue';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
-    import { DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
     import { Schueler, Klassenleitung } from '@/Interfaces/Interface';
     import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components';
 

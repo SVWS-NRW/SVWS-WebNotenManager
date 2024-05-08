@@ -1,12 +1,9 @@
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Synchronisation</h2>
-                </div>
-            </header>
-            <br />
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="content">
                 <p v-if="clientExists">Letzte Änderung: {{ convertedClientRecordTimestamp }}</p>
                 <div>Klicken Sie auf den Button, um einen neuen Zugang für den SVWS-Server einzurichten.
@@ -51,7 +48,7 @@
     import axios, { AxiosResponse } from 'axios';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError } from '@/Helpers/api.helper';
-    import { SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui';
     import { usePage } from '@inertiajs/inertia-vue3';
 
     let props = defineProps({
@@ -65,6 +62,8 @@
         secret: string,
         created_at: Date,
     }
+
+    const title = 'Synchronisation';
 
     //TODO: name is always SVWS-Server now, so some things here are probably not necessary anymore
     const newClientName: string = usePage().props.value.schoolName as string;
@@ -138,7 +137,7 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12
+        @apply px-11 flex flex-col gap-12
     }
 
     .content>div {

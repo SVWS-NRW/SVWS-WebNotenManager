@@ -1,11 +1,9 @@
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Schuldaten</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="content">
                 <div>
                     <h3 class="headline-3">Schule</h3>
@@ -52,7 +50,7 @@
     import axios, { AxiosResponse } from 'axios';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
 
     let props = defineProps({
         auth: Object,
@@ -73,6 +71,8 @@
         hosting_provider_name: string,
         hosting_provider_address: string,
     }
+
+    const title = 'Schuldaten';
 
     const settings: Ref<Settings> = ref({} as Settings);
     const storedSettings: Ref<String> = ref('');

@@ -6,11 +6,9 @@
 
     <AppLayout>
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="content-area">
                 <!-- Tabelle mit SvwsUiTable -->
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
@@ -100,7 +98,7 @@
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
     import AppLayout from '@/Layouts/AppLayout.vue';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
-    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
     import { handleExport } from '@/Helpers/exportHelper';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';

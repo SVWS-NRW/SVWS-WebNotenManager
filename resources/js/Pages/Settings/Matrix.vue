@@ -1,11 +1,9 @@
 <template>
     <AppLayout>
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Schreibrechte</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="content">
                 <section class="flex flex-col w-full gap-4">
                     <SvwsUiCheckbox v-model="settings.lehrer_can_override_fachlehrer" value="true" type="toggle">
@@ -402,9 +400,7 @@
     import AppLayout from '@/Layouts/AppLayout.vue';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiSuccess, apiError } from '@/Helpers/api.helper';
-    import {
-        SvwsUiButton, SvwsUiCheckbox, SvwsUiTooltip, SvwsUiRadioOption, SvwsUiTable, DataTableColumn,
-    } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, SvwsUiButton, SvwsUiCheckbox, SvwsUiTooltip, SvwsUiRadioOption, SvwsUiTable, DataTableColumn } from '@svws-nrw/svws-ui';
 
     //TODO: check if still needed, seems to have no effect so far
     const defaultCollapsed: boolean = true;
@@ -480,6 +476,8 @@
         { key: 'klasse', label: 'AUE', tooltip: "Außerunterrichtliches Engagement"},
         { key: 'klasse', label: 'ZB', tooltip: "Zeugnisbemerkung"},
     ]) as Ref<DataTableColumn[]>;
+
+    const title = 'Schreibrechte';
 
     const jahrgaenge: Ref<JahrgangStructure> = ref({});
     const klassen: Ref<Klasse[]> = ref([]);
