@@ -16,17 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $policies = [
-         Leistung::class => LeistungFehlstundenPolicy::class,
-         Schueler::class => SchuelerFehlstundenPolicy::class,
+        Leistung::class => LeistungFehlstundenPolicy::class,
+        Schueler::class => SchuelerFehlstundenPolicy::class,
     ];
-
-    /**
-     * The boot method of this provider
-     *
-     * @return void
-     */
-    public function boot(): void
-    {
-        $this->registerPolicies();
-    }
 }
