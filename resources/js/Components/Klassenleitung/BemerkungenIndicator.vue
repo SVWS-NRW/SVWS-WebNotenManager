@@ -1,12 +1,3 @@
-<script setup lang="ts">// TODO: TBR
-    const emit = defineEmits(['open'])
-    const open = (): void => emit('open')
-
-    let props = defineProps({
-        bemerkung: Boolean,
-    })
-</script>
-
 <template>
     <button @click="open">
         <span class="icon" v-if="props.bemerkung">
@@ -20,6 +11,17 @@
         </span>
     </button>
 </template>
+
+
+<script setup lang="ts">// TODO: TBR
+    const emit = defineEmits(['open']);
+    const open = (): void => emit('open');
+
+    let props = defineProps({
+        bemerkung: Boolean,
+    });
+</script>
+
 
 <style scoped>
     .icon > svg {

@@ -7,50 +7,57 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * App\Models\Fach
+ * The `Fach` class represents a Laravel model for managing remarks associated with Faecher.
  *
+ * @package App\Models
  * @property int $id
- * @property int $ext_id
  * @property string $kuerzel
  * @property string $kuerzelAnzeige
  * @property int $sortierung
  * @property int $istFremdsprache
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Database\Factories\FachFactory factory(...$parameters)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Floskel> $floskeln
+ * @property-read int|null $floskeln_count
+ * @method static \Database\Factories\FachFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Fach newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Fach newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Fach query()
- * @method static \Illuminate\Database\Eloquent\Builder|Fach whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fach whereExtId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereIstFremdsprache($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereKuerzelAnzeige($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Fach whereSortierung($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Fach whereUpdatedAt($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Floskel[] $floskeln
- * @property-read int|null $floskeln_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Floskel> $floskeln
  * @mixin \Eloquent
  */
 class Fach extends Model
 {
     use HasFactory;
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
     protected $table = 'faecher';
 
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var string[]
+     */
     protected $fillable = [
-        'id',
-        'kuerzel',
-        'kuerzelAnzeige',
-        'sortierung',
-        'istFremdsprache',
+        'id', 'kuerzel', 'kuerzelAnzeige', 'sortierung', 'istFremdsprache',
     ];
 
 	public $timestamps = false;
 
+    /**
+     * The related models that are owned by the model
+     *
+     * @return HasMany
+     */
 	public function floskeln(): HasMany
 	{
-		return $this->hasMany(related: Floskel::class);
+		return $this->hasMany(Floskel::class);
 	}
 }

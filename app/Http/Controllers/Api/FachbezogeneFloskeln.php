@@ -10,44 +10,52 @@ use App\Models\Floskelgruppe;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * Defining the FachbezogeneFloskeln controller
+ */
 class FachbezogeneFloskeln extends Controller
 {
-	public function __invoke(Fach $fach): JsonResponse
+    /**
+     * A single-action controller method invoked when the controller is called.
+     *
+     * @param Fach $fach
+     * @return JsonResponse
+     */
+    public function __invoke(Fach $fach): JsonResponse
 	{
-		try {
+        // Attempting to find the Floskelgruppe with the specified 'kuerzel'.
+        try {
 			$floskelgruppe = Floskelgruppe::query()
-				->where(column: 'kuerzel', operator: '=', value: 'FACH')
+				->where('kuerzel', '=', 'FACH')
 				->firstOrFail();
 		} catch (ModelNotFoundException $e) {
-			return response()->json(data: FachBezogeneFloskelResource::collection(resource: []));
+			return response()->json(FachBezogeneFloskelResource::collection([]));
 		}
 
+        // Fetching Floskeln that belong to both the Floskelgruppe and the given Fach.
 		$floskeln = Floskel::query()
-			->whereBelongsTo(related: $floskelgruppe)
-			->whereBelongsTo(related: $fach)
-			->with(relations: 'jahrgang')
+			->whereBelongsTo( $floskelgruppe)
+			->whereBelongsTo($fach)
+			->with('jahrgang')
 			->get();
 
-		$mapNiveau = fn (Floskel $floskel): array => [
+        // Mapping function for 'niveau' of Floskeln.
+        $mapNiveau = fn (Floskel $floskel): array => [
 			'index' => $floskel->niveau,
 			'label' => $floskel->niveau
 		];
 
+        // Mapping function for 'jahrgaenge' of Floskeln.
 		$mapJahrgaenge = fn (Floskel $floskel): array => [
 			'index' => $floskel->jahrgang?->kuerzel,
 			'label' => $floskel->jahrgang?->kuerzel,
 		];
 
-		return response()->json(data: [
-			'data' => FachBezogeneFloskelResource::collection(resource: $floskeln),
-			'niveau' => $floskeln
-				->unique(key: 'niveau')
-				->map(callback: $mapNiveau)
-				->values(),
-			'jahrgaenge' => $floskeln
-				->unique(key: 'jahrgang_id')
-				->map(callback: $mapJahrgaenge)
-				->values(),
+        // Returning the fetched Floskeln, and their unique 'niveau' and 'jahrgaenge' in the JSON response.
+		return response()->json([
+			'data' => FachBezogeneFloskelResource::collection($floskeln),
+			'niveau' => $floskeln->unique('niveau')->map($mapNiveau)->values(),
+			'jahrgaenge' => $floskeln->unique('jahrgang_id')->map($mapJahrgaenge)->values(),
 		]);
 	}
 }

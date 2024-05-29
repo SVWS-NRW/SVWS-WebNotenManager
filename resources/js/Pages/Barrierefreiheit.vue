@@ -1,18 +1,3 @@
-<script setup lang="ts">
-    import AuthLayout from '../Layouts/AuthLayout.vue'
-    import { Head } from '@inertiajs/inertia-vue3'
-
-    import { Settings } from '../Interfaces/Settings'
-    import { PropType } from 'vue'
-
-    let props = defineProps({
-        settings: {
-            type: Object as PropType<Settings>,
-            required: true,
-        }
-    })
-</script>
-
 <template>
     <div v-cloak>
         <Head>
@@ -183,41 +168,58 @@
     </div>
 </template>
 
+
+<script setup lang="ts">
+    import AuthLayout from '../Layouts/AuthLayout.vue';
+    import { Head } from '@inertiajs/inertia-vue3';
+
+    import { Settings } from '@/Interfaces/Interface';
+    import { PropType } from 'vue';
+
+    let props = defineProps({
+        settings: {
+            type: Object as PropType<Settings>,
+            required: true,
+        },
+    });
+</script>
+
+
 <style scoped>
     main {
-        @apply ui-bg-white ui-rounded-lg ui-shadow-lg ui-p-8 ui-flex ui-flex-col ui-gap-6 ui-w-full ui-max-w-6xl ui-mx-auto ui-my-8 ui-overflow-y-auto
+        @apply bg-white rounded-lg shadow-lg p-8 flex flex-col gap-6 w-full max-w-6xl mx-auto my-8 overflow-y-auto
     }
 
     h1 {
-        @apply ui-uppercase
+        @apply uppercase
     }
 
     h1, h2 {
-        @apply ui-border-b ui-border-gray-300 ui-pb-2 ui-leading-relaxed
+        @apply border-b border-gray-300 pb-2 leading-relaxed
     }
 
     p {
-        @apply ui-text-lg ui-leading-7
+        @apply text-lg leading-7
     }
 
     ul {
-        @apply ui-list-disc ui-list-outside ui-ml-6 ui-text-lg
+        @apply list-disc list-outside ml-6 text-lg
     }
 
     ol {
-        @apply ui-list-decimal ui-list-outside ui-ml-6 ui-text-lg ui-space-y-3
+        @apply list-decimal list-outside ml-6 text-lg space-y-3
     }
 
     ol li {
-        @apply ui-pl-2 ui-space-y-3
+        @apply pl-2 space-y-3
     }
 
     a {
         @apply
-        ui-decoration-black/50 hover:ui-decoration-black
-        focus-visible:ui-outline focus-visible:ui-text-black/75 ui-outline-offset-2 ui-outline-2 ui-outline-black
-        ui-underline
-        ui-rounded-sm
-        ui-break-all
+        decoration-black/50 hover:decoration-black
+        focus-visible:outline focus-visible:text-black/75 outline-offset-2 outline-2 outline-black
+        underline
+        rounded-sm
+        break-all
     }
 </style>

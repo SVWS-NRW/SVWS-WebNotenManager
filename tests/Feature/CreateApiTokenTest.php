@@ -11,6 +11,12 @@ class CreateApiTokenTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Test if api tokens can be created
+     *
+     * @return void
+     * @throws \JsonException
+     */
     public function test_api_tokens_can_be_created()
     {
         if (! Features::hasApiFeatures()) {

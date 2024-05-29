@@ -8,10 +8,25 @@ use App\Models\Note;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating Bemerkung model instances.
+ *
+ * @package Database\Factories
+ */
 class LeistungFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = Leistung::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -20,6 +35,12 @@ class LeistungFactory extends Factory
         ];
     }
 
+    /**
+     * Indicate that the model has Abiturfach.
+     *
+     * @param int|null $amount
+     * @return LeistungFactory
+     */
     public function withAbiturfach(int|null $amount = null): LeistungFactory
     {
         return $this->state(fn (): array  => [
@@ -27,38 +48,75 @@ class LeistungFactory extends Factory
 		]);
     }
 
+    /**
+     * Indicate that the model has Note.
+     *
+     * @return LeistungFactory
+     */
     public function withNote(): LeistungFactory
     {
-		return $this->withTimestamp(column: 'note_id', tsColumn: 'tsNote', value: Note::Factory());
+		return $this->withTimestamp('note_id', 'tsNote', Note::Factory());
     }
 
-    public function istSchriftlich(): LeistungFactory
+    /**
+     * Indicate that the model has Ist Schriftlich.
+     *
+     * @return LeistungFactory
+     */
+    public function withIstSchriftlich(): LeistungFactory
     {
         return $this->state(fn (): array  => [
 			'istSchriftlich' => true,
 		]);
     }
 
+    /**
+     * Indicate that the model has Fehlstunden Fach.
+     *
+     * @param int|null $amount
+     * @return LeistungFactory
+     */
     public function withFehlstundenFach(int|null $amount = null): LeistungFactory
     {
-		return $this->withTimestamp(column: 'fehlstundenFach', value: $amount ?? rand(max: 10));
+		return $this->withTimestamp('fehlstundenFach', $amount ?? rand(10));
     }
 
+    /**
+     * Indicate that the model has Fehlstunden Unentschuldigt Fach.
+     *
+     * @param int|null $amount
+     * @return LeistungFactory
+     */
     public function withFehlstundenUnentschuldigtFach(int|null $amount = null): LeistungFactory
     {
-		return $this->withTimestamp(column: 'fehlstundenUnentschuldigtFach', value: $amount ?? rand(max: 10));
+		return $this->withTimestamp('fehlstundenUnentschuldigtFach', $amount ?? rand(10));
     }
 
+    /**
+     * Indicate that the model has Fachbezogene Bemerkungen.
+     *
+     * @return LeistungFactory
+     */
     public function withFachbezogeneBemerkungen(): LeistungFactory
     {
-		return $this->withTimestamp(column: 'fachbezogeneBemerkungen');
+		return $this->withTimestamp('fachbezogeneBemerkungen');
     }
 
-	public function istGemahnt(): LeistungFactory
+    /**
+     * Indicate that the model has Ist Gemahnt.
+     *
+     * @return LeistungFactory
+     */
+	public function withIstGemahnt(): LeistungFactory
 	{
-		return $this->withTimestamp(column: 'istGemahnt', value: true);
+		return $this->withTimestamp('istGemahnt', true);
 	}
 
+    /**
+     * Indicate that the model has Neue Zuweisung Kursart.
+     *
+     * @return LeistungFactory
+     */
 	public function withNeueZuweisungKursart(): LeistungFactory
 	{
 		return $this->state(fn (): array  => [
@@ -66,6 +124,14 @@ class LeistungFactory extends Factory
 		]);
 	}
 
+    /**
+     * Generate a timestamped value for a given column or its timestamp column.
+     *
+     * @param string $column
+     * @param string|null $tsColumn
+     * @param string|bool|int|null $value
+     * @return LeistungFactory
+     */
 	private function withTimestamp(
 		string $column,
 		string|null $tsColumn = null,
@@ -73,7 +139,7 @@ class LeistungFactory extends Factory
 	): LeistungFactory {
 		return $this->state(fn (): array  => [
 			$column => $value ?? $this->faker->paragraph(),
-			$tsColumn ?? "ts{$column}" => now()->format(format: 'Y-m-d H:i:s.u'),
+			$tsColumn ?? "ts{$column}" => now()->format('Y-m-d H:i:s.u'),
 		]);
 	}
 }

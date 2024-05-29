@@ -4,8 +4,19 @@ namespace App\Http\Resources\Export;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * The `Zp10Resource` class is a JSON resource for formatting and presenting 'Zp10' data.
+ *
+ * @package App\Http\Resources\Export
+ */
 class Zp10Resource extends JsonResource
 {
+    /**
+     * Transform the data into a JSON array.
+     *
+     * @param $request
+     * @return array
+     */
     public function toArray($request): array
     {
         return [

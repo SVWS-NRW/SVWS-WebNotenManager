@@ -5,45 +5,62 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeinUnterricht\LeistungResource;
 use App\Models\Leistung;
-use App\Models\UserSetting;
-use App\Settings\FilterSettings;
+use App\Models\Note;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
+/**
+ * Defining the MeinUnterricht controller
+ */
 class MeinUnterricht extends Controller
 {
-	public function __invoke(FilterSettings $settings)
-	{
-		$eagerLoadedColumns = [
+    /**
+     * Single-action method to fetch and return a collection of Leistung records.
+     *
+     * @return AnonymousResourceCollection
+     */
+    public function __invoke(): AnonymousResourceCollection
+    {
+        // Define the relationships to be eagerly loaded.
+        $eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
 			'lerngruppe' => ['lehrer', 'fach'],
 			'note',
 		];
 
-		$leistungen = Leistung::query()
-			->with($eagerLoadedColumns)
-			->when(
+        // Build the query for Leistung, including eager loading and conditional logic.
+        $leistungen = Leistung::query()
+            // Eager load the defined relationships for performance optimization.
+            ->with($eagerLoadedColumns)
+            // Conditional logic to modify the query if the authenticated user is a Lehrer.
+            ->when(
 				auth()->user()->isLehrer(),
-				fn (Builder $query): Builder => $query->whereHas('lerngruppe',
-					fn (Builder $query): Builder => $query->whereIn('id', auth()->user()->lerngruppen->pluck(value: 'id')->toArray()
+                // If the user is a Lehrer, limit the query to Leistung records linked to the Lehrer's Lerngruppen.
+                fn (Builder $query): Builder => $query->whereHas('lerngruppe',
+					fn (Builder $query): Builder => $query->whereIn('id',
+                        auth()->user()->lerngruppen->pluck(value: 'id')->toArray()
 					)
 				)
 			)
-			->get()
-			->sortBy([
+            // Execute the query and retrieve the results.
+            ->get()
+            // Sort the results based on specific columns.
+            ->sortBy([
                 'schueler.klasse.kuerzel', 'schueler.nachname', 'lerngruppe.fach.kuerzelAnzeige',
             ]);
 
-        $settings = auth()->user()->userSettings->filters_meinunterricht;
+        //Get all notes present in the noten DB table
+        $allNotes = Note::query()
+            ->orderBy('kuerzel')
+            ->pluck('kuerzel')
+            ->toArray();
 
+
+        // Return the collection of Leistung resources, with additional data.
 		return LeistungResource::collection($leistungen)
-            ->additional(['toggles' => [
-                'teilleistungen' => $settings->teilleistungen,
-                'mahnungen' => $settings->mahnungen,
-                'bemerkungen' => $settings->bemerkungen,
-                'fehlstunden' => $settings->fehlstunden,
-                'kurs' => $settings->kurs,
-                'note' => $settings->note,
-                'fach' => $settings->fach,
-            ]]);
+            ->additional([
+                'toggles' => auth()->user()->filters('meinunterricht'),
+                'allNotes' => $allNotes,
+            ]);
 	}
 }

@@ -11,16 +11,33 @@ class SettingsApiControllerTest extends TestCase
 {
 	use RefreshDatabase;
 
+    /**
+     * Index endpoint url
+     *
+     * @var string
+     */
 	private string $indexUrl = 'api.settings.index';
+
+    /**
+     * Update endpoint url
+     *
+     * @var string
+     */
 	private string $updateUrl = 'api.settings.update';
 
+    /**
+     * Test if Administrator Can List
+     *
+     * @return void
+     */
 	public function test_administrator_can_list(): void
 	{
-		$this->actingAs(user: User::factory()->administrator()->create());
+		$type = 'randomString'; // TODO check if still needed
+		Setting::factory()->count(3)->create(['type' => $type]);
 
-		$type = 'randomString';
+		$this->actingAs(User::factory()->administrator()->create());
 
-		Setting::factory()->count(count: 3)->create(['type' => $type]);
+
 
 		$response = $this->getJson(uri: route(name: $this->indexUrl, parameters: ['type' => $type]));
 

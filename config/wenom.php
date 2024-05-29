@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'version' => '0.1.2',
-    'npm' => '0.7.8',
+    'version' => '0.1.5',
+    'npm' => '0.8.14',
     'schulnummer' => env('SCHULNUMMER'),
     'aes_password' => env('AES_PASSWORD'),
     'aes_salt' => env('AES_SALT'),
@@ -17,12 +17,14 @@ return [
         'from_name' => env('MAIL_FROM_NAME'),
     ],
     'filters' => [
-        'meinunterricht' => [
+        'meinunterricht' =>
+         [
             'teilleistungen' => env('FILTERS_MEINUNTERRICHT_TEILLEISTUNGEN', false),
             'mahnungen' => env('FILTERS_MEINUNTERRICHT_MAHNUNGEN', true),
             'fehlstunden' => env('FILTERS_MEINUNTERRICHT_FEHLSTUNDEN', false),
             'bemerkungen' => env('FILTERS_MEINUNTERRICHT_BEMERKUNGEN', true),
             'kurs' => env('FILTERS_MEINUNTERRICHT_KURS', true),
+            'quartalnoten' => env('FILTERS_MEINUNTERRICHT_QUARTALNOTEN', true),
             'note' => env('FILTERS_MEINUNTERRICHT_NOTE', true),
             'fach' => env('FILTERS_MEINUNTERRICHT_FACH', true),
         ],
@@ -30,7 +32,12 @@ return [
             'teilleistungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_TEILLEISTUNGEN', false),
             'fachlehrer' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FACHLEHRER', true),
             'mahnungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_MAHNUNGEN', false),
+            'fehlstunden' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FEHLSTUNDEN', false),
             'bemerkungen' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_BEMERKUNGEN', true),
+            'kurs' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_KURS', true),
+            'quartalnoten' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_QUARTALNOTEN', true),
+            'note' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_NOTE', true),
+            'fach' => env('FILTERS_LEISTUNGSDATENUEBERSICHT_FACH', true),
         ],
     ],
 ];

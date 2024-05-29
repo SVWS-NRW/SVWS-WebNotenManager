@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Fach|null $fach
  * @property-read \App\Models\Schueler|null $schueler
- * @method static \Database\Factories\Zp10Factory factory(...$parameters)
+ * @method static \Database\Factories\Zp10Factory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Zp10 newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Zp10 newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Zp10 query()
@@ -43,46 +43,80 @@ class Zp10 extends Model
 {
     use HasFactory;
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
     protected $table = 'zp10';
 
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var string[]
+     */
     protected $fillable = [
-        'schueler_id',
-        'fach_id',
-        'vornote',
-        'noteSchriftlichePruefung', 
-        'muendlichePruefung',
-        'muendlichePruefungFreiwillig', 
-        'noteMuendlichePruefung',
-        'abschlussnote', 
+        'schueler_id', 'fach_id', 'vornote', 'noteSchriftlichePruefung', 'muendlichePruefung', 
+        'muendlichePruefungFreiwillig', 'noteMuendlichePruefung', 'abschlussnote', 
     ];
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function abschlussnote(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
-    }   
+        return $this->belongsTo(Note::class);
+    }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(related: Fach::class);
+        return $this->belongsTo(Fach::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function noteMuendlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function noteSchriftlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(related: Schueler::class);
+        return $this->belongsTo(Schueler::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function vornote(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     } 
 }

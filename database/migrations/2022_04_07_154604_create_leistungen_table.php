@@ -1,40 +1,48 @@
 <?php
 
-use App\Models\Lerngruppe;
-use App\Models\Note;
-use App\Models\Schueler;
+use App\Models\{Lerngruppe, Note, Schueler};
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table:'leistungen', callback: function (Blueprint $table): void {
+        Schema::create('leistungen', function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(model: Schueler::class);
-            $table->foreignIdFor(model: Lerngruppe::class);
-            $table->foreignIdFor(model: Note::class)->nullable();
-			$table->timestamp(column: 'tsNote', precision: 3)->default(value: now());
-            $table->boolean(column: 'istSchriftlich')->default(value: false);
-            $table->string(column: 'abiturfach')->nullable();
-            $table->integer(column: 'fehlstundenFach')->nullable();
-			$table->timestamp(column: 'tsFehlstundenFach', precision: 3)->default(value: now());
-            $table->integer(column: 'fehlstundenUnentschuldigtFach')->nullable();
-			$table->timestamp(column: 'tsFehlstundenUnentschuldigtFach', precision: 3)->default(value: now());
-            $table->text(column: 'fachbezogeneBemerkungen')->nullable();
-			$table->timestamp(column: 'tsFachbezogeneBemerkungen', precision: 3)->default(value: now());
-            $table->string(column: 'neueZuweisungKursart')->nullable();
-            $table->boolean(column: 'istGemahnt')->default(false);
-			$table->timestamp(column: 'tsIstGemahnt', precision: 3)->default(value: now());
-            $table->timestamp(column: 'mahndatum')->nullable();
+            $table->foreignIdFor(Schueler::class);
+            $table->foreignIdFor(Lerngruppe::class);
+            $table->foreignIdFor(Note::class)->nullable();
+			$table->timestamp('tsNote', 3)->default(now());
+            $table->boolean('istSchriftlich')->default(false);
+            $table->string('abiturfach')->nullable();
+            $table->integer('fehlstundenFach')->nullable();
+			$table->timestamp('tsFehlstundenFach', 3)->default(now());
+            $table->integer('fehlstundenUnentschuldigtFach')->nullable();
+			$table->timestamp('tsFehlstundenUnentschuldigtFach', 3)->default(now());
+            $table->text('fachbezogeneBemerkungen')->nullable();
+			$table->timestamp('tsFachbezogeneBemerkungen', 3)->default(now());
+            $table->string('neueZuweisungKursart')->nullable();
+            $table->boolean('istGemahnt')->default(false);
+			$table->timestamp('tsIstGemahnt', 3)->default(now());
+            $table->timestamp('mahndatum')->nullable();
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'leistungen');
+        Schema::dropIfExists( 'leistungen');
     }
 };

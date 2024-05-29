@@ -1,6 +1,6 @@
 export interface Filter {
 	key: string,
-	index: string|number
+	index: string|number,
 }
 
 export interface LeistungsDatenFilterValues {
@@ -14,7 +14,7 @@ export interface LeistungsDatenFilterValues {
 export interface SchuelerFilterValues {
 	klassen: Array<{
 		key: string,
-		index: string|number
+		index: string|number,
 	}>,
 }
 
@@ -26,5 +26,5 @@ export interface FachbezogeneFloskelnFilterOptions {
 export interface FachbezogeneFloskelnFilterValues {
 	search: string,
 	niveau: Number,
-	jahrgang: Number | string | null
+	jahrgang: Number | string | null,
 }

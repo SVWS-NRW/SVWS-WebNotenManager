@@ -13,23 +13,31 @@ class ExportControllerTest extends TestCase
 {
 	use RefreshDatabase;
 
-	private string $url = 'api.export';
+    /**
+     * Endpoint URL
+     *
+     * @var string
+     */
+    private string $url = 'api.export';
 
+    /**
+     * Test if export for everyone
+     *
+     * @return void
+     */
     public function test_export_for_everyone(): void
     {
 		Schueler::factory()
-			->count(count: 3)
-			->has(factory: Leistung::factory()->count(count: 3), relationship: 'leistungen')
-			->has(factory: Lernabschnitt::factory())
-			->has(factory: Bemerkung::factory())
+			->count(3)
+			->has(Leistung::factory()->count(3), 'leistungen')
+			->has(Lernabschnitt::factory())
+			->has(Bemerkung::factory())
 			->create();
 
-        $response = $this->getJson(uri: route(name: 'api.export'));
-
-        $response->assertOk()
-			->assertJsonCount(count: 3)
-			->assertJsonCount(count: 3, key: '0.leistungsdaten')
-			->assertJsonStructure(structure: [
+        $this->getJson(route('api.export'))->assertOk()
+			->assertJsonCount(3)
+			->assertJsonCount(3, '0.leistungsdaten')
+			->assertJsonStructure([
 				'*' => [
 					'id',
 					'leistungsdaten' => [

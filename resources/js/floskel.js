@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export const floskelStore = defineStore('main', {
     state: () => ({
         sidebarCollapsed: true,
-				darkmode: false,
+        darkmode: false,
         progress: 0,
     }),
     actions: {
         
     },
-})
+});

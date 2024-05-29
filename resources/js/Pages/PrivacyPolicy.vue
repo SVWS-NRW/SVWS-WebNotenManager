@@ -1,12 +1,3 @@
-<script setup>
-    import { Head } from '@inertiajs/inertia-vue3';
-    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
-
-    defineProps({
-        policy: String,
-    });
-</script>
-
 <template>
     <Head title="Privacy Policy" />
 
@@ -22,3 +13,14 @@
         </div>
     </div>
 </template>
+
+
+<script setup>
+    import { Head } from '@inertiajs/inertia-vue3';
+    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
+
+    defineProps({
+        policy: String,
+    });
+</script>
+

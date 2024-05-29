@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * App\Models\BKFach
+ * The `BKFach` class represents a Laravel model for managing remarks associated with BKFacher.
  *
+ * @package App\Models
  * @property int $id
  * @property int $b_k_abschluss_id
  * @property int $fach_id
+ * @property int $user_id
  * @property int $istSchriftlich
  * @property \App\Models\Note|null $vornote
  * @property \App\Models\Note|null $noteSchriftlichePruefung
@@ -25,8 +27,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\BKAbschluss|null $bkabschluss
  * @property-read \App\Models\Fach|null $fach
- * @property-read Lehrer|null $lehrer
- * @method static \Database\Factories\BKFachFactory factory(...$parameters)
+ * @property-read \App\Models\User|null $lehrer
+ * @method static \Database\Factories\BKFachFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach query()
@@ -45,69 +47,107 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereVornote($value)
- * @property int $lehrer_id
- * @method static \Illuminate\Database\Eloquent\Builder|BKFach whereLehrerId($value)
- * @property int $user_id
  * @mixin \Eloquent
  */
 class BKFach extends Model
 {
     use HasFactory;
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
     protected $table = 'bkfaecher';
 
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var string[]
+     */
     protected $fillable = [
-        'bkabschluss_id', 
-        'fach_id', 
-        'lehrer_id',
-        'istSchriftlich',
-        'vornote',  
-        'noteSchriftlichePruefung', 
-        'muendlichePruefung',
-        'muendlichePruefungFreiwillig',
-        'noteMuendlichePruefung', 
-        'istSchriftlichBerufsabschluss',
-        'noteBerufsabschluss',  
-        'abschlussnote',  
+        'bkabschluss_id', 'fach_id', 'lehrer_id', 'istSchriftlich', 'vornote', 'noteSchriftlichePruefung', 
+        'muendlichePruefung', 'muendlichePruefungFreiwillig', 'noteMuendlichePruefung', 'istSchriftlichBerufsabschluss',
+        'noteBerufsabschluss', 'abschlussnote',  
     ];
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function abschlussnote(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
-    }    
+        return $this->belongsTo(Note::class);
+    }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function bkabschluss(): BelongsTo
     {
-        return $this->belongsTo(related: BKAbschluss::class);
-    }    
+        return $this->belongsTo(BKAbschluss::class);
+    }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(related: Fach::class);
+        return $this->belongsTo(Fach::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function lehrer(): BelongsTo
     {
-        return $this->belongsTo(related: Lehrer::class);
+        return $this->belongsTo(User::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function noteBerufsabschluss(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function noteMuendlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function noteSchriftlichePruefung(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function vornote(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 }

@@ -1,42 +1,3 @@
-<script setup lang="ts">
-    import { ref, Ref } from 'vue'
-    import eventBus from '@/event-bus'
-
-    const duration: number = 3000
-
-    type Variant = 'success' | 'error' 
-
-    type Toast = {
-        message: string
-        variant:Variant
-        visible: boolean
-    }
-
-    const toast: Ref<Toast> = ref({
-        message: '',
-        variant: 'success',
-        visible: false,
-    })
-
-    eventBus.$on('toast-success', (message: string): void => 
-        setMessage('success', message)
-    )
-    
-    eventBus.$on('toast-error', (message: string): void => {
-        setMessage('error', message)
-    })
-
-    const setMessage = (variant: Variant, message: string): void => {
-        toast.value = {
-            variant: variant,
-            message: message,
-            visible: true
-        }
-
-        setTimeout((): boolean => toast.value.visible = false, duration)
-    }
-</script>
-
 <template>
     <div 
         class="toast" 
@@ -50,27 +11,69 @@
     </div>
 </template>
 
+
+<script setup lang="ts">
+    import { ref, Ref } from 'vue';
+    import eventBus from '@/event-bus';
+
+    const duration: number = 3000;
+
+    type Variant = 'success' | 'error' ;
+
+    type Toast = {
+        message: string,
+        variant: Variant,
+        visible: boolean,
+    };
+
+    const toast: Ref<Toast> = ref({
+        message: '',
+        variant: 'success',
+        visible: false,
+    });
+
+    eventBus.$on('toast-success', (message: string): void => 
+        setMessage('success', message)
+    );
+    
+    eventBus.$on('toast-error', (message: string): void => {
+        setMessage('error', message)
+    });
+
+    const setMessage = (variant: Variant, message: string): void => {
+        toast.value = {
+            variant: variant,
+            message: message,
+            visible: true,
+        };
+
+        setTimeout((): boolean => toast.value.visible = false, duration);
+    };
+</script>
+
+
 <style scoped>
     .toast {
         @apply 
-        ui-absolute ui-top-4 ui-right-4 
-        ui-p-4 
-        ui-rounded 
-        ui-font-bold ui-text-white
-        ui-transition
-        ui-opacity-0
-        ui-pointer-events-none
+        absolute top-4 right-4 
+        p-4 
+        rounded 
+        font-bold text-white
+        transition
+        opacity-0
+        pointer-events-none
     }
 
     .toast--visible {
-        @apply ui-opacity-100
+        @apply opacity-100
     }
 
     .toast--error {
-        @apply ui-bg-red-500 
+        @apply bg-red-500 
     }
 
     .toast--success {
-        @apply ui-bg-green-500
+        @apply bg-green-500
     }
+    
 </style>

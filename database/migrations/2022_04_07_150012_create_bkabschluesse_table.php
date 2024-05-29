@@ -7,9 +7,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create('bkabschluesse', function (Blueprint $table) {
+        Schema::create('bkabschluesse', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(Schueler::class);
             $table->boolean('hatZulassung')->default(false);
@@ -32,8 +37,11 @@ return new class extends Migration
         });
     }
 
-  
-    
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
         Schema::dropIfExists('bkabschluesse');

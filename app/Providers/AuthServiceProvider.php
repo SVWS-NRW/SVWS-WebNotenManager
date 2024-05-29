@@ -10,11 +10,21 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 class AuthServiceProvider extends ServiceProvider
 {
+    /**
+     * Define the policies for the specified models
+     *
+     * @var string[]
+     */
     protected $policies = [
          Leistung::class => LeistungFehlstundenPolicy::class,
          Schueler::class => SchuelerFehlstundenPolicy::class,
     ];
 
+    /**
+     * The boot method of this provider
+     *
+     * @return void
+     */
     public function boot(): void
     {
         $this->registerPolicies();

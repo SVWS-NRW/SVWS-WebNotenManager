@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * App\Models\Sprachenfolge
+ * The `Sprachenfolge` class represents a Laravel model for managing remarks associated with Sprachenfolgen.
  *
+ * @package App\Models
  * @property int $id
  * @property int $schueler_id
  * @property int $fach_id
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Fach|null $fach
  * @property-read \App\Models\Schueler|null $schueler
- * @method static \Database\Factories\SprachenfolgeFactory factory(...$parameters)
+ * @method static \Database\Factories\SprachenfolgeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Sprachenfolge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Sprachenfolge newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Sprachenfolge query()
@@ -45,28 +46,40 @@ class Sprachenfolge extends Model
 {
     use HasFactory;
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
     protected $table = 'sprachenfolge';
 
-    protected $fillable = [           
-        'schuler_id',
-        'sprache', 
-        'fach_id',
-        'reihenfolge',
-        'belegungVonJahrgang',
-        'belegungVonAbschnitt',
-        'belegungBisJahrgang',
-        'belegungBisAbschnitt',
-        'referenzniveau',
-        'belegungSekI',
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var string[]
+     */
+    protected $fillable = [     // TODO: Check spelling of schueler
+        'schuler_id', 'sprache', 'fach_id', 'reihenfolge', 'belegungVonJahrgang', 'belegungVonAbschnitt',
+        'belegungBisJahrgang', 'belegungBisAbschnitt', 'referenzniveau', 'belegungSekI',
     ];
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function fach(): BelongsTo
     {
-        return $this->belongsTo(related: Fach::class);
+        return $this->belongsTo(Fach::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(related: Schueler::class);
+        return $this->belongsTo(Schueler::class);
     }
 }

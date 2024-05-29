@@ -1,31 +1,3 @@
-<script setup lang="ts">
-    import { ref, Ref } from 'vue'
-    import axios from 'axios'
-    import moment from 'moment'
-    import { Leistung } from '@/Interfaces/Interface'
-    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui'
-
-    const props = defineProps<{
-        leistung: Leistung,
-        disabled: boolean,
-    }>()
-
-    const modalVisible: Rev<boolean> = ref(false)
-    const modal = (): boolean => modalVisible
-    const open = () => modal().value = true
-    const close = () => modal().value = false
-
-    const leistung: Ref<Leistung> = ref(props.leistung)
-
-    const toggleMahnung = (): void => {
-        leistung.value.istGemahnt = !leistung.value.istGemahnt
-        axios.post(route('api.mahnung', props.leistung.id), props.leistung)
-            .catch((): boolean => leistung.value.istGemahnt = !leistung.value.istGemahnt)
-    }
-
-    const mahndatumFormatted = (): string => moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY')
-</script>
-
 <template>
     <svws-ui-modal :show="modal" size="small">
         <template #modalTitle>
@@ -46,49 +18,77 @@
         </template>
     </svws-ui-modal>
 
-    <span v-if="props.disabled">
+    <span>
         <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-            <span class="icon green" aria-hidden="true">
-                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
-            </span>
+            <SvwsUiCheckbox v-model="gemahnt" @click="checkboxActions($event)" color="success" readonly></SvwsUiCheckbox>
         </span>
         <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <span class="icon red" aria-hidden="true">
-                <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
-            </span>
+            <SvwsUiCheckbox v-model="gemahnt" @click="checkboxActions($event);" color="error" readonly></SvwsUiCheckbox>
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
-            <span class="icon" aria-hidden="true">
-                <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
-            </span>
+            <SvwsUiCheckbox v-model="notGemahnt" @click="checkboxActions($event);" readonly></SvwsUiCheckbox>
         </span>
     </span>
-
-    <button v-else @click="props.leistung.mahndatum ? open() : toggleMahnung()">
-        <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
-           <span class="icon green" aria-hidden="true">
-                <mdi-checkbox-marked-outline ></mdi-checkbox-marked-outline>
-           </span>
-        </span>
-        <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
-            <span class="icon red" aria-hidden="true">
-               <mdi-checkbox-marked-outline></mdi-checkbox-marked-outline>
-           </span>
-        </span>
-        <span v-else aria-description="Ist nicht gemahnt">
-           <span class="icon" aria-hidden="true">
-               <mdi-checkbox-blank-outline></mdi-checkbox-blank-outline>
-           </span>
-        </span>
-    </button>
 </template>
+
+
+<script setup lang="ts">
+    import { Ref, ref } from 'vue';
+    import axios from 'axios';
+    import moment from 'moment';
+    import { Leistung } from '@/Interfaces/Interface';
+    import { SvwsUiBadge, SvwsUiButton, SvwsUiModal, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+
+    const props = defineProps<{
+        leistung: Leistung,
+        disabled: boolean,
+    }>();
+
+    const modalVisible: Ref<boolean> = ref(false);
+    const modal = (): Ref<boolean> => modalVisible;
+    const open = () => {
+        modal().value = true;
+    }
+    const close = () => modal().value = false;
+
+    const leistung: Ref<Leistung> = ref(props.leistung);
+
+    const toggleMahnung = (): void => {
+        leistung.value.istGemahnt = !leistung.value.istGemahnt;
+        axios.post(route('api.mahnung', props.leistung.id), props.leistung)
+            .catch((): boolean => leistung.value.istGemahnt = !leistung.value.istGemahnt);
+    }
+
+    const mahndatumFormatted = (): string => moment(new Date(props.leistung.mahndatum)).format('DD.MM.YYYY');
+
+    //checkbox statuses
+    const gemahnt: boolean = true;
+    const notGemahnt: boolean = false;
+
+    const checkboxActions = (event: Event): void => {
+        if (props.disabled) {
+            if (event) {
+                console.log("readonly")
+                event.preventDefault();
+            }
+        } else if (props.leistung.mahndatum) {
+            event.preventDefault();
+            open();
+        } else {
+            toggleMahnung();
+        }
+    }
+
+</script>
+
 
 <style scoped>
     .red {
-        @apply ui-text-red-500
+        @apply text-red-500
     }
 
     .green {
-        @apply ui-text-green-500
+        @apply text-green-500
     }
+    
 </style>

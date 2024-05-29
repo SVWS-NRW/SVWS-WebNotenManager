@@ -2,10 +2,22 @@
 
 namespace App\Http\Resources\MeinUnterricht;
 
+use App\Http\Resources\Matrix\MatrixResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * The `LeistungResource` class is a JSON resource for formatting and presenting 'Leistung' data.
+ *
+ * @package App\Http\Resources\Export
+ */
 class LeistungResource extends JsonResource
 {
+    /**
+     * Transform the data into a JSON array.
+     *
+     * @param $request
+     * @return array
+     */
     public function toArray($request): array
     {
         return [

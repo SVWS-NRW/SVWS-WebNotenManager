@@ -9,10 +9,25 @@ use App\Models\Note;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating BKFach model instances.
+ *
+ * @package Database\Factories
+ */
 class BKFachFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = BKFach::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -27,28 +42,48 @@ class BKFachFactory extends Factory
         ];
     }
 
-    public function withIstSchriftlich(): Factory
+    /**
+     * Indicate that the model has Ist Schriftlich.
+     *
+     * @return BKFachFactory
+     */
+    public function withIstSchriftlich(): BKFachFactory
     {
         return $this->state(fn (): array => [
 			'istSchriftlich' => true,
 		]);
     }
-   
-    public function withMuendlichePruefung(): Factory
+
+    /**
+     * Indicate that the model has Muendliche Pruefung.
+     *
+     * @return BKFachFactory
+     */
+    public function withMuendlichePruefung(): BKFachFactory
     {
         return $this->state(fn (): array => [
 			'muendlichePruefung' => true,
 		]);
-    }    
+    }
 
-    public function withMuendlichePruefungFreiwillig(): Factory
+    /**
+     * Indicate that the model has Muendliche Pruefung Freiwillig.
+     *
+     * @return BKFachFactory
+     */
+    public function withMuendlichePruefungFreiwillig(): BKFachFactory
     {
         return $this->state(fn (): array  => [
 			'muendlichePruefungFreiwillig' => true,
 		]);
-    }    
+    }
 
-    public function withIstSchriftlichBerufsabschluss(): Factory
+    /**
+     * Indicate that the model has Ist Schriftlich Berufsabschluss.
+     *
+     * @return BKFachFactory
+     */
+    public function withIstSchriftlichBerufsabschluss(): BKFachFactory
     {
         return $this->state(fn (): array  => [
 			'istSchriftlichBerufsabschluss' => true,

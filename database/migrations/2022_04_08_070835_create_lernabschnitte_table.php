@@ -7,31 +7,41 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up(): void
     {
-        Schema::create(table: 'lernabschnitte', callback: function (Blueprint $table): void {
+        Schema::create('lernabschnitte', function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(model: Schueler::class);
-			$table->integer(column: 'fehlstundenGesamt')->nullable();
-			$table->timestamp(column: 'tsFehlstundenGesamt', precision: 3)->default(value: now());
-			$table->integer(column: 'fehlstundenGesamtUnentschuldigt')->nullable();
-			$table->timestamp(column: 'tsFehlstundenGesamtUnentschuldigt', precision: 3)->default(value: now());
-            $table->string(column: 'pruefungsordnung');
-            $table->unsignedBigInteger(column: 'lernbereich1note')->nullable();
-            $table->unsignedBigInteger(column: 'lernbereich2note')->nullable();
-            $table->unsignedBigInteger(column: 'foerderschwerpunkt1')->nullable();
-            $table->unsignedBigInteger(column: 'foerderschwerpunkt2')->nullable();
+            $table->foreignIdFor(Schueler::class);
+			$table->integer('fehlstundenGesamt')->nullable();
+			$table->timestamp('tsFehlstundenGesamt', 3)->default(now());
+			$table->integer('fehlstundenGesamtUnentschuldigt')->nullable();
+			$table->timestamp('tsFehlstundenGesamtUnentschuldigt', 3)->default(now());
+            $table->string('pruefungsordnung');
+            $table->unsignedBigInteger('lernbereich1note')->nullable();
+            $table->unsignedBigInteger('lernbereich2note')->nullable();
+            $table->unsignedBigInteger('foerderschwerpunkt1')->nullable();
+            $table->unsignedBigInteger('foerderschwerpunkt2')->nullable();
             $table->timestamps();
 
-            $table->foreign(columns: 'lernbereich1note')->references(columns: 'id')->on(table: 'noten');
-            $table->foreign(columns: 'lernbereich2note')->references(columns: 'id')->on(table: 'noten');
-            $table->foreign(columns: 'foerderschwerpunkt1')->references(columns: 'id')->on(table: 'foerderschwerpunkte');
-            $table->foreign(columns: 'foerderschwerpunkt2')->references(columns: 'id')->on(table: 'foerderschwerpunkte');
+            $table->foreign('lernbereich1note')->references('id')->on('noten');
+            $table->foreign('lernbereich2note')->references('id')->on('noten');
+            $table->foreign('foerderschwerpunkt1')->references('id')->on('foerderschwerpunkte');
+            $table->foreign('foerderschwerpunkt2')->references('id')->on('foerderschwerpunkte');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down(): void
     {
-        Schema::dropIfExists(table: 'lernabschnitte');
+        Schema::dropIfExists('lernabschnitte');
     }
 };

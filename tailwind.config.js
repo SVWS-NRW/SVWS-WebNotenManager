@@ -1,7 +1,7 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-	prefix: 'ui-', // For WeNoM
+	prefix: '', // For WeNoM
 	darkMode: 'class',
 	content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',

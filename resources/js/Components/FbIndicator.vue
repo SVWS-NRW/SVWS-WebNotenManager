@@ -1,8 +1,21 @@
+<template>
+    <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
+        <span>
+            <ri-checkbox-line v-if="props.bemerkung"></ri-checkbox-line>
+            <ri-checkbox-blank-line v-else></ri-checkbox-blank-line>
+        </span>
+
+        <span class="bemerkung">
+        <!-- TODO: correct known error message; see FbEditor, line 69 -->
+            {{ formatBasedOnGender(props.bemerkung, props.model) }}
+        </span>
+    </button>
+</template>
+
+
 <script setup lang="ts">
-    import { Schueler } from '@/Interfaces/Schueler'
-    import { Leistung } from '@/Interfaces/Leistung'
-    import { floskelgruppen } from '@/Interfaces/Floskelgruppe'
-    import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper'
+    import { Schueler, Leistung } from '@/Interfaces/Interface';
+    import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
 
     interface EmitsOptions {
         (event: 'clicked'): void,
@@ -11,33 +24,24 @@
     const props = defineProps<{
         model: Leistung,
         bemerkung: string | null,
-    }>()
+    }>();
 
-    const bemerkungButtonAriaLabel = (schueler: Schueler): string =>
-        `Fachbezogene Bemerkungen für ${schueler.vorname} ${schueler.nachname} öffnen`
+    const bemerkungButtonAriaLabel = (schueler: Schueler): string => {
+        return `Fachbezogene Bemerkungen für ${schueler.vorname} ${schueler.nachname} öffnen`;
+    };
 
-    const emit = defineEmits<EmitsOptions>()
+    const emit = defineEmits<EmitsOptions>();
 </script>
 
-<template>
-    <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
-        <span>
-            <mdi-checkbox-marked-outline v-if="props.bemerkung"></mdi-checkbox-marked-outline>
-            <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
-        </span>
-
-        <span class="bemerkung">
-            {{ formatBasedOnGender(props.bemerkung, props.model) }}
-        </span>
-    </button>
-</template>
 
 <style scoped>
+
     button {
-        @apply ui-max-w-full ui-flex ui-gap-1.5 ui-items-center ui-justify-start
+        @apply max-w-full flex gap-1.5 items-center justify-start
     }
 
     .bemerkung {
-        @apply ui-truncate
+        @apply truncate
     }
+    
 </style>

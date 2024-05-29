@@ -6,6 +6,7 @@ use Spatie\LaravelSettings\Settings;
 
 class GeneralSettings extends Settings
 {
+    // TODO: Check by Karol
 	public string $name;
 	public string $address;
 	public string $email;

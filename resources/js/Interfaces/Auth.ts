@@ -5,8 +5,9 @@ export interface Auth {
 		'nachname': string,
 		'email': string,
 		'klassen': Array<Object>,
-		lerngruppen: Array<Object>,
+		'lerngruppen': Array<Object>,
 	},
 	administrator: boolean,
 	schoolName: string,
+	lastLogin: string,
 }

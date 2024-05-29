@@ -1,8 +1,20 @@
+<template>
+    <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
+            <SvwsUiCheckbox v-model="bemerkungCheckboxStatus" @click.prevent.self></SvwsUiCheckbox>
+        <span class="bemerkung">
+            {{ formatBasedOnGender(props.bemerkung, props.model) }}
+        </span>
+    </button>
+</template>
+
+
 <script setup lang="ts">
-    import { Schueler } from '@/Interfaces/Schueler'
-    import { Leistung } from '@/Interfaces/Leistung'
-    import { floskelgruppen } from '@/Interfaces/Floskelgruppe'
-    import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper'
+    import { Schueler, Leistung } from '@/Interfaces/Interface';
+    import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
+    import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
+    import { SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+    import { computed, Ref, ref } from 'vue';
+    
 
     interface EmitsOptions {
         (event: 'clicked'): void,
@@ -12,33 +24,26 @@
         model: Schueler | Leistung,
         bemerkung: string | null,
         floskelgruppe: 'asv' | 'aue' | 'zb' | 'fb',
-    }>()
+    }>();
+    
+    const bemerkungCheckboxStatus = computed(() => (props.bemerkung === null || props.bemerkung === "" )  ? false : true);
 
-    const bemerkungButtonAriaLabel = (schueler: Schueler): string =>
-        `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`
+    const bemerkungButtonAriaLabel = (schueler: Schueler): string => { 
+        return `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`;
+    }
 
-    const emit = defineEmits<EmitsOptions>()
+    const emit = defineEmits<EmitsOptions>();
 </script>
 
-<template>
-    <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
-        <span>
-            <mdi-checkbox-marked-outline v-if="props.bemerkung"></mdi-checkbox-marked-outline>
-            <mdi-checkbox-blank-outline v-else></mdi-checkbox-blank-outline>
-        </span>
-
-        <span class="bemerkung">
-            {{ formatBasedOnGender(props.bemerkung, props.model) }}
-        </span>
-    </button>
-</template>
 
 <style scoped>
+
     button {
-        @apply ui-max-w-full ui-flex ui-gap-1.5 ui-items-center ui-justify-start
+        @apply max-w-full flex gap-1.5 items-center justify-start
     }
 
     .bemerkung {
-        @apply ui-truncate
+        @apply truncate
     }
+    
 </style>

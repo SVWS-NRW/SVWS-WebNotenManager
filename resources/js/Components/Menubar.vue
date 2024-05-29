@@ -1,21 +1,3 @@
-<script setup lang="ts">
-// TODO: TBR
-    import { useStore } from '../store.js'
-    import { Inertia } from '@inertiajs/inertia'
-
-    import { Auth } from '../Interfaces/Auth'
-
-    const store = useStore()
-
-    let props = defineProps<{
-        auth: Auth
-    }>()
-
-    const logout = (): void => Inertia.post(route('logout'))
-    const navigate = (routeName: string): void => Inertia.get(route(routeName))
-    const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value
-</script>
-
 <template>
     <SvwsUiSidebarMenu :collapsed="store.sidebarCollapsed" @toggle="toggleSidebar">
         <template #header>
@@ -50,7 +32,7 @@
         </template>
 
         <template #footer>
-            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.index')" v-if="props.auth.administrator">
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" :active="route().current('settings.*')" @click="navigate('settings.matrix')" v-if="props.auth.administrator">
                 <template #label>Einstellungen</template>
                 <template #icon>
                     <span class="icon">
@@ -72,9 +54,27 @@
 </template>
 
 
+<script setup lang="ts">
+// TODO: TBR
+    import { useStore } from '@/store';
+    import { Inertia } from '@inertiajs/inertia';
+    import { Auth } from '@/Interfaces/Interface'
+
+    const store = useStore();
+
+    let props = defineProps<{
+        auth: Auth
+    }>();
+
+    const logout = (): void => Inertia.post(route('logout'));
+    const navigate = (routeName: string): void => Inertia.get(route(routeName));
+    const toggleSidebar = (value: boolean): boolean => store.sidebarCollapsed = value;
+</script>
+
 
 <style scoped>
     .sidebar--menu-header {
         @apply py-3
     }
+    
 </style>

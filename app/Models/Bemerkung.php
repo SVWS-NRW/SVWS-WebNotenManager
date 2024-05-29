@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * App\Models\Bemerkung
+ * The `Bemerkung` class represents a Laravel model for managing remarks associated with students.
  *
+ * @package App\Models
  * @property int $id
  * @property int $schueler_id
  * @property string|null $ASV
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Schueler|null $schueler
- * @method static \Database\Factories\BemerkungFactory factory(...$parameters)
+ * @method static \Database\Factories\BemerkungFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Bemerkung query()
@@ -50,29 +51,51 @@ class Bemerkung extends Model
 {
     use HasFactory;
 
-	const ALLOWED_BEMERKUNGEN = [
-		'ASV', 'AUE', 'ZB',
-	];
-
-    protected $table = 'bemerkungen';
-
-    protected $fillable = [
-        'schueler_id',
-        'ASV',
-        'tsASV',
-        'AUE',
-        'tsAUE',
-        'ZB',
-        'tsZB',
-        'LELS',
-        'schulformEmpf',
-        'individuelleVersetzungsbemerkungen',
-        'tsIndividuelleVersetzungsbemerkungen',
-        'foerderbemerkungen',
+    /*
+     * Define a list of allowed bemerkungen
+     *
+     * @return array<int, string> ALLOWED_BEMERKUNGEN
+     */
+    public const ALLOWED_BEMERKUNGEN = [
+        'ASV', 'AUE', 'ZB',
     ];
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
+    protected $table = 'bemerkungen';
+
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var array<int, string> $fillable
+     */
+    protected $fillable = [
+        'schueler_id', 'ASV', 'tsASV', 'AUE', 'tsAUE', 'ZB', 'tsZB', 'LELS', 'schulformEmpf',
+        'individuelleVersetzungsbemerkungen', 'tsIndividuelleVersetzungsbemerkungen', 'foerderbemerkungen',
+    ];
+
+    /**
+     * Casts to types
+     *
+     * @var array<string, string> $casts
+     */
+    protected $casts = [
+        'tsASV' => 'datetime',
+        'tsAUE' => 'datetime',
+        'tsZB' => 'datetime',
+        'tsIndividuelleVersetzungsbemerkungen' => 'datetime',
+    ];
+
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(related: Schueler::class);
+        return $this->belongsTo(Schueler::class);
     }
 }

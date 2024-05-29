@@ -1,25 +1,3 @@
-<script setup>
-import { Head, useForm } from '@inertiajs/inertia-vue3';
-import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
-import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
-
-defineProps({
-    status: String,
-});
-
-const form = useForm({
-    email: '',
-});
-
-const submit = () => {
-    form.post(route('password.email'));
-};
-</script>
-
 <template>
     <Head title="Forgot Password" />
 
@@ -59,3 +37,26 @@ const submit = () => {
         </form>
     </JetAuthenticationCard>
 </template>
+
+
+<script setup>
+    import { Head, useForm } from '@inertiajs/inertia-vue3';
+    import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
+    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
+    import JetButton from '@/Jetstream/Button.vue';
+    import JetInput from '@/Jetstream/Input.vue';
+    import JetLabel from '@/Jetstream/Label.vue';
+    import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
+
+    defineProps({
+        status: String,
+    });
+
+    const form = useForm({
+        email: '',
+    });
+
+    const submit = () => {
+        form.post(route('password.email'));
+    };
+</script>

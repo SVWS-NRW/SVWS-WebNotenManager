@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeinUnterricht\LeistungResource;
 use App\Models\Leistung;
-use App\Settings\FilterSettings;
+use App\Models\Note;
 use App\Settings\MatrixSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
+/**
+ * Defining the Leistungsdatenuebersicht controller
+ */
 class Leistungsdatenuebersicht extends Controller
 {
     /**
@@ -22,21 +25,25 @@ class Leistungsdatenuebersicht extends Controller
      */
 	public function __invoke(MatrixSettings $matrix): AnonymousResourceCollection
 	{
-		$eagerLoadedColumns = [
+        // Define the relationships to be eager loaded to improve performance.
+        $eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
 			'lerngruppe' => ['lehrer', 'fach'],
 			'note',
 		];
 
+        // Define the columns for sorting the results.
 		$sortByColumns = [
 			'schueler.klasse.kuerzel',
 			'schueler.nachname',
 			'lerngruppe.fach.kuerzelAnzeige',
 		];
 
-		$leistungen = Leistung::query()
+        // Build the query for Leistung, including eager loading and conditional logic.
+        $leistungen = Leistung::query()
 			->with($eagerLoadedColumns)
-			->when(
+            // Apply additional conditions if the authenticated user is a Lehrer.
+            ->when(
 				auth()->user()->isLehrer(),
 				fn (Builder $query): Builder => $query->whereHas(
 					'schueler',
@@ -46,21 +53,25 @@ class Leistungsdatenuebersicht extends Controller
 					)
 				)
 			)
-			->get()
-			->sortBy($sortByColumns);
+            // Execute the query and retrieve the results.
+            ->get()
+            // Sort the results by the specified columns.
+            ->sortBy($sortByColumns);
+
+        //Get all notes present in noten DB table
+        $allNotes = Note::query()
+            ->orderBy('kuerzel')
+            ->pluck('kuerzel')
+            ->toArray();
 
 
-        $settings = auth()->user()->userSettings->filters_leistungsdatenuebersicht;
-
-        return LeistungResource::collection($leistungen)->additional([
-            'toggles' => [
-                'teilleistungen' => $settings->teilleistungen,
-                'mahnungen' => $settings->mahnungen,
-                'bemerkungen' => $settings->bemerkungen,
-                'fachlehrer' => $settings->fachlehrer,
-            ],
-            'lehrerCanOverrideFachlehrer' => $matrix->lehrer_can_override_fachlehrer,
-        ]);
+        // Return the collection of Leistung resources.
+        return LeistungResource::collection($leistungen)
+            ->additional([
+                'toggles' => auth()->user()->filters('leistungsdatenuebersicht'),
+                'lehrerCanOverrideFachlehrer' => $matrix->lehrer_can_override_fachlehrer,
+                'allNotes' => $allNotes,
+            ]);
     }
 }
 

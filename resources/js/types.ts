@@ -6,6 +6,7 @@ export interface TableColumn {
 }
 
 export interface FachbezogeneFloskel {
+	[index: string]: string,
 	kuerzel: string,
 	text: string,
 	niveau: string
@@ -76,9 +77,4 @@ interface Occurrence {
 interface Pronoun {
 	m: string,
 	w: string,
-}
-
-export interface SortTableColumns {
-	direction?: boolean,
-	sortBy: 'name' | 'klasse' | 'fach' | 'kurs' | 'lehrer' | 'note' | 'fs' | 'fsu' | 'fachbezogeneBemerkungen' | 'gfs' | 'gfsu'  | 'ASV' | 'AUE' | 'ZB'
 }

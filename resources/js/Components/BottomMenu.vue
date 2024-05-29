@@ -1,23 +1,3 @@
-<script setup lang="ts">
-    // TODO: TBR
-    import { useStore } from "../store";
-
-    const store = useStore()
-
-    const darkMode = (): void => {
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.remove('dark', 'theme-dark')
-            localStorage.removeItem('theme')
-            store.darkmode = false
-            return
-        }
-
-        document.documentElement.classList.add('dark', 'theme-dark')
-        localStorage.theme = 'dark'
-        store.darkmode = true
-    }
-</script>
-
 <template>
     <div class="bg-white text-black">
         <span>Powered by SVWS-NRW</span>
@@ -35,7 +15,30 @@
     </div>
 </template>
 
+
+<script setup lang="ts">
+    // TODO: TBR
+    import { useStore } from "../store";
+
+    const store = useStore();
+
+    const darkMode = (): void => {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.remove('dark', 'theme-dark');
+            localStorage.removeItem('theme');
+            store.darkmode = false;
+            return;
+        }
+
+        document.documentElement.classList.add('dark', 'theme-dark');
+        localStorage.theme = 'dark';
+        store.darkmode = true;
+    }
+</script>
+
+
 <style scoped>
+
     div {
         @apply
         flex gap-3 justify-end
@@ -52,4 +55,5 @@
         focus-visible:outline outline-offset-2 outline-2 outline-black dark:outline-white
         rounded-sm
     }
+    
 </style>

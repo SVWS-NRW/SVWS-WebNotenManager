@@ -1,126 +1,72 @@
-<script setup lang="ts">
-    import { Ref, ref, watch } from 'vue'
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import axios, { AxiosResponse } from 'axios'
-    import SettingsMenu from '@/Components/SettingsMenu.vue'
-    import { apiError, apiSuccess } from '@/Helpers/api.helper'
-    import { SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput } from '@svws-nrw/svws-ui'
-
-    let props = defineProps({
-        auth: Object,
-    })
-
-    //TODO: fetch 2FA data from backend
-    const enabled = ref(false)
-
-    interface Settings {
-        mailer: number
-        host: string
-        port: string
-        username: string
-        password: string
-        encryption: string
-        from_address: string
-        from_name: string
-    }
-
-    const settings: Ref<Settings> = ref({} as Settings)
-    const storedSettings: Ref<String> = ref('')
-    const isDirty: Ref<boolean> = ref(false)
-
-    axios.get(route('api.settings.mail_send_credentials'))
-        .then((response: AxiosResponse): void => {
-            settings.value = response.data
-            storedSettings.value = JSON.stringify(settings.value)
-        })
-
-    //TODO: save 2FA data too
-    const saveSettings = () => axios
-        .put(route('api.settings.mail_send_credentials'), {
-            'MAIL_MAILER': settings.value.mailer,
-            'MAIL_HOST': settings.value.host,
-            'MAIL_PORT': settings.value.port,
-            'MAIL_USERNAME': settings.value.username,
-            'MAIL_PASSWORD': settings.value.password,
-            'MAIL_ENCRYPTION': settings.value.encryption,
-            'MAIL_FROM_ADDRESS': settings.value.from_address,
-            'MAIL_FROM_NAME': settings.value.from_name,
-        })
-        .then((): void => apiSuccess())
-
-        .then((): boolean => isDirty.value = false)
-        .catch((error: any): void => apiError(
-            error,
-            'Speichern der Änderungen fehlgeschlagen!'
-        ))
-
-    watch(() => settings.value, (): void => {
-        console.log("changed")
-        if (JSON.stringify(settings.value) == storedSettings.value) {
-            isDirty.value = false
-        }
-    }, {
-        deep: true,
-    })
-
-    const updateIsDirty = (): boolean => isDirty.value = true
-
-
-
-
-    //only going in one direction (activate/deactivate) for the moment
-    //     //TODO: check types
-    // const submit = (): void => {
-    //     if (enabled.value) {
-    //     axios.post(route('activate2FA'))
-    //     .then((): void => apiSuccess())
-    //     .catch((error: any): void => apiError(
-    //         error,
-    //         'Ein Problem ist aufgetreten.'
-    //     ))
-    //     // .finally(() => alert(enabled.value))
-    //     }
-    // };
-
-
-
-
-</script>
-
 <template>
     <AppLayout title="Einstellungen">
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">Einstellungen - Sicherheit</h2>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
+            <div class="form-control-area">
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.mailer" :valid="() => !hasErrors('MAIL_MAILER')" type="text"
+                        placeholder="Mailer"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_MAILER')" class="error">
+                        {{ getError('MAIL_MAILER') }}
+                    </span>
                 </div>
-            </header>
-            <div class="content">
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.host" :valid="() => !hasErrors('MAIL_HOST')" type="text"
+                        placeholder="HOST_URL"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_HOST')" class="error">
+                        {{ getError('MAIL_HOST') }}
+                    </span>
+                </div>
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.port" :valid="() => !hasErrors('MAIL_PORT')" type="text"
+                        placeholder="PORT"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_PORT')" class="error">
+                        {{ getError('MAIL_PORT') }}
+                    </span>
+                </div>
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.username" :valid="() => !hasErrors('MAIL_USERNAME')" type="text"
+                        placeholder="Benutzername"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_USERNAME')" class="error">
+                        {{ getError('MAIL_USERNAME') }}
+                    </span>
+                </div>
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.password" :valid="() => !hasErrors('MAIL_PASSWORD')" type="password"
+                        placeholder="Passwort"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_PASSWORD')" class="error">
+                        {{ getError('MAIL_PASSWORD') }}
+                    </span>
+                </div>
+                <div class="form-control">
+                    <SvwsUiSelect v-model="data.form.encryption" :items="verschluesselungOptions" :item-text="item => item" label="Verschlüsselung"></SvwsUiSelect>
+                </div>
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.from_address" :valid="() => !hasErrors('MAIL_FROM_ADDRESS')"
+                        type="email" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_FROM_ADDRESS')" class="error">
+                        {{ getError('MAIL_FROM_ADDRESS') }}
+                    </span>
+                </div>
+
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.from_name" :valid="() => !hasErrors('MAIL_FROM_NAME')" type="text"
+                        placeholder="Absender"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_FROM_NAME')" class="error">
+                        {{ getError('MAIL_FROM_NAME') }}
+                    </span>
+                </div>
+                <SvwsUiButton @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton>
+
                 <div>
-                    <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten
+                    <SvwsUiCheckbox v-model="enabled" :value="true" type="toggle">Zweifaktor Authentisierung
                     </SvwsUiCheckbox>
                 </div>
-                <div>
-                    <SvwsUiTextInput v-model="settings.mailer" @input="updateIsDirty()" placeholder="Mailer"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.host" @input="updateIsDirty()" placeholder="HOST_URL"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.port" @input="updateIsDirty()" placeholder="PORT"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.username" @input="updateIsDirty()" placeholder="Benutzername"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.password" @input="updateIsDirty()" placeholder="Passwort"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.encryption" @input="updateIsDirty()" placeholder="Verschluesselung"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.from_address" @input="updateIsDirty()" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
-                    <SvwsUiTextInput v-model="settings.from_name" @input="updateIsDirty()" placeholder="Absender"></SvwsUiTextInput>
-                </div>
+
                 <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
             </div>
-
-            <section>
-                <h2 class="text-headline">Einstellungen - Sicherheit</h2>
-                <h3 class="text-headline-md">Mein Unterricht</h3>
-                <SvwsUiCheckbox v-model="enabled" :value="true">Zweifaktor Authentisierung anschalten</SvwsUiCheckbox>
-                <SvwsUiButton @click="submit" type="secondary">Speichern</SvwsUiButton>
-            </section>
-
-
         </template>
         <template #secondaryMenu>
             <SettingsMenu></SettingsMenu>
@@ -128,34 +74,143 @@
     </AppLayout>
 </template>
 
+
+<script setup lang="ts">
+    import { Ref, ref, watch, reactive } from 'vue';
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import axios, { AxiosResponse } from 'axios';
+    import { Inertia } from '@inertiajs/inertia';
+    import SettingsMenu from '@/Components/SettingsMenu.vue';
+    import { apiError, apiSuccess } from '@/Helpers/api.helper';
+    import { SvwsUiHeader, SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiSelect } from '@svws-nrw/svws-ui';
+    import { MailSendCredentialsFormData as MailSendCredentials } from '../../Interfaces/Interface';
+
+    let props = defineProps({
+        auth: Object,
+    });
+
+    const title = 'Mailkonfiguration';
+
+    //TODO: fetch 2FA data from backend
+    const enabled = ref(false);
+
+        //items (iterable group of strings) for SvwsUiSelect; these strings are displayed as dropdown options within the element
+    const verschluesselungOptions = reactive<string[]>([
+        "keine",
+        "tls",
+        "ssl"
+    ]);
+
+    //"encryption: verschluesselungOptions[1]" to display "tls" as default would have no effect here because axios.get(route('api.settings.mail_send_credentials')
+    //always overwrites all form defaults with the variables present in the .env file
+    let data: MailSendCredentials = reactive({
+        form: {
+            mailer: 0,
+            host: '',
+            port: '',
+            username: '',
+            password: '',
+            encryption: '',
+            from_address: '',
+            from_name: '',
+        },
+        //TODO: unused
+        processing: false,
+        errors: {},
+        //TODO: unused
+        successMessage: false,
+    });
+
+    //when the encryption variable is "null" or null in the .env file, we want to display "keine" instead of just an empty string in the select options
+    const convertEncryptionValueForDisplay = (): void => {
+        if (JSON.stringify(data.form.encryption) === "null") {
+            data.form.encryption = "keine";
+        }
+    }
+
+    const getError = (column: string): string => data.errors[column][0];
+    const hasErrors = (column: string): boolean => column in data.errors;
+
+    const storedDataForm: Ref<String> = ref('');
+    const isDirty: Ref<boolean> = ref(true);
+
+    axios.get(route('api.settings.mail_send_credentials'))
+        .then((response: AxiosResponse): void => {
+            data.form = response.data;
+            convertEncryptionValueForDisplay();
+            storedDataForm.value = JSON.stringify(data.form);
+        });
+        
+    //TODO: save 2FA data too
+    const saveSettings = () => axios
+        .put(route('api.settings.mail_send_credentials'), {
+            'MAIL_MAILER': data.form.mailer,
+            'MAIL_HOST': data.form.host,
+            'MAIL_PORT': data.form.port,
+            'MAIL_USERNAME': data.form.username,
+            'MAIL_PASSWORD': data.form.password,
+            'MAIL_ENCRYPTION': data.form.encryption === "keine" ? "null" : data.form.encryption,
+            'MAIL_FROM_ADDRESS': data.form.from_address,
+            'MAIL_FROM_NAME': data.form.from_name,
+        })
+        .then((): void => apiSuccess())
+        .then((): void  => { 
+                isDirty.value = false;
+                storedDataForm.value = JSON.stringify(data.form);
+        })
+        .catch((error: any): void => {
+            apiError(error, 'Speichern der Änderungen fehlgeschlagen!');
+            data.errors = error.response.data.errors;
+        });
+
+    const sendTestmail = (): void => Inertia.get(route('send_testmail'));
+
+    watch(() => data.form, (): void => {
+        isDirty.value = JSON.stringify(data.form) !== storedDataForm.value;
+    }, {
+        deep: true,
+    });
+</script>
+
+
 <style scoped>
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply flex flex-col gap-4 p-6
     }
 
     header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+        @apply flex items-center justify-start gap-6 ml-6
     }
 
     .content {
-        @apply ui-px-6 ui-flex ui-flex-col ui-gap-12 ui-max-w-lg
+        @apply px-6 flex flex-col gap-12 max-w-lg ml-6
     }
 
     .content>div {
-        @apply ui-flex ui-flex-col ui-gap-5 ui-justify-start
+        @apply flex flex-col gap-5 justify-start
     }
 
-    .button {
-
     section {
-        @apply ui-p-6 ui-space-y-12
+        @apply p-6 space-y-12
     }
 
     section>div {
-        @apply ui-flex ui-flex-col ui-gap-3 ui-items-start
+        @apply flex flex-col gap-3 items-start
     }
 
     button {
-        @apply ui-self-start
+        @apply self-start
+    }
+
+    .form-control-area {
+        @apply flex flex-col gap-10 max-w-[32rem] px-11 pt-6
+    }
+
+    .form-control {
+        @apply -my-2
+    }
+
+    .error {
+        @apply text-red-500 text-sm
     }
 </style>

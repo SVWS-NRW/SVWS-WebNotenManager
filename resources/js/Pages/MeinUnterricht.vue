@@ -1,282 +1,366 @@
-<script setup lang="ts">
-    import { computed, onMounted, Ref, ref } from 'vue'
-    import axios, { AxiosPromise, AxiosResponse } from 'axios'
-    import { Head } from '@inertiajs/inertia-vue3'
-    import { Leistung, TableColumnToggle } from '@/Interfaces/Interface'
-    import AppLayout from '@/Layouts/AppLayout.vue'
-    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper'
-    import { DataTableColumn, SvwsUiTable, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiMultiSelect } from '@svws-nrw/svws-ui'
-
-    import {
-        BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton
-    } from '@/Components/Components'
-
-    const title = 'Notenmanager - mein Unterricht'
-
-    const rows: Ref<Leistung[]> = ref([])
-
-    const rowsFiltered = computed((): Leistung[] =>
-        rows.value.filter((leistung: Leistung): boolean =>
-            searchHelper(leistung, ['name'], searchFilter.value)
-            && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
-            && multiSelectHelper(leistung, 'fach', fachFilter.value)
-            && multiSelectHelper(leistung, 'kurs', kursFilter.value)
-            && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
-            && multiSelectHelper(leistung, 'note', noteFilter.value)
-        )
-    )
-
-    const toggles: Ref<TableColumnToggle> = ref({
-        teilleistungen: false,
-        mahnungen: false,
-        bemerkungen: false,
-        fehlstunden: false,
-        kurs: false,
-        note: false,
-        fach: false,
-    })
-
-    onMounted((): AxiosPromise => axios
-        .get(route('api.mein_unterricht'))
-        //not working if each action has its own .then
-        .then((response: AxiosResponse): AxiosResponse => {
-            rows.value = response.data.data
-            toggles.value = response.data.toggles
-        })
-        .finally((): void => mapFilters())
-    )
-
-    const cols = computed((): DataTableColumn[] => [
-         { key: 'klasse', label: 'Klasse', sortable: true, span: 1, minWidth: 6, disabled: false },
-         { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 10, disabled: false },
-        ...(toggles.value.fach ? [
-            { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false },
-        ] : []),
-        ...(toggles.value.kurs ? [
-            { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false },
-        ] : []),
-        ...(toggles.value.teilleistungen ? [
-            { key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15 }
-        ] : []),
-        ...(toggles.value.note ? [
-            { key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5 },
-         ] : []),
-         ...(toggles.value.mahnungen ? [
-             { key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 4},
-         ] : []),
-         ...(toggles.value.fehlstunden ? [
-             { key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6 },
-             { key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6 },
-         ] : []),
-         ...(toggles.value.bemerkungen ? [
-             { key: 'fachbezogeneBemerkungen', label: 'FB', sortable: true, span: 12, minWidth: 4 },
-         ] : []),
-    ])
-
-    const selectedLeistung: Ref<Leistung | null> = ref(null)
-
-    const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null =>
-        selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null
-
-    // Filters
-    const searchFilter: Ref<string|null> = ref(null)
-    const klasseFilter: Ref <string[]> = ref([])
-    const fachFilter: Ref <string[]> = ref([])
-    const kursFilter: Ref <string[]> = ref([])
-    const jahrgangFilter: Ref <string[]> = ref([])
-    const noteFilter: Ref <string[]> = ref([])
-
-    const klasseItems: Ref<string[]> = ref([])
-    const fachItems: Ref<string[]> = ref([])
-    const kursItems: Ref<string[]> = ref([])
-    const jahrgangItems: Ref<string[]> = ref([])
-    const noteItems: Ref<string[]> = ref([])
-
-    const filterReset = (): void => {
-        searchFilter.value = ''
-        klasseFilter.value = []
-        jahrgangFilter.value = []
-        fachFilter.value = []
-        kursFilter.value = []
-        noteFilter.value = []
-    }
-
-    const isFiltered = (): boolean =>
-        searchFilter.value !== null
-        || klasseFilter.value.length > 0
-        || jahrgangFilter.value.length > 0
-        || fachFilter.value.length > 0
-        || kursFilter.value.length > 0
-        || noteFilter.value.length > 0
-
-    const mapFilters = (): void => {
-        klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse')
-        fachItems.value = mapFilterOptionsHelper(rows.value, 'fach')
-        kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs')
-        jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang')
-        noteItems.value = mapFilterOptionsHelper(rows.value, 'note')
-    }
-</script>
-
 <template>
+    <!-- Seitentitel -->
     <Head>
         <title>Mein Unterricht</title>
     </Head>
+
     <AppLayout>
         <template #main>
-            <header>
-                <div id="headline">
-                    <h2 class="text-headline">{{ title }}</h2>
-                </div>
-            </header>
+            <SvwsUiHeader>
+                {{ title }}
+            </SvwsUiHeader>
             <div class="content-area">
-                <SvwsUiTable
-                    :items="rowsFiltered"
-                    :columns="cols"
-                    :clickable="true"
-                    :count="true"
-                    :filtered="isFiltered()"
-                    :filterReset="filterReset"
-                    :filterOpen="true"
-                >
-                    <template #filter>
-                        <SvwsUiCheckbox v-model="toggles.fach" :value="true">Fach</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.kurs" :value="true">Kurs</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.teilleistungen" :value="true">Teilleistungen</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.note" :value="true">Note</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.mahnungen" :value="true">Mahnungen</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.fehlstunden" :value="true">Fachbezogene Fehlstunden</SvwsUiCheckbox>
-                        <SvwsUiCheckbox v-model="toggles.bemerkungen" :value="true">Fachbezogene Bemerkungen</SvwsUiCheckbox>
-                    </template>
+                <!-- Tabelle mit SvwsUiTable -->
+                <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
+                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
+
+                    <!-- Erweiterte Filteroptionen -->
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                        <SvwsUiMultiSelect label="Klasse"
-                            :items="klasseItems"
-                            :item-text="item => item"
-                            v-model="klasseFilter"
-                        />
-                        <SvwsUiMultiSelect
-                            label="Jahrgang"
-                            :items="jahrgangItems"
-                            :item-text="item => item"
-                            v-model="jahrgangFilter"
-                        />
-                        <SvwsUiMultiSelect
-                            label="Fach"
-                            :items="fachItems"
-                            :item-text="item => item"
-                            v-model="fachFilter"
-                        />
-                        <SvwsUiMultiSelect
-                            label="Kurs"
-                            :items="kursItems"
-                            :item-text="item => item"
-                            v-model="kursFilter"
-                        />
-                        <SvwsUiMultiSelect
-                            label="Note"
-                            :items="noteItems"
-                            :item-text="item => item"
-                            v-model="noteFilter"
-                        />
+                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
+                        <SvwsUiMultiSelect label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
+                        <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
+                        <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
+                        <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="item => item" v-model="noteFilter" />
                     </template>
 
+                    <!-- Individuelle Zellen-Template -->
+                    <!-- BemerkungButton in der Zelle 'klasse' -->
                     <template #cell(klasse)="{ value, rowData }">
-                        <BemerkungButton
-                            :value="value"
-                            :model="rowData"
-                            floskelgruppe="fb"
-                            @clicked="selectLeistung(rowData)"
-                        />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
+                    <!-- BemerkungButton in der Zelle 'name' -->
                     <template #cell(name)="{ value, rowData }">
-                        <BemerkungButton
-                            :value="value"
-                            :model="rowData"
-                            floskelgruppe="fb"
-                            @clicked="selectLeistung(rowData)"
-                        />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
+                    <!-- BemerkungButton in der Zelle 'fach' -->
                     <template #cell(fach)="{ value, rowData }">
-                        <BemerkungButton
-                            :value="value"
-                            :model="rowData"
-                            floskelgruppe="fb"
-                            @clicked="selectLeistung(rowData)"
-                        />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
+                    <!-- BemerkungButton in der Zelle 'kurs' -->
                     <template #cell(kurs)="{ value, rowData }">
-                        <BemerkungButton
-                            :value="value"
-                            :model="rowData"
-                            floskelgruppe="fb"
-                            @clicked="selectLeistung(rowData)"
-                        />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <template #cell(note)="{ value, rowData }">
-                        <NoteInput
-                            :leistung="rowData"
-                            :disabled="!rowData.editable.noten"
-                        />
+                    <!-- TODO: ticket 260; nothing comes from db yet -->
+                    <template #cell(quartal)="{ value, rowData, rowIndex }">
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
+
+                    <!-- BemerkungButton in der Zelle 'note' -->
+                    <template #cell(note)="{ value, rowData, rowIndex }">
+                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        ></NoteInput>
+                    </template>
+
+                    <!-- BemerkungButton in der Zelle 'istGemahnt' -->
                     <template #cell(istGemahnt)="{ value, rowData }">
                         <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" />
                     </template>
 
-                    <template #cell(fs)="{ value, rowData }">
-                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
-                    </template>
-
-                    <template #cell(fsu)="{ value, rowData }">
-                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden"/>
-                    </template>
-
-                    <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
-                        <BemerkungIndicator
-                            :model="rowData"
-                            :bemerkung="rowData['fachbezogeneBemerkungen']"
-                            @clicked="selectLeistung(rowData, true)"
-                            floskelgruppe="fb"
+                    <!-- BemerkungButton in der Zelle 'fs' -->
+                    <template #cell(fs)="{ value, rowData, rowIndex }">
+                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         />
+                    </template>
+
+                    <!-- BemerkungButton in der Zelle 'fsu' -->
+                    <template #cell(fsu)="{ value, rowData,  rowIndex}">
+                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        />
+                    </template>
+
+                    <!-- BemerkungButton in der Zelle 'fachbezogeneBemerkungen' -->
+                    <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
+                        <BemerkungIndicator :model="rowData" :bemerkung="rowData['fachbezogeneBemerkungen']"
+                            @clicked="selectLeistung(rowData, true)" floskelgruppe="fb" />
                     </template>
                 </SvwsUiTable>
             </div>
         </template>
 
+        <!-- Anzeige des ausgewählten Elements -->
         <template v-slot:aside v-if="selectedLeistung">
-            <FbEditor
-                :leistung="selectedLeistung"
-                @updated="selectedLeistung.fachbezogeneBemerkungen = $event;"
-                @close="selectedLeistung = null"
-                :editable="true"
-            ></FbEditor>
+            <FbEditor :leistung="selectedLeistung" @updated="selectedLeistung.fachbezogeneBemerkungen = $event;"
+                @close="selectedLeistung = null" editable />
         </template>
     </AppLayout>
 </template>
 
-<style scoped>
-    .truncate {
-        @apply ui-truncate
+<script setup lang="ts">
+    import { computed, onMounted, Ref, ref } from 'vue';
+    import axios, { AxiosResponse } from 'axios';
+    import { Head } from '@inertiajs/inertia-vue3';
+    import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
+    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
+    import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
+    import { handleExport } from '@/Helpers/exportHelper';
+    import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
+
+    //Correlation filter names and column names on this page
+    interface MeinUnterrichtFiltersToCols {
+        [index: string]: string,
+        fach: string,
+        kurs: string,
+        teilleistungen: string,
+        quartalnoten: string,
+        note: string,
+        mahnungen: string,
+        fehlstunden: string,
+        bemerkungen: string,
+    };
+
+    const title = 'Notenmanager - mein Unterricht';
+
+    //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
+    const itemRefsNoteInput = ref(new Map());
+    const itemRefsfs = ref(new Map());
+    const itemRefsfsu = ref(new Map());
+
+    // Data received from DB
+    const rows: Ref<Leistung[]> = ref([]);
+
+    // The different filters on top of the screen may get input and thus the data from DB will be filtered and then displayed
+    const rowsFiltered = computed((): Leistung[] => {
+        return rows.value.filter((leistung: Leistung): boolean => {
+            return searchHelper(leistung, ['name'], searchFilter.value || '')
+                && multiSelectHelper(leistung, 'klasse', klasseFilter.value)
+                && multiSelectHelper(leistung, 'fach', fachFilter.value)
+                && multiSelectHelper(leistung, 'kurs', kursFilter.value)
+                && multiSelectHelper(leistung, 'jahrgang', jahrgangFilter.value)
+                && multiSelectHelper(leistung, 'note', noteFilter.value)
+        })
+    });
+
+    // some columns may be displayed/hidden on demand
+    const toggles: Ref<TableColumnToggle> = ref({
+        teilleistungen: false,
+        quartalnoten: false,
+        mahnungen: false,
+        bemerkungen: false,
+        fehlstunden: false,
+        fachlehrer: false,
+        kurs: false,
+        note: false,
+        fach: false,
+    });
+
+    // all notes present in the noten DB table
+    const allNotes: Ref<string[]> = ref([]);
+
+    // Api Call - Daten für meinUnterricht
+    onMounted((): Promise<void> => axios
+        .get(route('api.mein_unterricht'))
+        .then((response: AxiosResponse): void => {
+            rows.value = response.data.data;
+            toggles.value = response.data.toggles;
+            allNotes.value = response.data.allNotes;
+            getHiddenColumns(toggles);
+        })
+        .finally((): void => mapFilters())
+    );
+
+    // Standard-Spalten für die Tabelle
+    const default_cols : DataTableColumn[] = [
+        { key: 'klasse', label: 'Klasse', sortable: true, span: 1, fixedWidth: 6, disabled: false, toggleInvisible:true },
+        { key: 'name', label: 'Name, Vorname', sortable: true, span: 3, minWidth: 16, disabled: false, toggleInvisible:true },
+    ];
+
+     // Ein- und Ausblendbare Spalten
+    const cols = computed((): DataTableColumn[] => {
+        const result = [...default_cols];
+            result.push({ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false, toggle: true });
+            result.push({ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false, toggle: true });
+            result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15, toggle: true });
+            result.push({ key: 'quartalnoten', label: 'Quartal', sortable: true, span: 1, minWidth: 6, toggle: true });
+            result.push({ key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5, toggle: true });
+            result.push({ key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8, toggle: true });
+            result.push({ key: 'fs', label: 'FS', sortable: true, span: 1, minWidth: 6,  tooltip: "Fachbezogene Fehlstunden", toggle: true });
+            result.push({ key: 'fsu', label: 'FSU', sortable: true, span: 1, minWidth: 6,  tooltip: "Unentschuldigte fachbezogene Fehlstunden", toggle: true });
+            result.push({ key: 'fachbezogeneBemerkungen', label: 'FB', sortable: true, span: 12, minWidth: 4,  tooltip: "Fachbezogene Bemerkungen", toggle: true });
+        return result;
+    });
+    
+    //filters from settings or user settings determine whether columns are hidden or shown in the table
+    const hiddenColumns = ref<Set<string>>(new Set<string>());
+    //filter names from DB do not match our cols; TODO: check whether it may be corrected at some point
+    const filtersToCols: MeinUnterrichtFiltersToCols = {
+        fach: 'fach',
+        kurs: 'kurs',
+        teilleistungen: 'teilnoten',
+        quartalnoten: 'quartalnoten',
+        note: 'note',
+        mahnungen: 'istGemahnt',
+        fehlstunden: 'fs',
+        bemerkungen: 'fachbezogeneBemerkungen',
+    };
+
+    const getHiddenColumns = (toggles: Ref<TableColumnToggle>) => {
+        for (const filter in toggles.value) {
+            if (toggles.value[filter] === false) {
+                hiddenColumns.value.add(filtersToCols[filter]);
+            }
+        }
     }
 
+    // when clicked on, Leistung is "selected"
+    const selectedLeistung: Ref<Leistung | null> = ref(null);
+
+    const selectLeistung = (leistung: Leistung, always: boolean = false): Leistung | null =>
+        selectedLeistung.value = (selectedLeistung.value || always) ? leistung : null;
+
+    // Filter
+    const searchFilter: Ref<string|null> = ref(null);
+    const klasseFilter: Ref <string[]> = ref([]);
+    const fachFilter: Ref <string[]> = ref([]);
+    const kursFilter: Ref <string[]> = ref([]);
+    const jahrgangFilter: Ref <string[]> = ref([]);
+    const noteFilter: Ref <string[]> = ref([]);
+
+    const klasseItems: Ref<string[]> = ref([]);
+    const fachItems: Ref<string[]> = ref([]);
+    const kursItems: Ref<string[]> = ref([]);
+    const jahrgangItems: Ref<string[]> = ref([]);
+    const noteItems: Ref<string[]> = ref([]);
+
+    // Filter zurücksetzen
+    const filterReset = (): void => {
+        searchFilter.value = '';
+        klasseFilter.value = [];
+        jahrgangFilter.value = [];
+        fachFilter.value = [];
+        kursFilter.value = [];
+        noteFilter.value = [];
+    }
+
+    // Prüfen, ob Filter aktiv sind
+    const isFiltered = (): boolean => {
+        return searchFilter.value !== null
+            || klasseFilter.value.length > 0
+            || jahrgangFilter.value.length > 0
+            || fachFilter.value.length > 0
+            || kursFilter.value.length > 0
+            || noteFilter.value.length > 0;
+    }
+
+    // Filteroptionen mappen
+    const mapFilters = (): void => {
+        klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse');
+        fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
+        kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs');
+        jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang');
+        noteItems.value = Array.from(Object.values(allNotes.value));
+    };
+
+    //input html element and reference map name are determined by child
+    function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
+        switch (itemRefsName) {
+            case "itemRefsNoteInput":
+                itemRefsNoteInput.value.set(rowIndex, el);
+                break;
+            case "itemRefsfs":
+                itemRefsfs.value.set(rowIndex, el);
+                break;
+            case "itemRefsfsu":
+                itemRefsfsu.value.set(rowIndex, el);
+                break;
+            default:
+                console.log("Map not found.")
+        }
+	}
+
+    //table navigation actions (go up/down within the column)
+	function next(id: number, itemRefs: Ref) {
+		const el = itemRefs.value.get(id + 1);
+		if (el)
+            el.input.select();
+	}
+
+	const previous = (id: number, itemRefs: Ref) => {
+        const el = itemRefs.value.get(id - 1);
+		if (el)
+        el.input.select();
+	}
+
+    //direction (up/down within the column) and map name are received from child component
+    const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
+        switch (itemRefsName) {
+            case "itemRefsNoteInput":
+                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
+                break;
+            case "itemRefsfs":
+                direction === "next" ? next(rowIndex, itemRefsfs) : previous(rowIndex, itemRefsfs);
+                break;
+            case "itemRefsfsu":
+                direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
+                break;
+            default:
+                console.log("itemRefs map not found");
+        }	
+	}    
+
+    /**
+     * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
+     * @param type - Der Exporttyp ('csv' oder 'excel').
+     */
+    const exportToFile = (type: string): void => {
+        // Bestimme die zu exportierenden Spalten basierend auf den Benutzereinstellungen
+        const visibleColumns: string[] = [
+            "klasse",
+            "nachname",
+            "vorname",
+            ...Object.keys(toggles.value).filter((col: string) => toggles.value[col as keyof TableColumnToggle])
+        ];
+        
+        // Ordne sichtbare Spalten den entsprechenden Datenbankfeldern zu
+        const mappedColumns: string[] = visibleColumns.map((col: string) => mapToggleToDatabaseField(col as keyof TableColumnToggle));
+
+        // Bereite Daten für den Export vor, indem relevante Spalten ausgewählt werden
+        const exportData = rowsFiltered.value.map((row: Leistung) => {
+            const rowData: Record<string, any> = {};
+            mappedColumns.forEach((col: string) => {
+                // Überprüfe, ob die Spalte 'istGemahnt' ist und die Werte auf 'ja' oder 'nein' abbilde
+                if (col === 'istGemahnt')
+                    rowData[col] = row[col as keyof Leistung] ? 'ja' : 'nein';
+                else
+                    rowData[col] = row[col as keyof Leistung];
+            });
+            return rowData;
+        });
+
+        // Rufe den allgemeinen Export-Handler mit den vorbereiteten Daten auf
+        handleExport(exportData, type, 'leistungsdatenübersicht');
+    }
+</script>
+
+
+<style scoped>
+
+    /*.truncate {
+        @apply truncate
+    } */
+
     header {
-        @apply ui-flex ui-flex-col ui-gap-4 ui-p-6
+        @apply flex flex-col gap-4 p-6
     }
 
     header #headline {
-        @apply ui-flex ui-items-center ui-justify-start ui-gap-6
+        @apply flex items-center justify-start gap-6 ml-6
     }
 
     .content-area {
-        @apply ui-mx-4
+        @apply mx-4 overflow-auto ml-6
     }
 
     .myToggles {
-        @apply ui-m-4
+        @apply m-4
     }
+
 </style>
+

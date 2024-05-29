@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * App\Models\BKAbschluss
+ * The `BKAbschluss` class represents a Laravel model for managing remarks associated with BKAbschlüsse.
  *
+ * @package App\Models
  * @property int $id
  * @property int $schueler_id
  * @property int $hatZulassung
@@ -26,8 +27,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $istFachpraktischerTeilAusreichend
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Schueler|null $schuler
- * @method static \Database\Factories\BKAbschlussFactory factory(...$parameters)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BKFach> $bkFaecher
+ * @property-read int|null $bk_faecher_count
+ * @property-read \App\Models\Schueler|null $schueler
+ * @method static \Database\Factories\BKAbschlussFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss query()
@@ -47,55 +50,79 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereSchuelerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereThemaAbschlussarbeit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BKAbschluss whereUpdatedAt($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BKFach[] $bkFaecher
- * @property-read int|null $bk_faecher_count
- * @property-read \App\Models\Schueler|null $schueler
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BKFach> $bkFaecher
  * @mixin \Eloquent
  */
 class BKAbschluss extends Model
 {
     use HasFactory;
 
+    /**
+     * Specify the database table name
+     *
+     * @var string
+     */
     protected $table = 'bkabschluesse';
 
+    /**
+     * Define the fillable attributes for mass assignment
+     *
+     * @var string[]
+     */
     protected $fillable = [
-        'schueler_id',
-        'hatZulassung',
-        'hatBestanden',
-        'hatZulassungErweiterteBeruflicheKenntnisse',
-        'hatErworbenErweiterteBeruflicheKenntnisse',
-        'notePraktischePruefung',
-        'noteKolloqium',
-        'hatZulassungBerufsabschlusspruefung',
-        'hatBestandenBerufsabschlusspruefung',
-        'themaAbschlussarbeit',
-        'istVorhandenBerufsabschlusspruefung',
-        'noteFachpraxis',
-        'istFachpraktischerTeilAusreichend',
+        'schueler_id', 'hatZulassung', 'hatBestanden', 'hatZulassungErweiterteBeruflicheKenntnisse',
+        'hatErworbenErweiterteBeruflicheKenntnisse', 'notePraktischePruefung', 'noteKolloqium',
+        'hatZulassungBerufsabschlusspruefung', 'hatBestandenBerufsabschlusspruefung', 'themaAbschlussarbeit',
+        'istVorhandenBerufsabschlusspruefung', 'noteFachpraxis', 'istFachpraktischerTeilAusreichend',
     ];
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function noteFachpraxis(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function noteKolloqium(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function notePraktischePruefung(): BelongsTo
     {
-        return $this->belongsTo(related: Note::class);
+        return $this->belongsTo(Note::class);
     }
 
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
     public function schueler(): BelongsTo
     {
-        return $this->belongsTo(related: Schueler::class);
+        return $this->belongsTo(Schueler::class);
     }
 
+    /**
+     * The related models that are owned by the model
+     *
+     * @return HasMany
+     */
     public function bkFaecher(): HasMany
     {
-        return $this->hasMany(related: BKFach::class);
+        return $this->hasMany(BKFach::class);
     }
 }

@@ -28,6 +28,6 @@ const eventBus: EventBus = {
         )
       }
     }
-  }
+  };
   
   export default eventBus;

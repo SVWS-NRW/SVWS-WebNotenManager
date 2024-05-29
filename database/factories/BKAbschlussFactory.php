@@ -7,10 +7,25 @@ use App\Models\Note;
 use App\Models\Schueler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * Factory for creating BKAbschluss model instances.
+ *
+ * @package Database\Factories
+ */
 class BKAbschlussFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
     protected $model = BKAbschluss::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
     public function definition(): array
     {
         return [
@@ -20,58 +35,98 @@ class BKAbschlussFactory extends Factory
             'themaAbschlussarbeit' => $this->faker->paragraph(),
             'noteFachpraxis' => Note::factory(),
         ];
-    }   
+    }
 
-    public function withHatZulassung(): Factory
+    /**
+     * Indicate that the model has Hat Zulassung.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withHatZulassung(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'hatZulassung' => true,
 		]);
     }
 
-    public function withHatBestanden(): Factory
+    /**
+     * Indicate that the model has Hat Bestanden.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withHatBestanden(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'hatBestanden' => true,
 		]);
     }
 
-    public function withHatZulassungErweiterteBeruflicheKenntnisse(): Factory
+    /**
+     * Indicate that the model has Hat Zulassung Erweiterte BeruflicheKenntnisse.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withHatZulassungErweiterteBeruflicheKenntnisse(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'hatZulassungErweiterteBeruflicheKenntnisse' => true,
 		]);
     }
 
-    public function withHatErworbenErweiterteBeruflicheKenntnisse(): Factory
+    /**
+     * Indicate that the model has Hat Erworben Erweiterte BeruflicheKenntnisse.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withHatErworbenErweiterteBeruflicheKenntnisse(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'hatErworbenErweiterteBeruflicheKenntnisse' => true,
 		]);
     }
 
-    public function withHatZulassungBerufsabschlusspruefung(): Factory
+    /**
+     * Indicate that the model has Hat Zulassung Berufsabschlusspruefung.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withHatZulassungBerufsabschlusspruefung(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'hatZulassungBerufsabschlusspruefung' => true,
 		]);
     }
 
-    public function withHatBestandenBerufsabschlusspruefung(): Factory
+    /**
+     * Indicate that the model has Hat Bestanden Berufsabschlusspruefung.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withHatBestandenBerufsabschlusspruefung(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'hatBestandenBerufsabschlusspruefung' => true,
 		]);
     }
 
-    public function withIstVorhandenBerufsabschlusspruefung(): Factory
+    /**
+     * Indicate that the model has Ist Vorhanden Berufsabschlusspruefung.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withIstVorhandenBerufsabschlusspruefung(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'istVorhandenBerufsabschlusspruefung' => true,
 		]);
     }
 
-    public function withIstFachpraktischerTeilAusreichend(): Factory
+    /**
+     * Indicate that the model has Ist Fachpraktischer TeilAusreichend.
+     *
+     * @return BKAbschlussFactory
+     */
+    public function withIstFachpraktischerTeilAusreichend(): BKAbschlussFactory
     {
         return $this->state(fn (): array => [
 			'istFachpraktischerTeilAusreichend' => true,
