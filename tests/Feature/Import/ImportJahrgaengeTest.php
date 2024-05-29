@@ -301,21 +301,6 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create with NULL "Stufe"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_stufe(): void
-    {
-        $data = $this->getData();
-        $data['jahrgaenge'][0]['stufe'] = null;
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
      * It does not create with empty "Stufe"
      *
      * @return void

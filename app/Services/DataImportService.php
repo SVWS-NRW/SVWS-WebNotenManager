@@ -110,9 +110,6 @@ class DataImportService
 
         // Fetch the values to compare in the future
         $jahrgaenge = Jahrgang::all();
-        $ids = $jahrgaenge->pluck('id', 'id')->toArray();
-        $kuerzeln = $jahrgaenge->pluck('id', 'kuerzel')->toArray();
-        $sortierungen = $jahrgaenge->pluck('id', 'sortierung')->toArray();
 
         collect($this->data['jahrgaenge'])
             ->filter(fn (array $array): bool => $this->hasValidId($array, 'jahrgaenge', $jahrgaenge))
