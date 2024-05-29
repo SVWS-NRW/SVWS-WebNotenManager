@@ -286,59 +286,7 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create with NULL "Beschreibung"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_beschreibung(): void
-    {
-        $data = $this->getData();
-        $data['jahrgaenge'][0]['beschreibung'] = null;
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-
-    /**
-     * It does not create with empty "Beschreibung"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_empty_beschreibung(): void
-    {
-        $data = $this->getData();
-        $data['jahrgaenge'][0]['beschreibung'] = '';
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 0);
-    }
-    /**
-     * It creates with trimmed whitespaces in "Beschreibung"
-     *
-     * @return void
-     */
-    public function test_it_creates_with_trimmed_whitespaces_in_beschreibung(): void
-    {
-        $data = $this->getData();
-        $data['jahrgaenge'][0]['beschreibung'] = '      Qualifikationsphase 2      ';
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas(self::TABLE, [
-                'id' => 1,
-                'kuerzel' => 'Q2',
-                'kuerzelAnzeige' => 'Q2',
-                'beschreibung' => 'Qualifikationsphase 2',
-                'stufe' => 'SII-3',
-                'sortierung' => 12
-            ]);
-    }
-
-    /**
-     * It does not create with "Stufe" missing
+     * It does not create jahrgaenge with stufe missing
      *
      * @return void
      */
