@@ -19,11 +19,12 @@ class CreatePersonalAccessTokensTable extends Migration
             $table->string('name');
             $table->string('token', 64)->unique();
             $table->text('abilities')->nullable();
+            $table->timestamp('expires_at')->nullable()->after('last_used_at');
             $table->timestamp('last_used_at')->nullable();
             $table->timestamps();
         });
     }
-    
+
     public function down(): void
     {
         Schema::dropIfExists('personal_access_tokens');
