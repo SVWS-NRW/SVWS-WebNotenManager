@@ -114,32 +114,16 @@ class DataImportService
         $kuerzeln = $jahrgaenge->pluck('id', 'kuerzel')->toArray();
         $sortierungen = $jahrgaenge->pluck('id', 'sortierung')->toArray();
 
-        // In past there was an issue with additional whitespace.
-        // This function takes care of it and notifies about.
-        $trimBeschreibung = function (array $array) use ($ctx): array {
-            if (preg_match('/\s{2,}/', $array['beschreibung'])) {
-                $this->setStatus($ctx, 'Whitespace Problem in Beschreibung', $array['beschreibung']);
-                $array['beschreibung'] = trim(preg_replace('/\s+/', ' ', $array['beschreibung']));
-            }
-
-            return $array;
-        };
-
-        collect($this->data[$ctx])
-            ->filter(fn (array $array): bool => $this->hasValidInt($array, 'id', $ctx))
-            // Check if "Jahrgang" does not already exists
-            ->filter(fn (array $array): bool => !$this->modelAlreadyExists($array, 'id', $ids, $ctx))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'kuerzel', $ctx))
-            // Check if "Kuerzel" is unique
-            ->filter(fn (array $array): bool => !$this->modelAlreadyExists($array, 'kuerzel', $kuerzeln, $ctx))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'sortierung', $ctx))
-            // Check if "Sortierung" is unique
-            ->filter(fn (array $array): bool => !$this->modelAlreadyExists($array, 'sortierung', $sortierungen, $ctx))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'kuerzelAnzeige', $ctx))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'stufe', $ctx))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'beschreibung', $ctx))
-            ->map($trimBeschreibung)
-            ->each(fn (array $array) => Jahrgang::create($array));
+        collect($this->data['jahrgaenge'])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'jahrgaenge', $jahrgaenge))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'jahrgaenge', $jahrgaenge, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'jahrgaenge', $jahrgaenge, 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzelAnzeige'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'stufe'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'beschreibung'))
+            ->each(fn (array $array) =>  Jahrgang::create($array));
     }
 
     /**

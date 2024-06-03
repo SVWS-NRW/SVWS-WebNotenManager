@@ -286,6 +286,7 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
+<<<<<<< HEAD
      * It does not create with NULL "Beschreibung"
      *
      * @return void
@@ -339,6 +340,9 @@ class ImportJahrgaengeTest extends TestCase
 
     /**
      * It does not create with "Stufe" missing
+=======
+     * It does not create jahrgaenge with stufe missing
+>>>>>>> feature/310-Umgang-mit-whitespace-errors
      *
      * @return void
      */
