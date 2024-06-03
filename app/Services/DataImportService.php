@@ -86,6 +86,8 @@ class DataImportService
                 $this->setStatus($ctx, '"eMailDienstlich" ist leer oder ungueltig', $row['id']);
             }
 
+            unset($row['eMailDienstlich']);
+
             return $row;
         };
 
@@ -169,8 +171,8 @@ class DataImportService
 
                 return true;
             })
-            ->each(function (array $array) use ($klassenlehrer): void {
-                $klasse = Klasse::create($array);
+        ->each(function (array $array) use ($klassenlehrer): void {
+                $klasse = Klasse::create(Arr::except($array, 'klassenlehrer'));
                 $klasse->klassenlehrer()->sync($klassenlehrer($array));
             });
     }
@@ -327,7 +329,7 @@ class DataImportService
                 return true;
             })
             ->each(function (array $array): void {
-                $lerngruppe = Lerngruppe::create($array);
+            $lerngruppe = Lerngruppe::create(Arr::except($array, 'lehrerID'));
                 $lerngruppe->lehrer()->attach($array['lehrerID']);
             });
     }
@@ -347,6 +349,7 @@ class DataImportService
         $kuerzeln = Floskelgruppe::all()->pluck('id', 'kuerzel')->toArray();
 
         collect($this->data['floskelgruppen'])
+<<<<<<< HEAD
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'kuerzel', $ctx))
             ->filter(fn (array $array): bool => !$this->modelAlreadyExists($array, 'kuerzel', $kuerzeln, $ctx))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'bezeichnung', $ctx))
@@ -395,6 +398,14 @@ class DataImportService
                 is_null($array['fachID']) || $this->relationExists($array, 'fachID', $faecher, $ctx)
             )
             ->each(fn (array $array) => $floskelgruppe->floskeln()->create($array));
+=======
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'floskelgruppen', $floskelgruppen, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'bezeichnung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'hauptgruppe'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'floskeln'))
+            ->each(fn (array $array): Floskelgruppe => Floskelgruppe::create(Arr::except($array, 'floskeln')));
+>>>>>>> feature/308-download-wirft-Fehler
     }
 
     /**
@@ -457,7 +468,17 @@ class DataImportService
             $array['note_id'] = $noten[$array['note']] ?? null;
             $array['lerngruppe_id'] = $array['lerngruppenID'];
 
-            $leistung = Leistung::firstOrNew(['id' => $array['id'], 'schueler_id' => $schueler['id']], $array);
+            $excluded = [
+                'lerngruppenID', 'note', 'teilleistungen', 'noteQuartal', 'tsNoteQuartal',
+            ];
+            foreach($excluded as $current) {
+                unset($array[$current]);
+            }
+
+            $leistung = Leistung::firstOrNew(
+                ['id' => $array['id'], 'schueler_id' => $schueler['id']],
+                $array
+            );
 
             // Check if timestamps for some fields are latter than the ones stored in DB.
             $this->updateWhenRecent($array, $leistung, 'note_id', 'tsNote');
