@@ -74,6 +74,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @method static Builder|User administrator()
  * @method static Builder|User lehrer()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserLogin> $loginLogs
+ * @property-read int|null $login_logs_count
  * @mixin \Eloquent
  */
 class User extends Authenticatable
