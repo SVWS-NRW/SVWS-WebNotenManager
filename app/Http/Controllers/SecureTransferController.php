@@ -74,8 +74,20 @@ class SecureTransferController extends Controller
      */
     public function export(GzipService $gzipService): Response
     {
-        // Fetching data to be exported and converting it to JSON.
-        $data = SchuelerResource::collection(Schueler::exportCollection())->toJson();
+        // Get the data with all relations
+        $schueler = Schueler::with([
+            'bemerkung',
+            'leistungen' => [
+                'note',
+            ],
+            'lernabschnitt' => [
+                'lernbereich1Note', 'lernbereich2Note', 'foerderschwerpunkt1Relation', 'foerderschwerpunkt2Relation',
+            ],
+        ])
+        ->get();
+
+        // Format the data and export as a collection
+        $data = SchuelerResource::collection($schueler)->toJson();
 
         // Attempt to GZIP encode the encrypted data.
         try {

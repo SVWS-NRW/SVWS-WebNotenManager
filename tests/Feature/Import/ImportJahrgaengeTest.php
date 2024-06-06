@@ -13,14 +13,9 @@ class ImportJahrgaengeTest extends TestCase
 
     const TABLE = 'jahrgaenge';
 
-    /**
-     * It creates jahrgaenge
-     *
-     * @return void
-     */
-    public function test_it_creates_jahrgaenge(): void
+    private function getData(): array
     {
-        $data = json_decode('{
+        return json_decode('{
             "jahrgaenge": [
                 {
                     "id": 1,
@@ -32,7 +27,16 @@ class ImportJahrgaengeTest extends TestCase
                 }
             ]
         }', true);
+    }
 
+    /**
+     * It creates
+     *
+     * @return void
+     */
+    public function test_it_creates(): void
+    {
+        $data = $this->getData();
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
@@ -47,23 +51,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with id missing
+     * It does not create  with id missing
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_id_missing(): void
+    public function test_it_does_note_create_with_id_missing(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['jahrgaenge'][0]['id']);
 
         (new DataImportService($data))->execute();
 
@@ -71,24 +66,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with null id
+     * It does not create with null id
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_null_id(): void
+    public function test_it_does_note_create_with_null_id(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": null,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['id'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -96,24 +81,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with negative id
+     * It does not create with empty id
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_negative_id(): void
+    public function test_it_does_note_create_with_empty_id(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": -1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['id'] = '';
 
         (new DataImportService($data))->execute();
 
@@ -121,11 +96,41 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with existing id
+     * It does not create with negative id
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_existing_id(): void
+    public function test_it_does_note_create_with_negative_id(): void
+    {
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['id'] = -1;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It does not create with non-numeric id
+     *
+     * @return void
+     */
+    public function test_it_does_note_create_with_non_numeric_id(): void
+    {
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['id'] = 'X';
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It does not create with existing id
+     *
+     * @return void
+     */
+    public function test_it_does_note_create_with_existing_id(): void
     {
         Jahrgang::factory()->create([
             'id' => 1,
@@ -136,49 +141,26 @@ class ImportJahrgaengeTest extends TestCase
             'sortierung' => 12
         ]);
 
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q3",
-                    "kuerzelAnzeige": "Q3",
-                    "beschreibung": "Qualifikationsphase 3",
-                    "stufe": "SII-4",
-                    "sortierung": 14
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['id'] = 1;
+        $data['jahrgaenge'][0]['kuerzel'] = 'Q3';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas(self::TABLE, [
-                'id' => 1,
-                'kuerzel' => 'Q2',
-            ])->assertDatabaseMissing(self::TABLE, [
-                'id' => 1,
-                'kuerzel' => 'Q3',
-            ]);
+            ->assertDatabaseHas(self::TABLE, ['id' => 1, 'kuerzel' => 'Q2'])
+            ->assertDatabaseMissing(self::TABLE, ['id' => 1, 'kuerzel' => 'Q3']);
     }
 
     /**
-     * It does not create jahrgaenge with kuerzel missing
+     * It does not create with missing "Kuerzel"
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_kuerzel_missing(): void
+    public function test_it_does_note_create_with_missing_kuerzel(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['jahrgaenge'][0]['kuerzel']);
 
         (new DataImportService($data))->execute();
 
@@ -186,24 +168,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with null kuerzel
+     * It does not create with null kuerzel
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_null_kuerzel(): void
+    public function test_it_does_note_create_with_null_kuerzel(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": null,
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['kuerzel'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -211,57 +183,57 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with existing kuerzel
+     * It does not create with empty "Kuerzel"
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_existing_kuerzel(): void
+    public function test_it_does_note_create_with_empty_kuerzel(): void
+    {
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['kuerzel'] = '';
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It does not create with existing "Kuerzel"
+     *
+     * @return void
+     */
+    public function test_it_does_note_create_with_existing_kuerzel(): void
     {
         Jahrgang::factory()->create([
             'kuerzel' => 'Q2',
+            'kuerzelAnzeige' => 'Q2',
         ]);
 
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q3",
-                    "kuerzelAnzeige": "Q3",
-                    "beschreibung": "Qualifikationsphase 3",
-                    "stufe": "SII-4",
-                    "sortierung": 14
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['kuerzel'] = 'Q2';
+        $data['jahrgaenge'][0]['kuerzelAnzeige'] = 'Q3';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
                 'kuerzel' => 'Q2',
+                'kuerzelAnzeige' => 'Q2',
             ])->assertDatabaseMissing(self::TABLE, [
-                'kuerzel' => 'Q3',
+                'kuerzel' => 'Q2',
+                'kuerzelAnzeige' => 'Q3',
             ]);
     }
 
     /**
-     * It does not create jahrgaenge with kuerzelAnzeige missing
+     * It does not create with "KuerzelAnzeige" missing
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_kuerzel_anzeige_missing(): void
+    public function test_it_does_note_create_with_kuerzel_anzeige_missing(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['jahrgaenge'][0]['kuerzelAnzeige']);
 
         (new DataImportService($data))->execute();
 
@@ -269,24 +241,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with null kuerzelAnzeige
+     * It does not create with null "KuerzelAnzeige"
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_null_kuerzel_anzeige(): void
+    public function test_it_does_note_create_with_null_kuerzel_anzeige(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": null,
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['kuerzelAnzeige'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -294,23 +256,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with beschreibung missing
+     * It does not create with empty "KuerzelAnzeige"
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_beschreibung_missing(): void
+    public function test_it_does_note_create_with_empty_kuerzel_anzeige(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['kuerzelAnzeige'] = '';
 
         (new DataImportService($data))->execute();
 
@@ -318,24 +271,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with null kuerzelAnzeige
+     * It does not create with "Beschreibung" missing
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_null_beschreibung(): void
+    public function test_it_does_note_create_with_beschreibung_missing(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": null,
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['jahrgaenge'][0]['beschreibung']);
 
         (new DataImportService($data))->execute();
 
@@ -343,24 +286,44 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It creates jahrgaenge with trimmed whitespaces in beschreibung
+<<<<<<< HEAD
+     * It does not create with NULL "Beschreibung"
      *
      * @return void
      */
-    public function test_it_creates_jahrgaenge_with_trimmed_whitespaces_in_beschreibung(): void
+    public function test_it_does_note_create_with_null_beschreibung(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "     Qualifikationsphase 2      ",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['beschreibung'] = null;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It does not create with empty "Beschreibung"
+     *
+     * @return void
+     */
+    public function test_it_does_note_create_with_empty_beschreibung(): void
+    {
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['beschreibung'] = '';
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+    /**
+     * It creates with trimmed whitespaces in "Beschreibung"
+     *
+     * @return void
+     */
+    public function test_it_creates_with_trimmed_whitespaces_in_beschreibung(): void
+    {
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['beschreibung'] = '      Qualifikationsphase 2      ';
 
         (new DataImportService($data))->execute();
 
@@ -376,23 +339,17 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
+     * It does not create with "Stufe" missing
+=======
      * It does not create jahrgaenge with stufe missing
+>>>>>>> feature/310-Umgang-mit-whitespace-errors
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_stufe_missing(): void
+    public function test_it_does_note_create_with_stufe_missing(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['jahrgaenge'][0]['stufe']);
 
         (new DataImportService($data))->execute();
 
@@ -400,24 +357,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with null stufe
+     * It does not create with NULL "Stufe"
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_null_stufe(): void
+    public function test_it_does_note_create_with_null_stufe(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": null,
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['stufe'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -425,23 +372,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with sortierung missing
+     * It does not create with empty "Stufe"
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_sortierung_missing(): void
+    public function test_it_does_note_create_with_empty_stufe(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3"
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['stufe'] = '';
 
         (new DataImportService($data))->execute();
 
@@ -449,24 +387,14 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with null sortierung
+     * It does not create with sortierung missing
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_null_sortierung(): void
+    public function test_it_does_note_create_with_sortierung_missing(): void
     {
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 1,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": null
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['jahrgaenge'][0]['sortierung']);
 
         (new DataImportService($data))->execute();
 
@@ -474,29 +402,49 @@ class ImportJahrgaengeTest extends TestCase
     }
 
     /**
-     * It does not create jahrgaenge with existing sortierung
+     * It does not create with NULL "Sortierung"
      *
      * @return void
      */
-    public function test_it_does_note_create_jahrgaenge_with_existing_sortierung(): void
+    public function test_it_does_note_create_with_null_sortierung(): void
+    {
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['sortierung'] = null;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It does not create with empty "Sortierung"
+     *
+     * @return void
+     */
+    public function test_it_does_note_create_with_empty_sortierung(): void
+    {
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['sortierung'] = '';
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /**
+     * It does not create with existing "Sortierung"
+     *
+     * @return void
+     */
+    public function test_it_does_note_create_with_existing_sortierung(): void
     {
         Jahrgang::factory()->create([
             'id' => 1,
             'sortierung' => 12,
         ]);
 
-        $data = json_decode('{
-            "jahrgaenge": [
-                {
-                    "id": 2,
-                    "kuerzel": "Q2",
-                    "kuerzelAnzeige": "Q2",
-                    "beschreibung": "Qualifikationsphase 2",
-                    "stufe": "SII-3",
-                    "sortierung": 12
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['jahrgaenge'][0]['sortierung'] = 12;
 
         (new DataImportService($data))->execute();
 

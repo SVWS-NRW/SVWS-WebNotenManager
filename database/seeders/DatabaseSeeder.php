@@ -24,11 +24,5 @@ class DatabaseSeeder extends Seeder
 			'email' => 'user@user.com',
 			'is_administrator' => true,
 		]);
-
-        // Call other specific seeders to populate additional data
-        $this->call([
-            // TODO: To be removed, temporary testing route #239 by Karol
-            // JsonImportSeeder::class,
-        ]);
     }
 }

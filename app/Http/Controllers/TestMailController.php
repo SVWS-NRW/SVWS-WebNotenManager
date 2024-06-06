@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\TestMail;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Mail;
+use App\Notifications\TestNotification;
+use Notification;
 
 class TestMailController extends Controller
 {
+    /**
+     * Send test email
+     *
+     * @return void
+     */
     public function sendTestMail(): void
     {
-        $title = 'WeNoM - Testmail';
-        $body = 'Dies ist eine Testmail von WeNoM';
-        $username = config("wenom.mail_send_credentials.username");
-
-        Mail::to($username)->send(new TestMail($title, $body));
-
-        return;
+        Notification::route('mail', auth()->user()->email)
+            ->notify(new TestNotification);
     }
 }

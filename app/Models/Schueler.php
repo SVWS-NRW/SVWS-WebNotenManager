@@ -170,28 +170,16 @@ class Schueler extends Model
         return $this->hasOne(Zp10::class);
     }
 
+     /**
+      * Determin whether the authenticated users shares "Klasse" with current "Schueler"
+      *
+      * @return bool
+      */
 	public function sharesKlasseWithCurrentUser(): bool
 	{
-		return in_array($this->klasse_id, Auth::user()->klassen->pluck('id')->toArray());
-	}
-
-    /**
-     * Retrieve a collection of items with related data for export purposes.
-     *
-     * @return array
-     */
-    public static function exportCollection(): array
-	{
-		return self::with([
-            'bemerkung',
-            'leistungen' => ['note'],
-            'lernabschnitt' => [
-                'lernbereich1Note',
-                'lernbereich2Note',
-                'foerderschwerpunkt1Relation',
-                'foerderschwerpunkt2Relation',
-            ],
-        ])
-        ->get();
+        return in_array(
+            $this->klasse_id,
+            Auth::user()->klassen->pluck('id')->toArray(),
+        );
 	}
 }
