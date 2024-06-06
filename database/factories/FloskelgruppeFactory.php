@@ -28,7 +28,7 @@ class FloskelgruppeFactory extends Factory
     {
         return [
             'kuerzel' => $this->faker->unique->word(),
-            'bezeichnung' => $this->faker->catchPhrase(),
+            'bezeichnung' => $this->faker->paragraph(),
             'hauptgruppe' => $this->faker->unique->word(),
         ];
     }
