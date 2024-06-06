@@ -30,7 +30,8 @@ class DataImportService
      * @param array $data
      */
     public function __construct(private array $data = [])
-    {}
+    {
+    }
 
     /**
      * Import execution
@@ -92,7 +93,7 @@ class DataImportService
         };
 
         collect($this->data[$ctx])
-            ->map(fn(array $array): array => $prepareEmail($array))
+            ->map(fn (array $array): array => $prepareEmail($array))
             ->each(fn (array $array): User => User::updateOrCreate(['ext_id' => $array['id']], $array));
     }
 
@@ -171,7 +172,21 @@ class DataImportService
 
                 return true;
             })
-        ->each(function (array $array) use ($klassenlehrer): void {
+            ->filter(fn (array $array): bool => $this->hasValidId($array, 'klassen', $klassen))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'klassen', $klassen, 'kuerzel'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'klassen', $klassen, 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'idJahrgang'))
+            ->filter(function (array $array): bool {
+                if (Jahrgang::where(['id' => $array['idJahrgang']])->doesntExist()) {
+                    $this->setStatus('klassen', 'Jahrgang mit id ' . $array['idJahrgang'] . ' existiert nicht.');
+                    return false;
+                }
+
+                return true;
+            })
+            ->each(function (array $array) use ($klassenlehrer): void {
                 $klasse = Klasse::create(Arr::except($array, 'klassenlehrer'));
                 $klasse->klassenlehrer()->sync($klassenlehrer($array));
             });
@@ -329,7 +344,7 @@ class DataImportService
                 return true;
             })
             ->each(function (array $array): void {
-            $lerngruppe = Lerngruppe::create(Arr::except($array, 'lehrerID'));
+                $lerngruppe = Lerngruppe::create(Arr::except($array, 'lehrerID'));
                 $lerngruppe->lehrer()->attach($array['lehrerID']);
             });
     }
@@ -349,7 +364,6 @@ class DataImportService
         $kuerzeln = Floskelgruppe::all()->pluck('id', 'kuerzel')->toArray();
 
         collect($this->data['floskelgruppen'])
-<<<<<<< HEAD
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'kuerzel', $ctx))
             ->filter(fn (array $array): bool => !$this->modelAlreadyExists($array, 'kuerzel', $kuerzeln, $ctx))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'bezeichnung', $ctx))
@@ -390,22 +404,16 @@ class DataImportService
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'niveau', $ctx, true))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'text', $ctx))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgangID', $ctx, true))
-            ->filter(fn (array $array): bool =>
+            ->filter(
+                fn (array $array): bool =>
                 is_null($array['jahrgangID']) || $this->relationExists($array, 'jahrgangID', $jahrgaenge, $ctx)
             )
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'fachID', $ctx, true))
-            ->filter(fn (array $array): bool =>
+            ->filter(
+                fn (array $array): bool =>
                 is_null($array['fachID']) || $this->relationExists($array, 'fachID', $faecher, $ctx)
             )
             ->each(fn (array $array) => $floskelgruppe->floskeln()->create($array));
-=======
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'floskelgruppen', $floskelgruppen, 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'bezeichnung'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'hauptgruppe'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'floskeln'))
-            ->each(fn (array $array): Floskelgruppe => Floskelgruppe::create(Arr::except($array, 'floskeln')));
->>>>>>> feature/308-download-wirft-Fehler
     }
 
     /**
@@ -506,7 +514,8 @@ class DataImportService
                         $this->setStatus($ctx, 'Note existiert nicht', $array['id']);
                         return false;
                     })
-                    ->filter(fn (array $array): bool =>
+                    ->filter(
+                        fn (array $array): bool =>
                         in_array($array['note'], ['', null]) || $this->modelAlreadyExists($array, 'note', $noten, $ctx)
                     )
                     ->each(fn (array $array) => $upsert($array, $schueler));
@@ -526,7 +535,7 @@ class DataImportService
             return;
         }
 
-        $schueler = Schueler::all()->pluck('id','id')->toArray();
+        $schueler = Schueler::all()->pluck('id', 'id')->toArray();
 
         $execute = function (array $array): void {
             // Check if "Bemerkung" already exists. If not, create a new one.
@@ -608,13 +617,16 @@ class DataImportService
             // The "Schueler" for given "Lernabschnitt" has to exist
             ->filter(fn (array $array): bool => $this->modelAlreadyExists($array, 'id', $schueler, 'lernabscnitt'))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'lernabschnitt', $ctx))
-            ->filter(fn (array $array): bool =>
+            ->filter(
+                fn (array $array): bool =>
                 $this->hasValidValue($array['lernabschnitt'], 'pruefungsordnung', $ctx)
             )
-            ->filter(fn (array $array): bool =>
+            ->filter(
+                fn (array $array): bool =>
                 $this->hasValidValue($array['lernabschnitt'], 'tsFehlstundenGesamt', $ctx)
             )
-            ->filter(fn (array $array): bool =>
+            ->filter(
+                fn (array $array): bool =>
                 $this->hasValidValue($array['lernabschnitt'], 'tsFehlstundenGesamtUnentschuldigt', $ctx)
             )
             ->each(fn (array $array) => $execute($array));
