@@ -13,7 +13,15 @@
                     </span>
                 </template>
             </SvwsUiSidebarMenuItem>
-            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click="navigate('leistungsdatenuebersicht')" :active="route().current('leistungsdatenuebersicht')">
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click="navigate('teilleistungen')" :active="route().current('teilleistungen')">
+                <template #label>Teilleistungen</template>
+                <template #icon>
+                    <span class="icon">
+                       <i-ri-team-line aria-hidden="true"></i-ri-team-line>
+                    </span>
+                </template>
+            </SvwsUiSidebarMenuItem>
+            <SvwsUiSidebarMenuItem :collapsed="store.sidebarCollapsed" @click="navigate('   ')" :active="route().current('leistungsdatenuebersicht')">
                 <template #label>Leistungsdatenübersicht</template>
                 <template #icon>
                     <span class="icon">
