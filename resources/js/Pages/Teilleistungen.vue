@@ -76,10 +76,12 @@
     const title = 'Notenmanager - Teilleistungen';
 
     // TODO: build display elements and functions when backend is ready (this is a dummy so far)
+
+    //TODO: Refactoring? -> call all this from a helper for all tables?
     //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
     const itemRefsNoteInput = ref(new Map());
-    const itemRefsfs = ref(new Map());
-    const itemRefsfsu = ref(new Map());
+    const itemRefsKa_1 = ref(new Map());
+    const itemRefsKa_2 = ref(new Map());
 
     // Data received from DB
     const rows: Ref<Teilleistung[]> = ref([]);
@@ -198,12 +200,10 @@
             case "itemRefsNoteInput":
                 itemRefsNoteInput.value.set(rowIndex, el);
                 break;
-            case "itemRefsfs":
-                itemRefsfs.value.set(rowIndex, el);
+            case "itemRefsKa_1":
+                itemRefsKa_1.value.set(rowIndex, el);
                 break;
-            case "itemRefsfsu":
-                itemRefsfsu.value.set(rowIndex, el);
-                break;
+            // and so on
             default:
                 console.log("Map not found.")
         }
@@ -222,21 +222,18 @@
         el.input.select();
 	}
 
-    //TODO: do we want this functionality too here? if so, it would need to be adjusted for Teilleistungen
     //direction (up/down within the column) and map name are received from child component
     const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
         switch (itemRefsName) {
-            // case "itemRefsNoteInput":
-            //     direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
-            //     break;
-            // case "itemRefsfs":
-            //     direction === "next" ? next(rowIndex, itemRefsfs) : previous(rowIndex, itemRefsfs);
-            //     break;
-            // case "itemRefsfsu":
-            //     direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
-            //     break;
-            // default:
-            //     console.log("itemRefs map not found");
+            case "itemRefsNoteInput":
+                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
+                break;
+            case "itemRefsKa_1":
+                direction === "next" ? next(rowIndex, itemRefsfs) : previous(rowIndex, itemRefsfs);
+                break;
+            // and so on
+            default:
+                console.log("itemRefs map not found");
         }	
 	}    
 
