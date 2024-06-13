@@ -29,20 +29,40 @@
 
                     <!-- BemerkungButton in der Zelle 'fach' -->
                     <template #cell(fach)="{ value, rowData }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
+                        <!-- <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" /> -->
+                        {{ value }} 
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'kurs' -->
                     <template #cell(kurs)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
-
+                    <!-- TODO: add rest -->
+                    <!-- TODO: check rights and components used for all of them -->
+                     <!-- this is a dummy taking data from api.noten/NoteInput -->
+                    <template #cell(ka_1)="{ value, rowData, rowIndex }">
+                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        ></NoteInput>
+                    </template>
+                    <template #cell(ka_2)="{ value, rowData, rowIndex }">
+                        {{ value }} 
+                    </template>
+                    <template #cell(ka_3)="{ value, rowData, rowIndex }">
+                        {{ value }} 
+                    </template>
+                    <template #cell(ka_4)="{ value, rowData, rowIndex }">
+                        {{ value }} 
+                    </template>
+                    <template #cell(somi1)="{ value, rowData, rowIndex }">
+                        {{ value }} 
+                    </template>
+                    <template #cell(somi2)="{ value, rowData, rowIndex }">
+                        {{ value }} 
+                    </template>
                     <!-- TODO: ticket 260; nothing comes from db yet -->
                     <template #cell(quartal)="{ value, rowData, rowIndex }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
-
-
                     <!-- BemerkungButton in der Zelle 'note' -->
                     <template #cell(note)="{ value, rowData, rowIndex }">
                         <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
