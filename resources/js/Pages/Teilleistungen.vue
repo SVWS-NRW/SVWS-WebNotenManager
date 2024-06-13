@@ -5,7 +5,7 @@
                 {{ title }}
             </SvwsUiHeader>
 
-            <!-- TODO: make this work -->
+            <!-- TODO: remove whatever is unnecessary -->
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
@@ -19,27 +19,27 @@
                     <!-- Individuelle Zellen-Template -->
                     <!-- BemerkungButton in der Zelle 'klasse' -->
                     <template #cell(klasse)="{ value, rowData }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'name' -->
                     <template #cell(name)="{ value, rowData }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'fach' -->
                     <template #cell(fach)="{ value, rowData }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'kurs' -->
                     <template #cell(kurs)="{ value, rowData }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
 
                     <!-- TODO: ticket 260; nothing comes from db yet -->
                     <template #cell(quartal)="{ value, rowData, rowIndex }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
 
 
@@ -87,11 +87,9 @@
     //TODO: we are working with select, so filter for multiselect won't work here
     // The different filters on top of the screen may get input and thus the data from DB will be filtered and then displayed
     const rowsFiltered = computed(() => {
-        rows.value.filter((teilleistung): boolean => {
-            return tableFilter(teilleistung, klasseFilter.value);
-            // tableFilter(teilleistung, kursFilter.value)
-            // && 
-
+        return rows.value.filter((teilleistung) => {
+            return tableFilter(teilleistung, klasseFilter.value, "klasse")
+            && tableFilter(teilleistung, kursFilter.value, "kurs");
         })
     });
 
@@ -153,12 +151,10 @@
         kurs: 'kurs',
     };
 
-    //TODO: adjust names and typing
-    const tableFilter = (leistung: Leistung, column: string) => {
-        console.log(leistung.value);
-        if (column == "") return leistung.value
-        //dummy
-        // if (leistung["klasse"] == column) return leistung
+    //TODO: adjust typing
+    const tableFilter = (teilleistung, filterValue: string, column: string): boolean => {
+        if (filterValue == "") return true;
+        return teilleistung[column] == filterValue;
     }
 
     //TODO: check if necessary
@@ -179,16 +175,15 @@
     const klasseItems: Ref<string[]> = ref([]);
     const kursItems: Ref<string[]> = ref([]);
 
-    // Filter zurücksetzen
+    //TODO: check if filterReset works with uiSelect as well
     const filterReset = (): void => {
         klasseFilter.value = "";
         kursFilter.value = "";
     }
 
-    // Prüfen, ob Filter aktiv sind
     const isFiltered = (): boolean => {
-            klasseFilter.value.length > 0
-            || kursFilter.value.length > 0
+        //still -> || kursFilter.value !== ""
+            return klasseFilter.value !== "" || kursFilter.value !== ""
     }
 
     // Filteroptionen mappen
