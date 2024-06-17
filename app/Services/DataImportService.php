@@ -6,6 +6,7 @@ use App\Models\{
     Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe,
     Note, Schueler, User,
 };
+use App\Models\Teilleistungsart;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -30,7 +31,8 @@ class DataImportService
      * @param array $data
      */
     public function __construct(private array $data = [])
-    {}
+    {
+    }
 
     /**
      * Import execution
@@ -50,6 +52,7 @@ class DataImportService
         $this->importLeistungsdaten();
         $this->importBemerkungen();
         $this->importFloskelgruppen();
+        $this->importTeilleistungsarten();
 
         return $this;
     }
@@ -183,9 +186,9 @@ class DataImportService
                 return true;
             })
         ->each(function (array $array) use ($klassenlehrer): void {
-                $klasse = Klasse::create(Arr::except($array, 'klassenlehrer'));
-                $klasse->klassenlehrer()->sync($klassenlehrer($array));
-            });
+            $klasse = Klasse::create(Arr::except($array, 'klassenlehrer'));
+            $klasse->klassenlehrer()->sync($klassenlehrer($array));
+        });
     }
 
     /**
@@ -347,7 +350,7 @@ class DataImportService
                 return true;
             })
             ->each(function (array $array): void {
-            $lerngruppe = Lerngruppe::create(Arr::except($array, 'lehrerID'));
+                $lerngruppe = Lerngruppe::create(Arr::except($array, 'lehrerID'));
                 $lerngruppe->lehrer()->attach($array['lehrerID']);
             });
     }
@@ -424,7 +427,8 @@ class DataImportService
 
                 return $array;
             })
-            ->each(fn (array $array): Schueler =>
+            ->each(
+                fn (array $array): Schueler =>
                 Schueler::create(Arr::except($array, ['bemerkungen', 'lernabschnitt', 'leistungsdaten']))
             );
     }
@@ -490,12 +494,13 @@ class DataImportService
                     // Check if "Note is set"
                     ->filter(fn (array $array): bool => array_key_exists('note', $array))
                     // Check if either "Note" is empty, or one of already created "Noten"
-                    ->filter(fn (array $array): bool =>
+                    ->filter(
+                        fn (array $array): bool =>
                         in_array($array['note'], ['', null]) || array_key_exists($array['note'], $noten)
                     )
                     // Perform the upsert
                     ->each(fn (array $array) => $upsert($array, $schueler));
-        });
+            });
     }
 
     /**
@@ -596,6 +601,34 @@ class DataImportService
             $lernabschnitt->pruefungsordnung = $data['pruefungsordnung'] ?? 'Lorem ipsum'; // TODO: Check with customer
             $lernabschnitt->save();
         }
+    }
+
+    /**
+     * Import "Schueler" "Bemerkungen"
+     *
+     * @param Schueler $schueler
+     * @param array $data
+     * @return void
+     */
+    public function importTeilleistungsarten(): void
+    {
+        $key = 'teilleistungsarten';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
+            return;
+        }
+
+        $collection = Teilleistungsart::all();
+
+        collect($this->data[$key])
+            ->filter(fn (array $array): bool => $this->hasValidId($array, $key, $collection))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, $key, 'bezeichnung'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, $key, $collection, 'bezeichnung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, $key, 'bezeichnung'))
+            ->filter(fn (array $array): bool => $this->hasValidInt($array, $key, 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, $key, $collection, 'sortierung'))
+            ->filter(fn (array $array): bool => $this->hasValidInt($array, $key, 'gewichtung'))
+            ->each(fn (array $array): Teilleistungsart => Teilleistungsart::create($array));
     }
 
     /**
