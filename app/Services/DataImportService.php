@@ -4,13 +4,9 @@ namespace App\Services;
 
 use App\Models\{
     Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe,
-    Note, Schueler, User,
-};
-use App\Models\Teilleistung;
-use App\Models\Teilleistungsart;
+    Note, Schueler, User, Teilleistung, Teilleistungsart};
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Collection, Model};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Arr, Str};
 use Illuminate\Support\Facades\Validator;

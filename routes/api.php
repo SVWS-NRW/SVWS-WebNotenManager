@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\{
     FachbezogeneBemerkung, FachbezogeneFloskeln, Fehlstunden, Floskeln, Klassenleitung, Leistungsdatenuebersicht,
-    Mahnungen, MeinUnterricht, Noten, SchuelerBemerkung, TwoFAAuthentication
+    Mahnungen, MeinUnterricht, Noten, SchuelerBemerkung, TwoFAAuthentication, TeilleistungenController,
 };
 use App\Http\Controllers\Api\Settings\{
     EnvController, MatrixController, SettingsController, UserSettingsController
@@ -22,6 +22,17 @@ Route::controller(SecureTransferController::class)
         Route::get('export', 'export')->name('export');
         Route::post('import', 'import')->name('import');
         Route::post('truncate', 'truncate')->name('truncate');
+    });
+
+Route::controller(TeilleistungenController::class)
+    //->middleware('client')
+    ->prefix('teilleistungen')
+    ->name('teilleistungen.')
+    ->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('/kurs/{id}', 'getKurs')->name('get_kurs');
+        Route::get('/klasse/{klasse}', 'getKlasse')->name('get_klasse');
+        Route::put('/update-note/{teilleistung}/{note}', 'updateNote')->name('update_note');
     });
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'administrator'])
