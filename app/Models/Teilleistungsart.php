@@ -48,7 +48,7 @@ class Teilleistungsart extends Model
      * @var string[]
      */
     protected $fillable = [
-        'bezeichnung', 'sortierung', 'gewichtung',
+        'id', 'bezeichnung', 'sortierung', 'gewichtung',
     ];
 
     /**

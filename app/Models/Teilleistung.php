@@ -32,6 +32,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereNoteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereTeilleistungsartId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereUpdatedAt($value)
+ * @property string $tsArtID
+ * @property string $tsDatum
+ * @property string $tsBemerkung
+ * @property string $tsNote
+ * @property-read \App\Models\Note|null $note
+ * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereTsArtID($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereTsBemerkung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereTsDatum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Teilleistung whereTsNote($value)
  * @mixin \Eloquent
  */
 class Teilleistung extends Model
@@ -51,7 +60,8 @@ class Teilleistung extends Model
      * @var string[]
      */
     protected $fillable = [
-        'leistung_id', 'teilleistungsart_id', 'datum', 'bemerkung', 'note_id',
+        'id', 'leistung_id', 'teilleistungsart_id', 'tsArtID', 'datum', 'tsDatum', 'bemerkung', 'tsBemerkung',
+        'note_id', 'tsNote',
     ];
 
     /**
@@ -72,5 +82,15 @@ class Teilleistung extends Model
     public function teilleistungsart(): BelongsTo
     {
         return $this->belongsTo(Teilleistungsart::class);
+    }
+
+    /**
+     * The relation that owns the model
+     *
+     * @return BelongsTo
+     */
+    public function note(): BelongsTo
+    {
+        return $this->belongsTo(Note::class);
     }
 }

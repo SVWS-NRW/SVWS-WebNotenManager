@@ -5,6 +5,8 @@ namespace Tests\Feature\Import;
 use App\Models\{Jahrgang, Klasse, Lerngruppe, Note};
 use App\Models\Leistung;
 use App\Models\Schueler;
+use App\Models\Teilleistung;
+use App\Models\Teilleistungsart;
 use App\Services\DataImportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,7 +15,7 @@ class ImportLeistungsdatenTest extends TestCase
 {
     use RefreshDatabase;
 
-    const TABLE = 'leistungen';
+    public const TABLE = 'leistungen';
 
     private function data(): array
     {
@@ -48,8 +50,7 @@ class ImportLeistungsdatenTest extends TestCase
                             "neueZuweisungKursart": null,
                             "istGemahnt": false,
                             "tsIstGemahnt": "2023-03-28 07:00:19.014",
-                            "mahndatum": null,
-                            "teilleistungen": []
+                            "mahndatum": null
                         }
                     ]
                 }

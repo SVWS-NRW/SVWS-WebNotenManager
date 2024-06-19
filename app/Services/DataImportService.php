@@ -6,9 +6,11 @@ use App\Models\{
     Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe,
     Note, Schueler, User,
 };
+use App\Models\Teilleistung;
 use App\Models\Teilleistungsart;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Arr, Str};
 use Illuminate\Support\Facades\Validator;
@@ -48,11 +50,11 @@ class DataImportService
         $this->importFoerderschwerpunkte();
         $this->importFaecher();
         $this->importLerngruppen();
+        $this->importTeilleistungsarten();
         $this->importSchueler();
         $this->importLeistungsdaten();
         $this->importBemerkungen();
         $this->importFloskelgruppen();
-        $this->importTeilleistungsarten();
 
         return $this;
     }
@@ -453,38 +455,10 @@ class DataImportService
         $noten = Note::all()->pluck('id', 'kuerzel')->toArray();
         $schueler = Schueler::all()->pluck('id', 'id')->toArray();
 
-        // Perfom the upsert
-        $upsert = function (array $array, $schueler) use ($noten): void {
-            // Remap some fields to Laravel notation
-            $array['note_id'] = $noten[$array['note']] ?? null;
-            $array['lerngruppe_id'] = $array['lerngruppenID'];
-
-            $excluded = [
-                'lerngruppenID', 'note', 'teilleistungen', 'noteQuartal', 'tsNoteQuartal',
-            ];
-            foreach($excluded as $current) {
-                unset($array[$current]);
-            }
-
-            $leistung = Leistung::firstOrNew(
-                ['id' => $array['id'], 'schueler_id' => $schueler['id']],
-                $array
-            );
-
-            // Check if timestamps for some fields are latter than the ones stored in DB.
-            $this->updateWhenRecent($array, $leistung, 'note_id', 'tsNote');
-            $this->updateWhenRecent($array, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
-            $this->updateWhenRecent($array, $leistung, 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigtFach');
-            $this->updateWhenRecent($array, $leistung, 'fachbezogeneBemerkungen', 'tsFachbezogeneBemerkungen');
-            $this->updateWhenRecent($array, $leistung, 'istGemahnt', 'tsIstGemahnt');
-
-            $leistung->save();
-        };
-
         collect($this->data['schueler'])
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'leistungsdaten', 'leistungsdaten'))
             ->filter(fn (array $array): bool => in_array($array['id'], $schueler))
-            ->each(function (array $schueler) use ($upsert, $noten, $leistungen, $lerngruppen): void {
+            ->each(function (array $schueler) use ($noten, $leistungen, $lerngruppen): void {
                 collect($schueler['leistungsdaten'])
                     ->filter(fn (array $array): bool => $this->hasValidInt($array, 'leistungsdaten', 'id'))
                     // Check if "lerngruppenID is set
@@ -499,7 +473,101 @@ class DataImportService
                         in_array($array['note'], ['', null]) || array_key_exists($array['note'], $noten)
                     )
                     // Perform the upsert
-                    ->each(fn (array $array) => $upsert($array, $schueler));
+                    ->each(fn (array $array) => $this->upsert($array, $schueler, $noten));
+            });
+    }
+
+    // Perfom the upsert
+    private function upsert(array $array, $schueler, $noten): void
+    {
+        $teilleistungen = $array;
+
+        // Remap some fields to Laravel notation
+        $array['note_id'] = $noten[$array['note']] ?? null;
+        $array['lerngruppe_id'] = $array['lerngruppenID'];
+        $excluded = [
+            'lerngruppenID', 'note', 'teilleistungen', 'noteQuartal', 'tsNoteQuartal',
+        ];
+        foreach($excluded as $current) {
+            unset($array[$current]);
+        }
+        $leistung = Leistung::firstOrNew(
+            ['id' => $array['id'], 'schueler_id' => $schueler['id']],
+            $array
+        );
+
+        // Check if timestamps for some fields are latter than the ones stored in DB.
+        $this->updateWhenRecent($array, $leistung, 'note_id', 'tsNote');
+        $this->updateWhenRecent($array, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
+        $this->updateWhenRecent($array, $leistung, 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigtFach');
+        $this->updateWhenRecent($array, $leistung, 'fachbezogeneBemerkungen', 'tsFachbezogeneBemerkungen');
+        $this->updateWhenRecent($array, $leistung, 'istGemahnt', 'tsIstGemahnt');
+
+        $leistung->save();
+
+        $key = 'teilleistungen';
+        if (!array_key_exists($key, $teilleistungen)) {
+            return;
+        }
+
+        if (count($teilleistungen[$key]) == 0) {
+            return;
+        }
+
+        $this->importTeilleistungen($leistung, $teilleistungen[$key], $key);
+    }
+
+    /**
+     *  Import Teillesitungen
+     *
+     * @param Leistung $leistung
+     * @param array $array
+     * @param string $key
+     */
+    private function importTeilleistungen(Leistung $leistung, array $array, string $key): void
+    {
+        $teilleistungsarten = Teilleistungsart::all()->pluck('id', 'id')->toArray();
+        $noten = Note::all()->pluck('id', 'kuerzel')->toArray();
+
+        collect($array)
+            // ID
+            ->filter(fn (array $row): bool => $this->hasValidInt($row, $key, 'id'))
+            // Teilleisungsarten
+            ->filter(fn (array $row): bool => $this->hasValidInt($row, $key, 'artID'))
+            ->filter(
+                fn (array $row): bool =>
+                $this->hasValidRelation($row, 'artID', $teilleistungsarten, $key, 'Teilleistungsart')
+            )
+            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'tsArtID'))
+            ->map(function (array $row) use ($teilleistungsarten): array {
+                $row['teilleistungsart_id'] = $this->getValueFromArray($row, 'artID', $teilleistungsarten);
+                unset($row['artID']);
+                return $row;
+            })
+            // Noten
+            ->filter(fn (array $row): bool => $this->hasValidRelation($row, 'note', $noten, $key, 'Note', true))
+            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'tsNote'))
+            ->map(function (array $row) use ($noten): array {
+                $row['note_id'] = $this->getValueFromArray($row, 'note', $noten);
+                unset($row['note']);
+                return $row;
+            })
+            // Bemerkung
+            ->filter(fn (array $row): bool => $this->hasValidKey($row, 'bemerkung', $key))
+            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'tsBemerkung'))
+            // Datum
+            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'datum'))
+            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'tsDatum'))
+            ->each(function (array $row) use ($leistung): void {
+                $model = Teilleistung::firstOrNew(['id' => $row['id']], $row);
+                $model->leistung_id = $leistung->id;
+
+                $this->updateWhenRecent($row, $model, 'note_id', 'tsNote');
+                $this->updateWhenRecent($row, $model, 'teilleistungsart_id', 'tsArtID');
+                $this->updateWhenRecent($row, $model, 'bemerkung', 'tsBemerkung');
+                $this->updateWhenRecent($row, $model, 'datum', 'tsDatum');
+
+                $model->save();
             });
     }
 
@@ -636,19 +704,19 @@ class DataImportService
      * If value parameter is provided, value will be used instead of the column value
      *
      * @param array $data
-     * @param Leistung|Lernabschnitt|Bemerkung $model
+     * @param Model $model
      * @param string $column
      * @param string $tsColumn
      * @param int|null $value
-     * @return void
+     * @return Model
      */
     private function updateWhenRecent(
         array $data,
-        Leistung|Lernabschnitt|Bemerkung &$model,
+        Model &$model,
         string $column,
         string $tsColumn,
         int|null $value = null
-    ): Leistung|Lernabschnitt|Bemerkung {
+    ): Model {
 
         $timestamp = Carbon::parse($data[$tsColumn]);
 
@@ -675,9 +743,9 @@ class DataImportService
      * @param array $data
      * @param string $column
      * @param array $collection
-     * @return int|null
+     * @return int|string|null
      */
-    private function getValueFromArray(array $data, string $column, array $collection): int|null
+    private function getValueFromArray(array $data, string $column, array $collection): int|string|null
     {
         if ($data[$column] !== null && array_key_exists($data[$column], $collection)) {
             return $collection[$data[$column]];
@@ -866,10 +934,28 @@ class DataImportService
      * @param string $context
      * @return bool
      */
+    private function hasValidKey(array $row, string $key, string $context): bool
+    {
+        if (array_key_exists($key, $row)) {
+            return true;
+        }
+
+        $this->setStatus($context, "{$key} nicht vorhanden", $row);
+        return false;
+    }
+
+    /**
+     * Checks if given element has a key mising
+     *
+     * @param array $row
+     * @param string $key
+     * @param string $context
+     * @return bool
+     */
     private function hasMissingKey(array $row, string $key, string $context): bool
     {
         if (!array_key_exists($key, $row)) {
-            $this->setStatus($row, $context, "{$key} nicht vorhanden");
+            $this->setStatus($row, "{$key} nicht vorhanden", $context);
             return true;
         }
 
@@ -942,7 +1028,7 @@ class DataImportService
      * @param string $key
      * @return bool
      */
-    private function hasValidId(array $row, string $context, Collection $existing, string $key = 'id'): bool
+    private function hasValidId(array $row, string $context, Collection $existing, string $key = 'id', bool $unique = true): bool
     {
         if (!array_key_exists($key, $row)) {
             $this->setStatus($context, "'{$key}' nicht vorhanden");
@@ -961,7 +1047,7 @@ class DataImportService
             return false;
         }
 
-        if ($existing->contains($id)) {
+        if ($unique && $existing->contains($id)) {
             $this->setStatus($context, "Ressource mit diesen '{$key}' existiert bereits", $id);
             return false;
         }
@@ -1041,6 +1127,65 @@ class DataImportService
 
         if (0 > $value) {
             $this->setStatus($context, "{$key} ist negativ", $value);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Has valid relation
+     *
+     * @param array  $array
+     * @param string $key
+     * @param array $haystack
+     * @param string $context
+     * @param string $relation
+     * @param bool $nullable
+     * @return bool
+     */
+    private function hasValidRelation(
+        array $array,
+        string $key,
+        array $haystack,
+        string $context,
+        string $relation = 'Ressource',
+        bool $nullable = false
+    ): bool {
+        if (!array_key_exists($key, $array)) {
+            $this->setStatus("{$context}: {$relation}", "{$key} nicht vorhanden");
+            return false;
+        }
+
+        if ($nullable && is_null($array[$key])) {
+            return true;
+        }
+
+        if (array_key_exists($array[$key], $haystack)) {
+            return true;
+        }
+
+        $this->setStatus($context, "Relation fuer {$relation} existiert nicht.", $array[$key]);
+        return false;
+    }
+
+
+    /**
+     * Check if note is valid
+     *
+     * @param arrat $noten
+     * @param string|null $note
+     * @param string $context
+     * @return bool
+     */
+    public function hasValidNote(array $noten, string|null $note, string $context): bool
+    {
+        if (is_null($note)) {
+            return true;
+        }
+
+        if (!in_array($note, $noten)) {
+            $this->setStatus($context, "Note existiert nicht", $note);
             return false;
         }
 

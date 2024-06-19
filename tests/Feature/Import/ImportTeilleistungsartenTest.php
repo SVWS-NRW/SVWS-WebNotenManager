@@ -13,10 +13,14 @@ class ImportTeilleistungsartenTest extends TestCase
 
     public const TABLE = 'teilleistungsarten';
 
-    /** It creates "Teilleistungsarten" */
-    public function test_it_creates_teilleistungsarten(): void
+    /**
+     * Import data
+     *
+     * @return array
+     */
+    private function data(): array
     {
-        $data = json_decode('{
+        return json_decode('{
             "teilleistungsarten": [
                 {
                     "id": 1,
@@ -26,8 +30,12 @@ class ImportTeilleistungsartenTest extends TestCase
                 }
             ]
         }', true);
+    }
 
-        (new DataImportService($data))->execute();
+    /** It creates "Teilleistungsarten" */
+    public function test_it_creates_teilleistungsarten(): void
+    {
+        (new DataImportService($this->data()))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -48,16 +56,10 @@ class ImportTeilleistungsartenTest extends TestCase
             'gewichtung' => 1,
         ]);
 
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "New value",
-                    "sortierung": 2,
-                    "gewichtung": 2
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['bezeichnung'] = 'New value';
+        $data['teilleistungsarten'][0]['sortierung'] = 2;
+        $data['teilleistungsarten'][0]['gewichtung'] = 2;
 
         (new DataImportService($data))->execute();
 
@@ -79,15 +81,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with missing "Bezeichnung" */
     public function test_it_does_not_create_teilleisungsarten_with_missing_bezeichnung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "sortierung": 1,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        unset($data['teilleistungsarten'][0]['bezeichnung']);
 
         (new DataImportService($data))->execute();
 
@@ -97,16 +92,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with empty "Bezeichnung" */
     public function test_it_does_not_create_teilleisungsarten_with_empty_bezeichnung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": null,
-                    "sortierung": 1,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['bezeichnung'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -118,16 +105,8 @@ class ImportTeilleistungsartenTest extends TestCase
     {
         Teilleistungsart::factory()->create(['bezeichnung' => 'Klassenarbeit/Klausur']);
 
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 1,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['bezeichnung'] = 'Klassenarbeit/Klausur';
 
         (new DataImportService($data))->execute();
 
@@ -137,15 +116,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with missing "id" */
     public function test_it_does_not_create_teilleisungsarten_with_missing_id(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 1,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        unset($data['teilleistungsarten'][0]['id']);
 
         (new DataImportService($data))->execute();
 
@@ -155,16 +127,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with empty "id" */
     public function test_it_does_not_create_teilleisungsarten_with_empty_id(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": null,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 1,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['id'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -174,16 +138,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with non-numeric "id" */
     public function test_it_does_not_create_teilleisungsarten_with_non_numeric_id(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": "x",
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 1,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['id'] = 'x';
 
         (new DataImportService($data))->execute();
 
@@ -193,15 +149,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with missing "Gewichtung" */
     public function test_it_does_not_create_teilleisungsarten_with_missing_gewichtung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        unset($data['teilleistungsarten'][0]['gewichtung']);
 
         (new DataImportService($data))->execute();
 
@@ -215,16 +164,8 @@ class ImportTeilleistungsartenTest extends TestCase
      */
     public function test_it_does_not_create_teilleisungsarten_with_null_gewichtung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 1,
-                    "gewichtung": null
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['gewichtung'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -234,16 +175,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with non-numeric "Gewichtung" */
     public function test_it_does_not_create_teilleisungsarten_with_non_numeric_gewichtung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 1,
-                    "gewichtung": "x"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['gewichtung'] = 'x';
 
         (new DataImportService($data))->execute();
 
@@ -253,15 +186,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with missing "Sortierung" */
     public function test_it_does_not_create_teilleisungsarten_with_missing_sortierung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        unset($data['teilleistungsarten'][0]['sortierung']);
 
         (new DataImportService($data))->execute();
 
@@ -271,16 +197,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with empty "Sortierng" */
     public function test_it_does_not_create_teilleisungsarten_with_null_sortierung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": null,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['sortierung'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -290,16 +208,8 @@ class ImportTeilleistungsartenTest extends TestCase
     /** It does not create "Teilleistungsarten" with non-numeric "Sortierung" */
     public function test_it_does_not_create_teilleisungsarten_with_non_numeric_sortierung(): void
     {
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": "x",
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['sortierung'] = 'x';
 
         (new DataImportService($data))->execute();
 
@@ -311,16 +221,8 @@ class ImportTeilleistungsartenTest extends TestCase
     {
         Teilleistungsart::factory()->create(['sortierung' => 5]);
 
-        $data = json_decode('{
-            "teilleistungsarten": [
-                {
-                    "id": 1,
-                    "bezeichnung": "Klassenarbeit/Klausur",
-                    "sortierung": 5,
-                    "gewichtung": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['teilleistungsarten'][0]['sortierung'] = 5;
 
         (new DataImportService($data))->execute();
 

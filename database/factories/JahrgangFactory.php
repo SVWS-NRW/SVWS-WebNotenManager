@@ -31,7 +31,7 @@ class JahrgangFactory extends Factory
             'kuerzelAnzeige' => $this->faker->word(),
             'beschreibung' => $this->faker->paragraph(),
             'stufe' => $this->faker->word(),
-            'sortierung' => rand(min: 1, max: 15)
+            'sortierung' => $this->faker->unique()->numberBetween(1, 1_000_000),
         ];
     }
 }

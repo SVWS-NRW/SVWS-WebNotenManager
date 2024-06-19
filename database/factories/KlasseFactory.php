@@ -27,8 +27,8 @@ class KlasseFactory extends Factory
     public function definition(): array
     {
         return [
-            'kuerzel' => $this->faker->unique->word(),
-            'kuerzelAnzeige' => $this->faker->unique->word(),
+            'kuerzel' => $this->faker->unique()->word(),
+            'kuerzelAnzeige' => $this->faker->unique()->word(),
             'sortierung' => rand(min: 1, max: 15)
         ];
     }
