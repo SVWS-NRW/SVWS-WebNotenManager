@@ -211,9 +211,17 @@ class DataImportService
         $noten = Note::all();
 
         collect($this->data['noten'])
-            ->filter(fn (array $array): bool => $this->hasValidId($array, 'noten', $noten))
+            ->filter(fn (array $array): bool => $this->hasValidInt($array, 'noten', 'id', unsigned: false))
             ->filter(fn (array $array): bool => $this->hasValidValue($array, 'noten', 'kuerzel'))
             ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'noten', $noten, 'kuerzel'))
+            // ID in SVWS is for ordering the records, in wenom it has to be remapped to correct key
+            ->map(function (array $row): array {
+                $row['sortierung'] = $row['id'];
+                unset($row['id']);
+                return $row;
+            })
+            //->each(fn ($a) => dd($a))
+            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'noten', $noten, 'sortierung'))
             ->each(fn (array $array): Note => Note::create($array));
 
         $this->existingNoten = $this->getExistingNoten(); // TODO: To be removed when IMPORT_LERNABSCHNITTE IS FIXED
@@ -472,6 +480,12 @@ class DataImportService
                         fn (array $array): bool =>
                         in_array($array['note'], ['', null]) || array_key_exists($array['note'], $noten)
                     )
+                    ->filter(fn (array $array): bool => array_key_exists('noteQuartal', $array))
+                    // Check if either "Note" is empty, or one of already created "Noten"
+                    ->filter(
+                        fn (array $array): bool =>
+                        in_array($array['noteQuartal'], ['', null]) || array_key_exists($array['noteQuartal'], $noten)
+                    )
                     // Perform the upsert
                     ->each(fn (array $array) => $this->upsert($array, $schueler, $noten));
             });
@@ -484,9 +498,10 @@ class DataImportService
 
         // Remap some fields to Laravel notation
         $array['note_id'] = $noten[$array['note']] ?? null;
+        $array['note_quartal_id'] = $noten[$array['noteQuartal']] ?? null;
         $array['lerngruppe_id'] = $array['lerngruppenID'];
         $excluded = [
-            'lerngruppenID', 'note', 'teilleistungen', 'noteQuartal', 'tsNoteQuartal',
+            'lerngruppenID', 'note', 'teilleistungen', 'noteQuartal',
         ];
         foreach($excluded as $current) {
             unset($array[$current]);
@@ -498,6 +513,7 @@ class DataImportService
 
         // Check if timestamps for some fields are latter than the ones stored in DB.
         $this->updateWhenRecent($array, $leistung, 'note_id', 'tsNote');
+        $this->updateWhenRecent($array, $leistung, 'note_quartal_id', 'tsNoteQuartal');
         $this->updateWhenRecent($array, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
         $this->updateWhenRecent($array, $leistung, 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigtFach');
         $this->updateWhenRecent($array, $leistung, 'fachbezogeneBemerkungen', 'tsFachbezogeneBemerkungen');
@@ -1071,8 +1087,13 @@ class DataImportService
             return false;
         }
 
-        if (is_null($row[$key])) {
+        if ('' == ($row[$key])) {
             $this->setStatus($context, "'{$key}' ist leer", $row[$key]);
+            return false;
+        }
+
+        if (is_null($row[$key])) {
+            $this->setStatus($context, "'{$key}' ist null", $row[$key]);
             return false;
         }
 
@@ -1106,7 +1127,7 @@ class DataImportService
      * @param string $context
      * @return bool
      */
-    private function hasValidInt(array $row, string $context, string $key): bool
+    private function hasValidInt(array $row, string $context, string $key, bool $unsigned = true): bool
     {
         if (!array_key_exists($key, $row)) {
             $this->setStatus($context, "{$key} nicht vorhanden");
@@ -1125,7 +1146,7 @@ class DataImportService
             return false;
         }
 
-        if (0 > $value) {
+        if ($unsigned && 0 > $value) {
             $this->setStatus($context, "{$key} ist negativ", $value);
             return false;
         }

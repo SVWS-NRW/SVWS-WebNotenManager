@@ -51,10 +51,9 @@ class MeinUnterricht extends Controller
 
         //Get all notes present in the noten DB table
         $allNotes = Note::query()
-            ->orderBy('kuerzel')
+            ->orderBy('sortierung')
             ->pluck('kuerzel')
             ->toArray();
-
 
         // Return the collection of Leistung resources, with additional data.
 		return LeistungResource::collection($leistungen)
