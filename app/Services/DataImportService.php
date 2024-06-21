@@ -472,6 +472,12 @@ class DataImportService
                         fn (array $array): bool =>
                         in_array($array['note'], ['', null]) || array_key_exists($array['note'], $noten)
                     )
+                    ->filter(fn (array $array): bool => array_key_exists('noteQuartal', $array))
+                    // Check if either "Note" is empty, or one of already created "Noten"
+                    ->filter(
+                        fn (array $array): bool =>
+                        in_array($array['noteQuartal'], ['', null]) || array_key_exists($array['noteQuartal'], $noten)
+                    )
                     // Perform the upsert
                     ->each(fn (array $array) => $this->upsert($array, $schueler, $noten));
             });
@@ -484,9 +490,10 @@ class DataImportService
 
         // Remap some fields to Laravel notation
         $array['note_id'] = $noten[$array['note']] ?? null;
+        $array['note_quartal_id'] = $noten[$array['noteQuartal']] ?? null;
         $array['lerngruppe_id'] = $array['lerngruppenID'];
         $excluded = [
-            'lerngruppenID', 'note', 'teilleistungen', 'noteQuartal', 'tsNoteQuartal',
+            'lerngruppenID', 'note', 'teilleistungen', 'noteQuartal',
         ];
         foreach($excluded as $current) {
             unset($array[$current]);
@@ -498,6 +505,7 @@ class DataImportService
 
         // Check if timestamps for some fields are latter than the ones stored in DB.
         $this->updateWhenRecent($array, $leistung, 'note_id', 'tsNote');
+        $this->updateWhenRecent($array, $leistung, 'note_quartal_id', 'tsNoteQuartal');
         $this->updateWhenRecent($array, $leistung, 'fehlstundenFach', 'tsFehlstundenFach');
         $this->updateWhenRecent($array, $leistung, 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigtFach');
         $this->updateWhenRecent($array, $leistung, 'fachbezogeneBemerkungen', 'tsFachbezogeneBemerkungen');
