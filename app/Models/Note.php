@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereKuerzel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereNotenpunkte($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereText($value)
+ * @property string $sortierung
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereSortierung($value)
  * @mixin \Eloquent
  */
 class Note extends Model

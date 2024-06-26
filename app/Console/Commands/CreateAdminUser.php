@@ -4,8 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{Hash, Validator};
 
 class CreateAdminUser extends Command
 {
@@ -53,13 +52,10 @@ class CreateAdminUser extends Command
         // Get input from console
         $email = $this->ask($this->customAttributes['email']);
         $password = $this->secret($this->customAttributes['password']);
+        $data = ['email' => $email, 'password' => $password];
 
         // Validate input
-        $validator = Validator::make(
-            data: ['email' => $email, 'password' => $password],
-            rules: $this->validationRules,
-            customAttributes: $this->customAttributes,
-        );
+        $validator = Validator::make($data, $this->validationRules, [], $this->customAttributes);
 
         // Show error messages if validator fails
         if ($validator->fails()) {
@@ -73,10 +69,14 @@ class CreateAdminUser extends Command
         }
 
         // Create the user
-        User::factory()->administrator()->create(['email' => $email, 'password' => Hash::make($password)]);
+        User::factory()->administrator()->create([
+            'email' => $email,
+            'password' => Hash::make($password),
+        ]);
 
         // Display the success message
-        $this->info('Technischer Admin wurde erfolgreich angelegt');
+        $this->info("Technischer Admin wurde erfolgreich angelegt mit die E-Mail-Adresse: {$email}");
+
         return Command::SUCCESS;
     }
 }
