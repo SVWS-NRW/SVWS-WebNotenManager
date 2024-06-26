@@ -4,13 +4,10 @@ namespace App\Services;
 
 use App\Models\{
     Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe,
-    Note, Schueler, User,
+    Note, Schueler, User, Teilleistungsart, Teilleistung,
 };
-use App\Models\Teilleistung;
-use App\Models\Teilleistungsart;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Collection, Model};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Arr, Str};
 use Illuminate\Support\Facades\Validator;
@@ -102,43 +99,34 @@ class DataImportService
     }
 
     /**
-     * Creates the Jahrgang model.
-     * The model will not be updated with future requests.
-     *
-     * TODO: On customers site there were formatting problems with whitespaces.
+     * Creates "Jahrgange". (tested)
      *
      * @return void
      */
     public function importJahrgaenge(): void
     {
-        if ($this->keyMissingOrEmpty($this->data, 'jahrgaenge', 'global')) {
+        $key = 'jahrgaenge';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
             return;
         }
 
         $jahrgaenge = Jahrgang::all();
 
-        $trimBeschreibung = function (array $array) {
-            // In past there was an issue with additional whitespace. This function takes care of it and notifies about.
-            $beschreibung = $array['beschreibung'];
-            if (preg_match('/\s{2,}/', $beschreibung)) {
-                $this->setStatus('jahrgaenge', 'Potentieles whitespace Problem in Beschreibung', $array['beschreibung']);
-                $array['beschreibung'] = $this->trimWhitespaces($array['beschreibung']);
-            }
-
-            return $array;
-        };
-
-        collect($this->data['jahrgaenge'])
-            ->filter(fn (array $array): bool => $this->hasValidId($array, 'jahrgaenge', $jahrgaenge))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'jahrgaenge', $jahrgaenge, 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'sortierung'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'jahrgaenge', $jahrgaenge, 'sortierung'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'kuerzelAnzeige'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'stufe'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'jahrgaenge', 'beschreibung'))
-            ->map($trimBeschreibung)
-            ->each(fn (array $array) =>  Jahrgang::create($array));
+        collect($this->data[$key])
+            // Check if "Id" is valid
+            ->filter(fn (array $row): bool => $this->validId($row, 'id', $jahrgaenge, $key))
+            // Check if "Kuerzel" is valid and unique
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $jahrgaenge, 'kuerzel', $key))
+            // Check if "Sortierung" is valid and unique
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'sortierung', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $jahrgaenge, 'sortierung', $key))
+            // Check if other columns is valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzelAnzeige', $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'stufe', $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'beschreibung', $key))
+            ->each(fn (array $array) => Jahrgang::create($array));
     }
 
     /**
@@ -358,6 +346,11 @@ class DataImportService
     }
 
 
+    /**
+     * Import Floskelgruppen (testd)
+     *
+     * @return void
+     */
     public function importFloskelgruppen(): void
     {
         if ($this->keyMissingOrEmpty($this->data, 'floskelgruppen', 'global')) {
@@ -365,14 +358,80 @@ class DataImportService
         }
 
         $floskelgruppen = Floskelgruppe::all();
+        $jahrgaenge = Jahrgang::all();
+        $faecher = Fach::all();
 
         collect($this->data['floskelgruppen'])
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'floskelgruppen', $floskelgruppen, 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'bezeichnung'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'hauptgruppe'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'floskelgruppen', 'floskeln'))
-            ->each(fn (array $array): Floskelgruppe => Floskelgruppe::create(Arr::except($array, 'floskeln')));
+            // Check if "Kuerzel" is valid and unique
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', 'floskelgruppen', ))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $floskelgruppen, 'kuerzel', 'floskelgruppen'))
+            // Check if following fields are valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'bezeichnung', 'floskelgruppen'))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'hauptgruppe', 'floskelgruppen'))
+            // Check if "Floskeln" are present
+            ->filter(fn (array $row): bool => $this->isValidArray($row, 'floskeln', 'floskelgruppen'))
+            // Create the "Floskelgruppe" and associate "Floskeln"
+            ->each(function (array $row) use ($jahrgaenge, $faecher): void {
+                $data = Arr::except($row, 'floskeln');
+                $floskelgruppe = Floskelgruppe::create($data);
+                $this->importFloskeln($floskelgruppe, $row, $jahrgaenge, $faecher);
+            });
+    }
+
+    /**
+     * Import floskeln (tested)
+     *
+     * @param Floskelgruppe $floskelgruppe
+     * @param array $array
+     * @param Collection $jahrgaenge
+     * @param Collection $faecher
+     * @return void
+     */
+    private function importFloskeln(
+        Floskelgruppe $floskelgruppe,
+        array $array = [],
+        Collection $jahrgaenge,
+        Collection $faecher
+    ): void {
+        if ($this->keyMissingOrEmpty($array, 'floskeln', 'global')) {
+            return;
+        }
+
+        $floskeln = Floskel::all();
+
+        collect($array['floskeln'])
+            // Check if "Kuerzel" is valid and unique
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', 'floskeln'))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $floskeln, 'kuerzel', 'floskeln'))
+            // Check if "Text" is valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'text', 'floskeln'))
+            // Check if "Jahrgang" is valid and exists
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'jahrgangID', 'floskeln', nullable: true))
+            ->filter(
+                fn (array $row): bool => $this->hasRelation(
+                    $row,
+                    'jahrgangID',
+                    $jahrgaenge,
+                    'floskeln',
+                    'Jahrgang',
+                    nullable: true
+                )
+            )
+            // Check if "Fach" is valid and exists
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'fachID', 'floskeln', nullable: true))
+            ->filter(
+                fn (array $row): bool =>
+                $this->hasRelation($row, 'fachID', $faecher, 'floskeln', 'Fach', nullable: true)
+            )
+            // Check if "Niveau" is valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'niveau', 'floskeln', nullable: true))
+            // Remap fields to Laravel notation
+            ->map(fn (array $row): array => array_merge($row, [
+                'jahrgang_id' => $row['jahrgangID'],
+                'fach_id' => $row['fachID']
+            ]))
+            // Create the "Floskel"
+            ->each(fn (array $row): Floskel => $floskelgruppe->floskeln()->create($row));
     }
 
     /**
@@ -572,10 +631,8 @@ class DataImportService
     }
 
     /**
-     * Import "Schueler" "Bemerkungen"
+     * Import "Bemerkungen" (tested)
      *
-     * @param Schueler $schueler
-     * @param array $data
      * @return void
      */
     public function importBemerkungen(): void
@@ -587,20 +644,61 @@ class DataImportService
         $schueler = Schueler::all();
 
         collect($this->data['schueler'])
-            ->filter(fn (array $array): bool => $schueler->contains($array['id']))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'bemerkungen', 'bemerkungen'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsASV'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsAUE'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsZB'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array['bemerkungen'], 'bemerkungen', 'tsIndividuelleVersetzungsbemerkungen'))
+            // Check if given "Schueler" exist
+            ->filter(fn (array $row): bool => $this->hasRelation($row, 'id', $schueler, 'bemerkungen'))
+            // Check if the "Bemerkungen" for the "Schueler" are set
+            ->filter(fn (array $row): bool => $this->isValidArray($row, 'bemerkungen', 'bemerkungen'))
+            // Check if updatable data is existing and valid
+            ->filter(fn (array $row): bool => $this->isValidValue(
+                $row['bemerkungen'],
+                'ASV',
+                'bemerkungen',
+                nullable: true,
+                emptable: true,
+            ))
+            ->filter(fn (array $row): bool => $this->isValidValue($row['bemerkungen'], 'tsASV', 'bemerkungen'))
+            ->filter(fn (array $row): bool => $this->isValidValue(
+                $row['bemerkungen'],
+                'AUE',
+                'bemerkungen',
+                nullable: true,
+                emptable: true,
+            ))
+            ->filter(fn (array $row): bool => $this->isValidValue($row['bemerkungen'], 'tsAUE', 'bemerkungen'))
+            ->filter(
+                fn (array $row): bool => $this->isValidValue(
+                    $row['bemerkungen'],
+                    'ZB',
+                    'bemerkungen',
+                    nullable: true,
+                    emptable: true,
+                )
+            )
+            ->filter(fn (array $row): bool => $this->isValidValue($row['bemerkungen'], 'tsZB', 'bemerkungen'))
+            ->filter(fn (array $row): bool => $this->isValidValue(
+                $row['bemerkungen'],
+                'individuelleVersetzungsbemerkungen',
+                'bemerkungen',
+                nullable: true,
+                emptable: true
+            ))
+            ->filter(fn (array $row): bool => $this->isValidValue(
+                $row['bemerkungen'],
+                'tsIndividuelleVersetzungsbemerkungen',
+                'bemerkungen'
+            ))
+            // Iteare rows to create or update "Bemerkung"
             ->each(function (array $array): void {
                 // Check if "Bemerkung" already exists. If not, create a new one.
                 $bemerkung = Bemerkung::firstOrNew(['schueler_id' => $array['id']]);
-
                 $data = $array['bemerkungen'];
-                $bemerkung->LELS = $data['LELS'];
-                $bemerkung->schulformEmpf = $data['schulformEmpf'];
-                $bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
+
+                // Set these values only while creating the Bemerkung
+                if ($bemerkung->wasRecentlyCreated) {
+                    $bemerkung->LELS = $data['LELS'];
+                    $bemerkung->schulformEmpf = $data['schulformEmpf'];
+                    $bemerkung->foerderbemerkungen = $data['foerderbemerkungen'];
+                }
 
                 $this->updateWhenRecent($data, $bemerkung, 'ASV', 'tsASV');
                 $this->updateWhenRecent($data, $bemerkung, 'AUE', 'tsAUE');
@@ -880,7 +978,7 @@ class DataImportService
             return true;
         }
 
-        if (is_null($row['kuerzel'])) {
+        if (in_array($row['kuerzel'], [null, ''])) {
             $this->setStatus($row, $context, '"keurzel" ist leer');
             return true;
         }
@@ -1186,6 +1284,178 @@ class DataImportService
 
         if (!in_array($note, $noten)) {
             $this->setStatus($context, "Note existiert nicht", $note);
+            return false;
+        }
+
+        return true;
+    }
+
+
+
+
+    /// new
+
+    /**
+     * Check if the value is valid
+     *
+     * @param array $row
+     * @param string $key
+     * @param string $context
+     * @param bool $nullable
+     * @param bool $emptable
+     * @return bool
+     */
+    private function isValidValue(
+        array $row,
+        string $key,
+        string $context,
+        bool $nullable = false,
+        bool $emptable = false,
+    ): bool {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($context, "'{$key}' nicht vorhanden");
+            return false;
+        }
+
+        if (!$nullable && $row[$key] === null) {
+            $this->setStatus($context, "'{$key}' ist NULL", $row[$key]);
+            return false;
+        }
+
+        if (!$emptable && $row[$key] === '') {
+            $this->setStatus($context, "'{$key}' ist leer", $row[$key]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the array is valid
+     *
+     * @param array $row
+     * @param string $key
+     * @param string $context
+     * @param bool $nullable
+     * @param bool $emptable
+     * @return bool
+     */
+    private function isValidArray(
+        array $row,
+        string $key,
+        string $context,
+        bool $nullable = false,
+        bool $emptable = false,
+    ): bool {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($context, "'{$key}' nicht vorhanden");
+            return false;
+        }
+
+        if (!$nullable && $row[$key] === null) {
+            $this->setStatus($context, "'{$key}' ist NULL", $row[$key]);
+            return false;
+        }
+
+        if (!$emptable && empty($row[$key])) {
+            $this->setStatus($context, "'{$key}' ist leer", $row[$key]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if given element has an unique key
+     *
+     * @param array $row
+     * @param string $model
+     * @param Collection $existing
+     * @param string $key
+     * @return bool
+     */
+    private function isUnique(array $row, Collection $existing, string $key, string $context): bool
+    {
+        if ($existing->filter(fn (mixed $item): bool => $item[$key] ==  $row[$key])->count() > 0) {
+            $this->setStatus($context, "Ressource mit diesen '{$key}' existiert bereits", $row[$key]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Has relation
+     *
+     * @param array $row
+     * @param string $key
+     * @param Collection $collection
+     * @param string $context
+     * @param string $relation
+     * @return bool
+     */
+    private function hasRelation(
+        array $row,
+        string $key,
+        Collection $collection,
+        string $context,
+        string $relation = 'Ressource',
+        bool $nullable = false,
+        bool $emptable = false,
+    ): bool {
+
+        if ($nullable && $row[$key] === null) {
+            return true;
+        }
+
+        if ($emptable && $row[$key] === '') {
+            return true;
+        }
+
+        if ($collection->contains($row[$key])) {
+            return true;
+        }
+
+        $this->setStatus($context, "Relation fuer {$relation} existiert nicht.", $row[$key]);
+        return false;
+    }
+
+    /**
+     * Checks if given element has valid id
+     *
+     * @param array $row
+     * @param string $key
+     * @param Collection $existing
+     * @param string $context
+     * @param bool $unique
+     * @return bool
+     */
+    private function validId(
+        array $row,
+        string $key = 'id',
+        Collection $existing,
+        string $context,
+        bool $unique = true,
+    ): bool {
+        if (!array_key_exists($key, $row)) {
+            $this->setStatus($context, "'{$key}' nicht vorhanden");
+            return false;
+        }
+
+        $id = $row[$key];
+
+        if (!is_int($id)) {
+            $this->setStatus($context, "'{$key}' ist keine Zahl", $id);
+            return false;
+        }
+
+        if ($id <= 0) {
+            $this->setStatus($context, "'{$key}' ist nicht positiv", $id);
+            return false;
+        }
+
+        if ($unique && $existing->contains($id)) {
+            $this->setStatus($context, "Ressource mit diesen '{$key}' existiert bereits", $id);
             return false;
         }
 

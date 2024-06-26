@@ -11,8 +11,13 @@ class ImportJahrgaengeTest extends TestCase
 {
     use RefreshDatabase;
 
-    const TABLE = 'jahrgaenge';
+    public const TABLE = 'jahrgaenge';
 
+    /**
+     * Get data
+     *
+     * @return array
+     */
     private function getData(): array
     {
         return json_decode('{
@@ -29,11 +34,7 @@ class ImportJahrgaengeTest extends TestCase
         }', true);
     }
 
-    /**
-     * It creates
-     *
-     * @return void
-     */
+    /** It creates */
     public function test_it_creates(): void
     {
         $data = $this->getData();
@@ -50,12 +51,8 @@ class ImportJahrgaengeTest extends TestCase
             ]);
     }
 
-    /**
-     * It does not create  with id missing
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_id_missing(): void
+    /** It does not create with "ID" missing */
+    public function test_it_does_not_create_with_id_missing(): void
     {
         $data = $this->getData();
         unset($data['jahrgaenge'][0]['id']);
@@ -65,12 +62,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with null id
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_id(): void
+    /** It does not create with null "ID" */
+    public function test_it_does_not_create_with_null_id(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['id'] = null;
@@ -80,12 +73,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with empty id
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_empty_id(): void
+    /** It does not create with empty "ID" */
+    public function test_it_does_not_create_with_empty_id(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['id'] = '';
@@ -95,12 +84,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with negative id
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_negative_id(): void
+    /** It does not create with negative "ID" */
+    public function test_it_does_not_create_with_negative_id(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['id'] = -1;
@@ -110,12 +95,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with non-numeric id
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_non_numeric_id(): void
+    /** It does not create with non-numeric "ID" */
+    public function test_it_does_not_create_with_non_numeric_id(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['id'] = 'X';
@@ -125,12 +106,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with existing id
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_existing_id(): void
+    /** It does not create with existing "ID" */
+    public function test_it_does_not_create_with_existing_id(): void
     {
         Jahrgang::factory()->create([
             'id' => 1,
@@ -152,12 +129,8 @@ class ImportJahrgaengeTest extends TestCase
             ->assertDatabaseMissing(self::TABLE, ['id' => 1, 'kuerzel' => 'Q3']);
     }
 
-    /**
-     * It does not create with missing "Kuerzel"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_missing_kuerzel(): void
+    /** It does not create with missing "Kuerzel" */
+    public function test_it_does_not_create_with_missing_kuerzel(): void
     {
         $data = $this->getData();
         unset($data['jahrgaenge'][0]['kuerzel']);
@@ -167,12 +140,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with null kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_kuerzel(): void
+    /** It does not create with null kuerzel */
+    public function test_it_does_not_create_with_null_kuerzel(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['kuerzel'] = null;
@@ -182,12 +151,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with empty "Kuerzel"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_empty_kuerzel(): void
+    /** It does not create with empty "Kuerzel" */
+    public function test_it_does_not_create_with_empty_kuerzel(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['kuerzel'] = '';
@@ -197,12 +162,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with existing "Kuerzel"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_existing_kuerzel(): void
+    /** It does not create with existing "Kuerzel" */
+    public function test_it_does_not_create_with_existing_kuerzel(): void
     {
         Jahrgang::factory()->create([
             'kuerzel' => 'Q2',
@@ -225,12 +186,8 @@ class ImportJahrgaengeTest extends TestCase
             ]);
     }
 
-    /**
-     * It does not create with "KuerzelAnzeige" missing
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_kuerzel_anzeige_missing(): void
+    /** It does not create with "KuerzelAnzeige" missing */
+    public function test_it_does_not_create_with_kuerzel_anzeige_missing(): void
     {
         $data = $this->getData();
         unset($data['jahrgaenge'][0]['kuerzelAnzeige']);
@@ -240,12 +197,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with null "KuerzelAnzeige"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_kuerzel_anzeige(): void
+    /** It does not create with null "KuerzelAnzeige" */
+    public function test_it_does_not_create_with_null_kuerzel_anzeige(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['kuerzelAnzeige'] = null;
@@ -255,12 +208,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with empty "KuerzelAnzeige"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_empty_kuerzel_anzeige(): void
+    /** It does not create with empty "KuerzelAnzeige" */
+    public function test_it_does_not_create_with_empty_kuerzel_anzeige(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['kuerzelAnzeige'] = '';
@@ -270,12 +219,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with "Beschreibung" missing
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_beschreibung_missing(): void
+    /** It does not create with "Beschreibung" missing */
+    public function test_it_does_not_create_with_beschreibung_missing(): void
     {
         $data = $this->getData();
         unset($data['jahrgaenge'][0]['beschreibung']);
@@ -285,13 +230,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-<<<<<<< HEAD
-     * It does not create with NULL "Beschreibung"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_beschreibung(): void
+    /** It does not create with NULL "Beschreibung" */
+    public function test_it_does_not_create_with_null_beschreibung(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['beschreibung'] = null;
@@ -301,12 +241,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with empty "Beschreibung"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_empty_beschreibung(): void
+    /** It does not create with empty "Beschreibung" */
+    public function test_it_does_not_create_with_empty_beschreibung(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['beschreibung'] = '';
@@ -315,38 +251,9 @@ class ImportJahrgaengeTest extends TestCase
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
-    /**
-     * It creates with trimmed whitespaces in "Beschreibung"
-     *
-     * @return void
-     */
-    public function test_it_creates_with_trimmed_whitespaces_in_beschreibung(): void
-    {
-        $data = $this->getData();
-        $data['jahrgaenge'][0]['beschreibung'] = '      Qualifikationsphase 2      ';
 
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas(self::TABLE, [
-                'id' => 1,
-                'kuerzel' => 'Q2',
-                'kuerzelAnzeige' => 'Q2',
-                'beschreibung' => 'Qualifikationsphase 2',
-                'stufe' => 'SII-3',
-                'sortierung' => 12
-            ]);
-    }
-
-    /**
-     * It does not create with "Stufe" missing
-=======
-     * It does not create jahrgaenge with stufe missing
->>>>>>> feature/310-Umgang-mit-whitespace-errors
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_stufe_missing(): void
+    /** It does not create with "Stufe" missing */
+    public function test_it_does_not_create_with_stufe_missing(): void
     {
         $data = $this->getData();
         unset($data['jahrgaenge'][0]['stufe']);
@@ -356,12 +263,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with NULL "Stufe"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_stufe(): void
+    /** It does not create with NULL "Stufe" */
+    public function test_it_does_not_create_with_null_stufe(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['stufe'] = null;
@@ -371,12 +274,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with empty "Stufe"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_empty_stufe(): void
+    /** It does not create with empty "Stufe" */
+    public function test_it_does_not_create_with_empty_stufe(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['stufe'] = '';
@@ -386,12 +285,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with sortierung missing
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_sortierung_missing(): void
+    /** It does not create with sortierung missing */
+    public function test_it_does_not_create_with_sortierung_missing(): void
     {
         $data = $this->getData();
         unset($data['jahrgaenge'][0]['sortierung']);
@@ -401,12 +296,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with NULL "Sortierung"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_null_sortierung(): void
+    /** It does not create with NULL "Sortierung" */
+    public function test_it_does_not_create_with_null_sortierung(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['sortierung'] = null;
@@ -416,12 +307,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with empty "Sortierung"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_empty_sortierung(): void
+    /** It does not create with empty "Sortierung" */
+    public function test_it_does_not_create_with_empty_sortierung(): void
     {
         $data = $this->getData();
         $data['jahrgaenge'][0]['sortierung'] = '';
@@ -431,12 +318,8 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create with existing "Sortierung"
-     *
-     * @return void
-     */
-    public function test_it_does_note_create_with_existing_sortierung(): void
+    /** It does not create with existing "Sortierung" */
+    public function test_it_does_not_create_with_existing_sortierung(): void
     {
         Jahrgang::factory()->create([
             'id' => 1,
@@ -455,11 +338,7 @@ class ImportJahrgaengeTest extends TestCase
             ]);
     }
 
-    /**
-     * It returns when the "jahrgaenge" array is empty
-     *
-     * @return void
-     */
+    /** It returns when the "Jahrgaenge" array is empty */
     public function test_it_returns_when_the_jahrgaenge_array_is_missing(): void
     {
         $data = json_decode('{}', true);
@@ -469,11 +348,7 @@ class ImportJahrgaengeTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It returns when the "jahrgaenge" array is empty
-     *
-     * @return void
-     */
+    /** It returns when the "Jahrgaenge" array is empty */
     public function test_it_returns_when_the_jahrgaenge_array_is_empty(): void
     {
         $data = json_decode('{
