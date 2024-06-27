@@ -11,16 +11,16 @@ class ImportFoerderschwerpunkteTest extends TestCase
 {
     use RefreshDatabase;
 
-    const TABLE = 'foerderschwerpunkte';
+    public const TABLE = 'foerderschwerpunkte';
 
     /**
-     * It creates foerderschwerpunkte
+     * Get data
      *
-     * @return void
+     * @return array
      */
-    public function test_it_creates_foerderschwerpunkte(): void
+    private function getData(): array
     {
-        $data = json_decode('{
+        return json_decode('{
             "foerderschwerpunkte": [
                 {
                     "id": 1,
@@ -29,269 +29,157 @@ class ImportFoerderschwerpunkteTest extends TestCase
                 }
             ]
         }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseHas('foerderschwerpunkte', [
-            'id' => 1,
-            'kuerzel' => '5-',
-            'beschreibung' => 'lorem',
-        ])->assertDatabaseCount(self::TABLE, 1);
     }
 
-    /**
-     * It does not update foerderschwerpunkte
-     *
-     * @return void
-     */
-    public function test_it_does_not_update_foerderschwerpunkte(): void
+    /** It creates */
+    public function test_it_creates(): void
     {
-        $note = Foerderschwerpunkt::factory()->create([
-            'id' => 1,
-            'kuerzel' => 'old_kuerzel',
-            'beschreibung' => 'old_text'
-        ]);
+        (new DataImportService($this->getData()))->execute();
 
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "id": 1,
-                    "kuerzel": "new_kuerzel",
-                    "beschreibung": "new_text"
-                }
-            ]
-        }', true);
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas('foerderschwerpunkte', ['id' => 1, 'kuerzel' => '5-', 'beschreibung' => 'lorem']);
+    }
+
+    /** It does not update */
+    public function test_it_does_not_update(): void
+    {
+        Foerderschwerpunkt::factory()->create([ 'id' => 1, 'kuerzel' => 'old_kuerzel', 'beschreibung' => 'old_text']);
+
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['kuerzel'] = 'new_kuerzel';
+        $data['foerderschwerpunkte'][0]['beschreibung'] = 'new_text';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas(self::TABLE, [
-                'id' => 1,
-                'kuerzel' => 'old_kuerzel',
-                'beschreibung' => 'old_text',
-            ])
-            ->assertDatabaseMissing(self::TABLE, [
-                'id' => 1,
-                'kuerzel' => 'new_kuerzel',
-                'beschreibung' => 'new_text',
-            ]);
-    }
-    /**
-     * It does not create foerderschwerpunkte with negative id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_negative_id(): void
-    {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                 {
-                    "id": -1,
-                    "kuerzel": "negative",
-                    "beschreibung": "negative"
-                },
-                {
-                    "id": 1,
-                    "kuerzel": "5-",
-                    "beschreibung": "Lorem ipsum dolor sit amet"
-                }
-            ]
-        }', true);
-
-        (new DataImportService($data))->execute();
-
-        $this->assertDatabaseMissing(self::TABLE, [
-            'kuerzel' => 'negative',
-            'beschreibung' => 'negative',
-        ])->assertDatabaseCount(self::TABLE, 1);
+            ->assertDatabaseHas(self::TABLE, ['id' => 1, 'kuerzel' => 'old_kuerzel', 'beschreibung' => 'old_text'])
+            ->assertDatabaseMissing(self::TABLE, ['id' => 1, 'kuerzel' => 'new_kuerzel', 'beschreibung' => 'new_text']);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with non-integer id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_non_integer_id(): void
+    /** It does not create with negative id */
+    public function test_it_does_not_create__with_negative_id(): void
     {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                 {
-                    "id": "Z",
-                    "kuerzel": "51",
-                    "beschreibung": "Lorem ipsum dolor sit amet"
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['id'] = -1;
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with missing id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_missing_id(): void
+    /** It does not create with non-integer id */
+    public function test_it_does_not_create_with_non_integer_id(): void
     {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "kuerzel": "test"
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['id'] = 'x';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with empty id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_empty_id(): void
+    /** It does not create with missing id */
+    public function test_it_does_not_create_with_missing_id(): void
     {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "id": null,
-                    "kuerzel": "test"
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['foerderschwerpunkte'][0]['id']);
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with existing Kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_existing_kurzel(): void
+    /** It does not create with empty id */
+    public function test_it_does_not_create_with_empty_id(): void
     {
-        $note = Foerderschwerpunkt::factory()->create([
-            'kuerzel' => 'existingKuerzel',
-        ]);
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['id'] = '';
 
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "id": 1,
-                    "kuerzel": "existingKuerzel"
-                }
-            ]
-        }', true);
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /** It does not create with null id */
+    public function test_it_does_not_create_with_null_id(): void
+    {
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['id'] = null;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /** It does not create with existing Kuerzel */
+    public function test_it_does_not_create_with_existing_kurzel(): void
+    {
+        Foerderschwerpunkt::factory()->create(['kuerzel' => 'existingKuerzel']);
+
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['kuerzel'] = 'existingKuerzel';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with empty kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_empty_kuerzel(): void
+    /** It does not create with empty kuerzel */
+    public function test_it_does_not_create_with_empty_kuerzel(): void
     {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "id": 1,
-                    "kuerzel": null
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['kuerzel'] = '';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with missing kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_missing_kuerzel(): void
+    /** It does not create with null kuerzel */
+    public function test_it_does_not_create_with_null_kuerzel(): void
     {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "id": 1
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['kuerzel'] = null;
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with beschreibung missing
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_beschreibung_missing(): void
+    /** It does not create with missing kuerzel */
+    public function test_it_does_not_create_with_missing_kuerzel(): void
     {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "id": 1,
-                    "kuerzel": "5-"
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['foerderschwerpunkte'][0]['kuerzel']);
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseMissing(self::TABLE, [
-            'id' => 1,
-            'kuerzel' => '5-',
-            'beschreibung' => null,
-        ])->assertDatabaseCount(self::TABLE, 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create foerderschwerpunkte with beschreibung null
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_foerderschwerpunkte_with_beschreibung_null(): void
+    /** It does not create with beschreibung missing */
+    public function test_it_does_not_create_with_beschreibung_missing(): void
     {
-        $data = json_decode('{
-            "foerderschwerpunkte": [
-                {
-                    "id": 1,
-                    "kuerzel": "5-",
-                    "beschreibung": null
-                }
-            ]
-        }', true);
+        $data = $this->getData();
+        unset($data['foerderschwerpunkte'][0]['beschreibung']);
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseMissing(self::TABLE, [
-            'id' => 1,
-            'kuerzel' => '5-',
-            'beschreibung' => null,
-        ])
-        ->assertDatabaseCount(self::TABLE, 0);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It returns when the "foerderschwerpunkte" array is empty
-     *
-     * @return void
-     */
+    /** It does not create with beschreibung null */
+    public function test_it_does_not_create_with_beschreibung_null(): void
+    {
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['beschreibung'] = null;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /** It returns when the "foerderschwerpunkte" array is empty */
     public function test_it_returns_when_the_foerderschwerpunkte_array_is_missing(): void
     {
         $data = json_decode('{}', true);
@@ -301,11 +189,7 @@ class ImportFoerderschwerpunkteTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It returns when the "foerderschwerpunkte" array is empty
-     *
-     * @return void
-     */
+    /** It returns when the "foerderschwerpunkte" array is empty */
     public function test_it_returns_when_the_foerderschwerpunkte_array_is_empty(): void
     {
         $data = json_decode('{

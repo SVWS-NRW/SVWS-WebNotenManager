@@ -197,24 +197,26 @@ class DataImportService
 
         $noten = Note::all();
 
+        // ID in SVWS is for ordering the records, in wenom it has to be remapped to correct key.
+        $remapSortierung = function (array $row): array {
+            $row['sortierung'] = $row['id'];
+            unset($row['id']);
+            return $row;
+        };
+
         collect($this->data[$key])
             ->filter(fn (array $row): bool => $this->validId($row, 'id', $noten, $key))
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
             ->filter(fn (array $row): bool => $this->isUnique($row, $noten, 'kuerzel', $key))
-            // ID in SVWS is for ordering the records, in wenom it has to be remapped to correct key
-            ->map(function (array $row): array {
-                $row['sortierung'] = $row['id'];
-                unset($row['id']);
-                return $row;
-            })
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'noten', $noten, 'sortierung'))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $noten, 'sortierung', $key))
+            ->map($remapSortierung)
             ->each(fn (array $row): Note => Note::create($row));
 
         $this->existingNoten = $this->getExistingNoten(); // TODO: To be removed when IMPORT_LERNABSCHNITTE IS FIXED
     }
 
     /**
-     * Creates the Foerderschwerpunkt model.
+     * Creates the Foerderschwerpunkt model. [tested]
      * The model will not be updated with future requests.
      *
      * TODO: All Models are stored in an array to be called by ID in different resources.
@@ -223,18 +225,20 @@ class DataImportService
      */
     public function importFoerderschwerpunkte(): void
     {
-        if ($this->keyMissingOrEmpty($this->data, 'foerderschwerpunkte', 'global')) {
+        $key = 'foerderschwerpunkte';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
             return;
         }
 
         $foerderschwerpunkte = Foerderschwerpunkt::all();
 
-        collect($this->data['foerderschwerpunkte'])
-            ->filter(fn (array $array): bool => $this->hasValidId($array, 'foerderschwerpunkte', $foerderschwerpunkte))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'foerderschwerpunkte', 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'foerderschwerpunkte', $foerderschwerpunkte, 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'foerderschwerpunkte', 'beschreibung'))
-            ->each(fn (array $array): Foerderschwerpunkt => Foerderschwerpunkt::create($array));
+        collect($this->data[$key])
+            ->filter(fn (array $row): bool => $this->validId($row, 'id', $foerderschwerpunkte, $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $foerderschwerpunkte, 'kuerzel', $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'beschreibung', $key))
+            ->each(fn (array $row): Foerderschwerpunkt => Foerderschwerpunkt::create($row));
 
         $this->existingFoerderschwerpunkte = $this->getExistingFoerderschwerpunkte(); // TODO: To be removed
     }
@@ -542,9 +546,14 @@ class DataImportService
                     ->filter(fn (array $array): bool => array_key_exists($array['lerngruppenID'], $lerngruppen))
                     // Check if "Note is set"
                     ->filter(fn (array $array): bool => array_key_exists('note', $array))
-
+                    ->filter(fn (array $array): bool =>
+                        in_array($array['note'], [null, '']) || array_key_exists($array['note'], $noten)
+                    )
                     // Check if "Quartals Note is set"
                     ->filter(fn (array $array): bool => array_key_exists('noteQuartal', $array))
+                    ->filter(fn (array $array): bool =>
+                        in_array($array['noteQuartal'], [null, '']) || array_key_exists($array['noteQuartal'], $noten)
+                    )
                     // Perform the upsert
                     ->each(fn (array $array) => $this->upsert($array, $schueler, $noten));
             });
@@ -554,7 +563,6 @@ class DataImportService
     private function upsert(array $array, $schueler, $noten): void
     {
         $teilleistungen = $array;
-
         // Remap some fields to Laravel notation
         $array['note_id'] = $noten[$array['note']] ?? null;
         $array['note_quartal_id'] = $noten[$array['noteQuartal']] ?? null;

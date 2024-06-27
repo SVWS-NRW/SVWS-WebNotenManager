@@ -356,9 +356,9 @@ class ImportLeistungsdatenTest extends TestCase
         $data = $this->data();
         $data['schueler'][0]['id'] = $schueler->id;
         $data['schueler'][0]['leistungsdaten'][0]['note'] = $newNote->kuerzel;
-        $data['schueler'][0]['leistungsdaten'][0]['tsNote'] = now();
+        $data['schueler'][0]['leistungsdaten'][0]['tsNote'] = now()->format('Y-m-d H:i:s.u');
         $data['schueler'][0]['leistungsdaten'][0]['noteQuartal'] = $newNote->kuerzel;
-        $data['schueler'][0]['leistungsdaten'][0]['tsNoteQuartal'] = now();
+        $data['schueler'][0]['leistungsdaten'][0]['tsNoteQuartal'] = now()->format('Y-m-d H:i:s.u');
         $data['schueler'][0]['leistungsdaten'][0]['abiturfach'] = 'not updateable';
 
         $ow = new DataImportService($data);
