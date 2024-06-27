@@ -16,6 +16,15 @@
                         <template #label>Notenmanager</template>
                     </SvwsUiMenuItem>
 
+                    <!-- TODO: visibility? -->
+                    <SvwsUiMenuItem
+                        :active="activePage('teilleistungen')"
+                        @click="navigate('teilleistungen')"
+                    >
+                        <template #icon><ri-calendar-line /></template>
+                        <template #label>Teilleistungen</template>
+                    </SvwsUiMenuItem>
+
                     <SvwsUiMenuItem
                         :active="activePage('leistungsdatenuebersicht')"
                         @click="navigate('leistungsdatenuebersicht')"

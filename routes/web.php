@@ -36,6 +36,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 		->name('mein_unterricht')
 		->middleware('mein.unterricht');
 
+    // Defines the Teilleistungen route
+        Route::inertia('teilleistungen', 'Teilleistungen')
+        ->name('teilleistungen');
+
     // Defines the Leistungsdatenuebersicht route
     Route::inertia('leistungsdatenuebersicht', 'Leistungsdatenuebersicht')
         ->name('leistungsdatenuebersicht');
