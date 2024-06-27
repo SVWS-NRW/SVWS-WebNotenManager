@@ -67,25 +67,27 @@ class DataImportService
     }
 
     /**
-     * Creates or updates the Lehrer model.
+     * Creates or updates the Lehrer model. (tested)
      * The id is stored under "ext_id" since we have system users as well.
      *
      * @return void
      */
     public function importLehrer(): void
     {
-        if ($this->keyMissingOrEmpty($this->data, 'lehrer', 'global')) {
+        $key = 'lehrer';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
             return;
         }
 
         // Check if email is correct. If not, fallback to temporary random email that will be updated in the future.
-        $checkEmail = function (array $row): array {
+        $checkEmail = function (array $row) use ($key): array {
             // Maps the email and falls back to null
             $email = $row['email'] = $row['eMailDienstlich'] ?? null;
 
             // Sets notification that the email is not valid. A temporary email will be assigned in UserObserver
             if (!$email || $email == '' || is_null($email)) {
-                $this->setStatus('lehrer', '"eMailDienstlich" ist leer oder ungueltig', $row['id']);
+                $this->setStatus($key, '"eMailDienstlich" ist leer oder ungueltig', $row['id']);
             }
 
             unset($row['eMailDienstlich']);
@@ -93,9 +95,9 @@ class DataImportService
             return $row;
         };
 
-        collect($this->data['lehrer'])
+        collect($this->data[$key])
             ->map($checkEmail)
-            ->each(fn (array $array): User => User::updateOrCreate(['ext_id' => $array['id']], $array));
+            ->each(fn (array $row): User => User::updateOrCreate(['ext_id' => $row['id']], $row));
     }
 
     /**
@@ -130,7 +132,7 @@ class DataImportService
     }
 
     /**
-     * Creates the Klasse model.
+     * Creates the Klasse model. [tested]
      * The model will not be updated with future requests.
      * After creating the model, the Lehrer model relationships are created.
      * The relationships are only being set once, and will not trigger at consecutive requests.
@@ -139,7 +141,9 @@ class DataImportService
      */
     public function importKlassen(): void
     {
-        if ($this->keyMissingOrEmpty($this->data, 'klassen', 'global')) {
+        $key = 'klassen';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
             return;
         }
 
@@ -150,35 +154,28 @@ class DataImportService
             ->toArray();
 
         $klassen = Klasse::all();
+        $jahrgaenge = Jahrgang::all();
 
-        collect($this->data['klassen'])
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'klassenlehrer'))
-            ->filter(function (array $array): bool {
-                if (count($array['klassenlehrer']) <= 0) {
-                    $this->setStatus('klassen', '"klassenlehrer" ist leer', $array['klassenlehrer']);
-                    return false;
-                }
-
-                return true;
-            })
-            ->filter(fn (array $array): bool => $this->hasValidId($array, 'klassen', $klassen))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'klassen', $klassen, 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'sortierung'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'klassen', $klassen, 'sortierung'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'klassen', 'idJahrgang'))
-            ->filter(function (array $array): bool {
-                if (Jahrgang::where(['id' => $array['idJahrgang']])->doesntExist()) {
-                    $this->setStatus('klassen', 'Jahrgang mit id ' . $array['idJahrgang'] . ' existiert nicht.');
-                    return false;
-                }
-
-                return true;
-            })
-        ->each(function (array $array) use ($klassenlehrer): void {
-            $klasse = Klasse::create(Arr::except($array, 'klassenlehrer'));
-            $klasse->klassenlehrer()->sync($klassenlehrer($array));
-        });
+        collect($this->data[$key])
+            // Check if the "Klassenlehrer" relation is present and valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'klassenlehrer', $key))
+            ->filter(fn (array $row): bool => $this->isValidArray($row, 'klassenlehrer', $key))
+            // Check if "Klasse" exists and is valid
+            ->filter(fn (array $row): bool => $this->validId($row, 'id', $klassen, $key, unique: true))
+            // Check if "Kuerzel" exists and is valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $klassen, 'kuerzel', $key))
+            // Check if "Sortierung" exists and is valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'sortierung', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $klassen, 'sortierung', $key))
+            // Check if the "Jahrgang" relation is present and valid
+            ->filter(fn (array $row): bool => $this->validId($row, 'idJahrgang', $klassen, $key))
+            ->filter(fn (array $row): bool => $this->hasRelation($row, 'idJahrgang', $jahrgaenge, $key))
+            // Create the resource
+            ->each(function (array $row) use ($klassenlehrer): void {
+                $klasse = Klasse::create(Arr::except($row, 'klassenlehrer'));
+                $klasse->klassenlehrer()->sync($klassenlehrer($row));
+            });
     }
 
     /**
@@ -192,17 +189,19 @@ class DataImportService
      */
     public function importNoten(): void
     {
-        if ($this->keyMissingOrEmpty($this->data, 'noten', 'global')) {
+        $key = 'noten';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
             return;
         }
 
         $noten = Note::all();
 
-        collect($this->data['noten'])
-            ->filter(fn (array $array): bool => $this->hasValidId($array, 'noten', $noten))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'noten', 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'noten', $noten, 'kuerzel'))
-            ->each(fn (array $array): Note => Note::create($array));
+        collect($this->data[$key])
+            ->filter(fn (array $row): bool => $this->validId($row, 'id', $noten, $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $noten, 'kuerzel', $key))
+            ->each(fn (array $row): Note => Note::create($row));
 
         $this->existingNoten = $this->getExistingNoten(); // TODO: To be removed when IMPORT_LERNABSCHNITTE IS FIXED
     }
@@ -234,27 +233,33 @@ class DataImportService
     }
 
     /**
-     * Creates the Fach model.
-     * The model will not be updated with future requests.
+     * Creates the Fach model. (tested)
      *
      * @return void
      */
     public function importFaecher(): void
     {
-        if ($this->keyMissingOrEmpty($this->data, 'faecher', 'global')) {
+        $key = 'faecher';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
             return;
         }
 
         $faecher = Fach::all();
 
-        collect($this->data['faecher'])
-            ->filter(fn (array $array): bool => $this->hasValidId($array, 'faecher', $faecher))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'faecher', 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'faecher', $faecher, 'kuerzel'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'faecher', 'sortierung'))
-            ->filter(fn (array $array): bool => $this->hasUniqueValue($array, 'faecher', $faecher, 'sortierung'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'faecher', 'istFremdsprache'))
-            ->each(fn (array $array): Fach => Fach::create($array));
+        collect($this->data[$key])
+            // Check if "Fach" already exists and is valid
+            ->filter(fn (array $row): bool => $this->validId($row, 'id', $faecher, $key, unique: true))
+            // Check if "Kuerzel" already exists and is valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $faecher, 'kuerzel', $key))
+            // Check if "Sortierung" already exists and is valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'sortierung', $key))
+            ->filter(fn (array $row): bool => $this->isUnique($row, $faecher, 'sortierung', $key))
+            // Check other fields if are valid
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'istFremdsprache', $key))
+            // Create the resource
+            ->each(fn (array $row): Fach => Fach::create($row));
     }
 
     /**
@@ -426,10 +431,14 @@ class DataImportService
             // Check if "Niveau" is valid
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'niveau', 'floskeln', nullable: true))
             // Remap fields to Laravel notation
-            ->map(fn (array $row): array => array_merge($row, [
-                'jahrgang_id' => $row['jahrgangID'],
-                'fach_id' => $row['fachID']
-            ]))
+            ->map(function (array $row): array {
+                $row['jahrgang_id'] = $row['jahrgangID'];
+                $row['fach_id'] = $row['fachID'];
+
+                unset($row['jahrgangID'], $row['fachID']);
+
+                return $row;
+            })
             // Create the "Floskel"
             ->each(fn (array $row): Floskel => $floskelgruppe->floskeln()->create($row));
     }
