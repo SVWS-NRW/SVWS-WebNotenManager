@@ -11,16 +11,11 @@ class ImportNotenTest extends TestCase
 {
     use RefreshDatabase;
 
-    const TABLE = 'noten';
+    public const TABLE = 'noten';
 
-    /**
-     * It creates noten
-     *
-     * @return void
-     */
-    public function test_it_creates_noten(): void
+    private function data(): array
     {
-        $data = json_decode('{
+        return json_decode('{
             "noten": [
                 {
                     "id": 1,
@@ -30,8 +25,12 @@ class ImportNotenTest extends TestCase
                 }
             ]
         }', true);
+    }
 
-        (new DataImportService($data))->execute();
+    /** It creates noten */
+    public function test_it_creates_noten(): void
+    {
+        (new DataImportService($this->data()))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
@@ -39,24 +38,16 @@ class ImportNotenTest extends TestCase
                 'kuerzel' => '5-',
                 'notenpunkte' => '1',
                 'text' => 'lorem',
+                'sortierung' => 1,
             ]);
     }
 
-    /**
-     * It creates noten with text and notenpunkte missing
-     *
-     * @return void
-     */
-    public function test_it_creates_noten_with_text_and_notenpunkte_missing(): void
+    /** It creates with text and notenpunkte missing */
+    public function test_it_creates_with_text_and_notenpunkte_missing(): void
     {
-        $data = json_decode('{
-            "noten": [
-                {
-                    "id": 1,
-                    "kuerzel": "5-"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        unset($data['noten'][0]['text']);
+        unset($data['noten'][0]['notenpunkte']);
 
         (new DataImportService($data))->execute();
 
@@ -69,23 +60,30 @@ class ImportNotenTest extends TestCase
             ]);
     }
 
-    /**
-     * It creates noten with text and notenpunkte null
-     *
-     * @return void
-     */
-    public function test_it_creates_noten_with_text_and_notenpunkte_null(): void
+    /** It creates with text and notenpunkte empty */
+    public function test_it_creates_with_text_and_notenpunkte_empty(): void
     {
-        $data = json_decode('{
-            "noten": [
-                {
-                    "id": 1,
-                    "kuerzel": "5-",
-                    "notenpunkte": null,
-                    "text": null
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['text'] = '';
+        $data['noten'][0]['notenpunkte'] = '';
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'id' => 1,
+                'kuerzel' => '5-',
+                'notenpunkte' => "",
+                'text' => "",
+            ]);
+    }
+
+    /** It creates with text and notenpunkte null */
+    public function test_it_creates_with_text_and_notenpunkte_null(): void
+    {
+        $data = $this->data();
+        $data['noten'][0]['text'] = null;
+        $data['noten'][0]['notenpunkte'] = null;
 
         (new DataImportService($data))->execute();
 
@@ -98,211 +96,147 @@ class ImportNotenTest extends TestCase
             ]);
     }
 
-    /**
-     * It does not create noten with negative id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_noten_with_negative_id(): void
+    /** It creates with negative id */
+    public function test_it_creates_with_negative_id(): void
     {
-        $data = json_decode('{
-            "noten": [
-                 {
-                    "id": -1,
-                    "kuerzel": "negative",
-                    "notenpunkte": -1,
-                    "text": "negative"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['id'] = -1;
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseCount(self::TABLE, 0)
-            ->assertDatabaseMissing(self::TABLE, [
-                'kuerzel' => 'negative',
-                'text' => 'negative',
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, [
+                'id' => 1,
+                'sortierung' => -1,
             ]);
     }
 
-    /**
-     * It does not create noten with non-integer id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_noten_with_non_integer_id(): void
+    /** It does not create with non-integer id */
+    public function test_it_does_not_create_with_non_integer_id(): void
     {
-        $data = json_decode('{
-            "noten": [
-                 {
-                    "id": "Z",
-                    "kuerzel": "51",
-                    "notenpunkte": 1,
-                    "text": "Lorem ipsum dolor sit amet"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['id'] = 'x';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create noten with existing Kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_noten_with_existing_kurzel(): void
+    /** It does not create with existing Kuerzel */
+    public function test_it_does_not_create_with_existing_kurzel(): void
     {
-        Note::factory()->create([
-            'kuerzel' => 'existingKuerzel',
-        ]);
+        Note::factory()->create(['kuerzel' => 'existingKuerzel']);
 
-        $data = json_decode('{
-            "noten": [
-                {
-                    "id": 1,
-                    "kuerzel": "existingKuerzel"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['kuerzel'] = 'existingKuerzel';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1);
     }
 
-    /**
-     * It does not create noten with missing id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_note_with_missing_id(): void
+    /** It does not create with missing id */
+    public function test_it_does_not_create_with_missing_id(): void
     {
-        $data = json_decode('{
-            "noten": [
-                {
-                    "kuerzel": "test"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        unset($data['noten'][0]['id']);
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create note with empty id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_note_with_empty_id(): void
+    /** It does not create with null "ID" */
+    public function test_it_does_not_create_with_null_id(): void
     {
-        $data = json_decode('{
-            "noten": [
-                {
-                    "id": null,
-                    "kuerzel": "test"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['id'] = null;
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create note with empty kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_note_with_empty_kuerzel(): void
+    /** It does not create with empty id */
+    public function test_it_does_not_create_with_empty_id(): void
     {
-        $data = json_decode('{
-            "noten": [
-                {
-                    "id": 1,
-                    "kuerzel": null
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['id'] = '';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create note with missing kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_note_with_missing_kuerzel(): void
+
+    /** It does not create with empty kuerzel */
+    public function test_it_does_not_create_with_empty_kuerzel(): void
     {
-        $data = json_decode('{
-            "noten": [
-                {
-                    "id": 1
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['kuerzel'] = '';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not update noten
-     *
-     * @return void
-     */
-    public function test_it_does_not_update_noten(): void
+    /** It does not create with null kuerzel */
+    public function test_it_does_not_create_with_null_kuerzel(): void
+    {
+        $data = $this->data();
+        $data['noten'][0]['kuerzel'] = null;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /** It does not create with missing kuerzel */
+    public function test_it_does_not_create_with_missing_kuerzel(): void
+    {
+        $data = $this->data();
+        unset($data['noten'][0]['kuerzel']);
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 0);
+    }
+
+    /** It does not update */
+    public function test_it_does_not_update(): void
     {
         Note::factory()->create([
             'id' => 1,
-            'kuerzel' => 'old_kuerzel',
+            'kuerzel' => 'kuerzel',
             'notenpunkte' => 'old_notenpunkte',
-            'text' => 'old_text'
+            'text' => 'old_text',
+            'sortierung' => 1,
         ]);
 
-        $data = json_decode('{
-            "noten": [
-                {
-                    "id": 1,
-                    "kuerzel": "new_kuerzel",
-                    "notenpunkte": "new_notenpunkte",
-                    "text": "new_text"
-                }
-            ]
-        }', true);
+        $data = $this->data();
+        $data['noten'][0]['kuerzel'] = '5-';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
                 'id' => 1,
-                'kuerzel' => 'old_kuerzel',
+                'kuerzel' => 'kuerzel',
                 'notenpunkte' => 'old_notenpunkte',
                 'text' => 'old_text',
+                'sortierung' => 1,
             ])
             ->assertDatabaseMissing(self::TABLE, [
                 'id' => 1,
-                'kuerzel' => 'new_kuerzel',
+                'kuerzel' => 'kuerzel',
                 'notenpunkte' => 'new_notenpunkte',
                 'text' => 'new_text',
+                'sortierung' => 2,
             ]);
     }
 
-    /**
-     * It returns when the "noten" array is empty
-     *
-     * @return void
-     */
-    public function test_it_returns_when_the_noten_array_is_missing(): void
+    /** It returns when the array is missing */
+    public function test_it_returns_when_the_array_is_missing(): void
     {
         $data = json_decode('{}', true);
 
@@ -311,12 +245,8 @@ class ImportNotenTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It returns when the "noten" array is empty
-     *
-     * @return void
-     */
-    public function test_it_returns_when_the_noten_array_is_empty(): void
+    /** It returns when array is empty */
+    public function test_it_returns_when_the_array_is_empty(): void
     {
         $data = json_decode('{
             "noten": []

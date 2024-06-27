@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeinUnterricht\LeistungResource;
-use App\Models\Leistung;
-use App\Models\Note;
+use App\Models\{Leistung, Note};
 use App\Settings\MatrixSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -60,10 +59,9 @@ class Leistungsdatenuebersicht extends Controller
 
         //Get all notes present in noten DB table
         $allNotes = Note::query()
-            ->orderBy('kuerzel')
+            ->orderBy('sortierung')
             ->pluck('kuerzel')
             ->toArray();
-
 
         // Return the collection of Leistung resources.
         return LeistungResource::collection($leistungen)
@@ -74,7 +72,3 @@ class Leistungsdatenuebersicht extends Controller
             ]);
     }
 }
-
-
-
-

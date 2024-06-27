@@ -42,7 +42,7 @@ class Note extends Model
      * @var string[]
      */
     protected $fillable = [
-        'id', 'kuerzel', 'notenpunkte', 'text',
+        'id', 'kuerzel', 'notenpunkte', 'text', 'sortierung',
     ];
 
     /**
