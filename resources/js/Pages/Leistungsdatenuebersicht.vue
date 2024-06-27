@@ -9,11 +9,11 @@
                 {{ title }}
             </SvwsUiHeader>
             <div class="content-area">
-                <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"  
+                <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"
                     :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
                     <template #filter>
                         <div class="filter-area-icon">
-                        <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator" 
+                        <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator"
                             :class="'hover:opacity-100 focus-visible:opacity-100'"
                             :type="leistungEditable ? 'primary' : 'transparent'" size="big">
                             <ri-pencil-fill></ri-pencil-fill>
@@ -54,7 +54,7 @@
                     <template #cell(lehrer)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
-                    
+
                     <template #cell(note)="{ value, rowData, rowIndex }">
                         <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
@@ -82,7 +82,7 @@
             </div>
         </template>
         <template v-slot:aside v-if="selectedLeistung">
-            <FbEditor :leistung="selectedLeistung" @updated="selectedLeistung.fachbezogeneBemerkungen = $event;" @close="selectedLeistung = null" 
+            <FbEditor :leistung="selectedLeistung" @updated="selectedLeistung.fachbezogeneBemerkungen = $event;" @close="selectedLeistung = null"
                 :editable="leistungEditable"></FbEditor>
         </template>
     </AppLayout>
@@ -114,6 +114,7 @@
         teilleistungen: string,
         quartalnoten: string,
         note: string,
+        quartalnote: string,
         mahnungen: string,
         fehlstunden: string,
         bemerkungen: string,
@@ -321,7 +322,7 @@
                 break;
             default:
                 console.log("itemRefs map not found");
-        }	
+        }
 	}
 
     /**

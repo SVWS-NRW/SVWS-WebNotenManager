@@ -5,9 +5,7 @@ namespace App\Models;
 use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
 
 /**
  * The `Leistung` class represents a Laravel model for managing remarks associated with Leistungen.
@@ -80,12 +78,12 @@ class Leistung extends Model
      * @var string[]
      */
     protected $fillable = [
-        'id', 'schueler_id', 'lerngruppe_id', 'note_id', 'tsNote', 'istSchriftlich', 'abiturfach', 'fehlstundenFach',
-		'tsFehlstundenFach', 'fehlstundenUnentschuldigtFach', 'tsFehlstundenUnentschuldigtFach', 
-        'fachbezogeneBemerkungen', 'tsFachbezogeneBemerkungen', 'neueZuweisungKursart', 'istGemahnt', 'tsIstGemahnt',
-        'mahndatum',
+        'id', 'schueler_id', 'lerngruppe_id', 'note_id', 'tsNote', 'note_quartal_id', 'tsNoteQuartal', 'istSchriftlich',
+        'abiturfach', 'fehlstundenFach', 'tsFehlstundenFach', 'fehlstundenUnentschuldigtFach',
+        'tsFehlstundenUnentschuldigtFach', 'fachbezogeneBemerkungen', 'tsFachbezogeneBemerkungen',
+        'neueZuweisungKursart', 'istGemahnt', 'tsIstGemahnt', 'mahndatum',
     ];
-    
+
     /**
      * The property specifies the type casting for certain attributes in the model.
      *
@@ -107,13 +105,23 @@ class Leistung extends Model
     }
 
     /**
-     * The relation that owns the model
+     * The "Note" that the model belongs to
      *
      * @return BelongsTo
      */
     public function note(): BelongsTo
     {
         return $this->belongsTo(Note::class);
+    }
+
+    /**
+     * The "NoteQuartal" that the model belongs to
+     *
+     * @return BelongsTo
+     */
+    public function quartalnote(): BelongsTo
+    {
+        return $this->belongsTo(Note::class, 'note_quartal_id', 'id');
     }
 
     /**

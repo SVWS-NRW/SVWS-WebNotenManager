@@ -121,7 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.mahnung');
 
     // Defines the Noten controller route group
-    Route::post('noten/{leistung}', Noten::class)
+    Route::post('noten/{leistung}/{type?}', Noten::class)
         ->name('api.noten');
 
     // Defines the Schueler Bemerkung controller route group

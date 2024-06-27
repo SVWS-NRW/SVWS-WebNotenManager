@@ -28,7 +28,7 @@ class Leistungsdatenuebersicht extends Controller
         $eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
 			'lerngruppe' => ['lehrer', 'fach'],
-			'note',
+			'note', 'quartalNote',
 		];
 
         // Define the columns for sorting the results.

@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MeinUnterricht\LeistungResource;
-use App\Models\Leistung;
-use App\Models\Note;
+use App\Models\{Leistung, Note};
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -25,7 +24,7 @@ class MeinUnterricht extends Controller
         $eagerLoadedColumns = [
 			'schueler' => ['klasse', 'jahrgang'],
 			'lerngruppe' => ['lehrer', 'fach'],
-			'note',
+			'note', 'quartalNote',
 		];
 
         // Build the query for Leistung, including eager loading and conditional logic.

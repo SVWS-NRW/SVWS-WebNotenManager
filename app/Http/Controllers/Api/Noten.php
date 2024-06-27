@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Leistung;
-use App\Models\Note;
+use App\Models\{Leistung, Note};
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,15 +16,14 @@ class Noten extends Controller
      * @param Leistung $leistung
      * @return JsonResponse
      */
-    public function __invoke(Leistung $leistung): JsonResponse
+    public function __invoke(Leistung $leistung, string|null $type = 'note'): JsonResponse
 	{
         // Check if the class Klasse of the Schueler related to the Leistung is allowed to have editable Noten.
-
         abort_unless($leistung->schueler->klasse->editable_noten, Response::HTTP_FORBIDDEN);
 
         // If the requested note is an empty string, call updateNote method without a specific note.
         if (request()->note == '') {
-			return $this->updateNote($leistung);
+			return $this->updateNote($leistung, $type);
 		}
 
         // Retrieve the Note model based on the requested note's 'kuerzel'.
@@ -33,24 +31,51 @@ class Noten extends Controller
             ->where('kuerzel', '=', (string) request()->note)
             ->firstOrFail();
 
-        // Call updateNote method with the retrieved note's ID.
-        return $this->updateNote($leistung, $note->id);
+        return $this->updateNote($leistung, $type, $note);
     }
 
     /**
+     * Update the note
+     *
      * @param Leistung $leistung
-     * @param string|null $note
+     * @param string $type
+     * @param Note|null $note
      * @return JsonResponse
      */
-    private function updateNote(Leistung $leistung, string|null $note = null): JsonResponse
-	{
+    private function updateNote(Leistung $leistung, string $type, Note|null $note = null): JsonResponse
+    {
+        // Check if type is correct
+        $keys = $this->getKeys($type);
+        abort_unless($keys, Response::HTTP_FORBIDDEN);
+
         // Updating the resource with an additional timestamp
         $leistung->update([
-			'note_id' => $note,
-			'tsNote' => now()->format('Y-m-d H:i:s.u'),
+			$keys['id'] => $note,
+			$keys['ts'] => now()->format('Y-m-d H:i:s.u'),
 		]);
 
         // Returning a JSON response with a 204 No Content status.
 		return response()->json(Response::HTTP_NO_CONTENT);
-	}
+    }
+
+    /**
+     * Check if type is correct and retrive correct ones
+     *
+     * @param  $type
+     * @return
+     */
+    private function getKeys(string $type): array|null
+    {
+        return match ($type) {
+            'note' => [
+                'id' => 'note_id',
+                'ts' => 'tsNote',
+            ],
+            'note_quartal' => [
+                'id' => 'note_quartal_id',
+                'ts' => 'tsNoteQuartal',
+            ],
+            default => null,
+        };
+    }
 }
