@@ -96,19 +96,15 @@ class ImportNotenTest extends TestCase
             ]);
     }
 
-    /** It creates with negative id */
-    public function test_it_creates_with_negative_id(): void
+    /** It does not create with negative id */
+    public function test_it_does_not_create_with_negative_id(): void
     {
         $data = $this->data();
         $data['noten'][0]['id'] = -1;
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas(self::TABLE, [
-                'id' => 1,
-                'sortierung' => -1,
-            ]);
+        $this->assertDatabaseCount(self::TABLE, 0);
     }
 
     /** It does not create with non-integer id */
@@ -168,6 +164,17 @@ class ImportNotenTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
+    /** It creates with ID converted to sortierung */
+    public function test_if_creates_with_id_converted_to_sortierung(): void
+    {
+        $data = $this->data();
+        $data['noten'][0]['id'] = 6;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, ['id' => 1, 'sortierung' => 6]);
+    }
 
     /** It does not create with empty kuerzel */
     public function test_it_does_not_create_with_empty_kuerzel(): void

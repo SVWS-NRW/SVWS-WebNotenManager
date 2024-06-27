@@ -40,6 +40,8 @@ class ImportTeilleistungsdatenTest extends TestCase
                             "lerngruppenID": 1,
                             "note": "",
                             "tsNote": "2023-03-28 07:00:19.014",
+                            "noteQuartal": "2",
+                            "tsNoteQuartal": "2023-05-23 01:23:39.755",
                             "istSchriftlich": true,
                             "abiturfach": null,
                             "fehlstundenFach": 0,

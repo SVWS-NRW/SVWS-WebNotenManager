@@ -179,7 +179,7 @@ class DataImportService
     }
 
     /**
-     * Creates the Note model.
+     * Creates the Note model. (tested)
      * The model will not be updated with future requests.
      * Resources with an negative id are filtered out. Relatable models are nullable.
      *
@@ -197,6 +197,7 @@ class DataImportService
 
         $noten = Note::all();
 
+        collect($this->data[$key])
             ->filter(fn (array $row): bool => $this->validId($row, 'id', $noten, $key))
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
             ->filter(fn (array $row): bool => $this->isUnique($row, $noten, 'kuerzel', $key))
@@ -541,17 +542,9 @@ class DataImportService
                     ->filter(fn (array $array): bool => array_key_exists($array['lerngruppenID'], $lerngruppen))
                     // Check if "Note is set"
                     ->filter(fn (array $array): bool => array_key_exists('note', $array))
-                    // Check if either "Note" is empty, or one of already created "Noten"
-                    ->filter(
-                        fn (array $array): bool =>
-                        in_array($array['note'], ['', null]) || array_key_exists($array['note'], $noten)
-                    )
+
+                    // Check if "Quartals Note is set"
                     ->filter(fn (array $array): bool => array_key_exists('noteQuartal', $array))
-                    // Check if either "Note" is empty, or one of already created "Noten"
-                    ->filter(
-                        fn (array $array): bool =>
-                        in_array($array['noteQuartal'], ['', null]) || array_key_exists($array['noteQuartal'], $noten)
-                    )
                     // Perform the upsert
                     ->each(fn (array $array) => $this->upsert($array, $schueler, $noten));
             });
@@ -586,7 +579,6 @@ class DataImportService
         $this->updateWhenRecent($array, $leistung, 'istGemahnt', 'tsIstGemahnt');
 
         $leistung->save();
-
         $key = 'teilleistungen';
         if (!array_key_exists($key, $teilleistungen)) {
             return;
@@ -600,7 +592,7 @@ class DataImportService
     }
 
     /**
-     *  Import Teillesitungen
+     * Import Teillesitungen
      *
      * @param Leistung $leistung
      * @param array $array
@@ -635,11 +627,13 @@ class DataImportService
                 return $row;
             })
             // Bemerkung
-            ->filter(fn (array $row): bool => $this->hasValidKey($row, 'bemerkung', $key))
-            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'tsBemerkung'))
+            ->filter(fn (array $row): bool =>
+                $this->isValidValue($row, 'bemerkung', $key, nullable: true, emptable: true)
+            )
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'tsBemerkung', $key))
             // Datum
-            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'datum'))
-            ->filter(fn (array $row): bool => $this->hasValidValue($row, $key, 'tsDatum'))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'datum', $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'tsDatum', $key))
             ->each(function (array $row) use ($leistung): void {
                 $model = Teilleistung::firstOrNew(['id' => $row['id']], $row);
                 $model->leistung_id = $leistung->id;

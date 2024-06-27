@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->string('kuerzel')->unique();
             $table->integer('notenpunkte')->nullable();
             $table->string('text')->nullable();
-            $table->integer('sortierung')->unique();
+            $table->integer('sortierung');
         });
     }
 
