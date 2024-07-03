@@ -60,8 +60,9 @@
                         {{ value }} 
                     </template>
                     <!-- TODO: ticket 260; nothing comes from db yet -->
-                    <template #cell(quartal)="{ value, rowData, rowIndex }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
+                    <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
+                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        ></NoteInput>
                     </template>
                     <!-- BemerkungButton in der Zelle 'note' -->
                     <template #cell(note)="{ value, rowData, rowIndex }">

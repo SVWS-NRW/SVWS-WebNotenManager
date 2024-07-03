@@ -9,7 +9,7 @@
             :disabled="props.disabled"
             :valid="() => valid()"
             style="font-weight: bold;"
-            :ref="(el) => updateItemRefs(rowIndex, el as Element, 'itemRefsNoteInput')"
+            :ref="(el) => updateItemRefs(rowIndex, el as Element, itemRefsNoteInputName)"
             @click="$event.target.select()"
             @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
             @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
@@ -23,14 +23,18 @@
     import { watch, ref, Ref } from 'vue';
     import { Leistung } from '@/Interfaces/Interface';
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import axios from 'axios';
 
     const props = defineProps<{
         leistung: Leistung,
         disabled: boolean,
         rowIndex: number,
+        column: 'quartalnote'|'note',
     }>();
 
     const emit = defineEmits(['navigated','updatedItemRefs'])
+
+    const itemRefsNoteInputName: string = 'itemRefs' + props.column + 'Input';
 
     const navigated = ( direction: string, rowIndex: number, itemRefsNoteInputName: string) : void => emit("navigated", direction, rowIndex, itemRefsNoteInputName)
 
@@ -40,11 +44,13 @@
     }
 
     const navigate = (direction: string, rowIndex: number): void => {
-        navigated(direction, rowIndex, "itemRefsNoteInput");
+        navigated(direction, rowIndex, itemRefsNoteInputName);
     }
 
     const lowScoreArray: Array<string> = ['6', '5-', '5', '5+', '4-'];
-    const note: Ref<string | null> = ref(props.leistung.note);
+    //type of note can be note or quartalnote
+    const note: Ref<string | null> = props.column == "note"  ? ref(props.leistung.note) : ref(props.leistung.quartalnote)
+    const noteType: Ref<string | null> = props.column == "note"  ? ref("note") : ref("note_quartal")
 
     let debounce: ReturnType<typeof setTimeout>;
     watch(note, (): void => {
@@ -53,7 +59,7 @@
     })
 
     const saveNote = (): Promise<string | null> => axios
-        .post(route('api.noten', props.leistung), { note: note.value })
+        .post(route('api.noten', { leistung: props.leistung,  type: noteType.value }), { note: note.value })
         .then((): string | null => props.leistung.note = note.value)
         .catch((): string | null => {
             if (props.leistung.note === null) {

@@ -46,14 +46,14 @@
                     </template>
 
                     <!-- TODO: ticket 260; nothing comes from db yet -->
-                    <template #cell(quartal)="{ value, rowData, rowIndex }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                    <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
+                        <NoteInput column="quartalnote" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        ></NoteInput>
                     </template>
-
 
                     <!-- BemerkungButton in der Zelle 'note' -->
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput column="note" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
 
@@ -120,6 +120,7 @@
 
     //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
     const itemRefsNoteInput = ref(new Map());
+    const itemRefsQuartalNoteInput = ref(new Map());
     const itemRefsfs = ref(new Map());
     const itemRefsfsu = ref(new Map());
 
@@ -261,7 +262,10 @@
     //input html element and reference map name are determined by child
     function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
         switch (itemRefsName) {
-            case "itemRefsNoteInput":
+            case "itemRefsquartalnoteInput":
+                itemRefsQuartalNoteInput.value.set(rowIndex, el);
+                break;
+            case "itemRefsnoteInput":
                 itemRefsNoteInput.value.set(rowIndex, el);
                 break;
             case "itemRefsfs":
@@ -271,7 +275,7 @@
                 itemRefsfsu.value.set(rowIndex, el);
                 break;
             default:
-                console.log("Map not found.")
+                console.log("Map not found: " + itemRefsName)
         }
 	}
 
@@ -291,7 +295,10 @@
     //direction (up/down within the column) and map name are received from child component
     const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
         switch (itemRefsName) {
-            case "itemRefsNoteInput":
+            case "itemRefsquartalnoteInput":
+                direction === "next" ? next(rowIndex, itemRefsQuartalNoteInput) : previous(rowIndex, itemRefsQuartalNoteInput);
+                break;
+            case "itemRefsnoteInput":
                 direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
                 break;
             case "itemRefsfs":
