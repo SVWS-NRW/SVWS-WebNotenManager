@@ -45,7 +45,6 @@
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <!-- TODO: ticket 260; nothing comes from db yet -->
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
                         <NoteInput column="quartalnote" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>

@@ -31,7 +31,7 @@ class Noten extends Controller
             ->where('kuerzel', '=', (string) request()->note)
             ->firstOrFail();
 
-        return $this->updateNote($leistung, $type, $note);
+        return $this->updateNote($leistung, $type, $note->id);
     }
 
     /**
@@ -42,7 +42,7 @@ class Noten extends Controller
      * @param Note|null $note
      * @return JsonResponse
      */
-    private function updateNote(Leistung $leistung, string $type, Note|null $note = null): JsonResponse
+    private function updateNote(Leistung $leistung, string $type, string|null $note = null): JsonResponse
     {
         // Check if type is correct
         $keys = $this->getKeys($type);
