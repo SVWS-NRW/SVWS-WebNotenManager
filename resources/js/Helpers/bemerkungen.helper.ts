@@ -41,6 +41,7 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 
 	const namePattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/;
     const genderPattern: RegExp = /&([^%]*)%([^&]*)&/g;
+    const pronounPattern: RegExp = /$([^%]*)\/([^$]*)&/g;
 
 	const pronouns: Pronoun = {
 		m: 'Er',
@@ -72,6 +73,10 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
         })
         // Replace any other word with the specific pattern selecting the results by gender.
         .replace(genderPattern, (_, maleText, femaleText): string => {
+            return model?.geschlecht === 'm' ? maleText : femaleText;
+        })
+        // Replace any other word with the specific pattern selecting the results by gender.
+        .replace(pronounPattern, (_, maleText, femaleText): string => {
             return model?.geschlecht === 'm' ? maleText : femaleText;
         });
 }
