@@ -71,7 +71,7 @@ class CreateAdminUser extends Command
         // Create the user
         User::factory()->administrator()->create([
             'email' => $email,
-            'password' => Hash::make($password),
+            'password' => $password,
         ]);
 
         // Display the success message
