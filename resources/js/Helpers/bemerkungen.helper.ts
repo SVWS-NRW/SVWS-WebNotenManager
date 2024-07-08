@@ -39,33 +39,41 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 		return '';
 	}
 
-	const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/;
+	const namePattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/;
+    const genderPattern: RegExp = /&([^%]*)%([^&]*)&/g;
 
-	let pronouns: Pronoun = {
+	const pronouns: Pronoun = {
 		m: 'Er',
 		w: 'Sie',
 	};
 
-	let pronoun: string | null = pronouns[model.geschlecht] !== undefined ? pronouns[model.geschlecht] : null;
+	const pronoun: string | null = pronouns[model.geschlecht] !== undefined ? pronouns[model.geschlecht] : null;
 
-	let initialOccurrence: Occurrence = {
+	const initialOccurrence: Occurrence = {
 		"$vorname$ $nachname$": [model.vorname, model.nachname].join(' '),
 		"$vorname$": model.vorname,
 		"$nachname$": model.nachname,
 	};
 
-	let succeedingOccurrences: Occurrence = {
+	const succeedingOccurrences: Occurrence = {
 		"$vorname$ $nachname$": pronoun ?? model.vorname,
 		"$vorname$": pronoun ?? model.vorname,
 		"$nachname$": null
 	};
 
-	return text.replace(new RegExp(pattern,"i"), (matched: string): string => {
-		return initialOccurrence[matched.toLowerCase()];
-	})
-	.replaceAll(new RegExp(pattern ,"gi"), (matched: string): string => {
-		return succeedingOccurrences[matched.toLowerCase()];
-	});
+	return text
+        // Replace the first occurence of the namePattern with the name of the "Schueler".
+        .replace(new RegExp(namePattern, "i"), (matched: string): string => {
+            return initialOccurrence[matched.toLowerCase()];
+        })
+        // Replace any following occurence of the namePattern with the correct pronoun.
+        .replaceAll(new RegExp(namePattern, "gi"), (matched: string): string => {
+            return succeedingOccurrences[matched.toLowerCase()];
+        })
+        // Replace any other word with the specific pattern selecting the results by gender.
+        .replace(genderPattern, (_, maleText, femaleText): string => {
+            return model?.geschlecht === 'm' ? maleText : femaleText;
+        });
 }
 
 //TODO: check if this function is actually not needed anymore (seems to be the case)
