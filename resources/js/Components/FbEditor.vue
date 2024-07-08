@@ -113,13 +113,16 @@
         .map((item: FachbezogeneFloskel): string => item[column])
         .filter((value: string, index: number, self: string[]): boolean => self.indexOf(value) === index);
 
-    const rowsFiltered = computed((): FachbezogeneFloskel[] => {
-        return rows.value.filter((floskel: FachbezogeneFloskel): boolean => {
+    const rowsFiltered = computed((): FachbezogeneFloskel[] => rows.value
+        .filter((floskel: FachbezogeneFloskel): boolean => {
             return (search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text))
                 && multiselect(niveauFilter, floskel.niveau)
-                && multiselect(jahrgangFilter, floskel.jahrgang);
-        });
-    });
+                && multiselect(jahrgangFilter, floskel.jahrgang)
+        })
+        .map((floskel: FachbezogeneFloskel): FachbezogeneFloskel => ({
+            ...floskel, text: formatBasedOnGender(floskel.text, props.leistung)
+        }))
+    );
 
     // Button actions
     const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows);

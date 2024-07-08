@@ -92,9 +92,15 @@
     const filterReset = (): string => searchFilter.value = '';
     const filtered = (): boolean => '' !== searchFilter.value;
 
-    const rowsFiltered = computed((): Floskel[] => rows.value.filter((floskel: Floskel): boolean =>
-        search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text)
-    ));
+    const rowsFiltered = computed((): Floskel[] => rows.value
+        .filter((floskel: Floskel): boolean => {
+            return search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text);
+        })
+        .map((floskel: Floskel): Floskel => ({
+            ...floskel, text: formatBasedOnGender(floskel.text, props.schueler)
+        }))
+    );
+
 
     // Button actions
     const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows);
