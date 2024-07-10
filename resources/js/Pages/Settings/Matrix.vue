@@ -734,7 +734,7 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12 items-start w-full overflow-auto ml-6
+        @apply px-6 flex flex-col gap-12 items-start overflow-auto ml-6
     }
 
     .button {
