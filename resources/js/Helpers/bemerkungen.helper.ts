@@ -39,9 +39,8 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 		return '';
 	}
 
-	const namePattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/;
+	const namePattern: RegExp = /\$Name\$|\$Vorname\$|\$Nachname\$/;
     const genderPattern: RegExp = /&([^%]*)%([^&]*)&/g;
-    const pronounPattern: RegExp = /$([^%]*)\/([^$]*)&/g;
 
 	const pronouns: Pronoun = {
 		m: 'Er',
@@ -51,13 +50,12 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 	const pronoun: string | null = pronouns[model.geschlecht] !== undefined ? pronouns[model.geschlecht] : null;
 
 	const initialOccurrence: Occurrence = {
-		"$vorname$ $nachname$": [model.vorname, model.nachname].join(' '),
+		"$name$": [model.vorname, model.nachname].join(' '),
 		"$vorname$": model.vorname,
 		"$nachname$": model.nachname,
 	};
-
 	const succeedingOccurrences: Occurrence = {
-		"$vorname$ $nachname$": pronoun ?? model.vorname,
+		"$name$": pronoun ?? model.vorname,
 		"$vorname$": pronoun ?? model.vorname,
 		"$nachname$": null
 	};
@@ -72,12 +70,15 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
             return succeedingOccurrences[matched.toLowerCase()];
         })
         // Replace any other word with the specific pattern selecting the results by gender.
-        .replace(genderPattern, (_, maleText, femaleText): string => {
-            return model?.geschlecht === 'm' ? maleText : femaleText;
-        })
-        // Replace any other word with the specific pattern selecting the results by gender.
-        .replace(pronounPattern, (_, maleText, femaleText): string => {
-            return model?.geschlecht === 'm' ? maleText : femaleText;
+        .replace(genderPattern, (matched, maleText, femaleText): string => {
+            switch (model?.geschlecht) {
+                case 'm':
+                    return maleText;
+                case 'd':
+                    return femaleText;
+                default:
+                    return matched + " !!!!!! D/X Geschlecht !!!!!!";
+            };
         });
 }
 
