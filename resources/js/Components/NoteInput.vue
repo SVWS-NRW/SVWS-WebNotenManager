@@ -60,12 +60,12 @@
 
     const saveNote = (): Promise<string | null> => axios
         .post(route('api.noten', { leistung: props.leistung,  type: noteType.value }), { note: note.value })
-        .then((): string | null => props.leistung.note = note.value)
+        .then((): string | null => props.leistung[props.column] = note.value)
         .catch((): string | null => {
-            if (props.leistung.note === null) {
+            if (props.leistung[props.column] === null) {
                 return note.value = ""
             } else {
-                return note.value = props.leistung.note
+                return note.value = props.leistung[props.column]
             }
         });
 

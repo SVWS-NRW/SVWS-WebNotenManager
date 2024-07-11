@@ -42,8 +42,9 @@ class Noten extends Controller
      * @param Note|null $note
      * @return JsonResponse
      */
-    private function updateNote(Leistung $leistung, string $type, string|null $note = null): JsonResponse
-    {
+    private function updateNote(Leistung $leistung, string $type, string|null $note = null)
+    //: JsonResponse
+    {   
         // Check if type is correct
         $keys = $this->getKeys($type);
         abort_unless($keys, Response::HTTP_FORBIDDEN);
@@ -56,6 +57,7 @@ class Noten extends Controller
 
         // Returning a JSON response with a 204 No Content status.
 		return response()->json(Response::HTTP_NO_CONTENT);
+        //return "upated";
     }
 
     /**

@@ -111,6 +111,8 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 	}
 };
 
+//TODO: der Text muss noch ein mal umgewandelt werden, Damit bei ersten $Vorname kommt Tom, und bei weiteren "Er". 
+//Was genau muss mann machen ist die trennung von die texte die bearbeitet sind von die texte die angezeigt werden und nach befullen die erst umzuwandeln, und immer wenn ein neuer text kommt muss das umgewandelt werden.
 const addSelectedToBemerkung = (
 	bemerkung: Ref<string|null>,
 	selectedFloskeln: Ref<Floskel[]|FachbezogeneFloskel[]>,
@@ -118,6 +120,8 @@ const addSelectedToBemerkung = (
 	let floskeln: string = selectedFloskeln.value.map((selected: Floskel|FachbezogeneFloskel): string => {
 		return selected.text;
 	}).join(' ');
+
+	alert("here?");
 
 	selectedFloskeln.value = [];
 	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim();
