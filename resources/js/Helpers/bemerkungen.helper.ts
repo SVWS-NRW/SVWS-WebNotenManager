@@ -121,7 +121,7 @@ const addSelectedToBemerkung = (
 		return selected.text;
 	}).join(' ');
 
-	alert("here?");
+	//alert("here?");
 
 	selectedFloskeln.value = [];
 	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim();
