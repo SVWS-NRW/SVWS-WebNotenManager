@@ -205,10 +205,9 @@ class DataImportService
         };
 
         collect($this->data[$key])
-            ->filter(fn (array $row): bool => $this->validId($row, 'id', $noten, $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'id', $key, nullable: false, expectedInteger: true))
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
             ->filter(fn (array $row): bool => $this->isUnique($row, $noten, 'kuerzel', $key))
-            ->filter(fn (array $row): bool => $this->isUnique($row, $noten, 'sortierung', $key))
             ->map($remapSortierung)
             ->each(fn (array $row): Note => Note::create($row));
 
@@ -508,11 +507,12 @@ class DataImportService
 
                 return $array;
             })
-            ->each(
-                fn (array $array): Schueler =>
-                Schueler::create(Arr::except($array, ['bemerkungen', 'lernabschnitt', 'leistungsdaten']))
-            );
+            ->each(function (array $row): void {
+                $schueler = Schueler::create(Arr::except($row, ['bemerkungen', 'lernabschnitt', 'leistungsdaten']));
+                $this->importLernabschnitte($schueler, $row['lernabschnitt']);
+            });
     }
+
 
     /**
      * Creates the Leistung model. The model will be updated with future requests.
@@ -546,12 +546,14 @@ class DataImportService
                     ->filter(fn (array $array): bool => array_key_exists($array['lerngruppenID'], $lerngruppen))
                     // Check if "Note is set"
                     ->filter(fn (array $array): bool => array_key_exists('note', $array))
-                    ->filter(fn (array $array): bool =>
+                    ->filter(
+                        fn (array $array): bool =>
                         in_array($array['note'], [null, '']) || array_key_exists($array['note'], $noten)
                     )
                     // Check if "Quartals Note is set"
                     ->filter(fn (array $array): bool => array_key_exists('noteQuartal', $array))
-                    ->filter(fn (array $array): bool =>
+                    ->filter(
+                        fn (array $array): bool =>
                         in_array($array['noteQuartal'], [null, '']) || array_key_exists($array['noteQuartal'], $noten)
                     )
                     // Perform the upsert
@@ -635,7 +637,8 @@ class DataImportService
                 return $row;
             })
             // Bemerkung
-            ->filter(fn (array $row): bool =>
+            ->filter(
+                fn (array $row): bool =>
                 $this->isValidValue($row, 'bemerkung', $key, nullable: true, emptable: true)
             )
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'tsBemerkung', $key))
@@ -752,12 +755,15 @@ class DataImportService
     {
         if ($data) { // TODO: To be updated if noteID is available // TODO: Idea to put into schueler
 
-            $lernabschnitt = Lernabschnitt::firstOrNew(['id' => $data['id']]);
+            if (!$this->validId($data, 'id', Lernabschnitt::all(), 'lernabschnitt', unique: true)) {
+                return;
+            }
 
+
+            $lernabschnitt = Lernabschnitt::firstOrNew(['id' => $data['id']]);
             $lernabschnitt->schueler_id = $schueler->id;
 
             $this->updateWhenRecent($data, $lernabschnitt, 'fehlstundenGesamt', 'tsFehlstundenGesamt');
-
             $this->updateWhenRecent(
                 $data,
                 $lernabschnitt,
@@ -790,6 +796,7 @@ class DataImportService
             );
 
             $lernabschnitt->pruefungsordnung = $data['pruefungsordnung'] ?? 'Lorem ipsum'; // TODO: Check with customer
+
             $lernabschnitt->save();
         }
     }
@@ -840,12 +847,13 @@ class DataImportService
         string $tsColumn,
         int|null $value = null
     ): Model {
-
         $timestamp = Carbon::parse($data[$tsColumn]);
 
         if ($model->$tsColumn == null) {
+            $model->$tsColumn = $data[$tsColumn];
             return $model;
         }
+
         if ($timestamp->gt($model->$tsColumn)) {
             $model->$column = $value ?? $data[$column];
             $model->$tsColumn = $timestamp->format('Y-m-d H:i:s.u');
@@ -1333,6 +1341,7 @@ class DataImportService
      * @param string $context
      * @param bool $nullable
      * @param bool $emptable
+     * @param bool $expectedInteger
      * @return bool
      */
     private function isValidValue(
@@ -1341,6 +1350,7 @@ class DataImportService
         string $context,
         bool $nullable = false,
         bool $emptable = false,
+        bool $expectedInteger = false,
     ): bool {
         if (!array_key_exists($key, $row)) {
             $this->setStatus($context, "'{$key}' nicht vorhanden");
@@ -1354,6 +1364,11 @@ class DataImportService
 
         if (!$emptable && $row[$key] === '') {
             $this->setStatus($context, "'{$key}' ist leer", $row[$key]);
+            return false;
+        }
+
+        if ($expectedInteger && filter_var($row[$key], FILTER_VALIDATE_INT) === false) {
+            $this->setStatus($context, "'{$key}' ist kein Zahl", $row[$key]);
             return false;
         }
 

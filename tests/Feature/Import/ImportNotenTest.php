@@ -96,15 +96,15 @@ class ImportNotenTest extends TestCase
             ]);
     }
 
-    /** It does not create with negative id */
-    public function test_it_does_not_create_with_negative_id(): void
+    /** It creates with negative id */
+    public function test_it_creates_with_negative_id(): void
     {
         $data = $this->data();
         $data['noten'][0]['id'] = -1;
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseCount(self::TABLE, 0);
+        $this->assertDatabaseCount(self::TABLE, 1);
     }
 
     /** It does not create with non-integer id */
@@ -214,10 +214,9 @@ class ImportNotenTest extends TestCase
     {
         Note::factory()->create([
             'id' => 1,
-            'kuerzel' => 'kuerzel',
+            'kuerzel' => '5-',
             'notenpunkte' => 'old_notenpunkte',
             'text' => 'old_text',
-            'sortierung' => 1,
         ]);
 
         $data = $this->data();
@@ -228,17 +227,15 @@ class ImportNotenTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 1)
             ->assertDatabaseHas(self::TABLE, [
                 'id' => 1,
-                'kuerzel' => 'kuerzel',
+                'kuerzel' => '5-',
                 'notenpunkte' => 'old_notenpunkte',
                 'text' => 'old_text',
-                'sortierung' => 1,
             ])
             ->assertDatabaseMissing(self::TABLE, [
                 'id' => 1,
-                'kuerzel' => 'kuerzel',
+                'kuerzel' => '5-',
                 'notenpunkte' => 'new_notenpunkte',
                 'text' => 'new_text',
-                'sortierung' => 2,
             ]);
     }
 
