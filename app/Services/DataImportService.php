@@ -455,57 +455,37 @@ class DataImportService
 
     /**
      * Creates the Schueler model. The model will not be updated with future requests.
-     * Related Lernabschnitt model will be created only if the Lerngruppe model was recently created.
-     * TODO: ^^^ To be cleared with Customer
      *
      * @return void
      */
     public function importSchueler(): void
     {
-        if ($this->keyMissingOrEmpty($this->data, 'schueler', 'global')) {
+        $key = 'schueler';
+
+        if ($this->keyMissingOrEmpty($this->data, $key, 'global')) {
             return;
         }
 
         $schueler = Schueler::all();
+        $jahrgaenge = Jahrgang::all();
+        $klassen = Klasse::all();
 
-        collect($this->data['schueler'])
-            ->filter(fn (array $array): bool => $this->hasValidId($array, 'schueler', $schueler))
-            // Check if "Jahrgang" is set and exists in database.
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'schueler', 'jahrgangID'))
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'schueler', 'geschlecht'))
-            ->filter(function (array $array): bool {
-                if (Jahrgang::where(['id' => $array['jahrgangID']])->doesntExist()) {
-                    $this->setStatus('schueler', 'Jahrgang mit id ' . $array['jahrgangID'] . ' existiert nicht.', $array['id']);
-                    return false;
-                }
-
-                return true;
-            })
+        collect($this->data[$key])
+            ->filter(fn (array $row): bool => $this->validId($row, 'id', $schueler, $key))
+            ->filter(fn (array $row): bool => $this->hasRelation($row, 'jahrgangID', $jahrgaenge, $key))
+            ->filter(fn (array $row): bool => $this->hasRelation($row, 'klasseID', $klassen, $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'geschlecht', $key))
             // Remap the keys and unset unused valued
-            ->map(function (array $array): array {
-                $array['jahrgang_id'] = $array['jahrgangID'];
-                unset($array['jahrgangID']);
-                return $array;
-            })
-            ->filter(fn (array $array): bool => $this->hasValidValue($array, 'schueler', 'klasseID'))
-            ->filter(function (array $array): bool {
-                if (Klasse::where(['id' => $array['klasseID']])->doesntExist()) {
-                    $this->setStatus('schueler', 'Klasse mit id ' . $array['klasseID'] . ' existiert nicht.', $array['id']);
-                    return false;
-                }
+            ->map(function (array $row): array {
+                $row['klasse_id'] = $row['klasseID'];
+                $row['jahrgang_id'] = $row['jahrgangID'];
+                $row['geschlecht'] = $this->gender($row, Schueler::GENDERS);
+                unset($row['klasseID'], $row['jahrgangID']);
 
-                return true;
-            })
-            // Remap the keys and unset unused valued
-            ->map(function (array $array): array {
-                $array['klasse_id'] = $array['klasseID'];
-                $array['geschlecht'] = $this->gender($array, Schueler::GENDERS);
-
-                unset($array['klasseID']);
                 // TODO: Temporary unset. TO BE CLEARED
-                unset($array['sprachenfolge'], $array['zp10'], $array['bkabschluss']);
+                unset($row['sprachenfolge'], $row['zp10'], $row['bkabschluss']);
 
-                return $array;
+                return $row;
             })
             ->each(function (array $row): void {
                 $schueler = Schueler::create(Arr::except($row, ['bemerkungen', 'lernabschnitt', 'leistungsdaten']));
@@ -658,68 +638,44 @@ class DataImportService
             });
     }
 
-    /**
-     * Import "Bemerkungen" (tested)
-     *
-     * @return void
-     */
+    /** Import "Bemerkungen" */
     public function importBemerkungen(): void
     {
+        $key = 'bemerkungen';
+
         if ($this->keyMissingOrEmpty($this->data, 'schueler', 'global')) {
             return;
         }
 
         $schueler = Schueler::all();
 
+        $isValidValue = fn (array $row, string $column): bool => $this->isValidValue(
+            $row[$key],
+            $column,
+            $key,
+            nullable: true,
+            emptable: true,
+        );
+
         collect($this->data['schueler'])
             // Check if given "Schueler" exist
-            ->filter(fn (array $row): bool => $this->hasRelation($row, 'id', $schueler, 'bemerkungen'))
+            ->filter(fn (array $row): bool => $this->hasRelation($row, 'id', $schueler, $key))
             // Check if the "Bemerkungen" for the "Schueler" are set
-            ->filter(fn (array $row): bool => $this->isValidArray($row, 'bemerkungen', 'bemerkungen'))
+            ->filter(fn (array $row): bool => $this->isValidArray($row, $key, $key))
             // Check if updatable data is existing and valid
-            ->filter(fn (array $row): bool => $this->isValidValue(
-                $row['bemerkungen'],
-                'ASV',
-                'bemerkungen',
-                nullable: true,
-                emptable: true,
-            ))
-            ->filter(fn (array $row): bool => $this->isValidValue($row['bemerkungen'], 'tsASV', 'bemerkungen'))
-            ->filter(fn (array $row): bool => $this->isValidValue(
-                $row['bemerkungen'],
-                'AUE',
-                'bemerkungen',
-                nullable: true,
-                emptable: true,
-            ))
-            ->filter(fn (array $row): bool => $this->isValidValue($row['bemerkungen'], 'tsAUE', 'bemerkungen'))
-            ->filter(
-                fn (array $row): bool => $this->isValidValue(
-                    $row['bemerkungen'],
-                    'ZB',
-                    'bemerkungen',
-                    nullable: true,
-                    emptable: true,
-                )
-            )
-            ->filter(fn (array $row): bool => $this->isValidValue($row['bemerkungen'], 'tsZB', 'bemerkungen'))
-            ->filter(fn (array $row): bool => $this->isValidValue(
-                $row['bemerkungen'],
-                'individuelleVersetzungsbemerkungen',
-                'bemerkungen',
-                nullable: true,
-                emptable: true
-            ))
-            ->filter(fn (array $row): bool => $this->isValidValue(
-                $row['bemerkungen'],
-                'tsIndividuelleVersetzungsbemerkungen',
-                'bemerkungen'
-            ))
+            ->filter(fn (array $row): bool => $isValidValue($row, 'ASV'))
+            ->filter(fn (array $row): bool => $this->isValidValue($row[$key], 'tsASV', $key))
+            ->filter(fn (array $row): bool => $isValidValue($row, 'AUE'))
+            ->filter(fn (array $row): bool => $this->isValidValue($row[$key], 'tsAUE', $key))
+            ->filter(fn (array $row): bool => $isValidValue($row, 'ZB'))
+            ->filter(fn (array $row): bool => $this->isValidValue($row[$key], 'tsZB', $key))
+            ->filter(fn (array $row): bool => $isValidValue($row, 'individuelleVersetzungsbemerkungen'))
+            ->filter(fn (array $row): bool => $this->isValidValue($row[$key], 'tsIndividuelleVersetzungsbemerkungen', $key))
             // Iteare rows to create or update "Bemerkung"
-            ->each(function (array $array): void {
+            ->each(function (array $row) use ($key): void {
                 // Check if "Bemerkung" already exists. If not, create a new one.
-                $bemerkung = Bemerkung::firstOrNew(['schueler_id' => $array['id']]);
-                $data = $array['bemerkungen'];
+                $bemerkung = Bemerkung::firstOrNew(['schueler_id' => $row['id']]);
+                $data = $row[$key];
 
                 // Set these values only while creating the Bemerkung
                 if ($bemerkung->wasRecentlyCreated) {
@@ -758,7 +714,6 @@ class DataImportService
             if (!$this->validId($data, 'id', Lernabschnitt::all(), 'lernabschnitt', unique: true)) {
                 return;
             }
-
 
             $lernabschnitt = Lernabschnitt::firstOrNew(['id' => $data['id']]);
             $lernabschnitt->schueler_id = $schueler->id;

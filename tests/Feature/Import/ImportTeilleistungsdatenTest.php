@@ -40,7 +40,7 @@ class ImportTeilleistungsdatenTest extends TestCase
                             "lerngruppenID": 1,
                             "note": "",
                             "tsNote": "2023-03-28 07:00:19.014",
-                            "noteQuartal": "2",
+                            "noteQuartal": "",
                             "tsNoteQuartal": "2023-05-23 01:23:39.755",
                             "istSchriftlich": true,
                             "abiturfach": null,
@@ -213,11 +213,7 @@ class ImportTeilleistungsdatenTest extends TestCase
     {
         $this->init();
 
-        Teilleistung::factory()->create([
-            'id' => 1,
-            'teilleistungsart_id' => 1,
-            'tsArtID' => now(),
-        ]);
+        Teilleistung::factory()->create(['id' => 1, 'teilleistungsart_id' => 1, 'tsArtID' => now()]);
 
         $data = $this->data();
         $data['schueler'][0]['leistungsdaten'][0]['teilleistungen'][0]['artID'] = 2;

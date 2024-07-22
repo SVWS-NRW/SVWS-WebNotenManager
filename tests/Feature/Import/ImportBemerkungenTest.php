@@ -43,7 +43,19 @@ class ImportBemerkungenTest extends TestCase
                         "foerderbemerkungen": null
                     },
                     "zp10": null,
-                    "bkabschluss": null
+                    "bkabschluss": null,
+                    "lernabschnitt": {
+                        "id": 55867,
+                        "fehlstundenGesamt": null,
+                        "tsFehlstundenGesamt": "2024-05-23 01:23:39.775",
+                        "fehlstundenGesamtUnentschuldigt": null,
+                        "tsFehlstundenGesamtUnentschuldigt": "2024-05-23 01:23:39.775",
+                        "pruefungsordnung": "APO-GOSt(B)10/G8",
+                        "lernbereich1note": null,
+                        "lernbereich2note": null,
+                        "foerderschwerpunkt1": null,
+                        "foerderschwerpunkt2": null
+                    }
                 }
             ]
         }', true);
@@ -284,7 +296,7 @@ class ImportBemerkungenTest extends TestCase
     }
 
     /** It updates if ASV is null */
-    public function test_updates_if_asv_is_null(): void
+    public function test_it_updates_if_asv_is_null(): void
     {
         $jahrgang = Jahrgang::factory()->create();
         Klasse::factory()->create(['idJahrgang' => $jahrgang->id]);
