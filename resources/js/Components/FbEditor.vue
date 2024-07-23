@@ -113,13 +113,23 @@
         .map((item: FachbezogeneFloskel): string => item[column])
         .filter((value: string, index: number, self: string[]): boolean => self.indexOf(value) === index);
 
-    const rowsFiltered = computed((): FachbezogeneFloskel[] => rows.value
+    const rowsFiltered = computed((): FachbezogeneFloskel[] => 
+    rows.value
         .filter((floskel: FachbezogeneFloskel): boolean => {
             return (search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text))
                 && multiselect(niveauFilter, floskel.niveau)
                 && multiselect(jahrgangFilter, floskel.jahrgang)
         })
         .map((floskel: FachbezogeneFloskel): FachbezogeneFloskel => ({
+            //...floskel, text: formatBasedOnGender(floskel.text, props.leistung)
+            ...floskel, text: floskel.text
+        }))
+    );
+
+    //testing here for ticket
+    const rowsFilteredForDisplay = computed((): FachbezogeneFloskel[] => rowsFiltered.value
+        .map((floskel: FachbezogeneFloskel): FachbezogeneFloskel => ({
+            //TODO: GET LATEST FLOSKEL HERE SO THAT WE CAN MANIPULATE PRONOUNS AFTERWARDS?
             ...floskel, text: formatBasedOnGender(floskel.text, props.leistung)
         }))
     );

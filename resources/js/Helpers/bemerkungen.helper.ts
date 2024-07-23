@@ -38,7 +38,7 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 	if (!text) {
 		return '';
 	}
-
+	
 	const namePattern: RegExp = /\$Name\$|\$Vorname\$|\$Nachname\$/;
     const genderPattern: RegExp = /&([^%]*)%([^&]*)&/g;
 
@@ -61,21 +61,24 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 	};
 
 	return text
-        // Replace the first occurence of the namePattern with the name of the "Schueler".
+        // Replace the first occurrence of the namePattern with the name of the "Schueler".
         .replace(new RegExp(namePattern, "i"), (matched: string): string => {
             return initialOccurrence[matched.toLowerCase()];
         })
-        // Replace any following occurence of the namePattern with the correct pronoun.
-        .replaceAll(new RegExp(namePattern, "gi"), (matched: string): string => {
-            return succeedingOccurrences[matched.toLowerCase()];
+        // Replace any following occurence of the namePattern with the correct pronoun and capitalised/small depending on sentence position
+        //TODO: dativ case is not foreseen but is present in some floskeln (no specific pattern applied in floskeln, though)
+		.replaceAll(new RegExp(namePattern, "gi"), ((matched, offset, fullString) => {
+			let formatedReturnValue: string = succeedingOccurrences[matched.toLowerCase()];
+			return fullString.charAt(offset - 3) ===  "." ? formatedReturnValue : formatedReturnValue.toLowerCase();
         })
+	)
         // Replace any other word with the specific pattern selecting the results by gender.
-        .replace(genderPattern, (matched, maleText, femaleText): string => {
+        .replace(genderPattern, (matched: string, maleText, femaleText): string => {
             switch (model?.geschlecht) {
                 case 'm':
-                    return maleText;
+					return maleText
                 case 'd':
-                    return femaleText;
+					return femaleText;
                 default:
                     return matched + " !!!!!! D/X Geschlecht !!!!!!";
             };
@@ -111,8 +114,6 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 	}
 };
 
-//TODO: der Text muss noch ein mal umgewandelt werden, Damit bei ersten $Vorname kommt Tom, und bei weiteren "Er". 
-//Was genau muss mann machen ist die trennung von die texte die bearbeitet sind von die texte die angezeigt werden und nach befullen die erst umzuwandeln, und immer wenn ein neuer text kommt muss das umgewandelt werden.
 const addSelectedToBemerkung = (
 	bemerkung: Ref<string|null>,
 	selectedFloskeln: Ref<Floskel[]|FachbezogeneFloskel[]>,
@@ -120,8 +121,6 @@ const addSelectedToBemerkung = (
 	let floskeln: string = selectedFloskeln.value.map((selected: Floskel|FachbezogeneFloskel): string => {
 		return selected.text;
 	}).join(' ');
-
-	//alert("here?");
 
 	selectedFloskeln.value = [];
 	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim();
