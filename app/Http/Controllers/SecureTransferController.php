@@ -124,7 +124,7 @@ class SecureTransferController extends Controller
         $tablesToTruncate = Arr::where($tables, fn (string $tableName): bool => !in_array($tableName, $excludedTables));
 
         // Truncate the tables
-        collect($tablesToTruncate)->each(fn (string $tableName): bool => DB::table($tableName)->truncate());
+        collect($tablesToTruncate)->each(fn (string $tableName): null => DB::table($tableName)->truncate());
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
