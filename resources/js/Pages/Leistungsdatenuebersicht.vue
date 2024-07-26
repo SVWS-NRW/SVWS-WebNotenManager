@@ -16,13 +16,13 @@
                             <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator"
                                 :class="'hover:opacity-100 focus-visible:opacity-100'"
                                 :type="leistungEditable ? 'primary' : 'transparent'" size="big">
-                                <ri-pencil-fill></ri-pencil-fill>
+                                <ri-pencil-fill></ri-pencil-fill>edit
                             </SvwsUiButton>
                         </div>
                         <div class="filter-area-icon">
                             <SvwsUiButton @click="exportToFile()" type="transparent" size="big"
                                 :class="'hover:opacity-100 focus-visible:opacity-100 export-button'">
-                                <ri-download-2-line></ri-download-2-line>
+                                <ri-download-2-line></ri-download-2-line>csv
                             </SvwsUiButton>
                         </div>
                     </template>

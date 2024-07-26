@@ -20,11 +20,19 @@ export const handleExport = (data: Record<string, any>[], columns: string[], fil
  */
 const arrayToCSV = (data: Record<string, any>[], columns: string[]): string => {
     // Map data to array of arrays format
-    const arrayData = data.map(row => columns.map(col => row[col]));
-    
+    const arrayData = data.map(row => 
+        columns.map(col => {
+            const value = row[col];
+            if (value === undefined || value === null) {
+                return "";
+            }
+            return value;
+        })
+    );
+
     // Combine columns header and data
     const allData = [columns, ...arrayData];
-    
+
     // Convert array of arrays to CSV string
     return allData.map(row => row.map(String).map(value => `"${value.replace(/"/g, '""')}"`).join(';')).join('\n');
 };
