@@ -28,8 +28,15 @@ class CreateAdminUser extends Command
      * @var array
      */
     private array $validationRules = [
-        'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
-        'password' => ['required', 'string', 'min:8'],
+        'email' => [
+            'required', 'email:rfc,dns', 'unique:users,email',
+        ],
+        'password' => [
+            'required', 'string', 'min:8', 'confirmed',
+        ],
+        'password_confirmation' => [
+            'required', 'string', 'min:8',
+        ],
     ];
 
     /**
@@ -40,6 +47,7 @@ class CreateAdminUser extends Command
     private array $customAttributes = [
         'email' => 'E-Mail-Adresse',
         'password' => 'Passwort',
+        'password_confirmation' => 'Password Bestätigung',
     ];
 
     /**
@@ -52,7 +60,8 @@ class CreateAdminUser extends Command
         // Get input from console
         $email = $this->ask($this->customAttributes['email']);
         $password = $this->secret($this->customAttributes['password']);
-        $data = ['email' => $email, 'password' => $password];
+        $passwordConfirmation = $this->secret($this->customAttributes['password_confirmation']);
+        $data = ['email' => $email, 'password' => $password, 'password_confirmation' => $passwordConfirmation];
 
         // Validate input
         $validator = Validator::make($data, $this->validationRules, [], $this->customAttributes);
@@ -68,11 +77,11 @@ class CreateAdminUser extends Command
             return Command::FAILURE;
         }
 
-        // Create the user
-        User::factory()->administrator()->create([
+        // Create the user (without events prepared only for the importer)
+        User::withoutEvents(fn (): User => User::factory()->administrator()->create([
             'email' => $email,
-            'password' => $password,
-        ]);
+            'password' => Hash::make($password),
+        ]));
 
         // Display the success message
         $this->info("Technischer Admin wurde erfolgreich angelegt mit die E-Mail-Adresse: {$email}");
