@@ -5,16 +5,18 @@
                 {{ title }}
             </SvwsUiHeader>
 
-            <!-- TODO: remove whatever is unnecessary -->
+            <!-- TODO: remove unnecessary elements if present -->
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
 
                     <!-- Erweiterte Filteroptionen -->
-                    <template #filterAdvanced>
-                        <SvwsUiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
-                        <SvwsUiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
-                    </template>
+                    <div class="filter-area"></div>
+                        <template #filterAdvanced>
+                            <SvwsUiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
+                            <SvwsUiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
+                            <SvwsUiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
+                        </template>
 
                     <!-- Individuelle Zellen-Template -->
                     <!-- BemerkungButton in der Zelle 'klasse' -->
@@ -59,7 +61,7 @@
                     <template #cell(somi2)="{ value, rowData, rowIndex }">
                         {{ value }} 
                     </template>
-                    <!-- TODO: ticket 260; nothing comes from db yet -->
+                    <!-- TODO: ticket 260; what comes from db not ready yet -->
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
                         <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
@@ -79,25 +81,25 @@
 <script setup lang="ts">
     import AppLayout from '@/Layouts/AppLayout.vue';
     import axios, { AxiosPromise, AxiosResponse } from 'axios';
-    // TODO: import what's neeeded and remove what is not
+    // TODO: refactor unnecessary elements
     import { computed, onMounted, Ref, ref } from 'vue';
     import { mapFilterOptionsHelper, multiSelectHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
     import { NoteInput, BemerkungButton, } from '@/Components/Components';
     import { Leistung, Teilleistung, TableColumnToggle } from '@/Interfaces/Interface';
 
-    //TODO: check it
+    //TODO: apply when backend ready
     //Correlation filter names and column names on this page
     interface teillestungenFiltersToCols {
         [index: string]: string,
         klasse: string,
         kurs: string,
+        fach: string,
     };
 
     const title = 'Notenmanager - Teilleistungen';
 
     // TODO: build display elements and functions when backend is ready (this is a dummy so far)
-
     //TODO: Refactoring? -> call all this from a helper for all tables?
     //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
     const itemRefsNoteInput = ref(new Map());
@@ -112,7 +114,8 @@
     const rowsFiltered = computed(() => {
         return rows.value.filter((teilleistung) => {
             return tableFilter(teilleistung, klasseFilter.value, "klasse")
-            && tableFilter(teilleistung, kursFilter.value, "kurs");
+            && tableFilter(teilleistung, kursFilter.value, "kurs")
+            && tableFilter(teilleistung, fachFilter.value, "fach");
         })
     });
 
@@ -152,8 +155,8 @@
 
     const cols: Ref<DataTableColumn[]> = ref([
         ...default_cols,
-        { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, toggle: true  },
-        { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, toggle: true  },
+        { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, toggleInvisible:true  },
+        { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, toggleInvisible:true  },
         { key: 'ka_1', label: 'KA_1', sortable: false, span: 1, minWidth: 6, toggle: true  },
         { key: 'ka_2', label: 'KA_2', sortable: false, span: 1, minWidth: 6, toggle: true  },
         { key: 'ka_3', label: 'KA_3', sortable: false, span: 1, minWidth: 6, toggle: true  },
@@ -181,7 +184,7 @@
     }
 
     //TODO: check if necessary
-    //TODO: types
+    //TODO: typing
     const getHiddenColumns = (toggles) => {
         for (const filter in toggles.value) {
             if (toggles.value[filter] === false) {
@@ -193,26 +196,29 @@
     // Filter
     const klasseFilter: Ref <string> = ref("");
     const kursFilter: Ref <string> = ref("");
+    const fachFilter: Ref <string> = ref("");
 
     //TODO: do we need this?
     const klasseItems: Ref<string[]> = ref([]);
     const kursItems: Ref<string[]> = ref([]);
+    const fachItems: Ref<string[]> = ref([]);
 
     //TODO: check if filterReset works with uiSelect as well
     const filterReset = (): void => {
         klasseFilter.value = "";
         kursFilter.value = "";
+        fachFilter.value = "";
     }
 
     const isFiltered = (): boolean => {
-        //still -> || kursFilter.value !== ""
-            return klasseFilter.value !== "" || kursFilter.value !== ""
+        return klasseFilter.value !== "" || kursFilter.value !== "" || fachFilter.value !== ""
     }
 
     // Filteroptionen mappen
     const mapFilters = (): void => {
         klasseItems.value = mapFilterOptionsHelper(rows.value, 'klasse');
         kursItems.value = mapFilterOptionsHelper(rows.value, 'kurs');
+        fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
     };
 
     //input html element and reference map name are determined by child
