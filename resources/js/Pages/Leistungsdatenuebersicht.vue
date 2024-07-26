@@ -13,16 +13,17 @@
                     :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
                     <template #filter>
                         <div class="filter-area-icon">
-                        <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator"
-                            :class="'hover:opacity-100 focus-visible:opacity-100'"
-                            :type="leistungEditable ? 'primary' : 'transparent'" size="big">
-                            <ri-pencil-fill></ri-pencil-fill>
-                        </SvwsUiButton>
+                            <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator"
+                                :class="'hover:opacity-100 focus-visible:opacity-100'"
+                                :type="leistungEditable ? 'primary' : 'transparent'" size="big">
+                                <ri-pencil-fill></ri-pencil-fill>
+                            </SvwsUiButton>
                         </div>
                         <div class="filter-area-icon">
-                        <SvwsUiButton class="export-button" type="transparent" size="big"
-                        :class="'hover:opacity-100 focus-visible:opacity-100'" @click="exportToFile('csv')"><ri-download-2-line></ri-download-2-line>
-                        </SvwsUiButton>
+                            <SvwsUiButton @click="exportToFile()" type="transparent" size="big"
+                                :class="'hover:opacity-100 focus-visible:opacity-100 export-button'">
+                                <ri-download-2-line></ri-download-2-line>
+                            </SvwsUiButton>
                         </div>
                     </template>
                     <template #filterAdvanced>
@@ -332,28 +333,20 @@
         }
 	}
 
-    /**
-     * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
-     * TODO: explain how here and delete duplicated comments
-     * @param type - Der Exporttyp ('csv' oder 'excel').
-     */
-     const exportToFile = (type: string): void => {
-        // Bereite Daten für den Export vor, indem relevante Spalten ausgewählt werden
-        const exportData = rowsFiltered.value.map((row: Leistung) => {
-            const rowData: Record<string, any> = {};
-            mappedColumns.forEach((col: string) => {
-                // Überprüfe, ob die Spalte 'istGemahnt' ist und die Werte auf 'ja' oder 'nein' abbilde
-                if (col === 'istGemahnt')
-                    rowData[col] = row[col as keyof Leistung] ? 'ja' : 'nein';
-                else
-                    rowData[col] = row[col as keyof Leistung];
-            });
-            return rowData;
+    const exportToFile = (): void => {
+        // Get visible columns from the table
+        const visibleColumns = cols.value.filter(col => !hiddenColumns.value.has(col.key)).map(col => col.key);
+
+        // Filter rows to only include visible columns
+        const exportData = rowsFiltered.value.map(row => {
+            const filteredRow: Record<string, any> = {};
+            visibleColumns.forEach(col => filteredRow[col] = row[col]);
+            return filteredRow;
         });
 
-        // Rufe den allgemeinen Export-Handler mit den vorbereiteten Daten auf
-        handleExport(exportData, type, 'leistungsdatenübersicht');
-    }
+        // Call handleExport to export the data as CSV
+        handleExport(exportData, visibleColumns, 'Leistungsdaten');
+    };
 
 </script>
 
