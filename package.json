@@ -40,7 +40,6 @@
     "dependencies": {
         "@svws-nrw/svws-ui": "^0.8.14",
         "brew": "^0.0.8",
-        "exceljs": "^4.4.0",
         "moment": "^2.30.1",
         "remixicon": "^4.2.0",
         "tslint": "^6.1.3"
