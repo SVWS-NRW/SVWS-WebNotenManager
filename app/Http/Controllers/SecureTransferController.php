@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SecureImportRequest;
 use App\Http\Resources\Export\SchuelerResource;
-use App\Models\Schueler;
-use App\Models\User;
+use App\Models\{Schueler, User};
 use App\Services\{DataImportService, GzipService};
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
@@ -35,7 +34,8 @@ class SecureTransferController extends Controller
      * @param GzipService $gzipService
      * @return JsonResponse|Response
      */
-    public function import(SecureImportRequest $request, GzipService $gzipService): Response|JsonResponse {
+    public function import(SecureImportRequest $request, GzipService $gzipService): Response|JsonResponse
+    {
         // Retrieving the uploaded file from the request.
         $file = $request->file('file');
 
@@ -116,13 +116,15 @@ class SecureTransferController extends Controller
         // Disable foreign key checks to avoid constraint violations
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // Preparing tables from the schema to be truncated, skips excluded tables.
-        $tablesToTruncate = Arr::where(
-            Schema::getConnection()->getDoctrineSchemaManager()->listTableNames(),
-            fn (string $tableName): bool => !in_array($tableName, $excludedTables)
-        );
+        // Get a list of all tables in the database
+        $tables = DB::select('SHOW TABLES');
+        $tables = array_map('current', $tables); // Convert objects to an array of table names
+
+        // Preparing tables from the schema to be truncated, skipping excluded tables
+        $tablesToTruncate = Arr::where($tables, fn (string $tableName): bool => !in_array($tableName, $excludedTables));
+
         // Truncate the tables
-        collect($tablesToTruncate)->each(fn (string $tableName) => DB::table($tableName)->truncate());
+        collect($tablesToTruncate)->each(fn (string $tableName): bool => DB::table($tableName)->truncate());
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
@@ -130,8 +132,9 @@ class SecureTransferController extends Controller
         // Remove all imported users
         $usersToDelete = User::lehrer();
         $deletedUserCount = $usersToDelete->count();
-        $usersToDelete->each(fn (User $user) => $user->delete());
+        $usersToDelete->each(fn (User $user): bool => $user->delete());
 
+        // Return the response in JSON format
         return response()->json([
             'message' => [
                 'tables' => [
