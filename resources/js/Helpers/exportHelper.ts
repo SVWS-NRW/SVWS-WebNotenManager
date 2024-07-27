@@ -1,22 +1,38 @@
-/**
- * Handles the export of data to CSV format.
- * 
- * @param data - The data to be exported.
- * @param columns - The columns to be included in the export.
- * @param fileName - The name of the file to be downloaded.
- */
-export const handleExport = (data: Record<string, string>[], header: { key: string, label: string }[], fileName: string): void => {
-    const csvData = arrayToCSV(data, header);
-    downloadCSV(csvData, fileName);
-};
+import { Leistung } from '@/Interfaces/Interface';
+import { DataTableColumn } from "@svws-nrw/svws-ui";
 
 /**
- * Converts array-data to a CSV-formatted string.
+ * Exports tabledata as a CSV file.
+ * 
+ * @param cols - The visible columns of the table.
+ * @param hiddenColumns - The columns that are hidden.
+ * @param rowsFiltered - The filtered data for export.
+ * @param fileName - The name of the file to be downloaded.
+ */
+export const exportDataToCSV = (cols: DataTableColumn[], hiddenColumns: Set<string>, rowsFiltered: Leistung[], fileName: string): void => {
+    const visibleColumns = cols.filter(col => !hiddenColumns.has(col.key));
+    const keyAndLabel = visibleColumns.map(col => ({ key: col.key, label: col.label || col.key }));
+
+    const exportData: Record<string, string>[] = rowsFiltered.map(row =>
+        keyAndLabel.reduce((filteredRow: Record<string, string>, col) => {
+            const value = row[col.key];
+            filteredRow[col.key] = value === undefined || value === null ? '' : String(value);
+            return filteredRow;
+        }, {})
+    );
+
+    downloadCSV(arrayToCSV(exportData, keyAndLabel), fileName);
+};
+
+
+/**
+ * Converts array data to a CSV-formatted string.
  * 
  * @param data - The data to be converted.
  * @param columns - The columns to be included in the CSV.
  * @returns A CSV-formatted string.
  */
+
 const arrayToCSV = (data: Record<string, any>[], columns: { key: string; label: string }[]): string => {
     const headers = columns.map(col => `"${col.label}"`).join(';');
 
@@ -24,9 +40,9 @@ const arrayToCSV = (data: Record<string, any>[], columns: { key: string; label: 
         columns.map(col => {
             let value = row[col.key] || ''; // Use empty string if value is undefined or null
             if (typeof value === 'string') {
-                value = `"${value.replace(/"/g, '""')}"`;
+                value = value.replace(/"/g, '""');
             }
-            return value;
+            return `"${value}"`;
         }).join(';')
     );
 

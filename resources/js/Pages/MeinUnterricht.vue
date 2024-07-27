@@ -14,6 +14,15 @@
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
 
+                    <template #filter>
+                        <div class="filter-area-icon">
+                            <SvwsUiButton @click="exportToFile()" type="transparent" size="big"
+                                :class="'hover:opacity-100 focus-visible:opacity-100 export-button'">
+                                <ri-download-2-line></ri-download-2-line>csv
+                            </SvwsUiButton>
+                        </div>
+                    </template>
+
                     <!-- Erweiterte Filteroptionen -->
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
@@ -99,8 +108,8 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
-    import { handleExport } from '@/Helpers/exportHelper';
     import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
+    import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     //Correlation filter names and column names on this page
     interface MeinUnterrichtFiltersToCols {
@@ -311,38 +320,9 @@
         }	
 	}    
 
-    /**
-     * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
-     * @param type - Der Exporttyp ('csv' oder 'excel').
-     */
-    const exportToFile = (type: string): void => {
-        // Bestimme die zu exportierenden Spalten basierend auf den Benutzereinstellungen
-        const visibleColumns: string[] = [
-            "klasse",
-            "nachname",
-            "vorname",
-            ...Object.keys(toggles.value).filter((col: string) => toggles.value[col as keyof TableColumnToggle])
-        ];
-        
-        // Ordne sichtbare Spalten den entsprechenden Datenbankfeldern zu
-        const mappedColumns: string[] = visibleColumns.map((col: string) => mapToggleToDatabaseField(col as keyof TableColumnToggle));
-
-        // Bereite Daten für den Export vor, indem relevante Spalten ausgewählt werden
-        const exportData = rowsFiltered.value.map((row: Leistung) => {
-            const rowData: Record<string, any> = {};
-            mappedColumns.forEach((col: string) => {
-                // Überprüfe, ob die Spalte 'istGemahnt' ist und die Werte auf 'ja' oder 'nein' abbilde
-                if (col === 'istGemahnt')
-                    rowData[col] = row[col as keyof Leistung] ? 'ja' : 'nein';
-                else
-                    rowData[col] = row[col as keyof Leistung];
-            });
-            return rowData;
-        });
-
-        // Rufe den allgemeinen Export-Handler mit den vorbereiteten Daten auf
-        handleExport(exportData, type, 'leistungsdatenübersicht');
-    }
+    const exportToFile = (): void => {
+        exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'meinUnterricht');
+    };
 </script>
 
 
@@ -366,6 +346,10 @@
 
     .myToggles {
         @apply m-4
+    }
+
+    .filter-area-icon {
+        @apply -m-1.5
     }
 
 </style>

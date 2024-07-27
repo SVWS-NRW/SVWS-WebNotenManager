@@ -10,6 +10,15 @@
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
 
+                    <template #filter>
+                        <div class="filter-area-icon">
+                            <SvwsUiButton @click="exportToFile()" type="transparent" size="big"
+                                :class="'hover:opacity-100 focus-visible:opacity-100 export-button'">
+                                <ri-download-2-line></ri-download-2-line>csv
+                            </SvwsUiButton>
+                        </div>
+                    </template>
+
                     <!-- Erweiterte Filteroptionen -->
                     <div class="filter-area"></div>
                         <template #filterAdvanced>
@@ -84,9 +93,10 @@
     // TODO: refactor unnecessary elements
     import { computed, onMounted, Ref, ref } from 'vue';
     import { mapFilterOptionsHelper, multiSelectHelper } from '@/Helpers/tableHelper';
-    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiSelect, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { NoteInput, BemerkungButton, } from '@/Components/Components';
     import { Leistung, Teilleistung, TableColumnToggle } from '@/Interfaces/Interface';
+    import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     //TODO: apply when backend ready
     //Correlation filter names and column names on this page
@@ -264,6 +274,9 @@
         }	
 	}    
 
+    const exportToFile = (): void => {
+        exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'Teilleistungen');
+    };
 
 </script>
 
@@ -275,6 +288,10 @@
 
     .content-area {
         @apply mx-4 overflow-auto ml-6
+    }
+
+    .filter-area-icon {
+        @apply -m-1.5
     }
 </style>
 

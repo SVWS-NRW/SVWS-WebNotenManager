@@ -99,7 +99,7 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
-    import { handleExport } from '@/Helpers/exportHelper';
+    import { exportDataToCSV } from '@/Helpers/exportHelper';
     import { Auth } from '@/Interfaces/Interface';
 
     let props = defineProps<{
@@ -334,23 +334,8 @@
 	}
 
     const exportToFile = (): void => {
-        const visibleColumns = cols.value.filter(col => !hiddenColumns.value.has(col.key));
-        const keyAndLabel = visibleColumns.map(col => ({ key: col.key, label: col.label || col.key }));
-
-        const exportData = rowsFiltered.value.map(row => 
-            keyAndLabel.reduce((filteredRow: Record<string, any>, col) => {
-                const value = row[col.key];
-                // Convert value to string, handling null, undefined, and number types
-                filteredRow[col.key] = value === undefined || value === null
-                    ? ''
-                    : String(value); // `String(value)` handles both numbers and strings
-                return filteredRow;
-            }, {})
-        );
-
-        handleExport(exportData, keyAndLabel, 'Leistungsdaten');
+        exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'Leistungsdaten');
     };
-
 
 </script>
 
