@@ -334,19 +334,23 @@
 	}
 
     const exportToFile = (): void => {
-        // Get visible columns from the table
-        const visibleColumns = cols.value.filter(col => !hiddenColumns.value.has(col.key)).map(col => col.key);
+        const visibleColumns = cols.value.filter(col => !hiddenColumns.value.has(col.key));
+        const keyAndLabel = visibleColumns.map(col => ({ key: col.key, label: col.label || col.key }));
 
-        // Filter rows to only include visible columns
-        const exportData = rowsFiltered.value.map(row => {
-            const filteredRow: Record<string, any> = {};
-            visibleColumns.forEach(col => filteredRow[col] = row[col]);
-            return filteredRow;
-        });
+        const exportData = rowsFiltered.value.map(row => 
+            keyAndLabel.reduce((filteredRow: Record<string, any>, col) => {
+                const value = row[col.key];
+                // Convert value to string, handling null, undefined, and number types
+                filteredRow[col.key] = value === undefined || value === null
+                    ? ''
+                    : String(value); // `String(value)` handles both numbers and strings
+                return filteredRow;
+            }, {})
+        );
 
-        // Call handleExport to export the data as CSV
-        handleExport(exportData, visibleColumns, 'Leistungsdaten');
+        handleExport(exportData, keyAndLabel, 'Leistungsdaten');
     };
+
 
 </script>
 

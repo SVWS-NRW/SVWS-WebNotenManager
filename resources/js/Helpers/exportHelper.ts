@@ -5,9 +5,8 @@
  * @param columns - The columns to be included in the export.
  * @param fileName - The name of the file to be downloaded.
  */
-export const handleExport = (data: Record<string, any>[], columns: string[], fileName: string): void => {
-    // Convert data to CSV and download
-    const csvData = arrayToCSV(data, columns);
+export const handleExport = (data: Record<string, string>[], header: { key: string, label: string }[], fileName: string): void => {
+    const csvData = arrayToCSV(data, header);
     downloadCSV(csvData, fileName);
 };
 
@@ -18,23 +17,20 @@ export const handleExport = (data: Record<string, any>[], columns: string[], fil
  * @param columns - The columns to be included in the CSV.
  * @returns A CSV-formatted string.
  */
-const arrayToCSV = (data: Record<string, any>[], columns: string[]): string => {
-    // Map data to array of arrays format
-    const arrayData = data.map(row => 
+const arrayToCSV = (data: Record<string, any>[], columns: { key: string; label: string }[]): string => {
+    const headers = columns.map(col => `"${col.label}"`).join(';');
+
+    const rows = data.map(row =>
         columns.map(col => {
-            const value = row[col];
-            if (value === undefined || value === null) {
-                return "";
+            let value = row[col.key] || ''; // Use empty string if value is undefined or null
+            if (typeof value === 'string') {
+                value = `"${value.replace(/"/g, '""')}"`;
             }
             return value;
-        })
+        }).join(';')
     );
 
-    // Combine columns header and data
-    const allData = [columns, ...arrayData];
-
-    // Convert array of arrays to CSV string
-    return allData.map(row => row.map(String).map(value => `"${value.replace(/"/g, '""')}"`).join(';')).join('\n');
+    return [headers, ...rows].join('\n');
 };
 
 /**
@@ -44,22 +40,16 @@ const arrayToCSV = (data: Record<string, any>[], columns: string[]): string => {
  * @param title - The title to be used for the downloaded file.
  */
 const downloadCSV = (csvData: string, title: string): void => {
-    // Create a Blob from the CSV data
-    const blob = new Blob([csvData], { type: 'text/csv' });
-
-    // Create a URL for the Blob
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
 
-    // Create a link element for the download
     const a = document.createElement('a');
     a.href = url;
-    a.download = title + '.csv';
+    a.download = `${title}.csv`;
 
-    // Append the link to the body, trigger a click, and remove the link
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 
-    // Revoke the Object URL to free up resources
     window.URL.revokeObjectURL(url);
 };
