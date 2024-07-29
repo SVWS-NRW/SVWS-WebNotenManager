@@ -22,6 +22,7 @@
                     <!-- Erweiterte Filteroptionen -->
                     <div class="filter-area"></div>
                         <template #filterAdvanced>
+                            <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
                             <SvwsUiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
                             <SvwsUiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
                             <SvwsUiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
@@ -92,7 +93,7 @@
     import axios, { AxiosPromise, AxiosResponse } from 'axios';
     // TODO: refactor unnecessary elements
     import { computed, onMounted, Ref, ref } from 'vue';
-    import { mapFilterOptionsHelper, multiSelectHelper } from '@/Helpers/tableHelper';
+    import { mapFilterOptionsHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiSelect, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { NoteInput, BemerkungButton, } from '@/Components/Components';
     import { Leistung, Teilleistung, TableColumnToggle } from '@/Interfaces/Interface';
@@ -123,7 +124,8 @@
     // The different filters on top of the screen may get input and thus the data from DB will be filtered and then displayed
     const rowsFiltered = computed(() => {
         return rows.value.filter((teilleistung) => {
-            return tableFilter(teilleistung, klasseFilter.value, "klasse")
+            return searchHelper(teilleistung, ['name'], searchFilter.value || '')
+            && tableFilter(teilleistung, klasseFilter.value, "klasse")
             && tableFilter(teilleistung, kursFilter.value, "kurs")
             && tableFilter(teilleistung, fachFilter.value, "fach");
         })
@@ -204,6 +206,7 @@
     }
 
     // Filter
+    const searchFilter: Ref<string|null> = ref(null);
     const klasseFilter: Ref <string> = ref("");
     const kursFilter: Ref <string> = ref("");
     const fachFilter: Ref <string> = ref("");
@@ -215,13 +218,17 @@
 
     //TODO: check if filterReset works with uiSelect as well
     const filterReset = (): void => {
+        searchFilter.value = "";
         klasseFilter.value = "";
         kursFilter.value = "";
         fachFilter.value = "";
     }
 
     const isFiltered = (): boolean => {
-        return klasseFilter.value !== "" || kursFilter.value !== "" || fachFilter.value !== ""
+        return searchFilter.value !== null
+        || klasseFilter.value !== ""
+        || kursFilter.value !== ""
+        || fachFilter.value !== ""
     }
 
     // Filteroptionen mappen
