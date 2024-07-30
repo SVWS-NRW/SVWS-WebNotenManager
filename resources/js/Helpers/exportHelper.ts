@@ -1,4 +1,3 @@
-import { Leistung } from '@/Interfaces/Interface';
 import { DataTableColumn } from "@svws-nrw/svws-ui";
 
 /**
@@ -9,8 +8,13 @@ import { DataTableColumn } from "@svws-nrw/svws-ui";
  * @param rowsFiltered - The filtered data for export.
  * @param fileName - The name of the file to be downloaded.
  */
-export const exportDataToCSV = (cols: DataTableColumn[], hiddenColumns: Set<string>, rowsFiltered: Leistung[], fileName: string): void => {
-    const visibleColumns = cols.filter(col => !hiddenColumns.has(col.key));
+export const exportDataToCSV = <T extends Record<string, any>>(
+    cols: DataTableColumn[], 
+    hiddenColumns: Set<string> | null,
+    rowsFiltered: T[], 
+    fileName: string
+): void => {
+    const visibleColumns = cols.filter(col => !hiddenColumns || !hiddenColumns.has(col.key));
     const keyAndLabel = visibleColumns.map(col => ({ key: col.key, label: col.label || col.key }));
 
     // Add separate columns for first name and last name
@@ -70,7 +74,10 @@ const splitName = (fullName: string): [string, string] => {
  * @param columns - The columns to be included in the CSV.
  * @returns A CSV-formatted string.
  */
-const arrayToCSV = (data: Record<string, any>[], columns: { key: string; label: string }[]): string => {
+const arrayToCSV = (
+    data: Record<string, any>[], 
+    columns: { key: string; label: string }[]
+): string => {
     const headers = columns.map(col => `"${col.label}"`).join(';');
 
     const rows = data.map(row =>
@@ -90,7 +97,10 @@ const arrayToCSV = (data: Record<string, any>[], columns: { key: string; label: 
  * @param csvData - The CSV-formatted data.
  * @param title - The title to be used for the downloaded file.
  */
-const downloadCSV = (csvData: string, title: string): void => {
+const downloadCSV = (
+    csvData: string, 
+    title: string
+): void => {
     const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
 
