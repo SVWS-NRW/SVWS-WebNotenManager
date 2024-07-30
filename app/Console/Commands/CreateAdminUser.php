@@ -13,14 +13,14 @@ class CreateAdminUser extends Command
      *
      * @var string
      */
-    protected $signature = 'create:admin-user';
+    protected $signature = 'create:admin-user {--user=} {--password=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Ersteinrichtung ein technischer Admin';
+    protected $description = 'Erstelle einen Admin-Benutzer. Optionale Parameter: --email, --password';
 
     /**
      * Validation rules
@@ -57,11 +57,17 @@ class CreateAdminUser extends Command
      */
     public function handle(): int
     {
-        // Get input from console
-        $email = $this->ask($this->customAttributes['email']);
-        $password = $this->secret($this->customAttributes['password']);
-        $passwordConfirmation = $this->secret($this->customAttributes['password_confirmation']);
-        $data = ['email' => $email, 'password' => $password, 'password_confirmation' => $passwordConfirmation];
+        // Get input from console or arguments
+        $email = $this->option('user') ?? $this->ask($this->customAttributes['email']);
+        $password = $this->option('password') ?? $this->secret($this->customAttributes['password']);
+        $passwordConfirmation = $this->option('password')
+            ?? $this->secret($this->customAttributes['password_confirmation']);
+
+        $data = [
+            'email' => $email,
+            'password' => $password,
+            'password_confirmation' => $passwordConfirmation,
+        ];
 
         // Validate input
         $validator = Validator::make($data, $this->validationRules, [], $this->customAttributes);
