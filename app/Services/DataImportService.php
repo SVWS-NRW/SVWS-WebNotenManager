@@ -232,11 +232,19 @@ class DataImportService
 
         $foerderschwerpunkte = Foerderschwerpunkt::all();
 
+        // ID in SVWS is for ordering the records, in wenom it has to be remapped to correct key.
+        $remapSortierung = function (array $row): array {
+            $row['sortierung'] = $row['id'];
+            unset($row['id']);
+            return $row;
+        };
+
         collect($this->data[$key])
-            ->filter(fn (array $row): bool => $this->validId($row, 'id', $foerderschwerpunkte, $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'id', $key, nullable: false, expectedInteger: true))
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'kuerzel', $key))
             ->filter(fn (array $row): bool => $this->isUnique($row, $foerderschwerpunkte, 'kuerzel', $key))
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'beschreibung', $key))
+            ->map($remapSortierung)
             ->each(fn (array $row): Foerderschwerpunkt => Foerderschwerpunkt::create($row));
 
         $this->existingFoerderschwerpunkte = $this->getExistingFoerderschwerpunkte(); // TODO: To be removed

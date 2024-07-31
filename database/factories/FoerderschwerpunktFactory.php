@@ -30,6 +30,7 @@ class FoerderschwerpunktFactory extends Factory
         return [
             'kuerzel' => $this->faker->unique->word(),
             'beschreibung' => $this->faker->paragraph(),
+            'sortierung' => $this->faker->unique()->numberBetween(1, 1_000_000),
         ];
     }
 }

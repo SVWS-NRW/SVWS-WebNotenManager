@@ -37,34 +37,51 @@ class ImportFoerderschwerpunkteTest extends TestCase
         (new DataImportService($this->getData()))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas('foerderschwerpunkte', ['id' => 1, 'kuerzel' => '5-', 'beschreibung' => 'lorem']);
+            ->assertDatabaseHas('foerderschwerpunkte', [
+                'id' => 1,
+                'kuerzel' => '5-',
+                'beschreibung' => 'lorem',
+                'sortierung' => 1,
+            ]);
     }
 
     /** It does not update */
     public function test_it_does_not_update(): void
     {
-        Foerderschwerpunkt::factory()->create([ 'id' => 1, 'kuerzel' => 'old_kuerzel', 'beschreibung' => 'old_text']);
+        Foerderschwerpunkt::factory()->create([
+            'id' => 1,
+            'kuerzel' => '5-',
+            'beschreibung' => 'old_text',
+            'sortierung' => 1,
+        ]);
 
         $data = $this->getData();
-        $data['foerderschwerpunkte'][0]['kuerzel'] = 'new_kuerzel';
         $data['foerderschwerpunkte'][0]['beschreibung'] = 'new_text';
 
         (new DataImportService($data))->execute();
 
         $this->assertDatabaseCount(self::TABLE, 1)
-            ->assertDatabaseHas(self::TABLE, ['id' => 1, 'kuerzel' => 'old_kuerzel', 'beschreibung' => 'old_text'])
-            ->assertDatabaseMissing(self::TABLE, ['id' => 1, 'kuerzel' => 'new_kuerzel', 'beschreibung' => 'new_text']);
+            ->assertDatabaseHas(self::TABLE, [
+                'id' => 1,
+                'kuerzel' => '5-',
+                'beschreibung' => 'old_text',
+            ])
+            ->assertDatabaseMissing(self::TABLE, [
+                'id' => 1,
+                'kuerzel' => '5-',
+                'beschreibung' => 'new_text',
+            ]);
     }
 
-    /** It does not create with negative id */
-    public function test_it_does_not_create__with_negative_id(): void
+    /** It creates with negative id */
+    public function test_it_creates_with_negative_id(): void
     {
         $data = $this->getData();
         $data['foerderschwerpunkte'][0]['id'] = -1;
 
         (new DataImportService($data))->execute();
 
-        $this->assertDatabaseCount(self::TABLE, 0);
+        $this->assertDatabaseCount(self::TABLE, 1);
     }
 
     /** It does not create with non-integer id */
