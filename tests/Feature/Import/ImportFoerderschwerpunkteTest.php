@@ -73,6 +73,18 @@ class ImportFoerderschwerpunkteTest extends TestCase
             ]);
     }
 
+    /** It creates with ID converted to sortierung */
+    public function test_if_creates_with_id_converted_to_sortierung(): void
+    {
+        $data = $this->getData();
+        $data['foerderschwerpunkte'][0]['id'] = 6;
+
+        (new DataImportService($data))->execute();
+
+        $this->assertDatabaseCount(self::TABLE, 1)
+            ->assertDatabaseHas(self::TABLE, ['id' => 1, 'sortierung' => 6]);
+    }
+
     /** It creates with negative id */
     public function test_it_creates_with_negative_id(): void
     {
