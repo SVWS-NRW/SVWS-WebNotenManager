@@ -14,7 +14,6 @@ class TestMailController extends Controller
      */
     public function sendTestMail(): void
     {
-        Notification::route('mail', auth()->user()->email)
-            ->notify(new TestNotification);
+        Notification::route('mail', config('mail.from.address'))->notify(new TestNotification);
     }
 }
