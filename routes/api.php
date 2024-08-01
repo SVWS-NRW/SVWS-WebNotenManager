@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Settings\{
     EnvController, MatrixController, SettingsController, UserSettingsController
 };
 use App\Http\Controllers\{PassportController, SecureTransferController};
+use App\Http\Controllers\TestMailController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,6 +51,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         // Defines the Passport Oauth2 route group for administrators
         Route::resource('settings/passport', PassportController::class)
             ->only('index', 'store');
+
+    // Sends a test mail to username address
+    Route::post('settings/send-testmail', [TestMailController::class, 'sendTestMail'])
+        ->name('settings.mail_test');
 
         // TODO: To be checked by Karol
         Route::controller(SettingsController::class)

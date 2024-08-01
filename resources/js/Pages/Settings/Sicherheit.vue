@@ -140,7 +140,7 @@
             convertEncryptionValueForDisplay();
             storedDataForm.value = JSON.stringify(data.form);
         });
-        
+
     //TODO: save 2FA data too
     const saveSettings = () => axios
         .put(route('api.settings.mail_send_credentials'), {
@@ -154,7 +154,7 @@
             'MAIL_FROM_NAME': data.form.from_name,
         })
         .then((): void => apiSuccess())
-        .then((): void  => { 
+        .then((): void  => {
                 isDirty.value = false;
                 storedDataForm.value = JSON.stringify(data.form);
         })
@@ -163,7 +163,9 @@
             data.errors = error.response.data.errors;
         });
 
-    const sendTestmail = (): void => Inertia.get(route('send_testmail'));
+    const sendTestmail = (): void => {
+        axios.post(route('settings.mail_test'), { email: 'lorem@ipsum.com' });
+    };
 
     watch(() => data.form, (): void => {
         isDirty.value = JSON.stringify(data.form) !== storedDataForm.value;
