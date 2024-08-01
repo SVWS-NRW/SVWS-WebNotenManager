@@ -50,12 +50,18 @@
                         {{ getError('MAIL_FROM_ADDRESS') }}
                     </span>
                 </div>
-
                 <div class="form-control">
                     <SvwsUiTextInput v-model="data.form.from_name" :valid="() => !hasErrors('MAIL_FROM_NAME')" type="text"
                         placeholder="Absender"></SvwsUiTextInput>
                     <span v-if="hasErrors('MAIL_FROM_NAME')" class="error">
                         {{ getError('MAIL_FROM_NAME') }}
+                    </span>
+                </div>
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="data.form.recipient" :valid="() => !hasErrors('MAIL_RECIPIENT')" type="text"
+                        placeholder="Empfänger"></SvwsUiTextInput>
+                    <span v-if="hasErrors('MAIL_RECIPIENT')" class="error">
+                        {{ getError('MAIL_RECIPIENT') }}
                     </span>
                 </div>
                 <SvwsUiButton @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton>
@@ -113,6 +119,7 @@
             encryption: '',
             from_address: '',
             from_name: '',
+            recipient: '',
         },
         //TODO: unused
         processing: false,
@@ -152,6 +159,7 @@
             'MAIL_ENCRYPTION': data.form.encryption === "keine" ? "null" : data.form.encryption,
             'MAIL_FROM_ADDRESS': data.form.from_address,
             'MAIL_FROM_NAME': data.form.from_name,
+            'MAIL_RECIPIENT': data.form.recipient,
         })
         .then((): void => apiSuccess())
         .then((): void  => {
@@ -164,7 +172,7 @@
         });
 
     const sendTestmail = (): void => {
-        axios.post(route('settings.mail_test'), { email: 'lorem@ipsum.com' });
+        axios.post(route('settings.mail_test'), { email: data.form.recipient });
     };
 
     watch(() => data.form, (): void => {

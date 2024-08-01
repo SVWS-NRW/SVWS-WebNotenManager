@@ -7,10 +7,13 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    RiArrowDownSLine: typeof import('~icons/ri/arrow-down-s-line')['default']
+    RiArrowRightSLine: typeof import('~icons/ri/arrow-right-s-line')['default']
     RiBook2Line: typeof import('~icons/ri/book2-line')['default']
     RiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
     RiCalendarLine: typeof import('~icons/ri/calendar-line')['default']
     RiDownload2Line: typeof import('~icons/ri/download2-line')['default']
+    RiFileCopyLine: typeof import('~icons/ri/file-copy-line')['default']
     RiLogoutCircleLine: typeof import('~icons/ri/logout-circle-line')['default']
     RiPencilFill: typeof import('~icons/ri/pencil-fill')['default']
     RiSettings3Line: typeof import('~icons/ri/settings3-line')['default']

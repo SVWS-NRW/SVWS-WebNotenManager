@@ -29,6 +29,7 @@ export interface MailSendCredentialsFormData {
         encryption: string,
         from_address: string,
         from_name: string,
+		recipient: string,
 	},
 	processing: boolean,
 	errors: {[key: string]: string},
