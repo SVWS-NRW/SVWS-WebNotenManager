@@ -85,9 +85,9 @@ class CreateAdminUser extends Command
 
         // Create the user (without events prepared only for the importer)
         User::withoutEvents(fn (): User => User::factory()->administrator()->create([
-            'vorname' => $this->setUniqueIncrementedValue('vorname'),
-            'nachname' => $this->setUniqueIncrementedValue('nachname'),
-            'kuerzel' => $this->setUniqueIncrementedValue('kuerzel'),
+            'vorname' => 'admin',
+            'nachname' => 'admin',
+            'kuerzel' => 'admin',
             'email' => $email,
             'password' => Hash::make($password),
         ]));
@@ -96,25 +96,5 @@ class CreateAdminUser extends Command
         $this->info("Technischer Admin wurde erfolgreich angelegt mit die E-Mail-Adresse: {$email}");
 
         return Command::SUCCESS;
-    }
-
-    /**
-     * Set unique incremented value when the current already exists
-     * https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/346
-     *
-     * @param string $column
-     * @param string $value
-     * @return string
-     */
-    private function setUniqueIncrementedValue(string $column, string $value = 'admin'): string
-    {
-        $counter = 1;
-
-        while (User::where($column, $value)->exists()) {
-            $value = $value . $counter;
-            $counter++;
-        }
-
-        return $value;
     }
 }
