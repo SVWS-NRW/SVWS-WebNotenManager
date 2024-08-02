@@ -10,10 +10,7 @@ declare module 'vue' {
     RiBook2Line: typeof import('~icons/ri/book2-line')['default']
     RiBookReadLine: typeof import('~icons/ri/book-read-line')['default']
     RiCalendarLine: typeof import('~icons/ri/calendar-line')['default']
-    RiDownload2Line: typeof import('~icons/ri/download2-line')['default']
     RiLogoutCircleLine: typeof import('~icons/ri/logout-circle-line')['default']
-    RiMore2Line: typeof import('~icons/ri/more2-line')['default']
-    RiMoreLine: typeof import('~icons/ri/more-line')['default']
     RiSettings3Line: typeof import('~icons/ri/settings3-line')['default']
     RiTeamLine: typeof import('~icons/ri/team-line')['default']
   }

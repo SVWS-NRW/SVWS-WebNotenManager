@@ -55,9 +55,6 @@ class MailSendCredentialsRequest extends FormRequest
             'MAIL_FROM_NAME' => [
                 'nullable', 'string',
             ],
-            'MAIL_RECIPIENT' => [
-                'required', 'string', 'email:rfc,dns'
-            ],
         ];
     }
 
@@ -77,7 +74,6 @@ class MailSendCredentialsRequest extends FormRequest
             'MAIL_ENCRYPTION' => 'Verschlüsselung',
             'MAIL_FROM_ADDRESS' => 'Absender E-Mail Adresse',
             'MAIL_FROM_NAME' => 'Absender Name',
-            'MAIL_RECIPIENT' => 'Empfänger Name',
         ];
     }
 }

@@ -57,21 +57,13 @@
                         {{ getError('MAIL_FROM_NAME') }}
                     </span>
                 </div>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.recipient" :valid="() => !hasErrors('MAIL_RECIPIENT')" type="text"
-                        placeholder="Empfänger"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_RECIPIENT')" class="error">
-                        {{ getError('MAIL_RECIPIENT') }}
-                    </span>
-                </div>
-                <SvwsUiButton @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton>
-
-                <div>
-                    <SvwsUiCheckbox v-model="enabled" :value="true" type="toggle">Zweifaktor Authentisierung
-                    </SvwsUiCheckbox>
-                </div>
-
                 <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
+                <h3 class="text-headline-md">Testmail</h3>
+                <div class="form-control">
+                    <SvwsUiTextInput v-model="recipient" type="text" placeholder="Empfänger"></SvwsUiTextInput>
+                    <span class="error"></span>
+                </div>
+                <SvwsUiButton @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton> 
             </div>
         </template>
         <template #secondaryMenu>
@@ -119,7 +111,6 @@
             encryption: '',
             from_address: '',
             from_name: '',
-            recipient: '',
         },
         //TODO: unused
         processing: false,
@@ -127,6 +118,8 @@
         //TODO: unused
         successMessage: false,
     });
+
+    const recipient: Ref<String> = ref('');
 
     //when the encryption variable is "null" or null in the .env file, we want to display "keine" instead of just an empty string in the select options
     const convertEncryptionValueForDisplay = (): void => {
@@ -159,7 +152,6 @@
             'MAIL_ENCRYPTION': data.form.encryption === "keine" ? "null" : data.form.encryption,
             'MAIL_FROM_ADDRESS': data.form.from_address,
             'MAIL_FROM_NAME': data.form.from_name,
-            'MAIL_RECIPIENT': data.form.recipient,
         })
         .then((): void => apiSuccess())
         .then((): void  => {
@@ -172,7 +164,7 @@
         });
 
     const sendTestmail = (): void => {
-        axios.post(route('settings.mail_test'), { email: data.form.recipient });
+        axios.post(route('settings.mail_test'), { email: recipient.value });
     };
 
     watch(() => data.form, (): void => {

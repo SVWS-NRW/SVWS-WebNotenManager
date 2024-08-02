@@ -78,6 +78,8 @@ class SettingsController extends Controller
             'filter' => FilterSettings::class,
             'matrix' => MatrixSettings::class,
             'sicherheit' => SicherheitSettings::class,
+            //TODO
+            //'2fa' => zfa::class,
             default => GeneralSettings::class,
         });
     }

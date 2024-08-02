@@ -15,7 +15,6 @@ return [
         'encryption' => env('MAIL_ENCRYPTION'),
         'from_address' => env('MAIL_FROM_ADDRESS'),
         'from_name' => env('MAIL_FROM_NAME'),
-        'recipient' => env('MAIL_RECIPIENT'),
     ],
     'filters' => [
         'meinunterricht' =>
