@@ -1,6 +1,6 @@
 <template>
     <button type="button" @click="emit('clicked')" :aria-label="bemerkungButtonAriaLabel">
-            <SvwsUiCheckbox v-model="bemerkungCheckboxStatus" @click.prevent.self></SvwsUiCheckbox>
+            <ri-more-2-line id="more-icon"></ri-more-2-line>
         <span class="bemerkung">
             {{ formatBasedOnGender(props.bemerkung, props.model) }}
         </span>
@@ -28,6 +28,11 @@
     
     const bemerkungCheckboxStatus = computed(() => (props.bemerkung === null || props.bemerkung === "" )  ? false : true);
 
+    //testing here for ticket 338
+    const bemerkungTabindex = computed(() => {
+        return (props.bemerkung === null || props.bemerkung === "" ) ? -1 : 0
+    });
+
     const bemerkungButtonAriaLabel = (schueler: Schueler): string => { 
         return `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`;
     }
@@ -44,6 +49,10 @@
 
     .bemerkung {
         @apply truncate
+    }
+
+    #more-icon {
+        @apply min-w-5 -ml-1 -mr-2
     }
     
 </style>
