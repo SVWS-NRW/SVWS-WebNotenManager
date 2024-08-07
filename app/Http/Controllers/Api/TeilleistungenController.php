@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Lerngruppe, Note, Teilleistung, Klasse};
-use App\Models\Leistung;
+use App\Models\{Lerngruppe, Note, Teilleistung, Klasse, Leistung};
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
@@ -22,6 +21,7 @@ class TeilleistungenController extends Controller
     public function index(): JsonResponse
     {
         // Per default take first "Klasse"
+        //$selected = Klasse::skip(3)->first();
         $selected = Klasse::first();
         $collection = $this->getTeilleistungen($selected);
 
@@ -103,7 +103,6 @@ class TeilleistungenController extends Controller
 
         return $leistungen;
     }
-
 
     /**
      * Update the "Note" for given "Teilleistung"

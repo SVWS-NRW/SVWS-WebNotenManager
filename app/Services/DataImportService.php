@@ -601,7 +601,9 @@ class DataImportService
         $teilleistungsarten = Teilleistungsart::all()->pluck('id', 'id')->toArray();
         $noten = Note::all()->pluck('id', 'kuerzel')->toArray();
 
-        collect($array)
+        $uniqueArray = $this->uniqueTeilleistungen($array);
+
+        collect($uniqueArray)
             // ID
             ->filter(fn (array $row): bool => $this->hasValidInt($row, $key, 'id'))
             // Teilleisungsarten
@@ -645,6 +647,41 @@ class DataImportService
                 $model->save();
             });
     }
+
+    /**
+     * Imports only unique Teilleistungen based on artID.
+     * If there are multiple same artID, takes the newer one
+     *
+     * @param array $array
+     * @return array
+     */
+    private function uniqueTeilleistungen(array $array): array
+    {
+        $unique = [];
+
+        foreach ($array as $item) {
+            $id = $item['artID'];
+
+            // Set the id if not already present
+            if (!isset($unique[$id])) {
+                $unique[$id] = $item;
+            }
+
+            if ($item['tsArtID'] > $unique[$id]['tsArtID']) {
+                $unique[$id] = $item;
+
+                $this->setStatus(
+                    $item,
+                    'teilleistung',
+                    'Teilleistung hat einen neueren Zeitstempel und ersetzt einen älteren'
+                );
+            }
+        }
+
+        // Convert the associative array back to a simple array
+        return array_values($unique);
+    }
+
 
     /** Import "Bemerkungen" */
     public function importBemerkungen(): void
