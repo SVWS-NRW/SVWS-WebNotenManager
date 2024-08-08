@@ -37,6 +37,12 @@ class TeilleistungenController extends Controller
             ->get()
             ->mapWithKeys(fn (Klasse $item): array => [$item->id => $item->kuerzel]);
 
+        //Get all notes present in the noten DB table
+        $noten = Note::query()
+            ->orderBy('sortierung')
+            ->pluck('kuerzel')
+            ->toArray();
+
         return response()->json([
             'filters' => [
                 'selected' => $selected,
@@ -45,6 +51,7 @@ class TeilleistungenController extends Controller
             ],
             'leistungen' => $this->getLeistungen($collection),
             'columns' => $this->getColumns($collection),
+            'notes' => $noten
         ]);
     }
 
@@ -96,8 +103,9 @@ class TeilleistungenController extends Controller
                 'name' => "{$leistung->schueler->nachname}, {$leistung->schueler->vorname}",
                 'fach' => $leistung->lerngruppe->fach->kuerzel,
                 'kurs' => $leistung->lerngruppe->kursartKuerzel,
+                'klasse' => $leistung->lerngruppe->klasse->kuerzelAnzeige,
                 'note' => $leistung->note?->id,
-                'quartalnoten' => $leistung->quartalnote?->id,
+                'quartalnoten' => $leistung->quartalnote?->kuerzel,
             ];
 
             $leistungen[] = [...$base, ...$this->mapTeilleistungen($leistung)];
@@ -120,7 +128,7 @@ class TeilleistungenController extends Controller
             $key = $this->teilleistungKey($teilleistung->teilleistungsart);
             $array[$key] = [
                 'id' => $teilleistung->id,
-                'note' => $teilleistung->note?->id,
+                'note' => $teilleistung->note?->kuerzel,
             ];
         }
 
@@ -217,7 +225,7 @@ class TeilleistungenController extends Controller
                     $array[] = [
                         'id' => $art->id,
                         'key' => $this->teilleistungKey($art),
-                        'bezeichnung' => $art->bezeichnung,
+                        'label' => $art->bezeichnung,
                         'sortierung' => $art->sortierung,
                     ];
                 });

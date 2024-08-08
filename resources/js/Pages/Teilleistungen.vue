@@ -42,43 +42,56 @@
                     <!-- BemerkungButton in der Zelle 'fach' -->
                     <template #cell(fach)="{ value, rowData }">
                         <!-- <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" /> -->
-                        {{ value }} 
+                        {{ value }}
                     </template>
 
                     <!-- BemerkungButton in der Zelle 'kurs' -->
                     <template #cell(kurs)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
+
+                    <!-- Teilleistungen -->
+                    <template v-for="col in teilleistungCols" :key="col.key" v-slot:[`cell(${col.key})`]="{ value, rowData }">
+                        <span v-if="value">
+                            <!-- Hier kommt ein NoteInput, der Schickt die note an API endpunkt teilleistungen/update-note/{id}/{note} Karol -->
+                            TL_ID: {{ value.id }} <br /> Note: {{ value.note ?? 'null' }}
+                        </span>
+                    </template>
+
                     <!-- TODO: add rest -->
                     <!-- TODO: check rights and components used for all of them -->
                      <!-- this is a dummy taking data from api.noten/NoteInput -->
+                    <!-- to be removed, is dynamically generated karol
                     <template #cell(ka_1)="{ value, rowData, rowIndex }">
                         <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
                     <template #cell(ka_2)="{ value, rowData, rowIndex }">
-                        {{ value }} 
+                        {{ value }}
                     </template>
                     <template #cell(ka_3)="{ value, rowData, rowIndex }">
-                        {{ value }} 
+                        {{ value }}
                     </template>
                     <template #cell(ka_4)="{ value, rowData, rowIndex }">
-                        {{ value }} 
+                        {{ value }}
                     </template>
                     <template #cell(somi1)="{ value, rowData, rowIndex }">
-                        {{ value }} 
+                        {{ value }}
                     </template>
                     <template #cell(somi2)="{ value, rowData, rowIndex }">
-                        {{ value }} 
+                        {{ value }}
                     </template>
+-->
                     <!-- TODO: ticket 260; what comes from db not ready yet -->
+                    <!-- removed disabled attribute for testing Karol -->
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput :leistung="rowData" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
                     <!-- BemerkungButton in der Zelle 'note' -->
+                    <!-- removed disabled attribute for testing Karol -->
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput :leistung="rowData" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
                 </SvwsUiTable>
@@ -120,6 +133,8 @@
     // Data received from DB
     const rows: Ref<Teilleistung[]> = ref([]);
 
+    const teilleistungCols: Ref<DataTableColumn[]> = ref([]); // Holds the fetched/refetched Columns Karol
+
     //TODO: we are working with select, so filter for multiselect won't work here
     // The different filters on top of the screen may get input and thus the data from DB will be filtered and then displayed
     const rowsFiltered = computed(() => {
@@ -134,6 +149,7 @@
     //TODO: interface
     // some columns may be displayed/hidden on demand
     const toggles = ref({
+        // This has to by dynamically adapted byt the teilleistungsCols Karol
         ka_1: false,
         ka_2: false,
         ka_3: false,
@@ -149,12 +165,14 @@
 
     // Api Call - Daten für meinUnterricht
     onMounted((): Promise<void> => axios
-        .get(route('api.mein_unterricht'))
+        .get(route('teilleistungen.index')) // Initial route Karol
         .then((response: AxiosResponse): void => {
-            rows.value = response.data.data;
+            rows.value = response.data.leistungen; // Fetches leistungen Karol
+            teilleistungCols.value = response.data.columns; // Fetches the columns Karol
             toggles.value = response.data.toggles;
-            allNotes.value = response.data.allNotes;
+            allNotes.value = response.data.notes;
             getHiddenColumns(toggles);
+            teilleistungCols.value.forEach((c) => cols.value.push(c)) // Pushes the fetched TL Columns to global columns Karol
         })
         .finally((): void => mapFilters())
     );
@@ -169,12 +187,14 @@
         ...default_cols,
         { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, toggleInvisible:true  },
         { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, toggleInvisible:true  },
+        /* Removed since they come dynamically from teilleistungsCols Karol
         { key: 'ka_1', label: 'KA_1', sortable: false, span: 1, minWidth: 6, toggle: true  },
         { key: 'ka_2', label: 'KA_2', sortable: false, span: 1, minWidth: 6, toggle: true  },
         { key: 'ka_3', label: 'KA_3', sortable: false, span: 1, minWidth: 6, toggle: true  },
         { key: 'ka_4', label: 'KA_4', sortable: false, span: 1, minWidth: 6, toggle: true  },
         { key: 'somi1', label: 'Somi1', sortable: false, span: 1, minWidth: 6, toggle: true  },
         { key: 'somi2', label: 'Somi2', sortable: false, span: 1, minWidth: 6, toggle: true  },
+        */
         { key: 'quartalnoten', label: 'Quartal', sortable: true, span: 1, minWidth: 6, toggle: true },
         { key: 'note', label: 'Note', sortable: true, span: 2, minWidth: 5, toggle: true },
     ]);
@@ -278,8 +298,8 @@
             // and so on
             default:
                 console.log("itemRefs map not found");
-        }	
-	}    
+        }
+	}
 
     const exportToFile = (): void => {
         exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'Teilleistungen');
