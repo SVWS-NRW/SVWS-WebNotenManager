@@ -21,8 +21,7 @@ class TeilleistungenController extends Controller
     public function index(): JsonResponse
     {
         // Per default take first "Klasse"
-        $selected = Klasse::skip(3)->first();
-        //$selected = Klasse::first();
+        $selected = Klasse::first();
         $collection = $this->getTeilleistungen($selected);
 
         $kurse = Lerngruppe::query()
