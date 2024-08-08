@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Lerngruppe, Note, Teilleistung, Klasse, Leistung};
+use App\Models\{Lerngruppe, Note, Teilleistung, Klasse, Leistung, Teilleistungsart};
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection;
+use Illuminate\Support\{Collection, Str};
 use Symfony\Component\HttpFoundation\Response;
 
 class TeilleistungenController extends Controller
@@ -21,8 +21,8 @@ class TeilleistungenController extends Controller
     public function index(): JsonResponse
     {
         // Per default take first "Klasse"
-        //$selected = Klasse::skip(3)->first();
-        $selected = Klasse::first();
+        $selected = Klasse::skip(3)->first();
+        //$selected = Klasse::first();
         $collection = $this->getTeilleistungen($selected);
 
         $kurse = Lerngruppe::query()
@@ -88,20 +88,56 @@ class TeilleistungenController extends Controller
      */
     private function getLeistungen(Collection $collection): array
     {
-        // TODO: Teilnoten
         $leistungen = [];
+
         foreach ($collection as $leistung) {
-            $leistungen[] = [
+            $base = [
                 'id' => $leistung->id,
                 'name' => "{$leistung->schueler->nachname}, {$leistung->schueler->vorname}",
                 'fach' => $leistung->lerngruppe->fach->kuerzel,
                 'kurs' => $leistung->lerngruppe->kursartKuerzel,
                 'note' => $leistung->note?->id,
-                'quartal' => null,
+                'quartalnoten' => $leistung->quartalnote?->id,
             ];
+
+            $leistungen[] = [...$base, ...$this->mapTeilleistungen($leistung)];
         }
 
         return $leistungen;
+    }
+
+    /**
+     * Map "Teilleistungen" for given "Leistung"
+     *
+     * @param Leistung $leistung
+     * @return array
+     */
+    private function mapTeilleistungen(Leistung $leistung): array
+    {
+        $array = [];
+
+        foreach($leistung->teilleistungen as $teilleistung) {
+            $key = $this->teilleistungKey($teilleistung->teilleistungsart);
+            $array[$key] = [
+                'id' => $teilleistung->id,
+                'note' => $teilleistung->note?->id,
+            ];
+        }
+
+        return $array;
+    }
+
+    /**
+     * Generate key for "Teilleistungsart"
+     *
+     * @param Teilleistungsart $teilleistungsart
+     * @return string
+     */
+    private function teilleistungKey(Teilleistungsart $teilleistungsart): string
+    {
+        $slug = Str::slug($teilleistungsart->bezeichnung, '_');
+
+        return sprintf('teilleistung_%s', $slug);
     }
 
     /**
@@ -167,24 +203,28 @@ class TeilleistungenController extends Controller
     private function getColumns(Collection $collection): array
     {
         $array = [];
-        foreach ($collection as $leistung) {
-            foreach($leistung->teilleistungen as $teilleistung) {
-                $array[] = [
-                    'id' => $teilleistung->id,
-                    'bezeichnung' => $teilleistung->teilleistungsart->bezeichnung,
-                    'sortierung' => $teilleistung->teilleistungsart->sortierung,
-                ];
-            }
-        }
 
-        // Sort first by 'sortierung' then by 'id' ascending
-        usort($array, function(array $a, array $b) {
-            if ($a['sortierung'] === $b['sortierung']) {
-                return $a['id'] <=> $b['id'];
-            }
+        $collection->each(function (Leistung $leistung) use (&$array): void {
+            $leistung->teilleistungen
+               // Filter out already existing "Teilleistungsarten"
+                ->filter(
+                    fn (Teilleistung $teilleistung): bool =>
+                    !in_array($teilleistung->teilleistungsart->id, array_column($array, 'id'))
+                )
+                // Iterate all Teilleistungen and map the array
+                ->each(function (Teilleistung $teilleistung) use (&$array): void {
+                    $art = $teilleistung->teilleistungsart;
+                    $array[] = [
+                        'id' => $art->id,
+                        'key' => $this->teilleistungKey($art),
+                        'bezeichnung' => $art->bezeichnung,
+                        'sortierung' => $art->sortierung,
+                    ];
+                });
+        })->toArray();
 
-            return $a['sortierung'] <=> $b['sortierung'];
-        });
+        // Sort the array
+        usort($array, fn (array $a, array $b): bool => $a['sortierung'] >  $b['sortierung']);
 
         return $array;
     }
