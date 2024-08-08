@@ -121,16 +121,7 @@
                 && multiselect(jahrgangFilter, floskel.jahrgang)
         })
         .map((floskel: FachbezogeneFloskel): FachbezogeneFloskel => ({
-            //...floskel, text: formatBasedOnGender(floskel.text, props.leistung)
             ...floskel, text: floskel.text
-        }))
-    );
-
-    //testing here for ticket
-    const rowsFilteredForDisplay = computed((): FachbezogeneFloskel[] => rowsFiltered.value
-        .map((floskel: FachbezogeneFloskel): FachbezogeneFloskel => ({
-            //TODO: GET LATEST FLOSKEL HERE SO THAT WE CAN MANIPULATE PRONOUNS AFTERWARDS?
-            ...floskel, text: formatBasedOnGender(floskel.text, props.leistung)
         }))
     );
 

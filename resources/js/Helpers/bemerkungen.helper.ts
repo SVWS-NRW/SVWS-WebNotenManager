@@ -69,7 +69,7 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
         //TODO: dativ case is not foreseen but is present in some floskeln (no specific pattern applied in floskeln, though)
 		.replaceAll(new RegExp(namePattern, "gi"), ((matched, offset, fullString) => {
 			let formatedReturnValue: string = succeedingOccurrences[matched.toLowerCase()];
-			return fullString.charAt(offset - 3) ===  "." ? formatedReturnValue : formatedReturnValue.toLowerCase();
+			return fullString.charAt(offset - 2) ===  "." ? formatedReturnValue : formatedReturnValue.toLowerCase();
         })
 	)
         // Replace any other word with the specific pattern selecting the results by gender.

@@ -97,7 +97,8 @@
             return search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text);
         })
         .map((floskel: Floskel): Floskel => ({
-            ...floskel, text: formatBasedOnGender(floskel.text, props.schueler)
+            //...floskel, text: formatBasedOnGender(floskel.text, props.schueler)
+            ...floskel, text: floskel.text
         }))
     );
 
