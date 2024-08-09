@@ -48,7 +48,7 @@
     }
 
     .bemerkung {
-        @apply truncate
+        @apply truncate leading-5
     }
 
     #more-icon {
