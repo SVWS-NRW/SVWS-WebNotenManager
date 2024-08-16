@@ -65,7 +65,7 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
         .replace(new RegExp(namePattern, "i"), (matched: string): string => {
             return initialOccurrence[matched.toLowerCase()];
         })
-        // Replace any following occurence of the namePattern with the correct pronoun and capitalised/small depending on sentence position
+        // Replace any following occurrence of the namePattern with the correct pronoun and capitalised/small depending on sentence position
         //TODO: dativ case is not foreseen but is present in some floskeln (no specific pattern applied in floskeln, though)
 		.replaceAll(new RegExp(namePattern, "gi"), ((matched, offset, fullString) => {
 			let formatedReturnValue: string = succeedingOccurrences[matched.toLowerCase()];
@@ -77,7 +77,7 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
             switch (model?.geschlecht) {
                 case 'm':
 					return maleText
-                case 'd':
+                case 'w':
 					return femaleText;
                 default:
                     return matched + " !!!!!! D/X Geschlecht !!!!!!";
