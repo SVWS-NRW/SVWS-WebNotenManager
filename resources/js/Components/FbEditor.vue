@@ -6,17 +6,26 @@
                 @input="bemerkung = $event.target.value" @keydown="onKeyDown" />
 
             <div class="buttons">
-                <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
                 <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
-                <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
+                <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'"><span class="icon i-ri-close-line my-1.5" /></SvwsUiButton>
             </div>
 
-            <SvwsUiTable v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" clickable count
-                :selectable="isEditable" :filtered="filtered()" :filterReset="filterReset">
+            <SvwsUiTable v-if="isEditable" :items="rowsFiltered" :columns="columns" clickable count
+                :filtered="filtered()" :filterReset="filterReset">
                 <template #filterAdvanced>
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
                     <SvwsUiMultiSelect v-if="niveauItems.length" label="Niveau" :items="niveauItems" :item-text="item => item" v-model="niveauFilter" />
                     <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
+                </template>
+                <template #cell(kuerzel)="{ value }">
+                    <!-- TODO: do we want this format? -->
+                    <button @click="add">
+                    <ri-more-2-line id="more-icon"></ri-more-2-line>
+                    {{ value }}
+                    </button>
+                </template>
+                <template #cell(text)="{ value }">
+                    {{ value }}
                 </template>
             </SvwsUiTable>
         </SvwsUiInputWrapper>
@@ -46,7 +55,8 @@
     }>();
 
     const rows: Ref<FachbezogeneFloskel[]> = ref([]);
-    const selectedRows: Ref<FachbezogeneFloskel[]> = ref([]);
+    //testing here for ticket 353
+    const selectedRow: Ref<FachbezogeneFloskel|undefined> = ref();
     const columns: Ref<DataTableColumn[]> = ref([
         { key: 'kuerzel', label: 'Kürzel', sortable: true, minWidth: 6 },
         { key: 'text', label: 'Text', sortable: true, span: 5 },
@@ -126,7 +136,10 @@
     );
 
     // Button actions
-    const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows);
+    const add = (): void => {
+        console.log("clicked");
+    }
+    //addSelectedToBemerkung(bemerkung, selectedRows);
     const close = (): void => closeEditor(isDirty, (): void => emit('close'));
     const save = (): Promise<void> => axios
         .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: bemerkung.value })
@@ -142,10 +155,14 @@
 
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows);
 
-</script>
+</script>   
 
 <style scoped>
     .buttons {
         @apply flex justify-end gap-3 mt-3 mb-3
+    }
+
+    #more-icon {
+        @apply min-w-5 -ml-3 -mr-2 -mt-1 inline-flex
     }
 </style>
