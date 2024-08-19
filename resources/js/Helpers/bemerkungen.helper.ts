@@ -114,21 +114,13 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 	}
 };
 
+//previously with possibly several checkboxes: Ref<Floskel[]|FachbezogeneFloskel[] and selectedFloskeln.value.map, and so on
+//TODO: correct type issue
 const addSelectedToBemerkung = (
 	bemerkung: Ref<string|null>,
-	selectedFloskeln: Ref<Floskel[]|FachbezogeneFloskel[]>,
+	selectedFloskel: Ref<Floskel|FachbezogeneFloskel>,
 ): void => {
-	let floskeln: string = selectedFloskeln.value.map((selected: Floskel|FachbezogeneFloskel): string => {
-		return selected.text;
-	}).join(' ');
-
-	selectedFloskeln.value = [];
-	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim();
-}
-
-const selectFloskeln = (floskeln: Floskel[] | FachbezogeneFloskel[], selectedFloskeln: Ref<Floskel[]>): void => {
-	selectedFloskeln.value = [];
-	floskeln.forEach((floskel: any): Number => selectedFloskeln.value.push(floskel));
+	bemerkung.value = bemerkung.value ? bemerkung.value + " " + selectedFloskel.text : selectedFloskel.text;
 }
 
 const saveBemerkung = (
@@ -159,7 +151,6 @@ export {
     formatBasedOnGender,
 	closeEditor,
     addSelectedToBemerkung,
-	selectFloskeln,
 	saveBemerkung,
     pasteShortcut,
     multiselect,

@@ -17,15 +17,12 @@
                     <SvwsUiMultiSelect v-if="niveauItems.length" label="Niveau" :items="niveauItems" :item-text="item => item" v-model="niveauFilter" />
                     <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
                 </template>
-                <template #cell(kuerzel)="{ value }">
-                    <!-- TODO: do we want this format? -->
-                    <button @click="add">
+                <template #cell(kuerzel)="{ value, rowIndex }">
+                    <!-- TODO: some particular format? -->
+                    <button @click="add(rows[rowIndex])">
                     <ri-more-2-line id="more-icon"></ri-more-2-line>
                     {{ value }}
                     </button>
-                </template>
-                <template #cell(text)="{ value }">
-                    {{ value }}
                 </template>
             </SvwsUiTable>
         </SvwsUiInputWrapper>
@@ -76,7 +73,7 @@
     watch((): string | null => bemerkung.value, (): void => {
         isDirty.value = storedBemerkung.value !== bemerkung.value;
         //TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
-        bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
+        //bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
     });
 
     const setup = (): void => {
@@ -123,7 +120,7 @@
         .map((item: FachbezogeneFloskel): string => item[column])
         .filter((value: string, index: number, self: string[]): boolean => self.indexOf(value) === index);
 
-    const rowsFiltered = computed((): FachbezogeneFloskel[] => 
+    const rowsFiltered = computed((): FachbezogeneFloskel[] =>
     rows.value
         .filter((floskel: FachbezogeneFloskel): boolean => {
             return (search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text))
@@ -136,12 +133,13 @@
     );
 
     // Button actions
-    const add = (): void => {
-        console.log("clicked");
-    }
-    //addSelectedToBemerkung(bemerkung, selectedRows);
+    const add = (selectedRow: Ref<FachbezogeneFloskel>): void => addSelectedToBemerkung(bemerkung, selectedRow);
+
     const close = (): void => closeEditor(isDirty, (): void => emit('close'));
-    const save = (): Promise<void> => axios
+    //TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
+    const save = (): Promise<void> => {
+        bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
+        axios
         .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: bemerkung.value })
         .then((): void => {
             storedBemerkung.value = bemerkung.value;
@@ -152,6 +150,7 @@
             alert('Speichern nicht möglich!');
             console.log(error);
         });
+    }
 
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows);
 
