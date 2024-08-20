@@ -6,15 +6,20 @@
                 @input="bemerkung = $event.target.value" @keydown="onKeyDown" />
 
             <div class="buttons">
-                <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
                 <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
-                <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
+                <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'"><span class="icon i-ri-close-line my-1.5" /></SvwsUiButton>
             </div>
 
-            <SvwsUiTable v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" :clickable="true" :selectable="isEditable"
+            <SvwsUiTable v-if="isEditable" :items="rowsFiltered" :columns="columns" :clickable="true"
                 :count="true" :filtered="filtered()" :filterReset="filterReset">
                 <template #filterAdvanced>
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                </template>
+                <template #cell(kuerzel)="{ value, rowIndex }">
+                    <button @click="add(rows[rowIndex])">
+                    <ri-add-line id="add-icon"></ri-add-line>
+                    {{ value }}
+                    </button>
                 </template>
             </SvwsUiTable>
 
@@ -48,7 +53,6 @@
     }>();
 
     const rows: Ref<Floskel[]> = ref([]);
-    const selectedRows: Ref<Floskel[]> = ref([]);
     const columns: Ref<DataTableColumn[]> = ref([
         { key: 'id', label: 'ID', sortable: true, },
         { key: 'kuerzel', label: 'Kuerzel', sortable: true, },
@@ -76,7 +80,6 @@
 
     watch((): string|null => bemerkung.value, (): void => {
         isDirty.value = storedBemerkung.value !== bemerkung.value;
-        bemerkung.value = formatBasedOnGender(bemerkung.value, props.schueler);
     });
 
     const fetchFloskeln = (): Promise<AxiosResponse | void> => axios
@@ -97,29 +100,31 @@
             return search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text);
         })
         .map((floskel: Floskel): Floskel => ({
-            //...floskel, text: formatBasedOnGender(floskel.text, props.schueler)
             ...floskel, text: floskel.text
         }))
     );
 
 
     // Button actions
-    const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows);
+    const add = (selectedRow: Floskel): void => addSelectedToBemerkung(bemerkung, selectedRow);
     const close = (): void => closeEditor(isDirty, (): void => emit('close'));
-    const save = (): Promise<void> => axios
-        .post(
-            route('api.schueler_bemerkung', props.schueler.id),
-            { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value }
-        )
-        .then((): void => {
-            storedBemerkung.value = bemerkung.value;
-            isDirty.value = false;
-            emit('updated', bemerkung.value);
-        })
-        .catch((error: AxiosError): void => {
-            alert('Speichern nicht möglich!');
-            console.log(error);
-        });
+    const save = (): void => {
+        bemerkung.value = formatBasedOnGender(bemerkung.value, props.schueler);
+        axios
+            .post(
+                route('api.schueler_bemerkung', props.schueler.id),
+                { key: props.floskelgruppe.toUpperCase(), value: bemerkung.value }
+            )
+            .then((): void => {
+                storedBemerkung.value = bemerkung.value;
+                isDirty.value = false;
+                emit('updated', bemerkung.value);
+            })
+            .catch((error: AxiosError): void => {
+                alert('Speichern nicht möglich!');
+                console.log(error);
+            });
+    }
 
     // Textarea actions
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows);
@@ -133,6 +138,10 @@
 
     .buttons {
         @apply flex justify-end gap-3 mt-3 mb-3
+    }
+
+    #add-icon {
+        @apply min-w-5 -ml-2 -mr-1 -mt-1 inline-flex
     }
 
 </style>

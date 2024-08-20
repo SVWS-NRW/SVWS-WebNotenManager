@@ -118,7 +118,7 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 //TODO: correct type issue
 const addSelectedToBemerkung = (
 	bemerkung: Ref<string|null>,
-	selectedFloskel: Ref<Floskel|FachbezogeneFloskel>,
+	selectedFloskel: Floskel|FachbezogeneFloskel,
 ): void => {
 	bemerkung.value = bemerkung.value ? bemerkung.value + " " + selectedFloskel.text : selectedFloskel.text;
 }

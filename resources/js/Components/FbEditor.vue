@@ -18,9 +18,8 @@
                     <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
                 </template>
                 <template #cell(kuerzel)="{ value, rowIndex }">
-                    <!-- TODO: some particular format? -->
                     <button @click="add(rows[rowIndex])">
-                    <ri-more-2-line id="more-icon"></ri-more-2-line>
+                    <ri-add-line id="add-icon"></ri-add-line>
                     {{ value }}
                     </button>
                 </template>
@@ -52,8 +51,6 @@
     }>();
 
     const rows: Ref<FachbezogeneFloskel[]> = ref([]);
-    //testing here for ticket 353
-    const selectedRow: Ref<FachbezogeneFloskel|undefined> = ref();
     const columns: Ref<DataTableColumn[]> = ref([
         { key: 'kuerzel', label: 'Kürzel', sortable: true, minWidth: 6 },
         { key: 'text', label: 'Text', sortable: true, span: 5 },
@@ -72,8 +69,6 @@
     watch((): Leistung => props.leistung, (): void => setup());
     watch((): string | null => bemerkung.value, (): void => {
         isDirty.value = storedBemerkung.value !== bemerkung.value;
-        //TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
-        //bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
     });
 
     const setup = (): void => {
@@ -133,23 +128,23 @@
     );
 
     // Button actions
-    const add = (selectedRow: Ref<FachbezogeneFloskel>): void => addSelectedToBemerkung(bemerkung, selectedRow);
+    const add = (selectedRow: FachbezogeneFloskel): void => addSelectedToBemerkung(bemerkung, selectedRow);
 
     const close = (): void => closeEditor(isDirty, (): void => emit('close'));
-    //TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
-    const save = (): Promise<void> => {
+//TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
+    const save = (): void => {
         bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
         axios
-        .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: bemerkung.value })
-        .then((): void => {
-            storedBemerkung.value = bemerkung.value;
-            isDirty.value = false;
-            emit('updated', bemerkung.value);
-        })
-        .catch((error: AxiosError): void => {
-            alert('Speichern nicht möglich!');
-            console.log(error);
-        });
+            .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: bemerkung.value })
+            .then((): void => {
+                storedBemerkung.value = bemerkung.value;
+                isDirty.value = false;
+                emit('updated', bemerkung.value);
+            })
+            .catch((error: AxiosError): void => {
+                alert('Speichern nicht möglich!');
+                console.log(error);
+            });
     }
 
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows);
@@ -161,7 +156,7 @@
         @apply flex justify-end gap-3 mt-3 mb-3
     }
 
-    #more-icon {
-        @apply min-w-5 -ml-3 -mr-2 -mt-1 inline-flex
+    #add-icon {
+        @apply min-w-5 -ml-2 -mr-1 -mt-1 inline-flex
     }
 </style>

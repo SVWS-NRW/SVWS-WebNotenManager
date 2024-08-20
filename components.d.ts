@@ -7,6 +7,11 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    RiAddBoxLine: typeof import('~icons/ri/add-box-line')['default']
+    RiAddCircleLine: typeof import('~icons/ri/add-circle-line')['default']
+    RiAddCirleLine: typeof import('~icons/ri/add-cirle-line')['default']
+    RiAddFill: typeof import('~icons/ri/add-fill')['default']
+    RiAddLine: typeof import('~icons/ri/add-line')['default']
     RiArrowDownSLine: typeof import('~icons/ri/arrow-down-s-line')['default']
     RiArrowRightSLine: typeof import('~icons/ri/arrow-right-s-line')['default']
     RiBook2Line: typeof import('~icons/ri/book2-line')['default']
@@ -15,6 +20,7 @@ declare module 'vue' {
     RiDownload2Line: typeof import('~icons/ri/download2-line')['default']
     RiFileCopyLine: typeof import('~icons/ri/file-copy-line')['default']
     RiLogoutCircleLine: typeof import('~icons/ri/logout-circle-line')['default']
+    RiMenuAddFill: typeof import('~icons/ri/menu-add-fill')['default']
     RiMore2Line: typeof import('~icons/ri/more2-line')['default']
     RiPencilFill: typeof import('~icons/ri/pencil-fill')['default']
     RiSettings3Line: typeof import('~icons/ri/settings3-line')['default']
