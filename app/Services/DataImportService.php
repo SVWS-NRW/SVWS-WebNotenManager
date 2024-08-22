@@ -392,8 +392,6 @@ class DataImportService
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'bezeichnung', 'floskelgruppen'))
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'hauptgruppe', 'floskelgruppen'))
             // Check if "Floskeln" are present
-            ->filter(fn (array $row): bool => $this->isValidArray($row, 'floskeln', 'floskelgruppen'))
-            // Create the "Floskelgruppe" and associate "Floskeln"
             ->each(function (array $row) use ($jahrgaenge, $faecher): void {
                 $data = Arr::except($row, 'floskeln');
                 $floskelgruppe = Floskelgruppe::create($data);
