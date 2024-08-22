@@ -6,8 +6,8 @@
                 @input="bemerkung = $event.target.value" @keydown="onKeyDown" />
 
             <div class="buttons">
-                <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
-                <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'"><span class="icon i-ri-close-line my-1.5" /></SvwsUiButton>
+                <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Zuweisen</SvwsUiButton>
+                <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
             </div>
 
             <SvwsUiTable v-if="isEditable" :items="rowsFiltered" :columns="columns" clickable count
@@ -19,7 +19,11 @@
                 </template>
                 <template #cell(kuerzel)="{ value, rowIndex }">
                     <button @click="add(rows[rowIndex])">
-                    <ri-add-line id="add-icon"></ri-add-line>
+                    {{ value }}
+                    </button>
+                </template>
+                <template #cell(text)="{ value, rowIndex }">
+                    <button @click="add(rows[rowIndex])" class="text-cell-button">
                     {{ value }}
                     </button>
                 </template>
@@ -156,7 +160,7 @@
         @apply flex justify-end gap-3 mt-3 mb-3
     }
 
-    #add-icon {
-        @apply min-w-5 -ml-2 -mr-1 -mt-1 inline-flex
+    .text-cell-button {
+        @apply text-left
     }
 </style>
