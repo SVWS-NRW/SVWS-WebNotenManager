@@ -120,7 +120,7 @@ class SecureTransferController extends Controller
     {
         // List of tables not to be truncated
         $excludedTables = [
-            'migrations', 'users', 'oauth_clients', 'settings',
+            'migrations', 'users', 'oauth_clients', 'settings', 'oauth_access_tokens',
         ];
 
         // Disable foreign key checks to avoid constraint violations
