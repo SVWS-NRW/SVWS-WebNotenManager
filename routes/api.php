@@ -52,9 +52,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::resource('settings/passport', PassportController::class)
             ->only('index', 'store');
 
-    // Sends a test mail to username address
-    Route::post('settings/send-testmail', [TestMailController::class, 'sendTestMail'])
-        ->name('settings.mail_test');
+        // Sends a test mail to username address
+        Route::post('settings/send-testmail', [TestMailController::class, 'sendTestMail'])
+            ->name('settings.mail_test');
 
         // TODO: To be checked by Karol
         Route::controller(SettingsController::class)

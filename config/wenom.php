@@ -18,7 +18,7 @@ return [
     ],
     'filters' => [
         'meinunterricht' =>
-         [
+        [
             'teilleistungen' => env('FILTERS_MEINUNTERRICHT_TEILLEISTUNGEN', false),
             'mahnungen' => env('FILTERS_MEINUNTERRICHT_MAHNUNGEN', true),
             'fehlstunden' => env('FILTERS_MEINUNTERRICHT_FEHLSTUNDEN', false),

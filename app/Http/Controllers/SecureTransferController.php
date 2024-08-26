@@ -74,7 +74,7 @@ class SecureTransferController extends Controller
      */
     public function export(GzipService $gzipService): Response
     {
-        // Get the data with all relations
+        // Get the data with all relations.
         $schueler = Schueler::with([
             'bemerkung',
             'leistungen' => [
@@ -86,10 +86,20 @@ class SecureTransferController extends Controller
         ])
         ->get();
 
-        // Format the data and export as a collection
-        $data = SchuelerResource::collection($schueler)->toJson();
+        // Attempt to stringify the data.
+        try {
+            $data = json_encode([
+                'schulnummer' => config('wenom.schulnummer'),
+                'schueler' => SchuelerResource::collection($schueler)
+            ]);
+        } catch (Exception $e) {
+            return response([
+                'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
+            ], Status::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
-        // Attempt to GZIP encode the encrypted data.
+
+        // Attempt to GZIP encode.
         try {
             return response($gzipService->encode($data));
         } catch (Exception $e) {
@@ -110,7 +120,7 @@ class SecureTransferController extends Controller
     {
         // List of tables not to be truncated
         $excludedTables = [
-            'migrations', 'users', 'oauth_clients', 'settings',
+            'migrations', 'users', 'oauth_clients', 'settings', 'oauth_access_tokens',
         ];
 
         // Disable foreign key checks to avoid constraint violations
