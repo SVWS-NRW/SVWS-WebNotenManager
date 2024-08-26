@@ -20,6 +20,11 @@
                     {{ value }}
                     </button>
                 </template>
+                <template #cell(text)="{ value, rowIndex }">
+                    <button @click="add(rows[rowIndex])" class="text-cell-button">
+                    {{ value }}
+                    </button>
+                </template>
             </SvwsUiTable>
 
         </SvwsUiInputWrapper>
@@ -53,7 +58,6 @@
 
     const rows: Ref<Floskel[]> = ref([]);
     const columns: Ref<DataTableColumn[]> = ref([
-        { key: 'id', label: 'ID', sortable: true, },
         { key: 'kuerzel', label: 'Kuerzel', sortable: true, },
         { key: 'text', label: 'Text', sortable: true, span: 5, },
     ]);
@@ -137,5 +141,9 @@
 
     .buttons {
         @apply flex justify-end gap-3 mt-3 mb-3
+    }
+    
+    .text-cell-button {
+        @apply text-left
     }
 </style>
