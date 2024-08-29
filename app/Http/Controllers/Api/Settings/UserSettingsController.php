@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\FilterValidationRequest;
 use App\Models\UserSetting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -62,6 +63,37 @@ class UserSettingsController extends Controller
     {
         // Updating or creating the user settings for the authenticated user with the specified filter values.
         UserSetting::updateOrCreate(['user_id' => auth()->id()], $request->safe($this->filterColumns));
+
+        // Returning a JSON response with a 204 No Content status, indicating successful processing.
+        return response()->json(status: Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Get settings dynamically
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getSettings(Request $request): JsonResponse
+    {
+        // TODO: Add request Karol
+        $columns = $request->all();
+        $settings = auth()->user()?->userSettings()->select($columns)->first();
+
+        return response()->json($settings);
+    }
+
+    /**
+     * Updates or creates settings for the authenticated user.
+     *
+     * @param FilterValidationRequest $request
+     * @return JsonResponse
+     */
+    public function setSettings(Request $request): JsonResponse
+    {
+        // TODO: Add request Karol
+        // Updating or creating the user settings for the authenticated user with the specified filter values.
+        UserSetting::updateOrCreate(['user_id' => auth()->id()], $request->all());
 
         // Returning a JSON response with a 204 No Content status, indicating successful processing.
         return response()->json(status: Response::HTTP_NO_CONTENT);

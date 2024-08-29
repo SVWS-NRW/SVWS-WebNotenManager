@@ -12,6 +12,9 @@
                 <SvwsUiMenuItem @click="navigate('user_settings.filter')" :active="route().current('user_settings.filter')">
                     <template #label>Spalteneinstellungen</template>
                 </SvwsUiMenuItem>
+                <SvwsUiMenuItem @click="navigate('user_settings.security')" :active="route().current('user_settings.security')">
+                    <template #label>Sicherheitseinstellungen</template>
+                </SvwsUiMenuItem>
             </div>
         </template>
     </SvwsUiSecondaryMenu>
@@ -46,5 +49,5 @@
     .login {
         @apply text-sm text-gray-500;
     }
-    
+
 </style>

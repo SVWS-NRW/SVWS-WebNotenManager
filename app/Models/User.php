@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\{HasOne, HasMany, BelongsToMany};
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -139,6 +140,12 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+
+    /**
+     * @var bool $otpVerified
+     */
+    protected bool $otpVerified = false;
+
     /**
      * The relations that own the model
      *
@@ -229,7 +236,7 @@ class User extends Authenticatable
     {
         $filterColumn = "filters_{$column}";
 
-        return $this->userSettings()->exists()
+        return $this->userSettings()->exists() && $this->userSettings->$filterColumn !== null
             ? json_decode(json_encode($this->userSettings->$filterColumn), true)
             : config("wenom.filters.{$column}");
     }
@@ -243,4 +250,37 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserLogin::class);
     }
+
+    /**
+     * OTP Verified setter
+     *
+     * @var bool $verified
+     * @return void
+     */
+    public function setOtpVerified(bool $verified): void
+    {
+        $this->otpVerified = $verified;
+    }
+
+    /**
+     * OTP Verified getter
+     *
+     * @return bool
+     */
+    public function getOtpVerified(): bool
+    {
+        return $this->otpVerified;
+    }
+
+    /**
+     * Defines if current user must verify via OTP
+     *
+     * @return bool
+     */
+    public function mustVerifyOtp(): bool
+    {
+        return $this?->userSettings?->twofactor_otp == true
+            && session()->get('otp_verified') == false;
+    }
+
 }

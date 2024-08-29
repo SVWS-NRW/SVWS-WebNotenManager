@@ -38,7 +38,7 @@ class UserSetting extends Model
      * @var string[]
      */
     protected $fillable = [
-        'user_id', 'filters_leistungsdatenuebersicht', 'filters_meinunterricht',
+        'user_id', 'filters_leistungsdatenuebersicht', 'filters_meinunterricht', 'twofactor_otp',
     ];
 
     /**
@@ -49,6 +49,7 @@ class UserSetting extends Model
     protected $casts = [
         'filters_leistungsdatenuebersicht' => 'object',
         'filters_meinunterricht' => 'object',
+        'twofactor_otp' => 'bool',
     ];
 
     /**
