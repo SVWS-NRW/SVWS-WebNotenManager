@@ -57,7 +57,7 @@ class Noten extends Controller
 
         // Returning a JSON response with a 204 No Content status.
 		return response()->json(Response::HTTP_NO_CONTENT);
-        //return "upated";
+        //return "updated";
     }
 
     /**

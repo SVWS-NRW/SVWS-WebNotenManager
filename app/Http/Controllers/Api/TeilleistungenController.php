@@ -10,6 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Collection, Str};
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TeilleistungenController extends Controller
 {
@@ -20,8 +21,10 @@ class TeilleistungenController extends Controller
      */
     public function index(): JsonResponse
     {
+        //testing here for ticket
         // Per default take first "Klasse"
         $selected = Klasse::first();
+        //$selected = Klasse::skip(3)->first();
         $collection = $this->getTeilleistungen($selected);
 
         $kurse = Lerngruppe::query()
@@ -60,9 +63,19 @@ class TeilleistungenController extends Controller
      * @param Klasse $klasse
      * @return JsonResponse
      */
-    public function getKlasse(Klasse $klasse): JsonResponse
+    public function getKlasse(string $klasseKuerzel): JsonResponse
     {
-        $collection = $this->getTeilleistungen($klasse);
+        try {
+            $completeKlassen = Klasse::query()
+                ->where('kuerzel', '=', $klasseKuerzel)
+                ->firstOrFail();
+        } catch (NotFoundHttpException $e) {
+            return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
+        }
+       
+        //used to be this
+        //$collection = $this->getTeilleistungen($klasse);
+        $collection = $this->getTeilleistungen($completeKlassen);
 
         return response()->json([
             'leistungen' => $this->getLeistungen($collection),
@@ -81,7 +94,7 @@ class TeilleistungenController extends Controller
         $collection = $this->getTeilleistungen($kurs);
 
         return response()->json([
-            'leistungen' => $collection,
+            'leistungen' => $this->getLeistungen($collection),
             'columns' => $this->getColumns($collection)
         ]);
     }
@@ -103,8 +116,8 @@ class TeilleistungenController extends Controller
                 'fach' => $leistung->lerngruppe->fach->kuerzel,
                 'kurs' => $leistung->lerngruppe->kursartKuerzel,
                 'klasse' => $leistung->lerngruppe->klasse->kuerzelAnzeige,
-                'note' => $leistung->note?->id,
-                'quartalnoten' => $leistung->quartalnote?->kuerzel,
+                'note' => $leistung->note?->kuerzel,
+                'quartalnote' => $leistung->quartalnote?->kuerzel,
             ];
 
             $leistungen[] = [...$base, ...$this->mapTeilleistungen($leistung)];
@@ -154,14 +167,41 @@ class TeilleistungenController extends Controller
      * @param Note $note
      * @return JsonResponse
      */
-    public function updateNote(Teilleistung $teilleistung, Note $note): JsonResponse
+    //public function updateNote(Teilleistung $teilleistung, Note $note): JsonResponse
+    public function updateNote(Teilleistung $teilleistung, string $kuerzel): JsonResponse
     {
-        try {
-            $teilleistung->note()->associate($note);
-            $teilleistung->tsNote = now();
-            $teilleistung->save();
+                //Get all notes present in the noten DB table Sílvia
+        $allNotes = Note::query()
+            ->orderBy('sortierung')
+            ->pluck('id', 'kuerzel')
+            ->toArray();
 
-            return response()->json('success');
+        // Attempting to note_id the specified 'kuerzel'.
+        try {
+			$noteId= Note::query()
+				->where('kuerzel', '=', $kuerzel)
+                ->pluck('id')
+				->firstOrFail();
+                //TODO: typing and response?
+		} catch (Exception $e) {
+			return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
+		}
+
+        try {
+            //Ask karol about this
+            // $teilleistung->note()->associate($kuerzel);
+            // $teilleistung->tsNote = now();
+            // $teilleistung->save();
+
+            //return response()->json('success');
+
+            $teilleistung->update([
+                'note_id' => $noteId,
+                'tsNote' => now()->format('Y-m-d H:i:s.u'),
+            ]);
+    
+            // Returning a JSON response with a 204 No Content status.
+            return response()->json(status: Response::HTTP_NO_CONTENT);
         } catch (QueryException $e) {
             return response()->json([
                 'error' => 'Database query error',
