@@ -86,6 +86,11 @@ class SecureTransferController extends Controller
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+        $data =
+    // Remove all ASCII control characters except for \r, \n, \t (whitespace characters)
+     preg_replace('/[\x00-\x1F\x7F]/', '', $data);
+
+
         // Attempt to GZIP encode.
         try {
             return response($gzipService->encode($data));
