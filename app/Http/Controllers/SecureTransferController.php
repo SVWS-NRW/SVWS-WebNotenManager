@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\{DB, Schema};
+use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\Response as Status;
 
 /**
@@ -73,7 +74,8 @@ class SecureTransferController extends Controller
      * @param GzipService $gzipService
      * @return Response
      */
-    public function export(GzipService $gzipService): Response
+    public function export(GzipService $gzipService)
+   // : Response
     {
         $payload = new DatenResource(null);
 
@@ -86,9 +88,10 @@ class SecureTransferController extends Controller
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $data = $this->cleanControlChars($data);
+        //$data = $this->cleanControlChars($data);
 
-
+        $path = '../database/seeders/data';
+		$data = File::get("{$path}/ENMGesamt.json");
         // Attempt to GZIP encode.
         try {
             return response($gzipService->encode($data));
