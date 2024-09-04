@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SecureImportRequest;
-use App\Http\Resources\DatenResource;
 use App\Http\Resources\Export\SchuelerResource;
 use App\Models\{Schueler, User};
 use App\Services\{DataImportService, GzipService};
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\{DB, Schema};
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response as Status;
 
 /**
@@ -90,8 +88,7 @@ class SecureTransferController extends Controller
 
         // Attempt to stringify the data.
         try {
-            $data = json_encode(SchuelerResource::collection($schueler), JSON_THROW_ON_ERROR);
-            return response()->json($data);
+            return response()->json(SchuelerResource::collection($schueler));
         } catch (Exception $e) {
             return response([
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
@@ -99,8 +96,8 @@ class SecureTransferController extends Controller
         }
 
 
-        // As for now there is no counterpart on the server
-/*
+        // As for now there is no counterpart on the server #347
+        /*
         try {
             return response($gzipService->encode($data));
         } catch (Exception $e) {
@@ -108,7 +105,7 @@ class SecureTransferController extends Controller
                 'message' => "Ein Fehler ist beim Komprimieren der Daten aufgetreten: {$e->getMessage()}",
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
-*/
+        */
     }
 
     /**
