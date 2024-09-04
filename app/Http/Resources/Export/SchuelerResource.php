@@ -21,6 +21,14 @@ class SchuelerResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'jahrgangID' => $this->jahrgang->idJahrgang,
+            'klasseID' => $this->klasse->id,
+            'nachname' => $this->nachname,
+            'vorname' => $this->vorname,
+            'geschlecht' => $this->geschlecht,
+            'bilingualeSprache' => $this->bilingualeSprache?->kuerzel,
+            'istZieldifferent' => $this->istZieldifferent,
+            'istDaZFoerderung' => $this->istDaZFoerderung,
             'leistungsdaten' => LeistungsdatenResource::collection($this->leistungen),
             'lernabschnitt' => new LernabschnittResource($this->lernabschnitt),
             'bemerkungen' => new BemerkungResource($this->bemerkung),

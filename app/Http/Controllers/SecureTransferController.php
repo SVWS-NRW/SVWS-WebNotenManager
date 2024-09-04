@@ -9,7 +9,7 @@ use App\Services\{DataImportService, GzipService};
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\{DB, Schema};
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response as Status;
 
 /**
@@ -72,7 +72,7 @@ class SecureTransferController extends Controller
      * @param GzipService $gzipService
      * @return Response
      */
-    public function export(GzipService $gzipService): Response
+    public function export(GzipService $gzipService): JsonResponse|Response
     {
         // Get the data with all relations.
         $schueler = Schueler::with([
@@ -88,10 +88,7 @@ class SecureTransferController extends Controller
 
         // Attempt to stringify the data.
         try {
-            $data = json_encode([
-                'schulnummer' => config('wenom.schulnummer'),
-                'schueler' => SchuelerResource::collection($schueler)
-            ]);
+            return response()->json(SchuelerResource::collection($schueler));
         } catch (Exception $e) {
             return response([
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
@@ -99,7 +96,8 @@ class SecureTransferController extends Controller
         }
 
 
-        // Attempt to GZIP encode.
+        // As for now there is no counterpart on the server #347
+        /*
         try {
             return response($gzipService->encode($data));
         } catch (Exception $e) {
@@ -107,6 +105,7 @@ class SecureTransferController extends Controller
                 'message' => "Ein Fehler ist beim Komprimieren der Daten aufgetreten: {$e->getMessage()}",
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
+        */
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Export;
 
-use App\Models\Schueler;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
