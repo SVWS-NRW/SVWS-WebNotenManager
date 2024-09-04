@@ -108,9 +108,9 @@ class SecureTransferController extends Controller
                 'floskelgruppen' => [],
                 'lehrer' => [],
                 'teilleistungsarten' => [],
-                'lerngruppen' => [],
+                '' => [],
                 'schueler' => SchuelerResource::collection($schueler)
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             return response([
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
