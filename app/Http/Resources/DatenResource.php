@@ -28,8 +28,8 @@ class DatenResource extends JsonResource
         ->get();
 
         return [
-            'schulnummer' => config('wenom.schulnummer'),
             'enmRevision' => 1,
+            'schulnummer' => (int) config('wenom.schulnummer'),
             'schuljahr' => 2021,
             'anzahlAbschnitte' => 2,
             'aktuellerAbschnitt' => 2,

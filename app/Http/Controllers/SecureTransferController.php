@@ -81,18 +81,13 @@ class SecureTransferController extends Controller
 
         // Attempt to stringify the data.
         try {
-            $data = json_encode($payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            $data = json_encode($payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         } catch (Exception $e) {
             return response([
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        //$data = $this->cleanControlChars($data);
-
-        $path = '../database/seeders/data';
-		$data = File::get("{$path}/ENMGesamt.json");
-        // Attempt to GZIP encode.
         try {
             return response($gzipService->encode($data));
         } catch (Exception $e) {
@@ -101,17 +96,6 @@ class SecureTransferController extends Controller
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
- private   function cleanControlChars($data) {
-    if (is_array($data)) {
-        foreach ($data as &$value) {
-            $value = $this->cleanControlChars($value);
-        }
-    } elseif (is_string($data)) {
-        $data = preg_replace('/[\x00-\x1F\x7F]/', '', $data);
-    }
-    return $data;
-}
 
     /**
      * Truncate the database.
