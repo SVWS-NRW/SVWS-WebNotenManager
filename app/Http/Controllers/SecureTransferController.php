@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SecureImportRequest;
+use App\Http\Resources\DatenResource;
 use App\Http\Resources\Export\SchuelerResource;
 use App\Models\{Schueler, User};
 use App\Services\{DataImportService, GzipService};
@@ -74,43 +75,11 @@ class SecureTransferController extends Controller
      */
     public function export(GzipService $gzipService): Response
     {
-        // Get the data with all relations.
-        $schueler = Schueler::with([
-            'bemerkung',
-            'leistungen' => [
-                'note',
-            ],
-            'lernabschnitt' => [
-                'lernbereich1Note', 'lernbereich2Note', 'foerderschwerpunkt1Relation', 'foerderschwerpunkt2Relation',
-            ],
-        ])
-        ->get();
+        $payload = DatenResource::make();
 
         // Attempt to stringify the data.
         try {
-            $data = json_encode([
-                'schulnummer' => config('wenom.schulnummer'),
-                'enmRevision' => 1,
-                'schuljahr' => 2021,
-                'anzahlAbschnitte' => 2,
-                'aktuellerAbschnitt' => 2,
-                'publicKey' => 'string',
-                'lehrerID' => 42,
-                'fehlstundenEingabe' => true,
-                'fehlstundenSIFachbezogen' => false,
-                'fehlstundenSIIFachbezogen' => true,
-                'schulform' => 'GY',
-                'mailadresse' => 'mail@schule.nrw.de',
-                'noten' => [],
-                'foerderschwerpunkte' => [],
-                'jahrgaenge' => [],
-                'klassen' => [],
-                'floskelgruppen' => [],
-                'lehrer' => [],
-                'teilleistungsarten' => [],
-                '' => [],
-                'schueler' => SchuelerResource::collection($schueler)
-            ], JSON_UNESCAPED_UNICODE);
+            $data = json_encode($payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             return response([
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
