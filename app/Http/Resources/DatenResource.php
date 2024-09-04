@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Schueler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -46,7 +47,7 @@ class DatenResource extends JsonResource
             'floskelgruppen' => [],
             'lehrer' => [],
             'teilleistungsarten' => [],
-            '' => [],
+            'lerngruppen' => [],
             'schueler' => SchuelerResource::collection($schueler)
         ];
     }
