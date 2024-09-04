@@ -86,9 +86,7 @@ class SecureTransferController extends Controller
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $data =
-    // Remove all ASCII control characters except for \r, \n, \t (whitespace characters)
-     preg_replace('/[\x00-\x1F\x7F]/', '', $data);
+        $data = $this->cleanControlChars($data);
 
 
         // Attempt to GZIP encode.
@@ -100,6 +98,17 @@ class SecureTransferController extends Controller
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+ private   function cleanControlChars($data) {
+    if (is_array($data)) {
+        foreach ($data as &$value) {
+            $value = $this->cleanControlChars($value);
+        }
+    } elseif (is_string($data)) {
+        $data = preg_replace('/[\x00-\x1F\x7F]/', '', $data);
+    }
+    return $data;
+}
 
     /**
      * Truncate the database.
