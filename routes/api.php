@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
  * Define a controller route for SecureTransferController with middleware and prefix
  */
 Route::controller(SecureTransferController::class)
-//    ->middleware('client')
+    ->middleware('client')
     ->prefix('secure')
     ->name('secure.')
     ->group(function (): void {
