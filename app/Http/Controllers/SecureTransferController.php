@@ -75,7 +75,7 @@ class SecureTransferController extends Controller
      */
     public function export(GzipService $gzipService): Response
     {
-        $payload = DatenResource::make();
+        $payload = new DatenResource(null);
 
         // Attempt to stringify the data.
         try {
@@ -85,7 +85,6 @@ class SecureTransferController extends Controller
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
-
 
         // Attempt to GZIP encode.
         try {
