@@ -21,16 +21,24 @@ class LeistungsdatenResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'lerngruppenID' => $this->lerngruppe->id,
             'note' => $this->note?->kuerzel,
             'tsNote' => $this->tsNote,
+            'quartal' => $this->quartalnote?->kuerzel,
+            'tsQuartalNote' => $this->tsNoteQuartal,
+            'istSchriftlich' => $this->istSchriftlich,
+            'abiturfach' => $this->abiturfach,
             'fehlstundenFach' => $this->fehlstundenFach,
             'tsFehlstundenFach' => $this->tsFehlstundenFach,
             'fehlstundenUnentschuldigtFach' => $this->fehlstundenUnentschuldigtFach,
             'tsFehlstundenUnentschuldigtFach' => $this->tsFehlstundenUnentschuldigtFach,
 			'fachbezogeneBemerkungen' => $this->fachbezogeneBemerkungen,
 			'tsFachbezogeneBemerkungen' => $this->tsFachbezogeneBemerkungen,
+			'neueZuweisungKursart' => $this->neueZuweisungKursart,
 			'istGemahnt' => (bool) $this->istGemahnt,
 			'tsIstGemahnt' => $this->tsIstGemahnt,
+			'mahndatum' => $this->mahndatum,
+            'teilleistungen' => [],
         ];
     }
 }
