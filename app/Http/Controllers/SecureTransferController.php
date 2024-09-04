@@ -90,6 +90,25 @@ class SecureTransferController extends Controller
         try {
             $data = json_encode([
                 'schulnummer' => config('wenom.schulnummer'),
+                'enmRevision' => 1,
+                'schuljahr' => 2021,
+                'anzahlAbschnitte' => 2,
+                'aktuellerAbschnitt' => 2,
+                'publicKey' => 'string',
+                'lehrerID' => 42,
+                'fehlstundenEingabe' => true,
+                'fehlstundenSIFachbezogen' => false,
+                'fehlstundenSIIFachbezogen' => true,
+                'schulform' => 'GY',
+                'mailadresse' => 'mail@schule.nrw.de',
+                'noten' => [],
+                'foerderschwerpunkte' => [],
+                'jahrgaenge' => [],
+                'klassen' => [],
+                'floskelgruppen' => [],
+                'lehrer' => [],
+                'teilleistungsarten' => [],
+                'lerngruppen' => [],
                 'schueler' => SchuelerResource::collection($schueler)
             ]);
         } catch (Exception $e) {
