@@ -119,7 +119,9 @@ class SecureTransferController extends Controller
     {
         // List of tables not to be truncated
         $excludedTables = [
-            'migrations', 'users', 'oauth_clients', 'settings', 'oauth_access_tokens',
+            'migrations', 'users', 'oauth_clients', 'settings', 'oauth_access_tokens', '2fa_auth_codes',
+            'oauth_auth_codes', 'oauth_personal_access_clients', 'oauth_refresh_tokens', 'password_resets',
+            'personal_access_tokens', 'sessions', 'user_login', 'user_settings', 'users',
         ];
 
         // Disable foreign key checks to avoid constraint violations
@@ -138,11 +140,6 @@ class SecureTransferController extends Controller
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Remove all imported users
-        $usersToDelete = User::lehrer();
-        $deletedUserCount = $usersToDelete->count();
-        $usersToDelete->each(fn (User $user): bool => $user->delete());
-
         // Return the response in JSON format
         return response()->json([
             'message' => [
@@ -150,10 +147,6 @@ class SecureTransferController extends Controller
                     'kept' => count($excludedTables),
                     'kept_tables' => $excludedTables,
                     'truncated' => count($tablesToTruncate),
-                ],
-                'users' => [
-                    'kept' => User::count(),
-                    'deleted' => $deletedUserCount,
                 ],
             ],
         ]);
