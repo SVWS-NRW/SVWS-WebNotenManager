@@ -19,7 +19,10 @@ class Noten extends Controller
     public function __invoke(Leistung $leistung, string|null $type = 'note'): JsonResponse
 	{
         // Check if the class Klasse of the Schueler related to the Leistung is allowed to have editable Noten.
-        abort_unless($leistung->schueler->klasse->editable_noten, Response::HTTP_FORBIDDEN);
+        abort_unless(
+            $leistung->schueler->klasse->editable_noten && $leistung->schueler->klasse->edit_overrideable,
+            Response::HTTP_FORBIDDEN
+        );
 
         // If the requested note is an empty string, call updateNote method without a specific note.
         if (request()->note == '') {
@@ -44,7 +47,13 @@ class Noten extends Controller
      */
     private function updateNote(Leistung $leistung, string $type, string|null $note = null)
     //: JsonResponse
-    {   
+    {
+        // Check if the class Klasse of the Schueler related to the Leistung is allowed to have editable Noten.
+        abort_unless(
+            $leistung->schueler->klasse->editable_noten && $leistung->schueler->klasse->edit_overrideable,
+            Response::HTTP_FORBIDDEN
+        );
+
         // Check if type is correct
         $keys = $this->getKeys($type);
         abort_unless($keys, Response::HTTP_FORBIDDEN);

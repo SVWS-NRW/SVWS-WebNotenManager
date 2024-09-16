@@ -16,7 +16,10 @@ class Mahnungen extends Controller
 	{
         // Abort the operation if the 'Klasse' of the 'Schueler'
         // associated with the 'leistung' is not editable for 'Mahnungen'.
-		abort_unless($leistung->schueler->klasse->editable_mahnungen, Response::HTTP_FORBIDDEN);
+        abort_unless(
+            $leistung->schueler->klasse->editable_mahnungen && $leistung->schueler->klasse->edit_overrideable,
+            Response::HTTP_FORBIDDEN
+        );
 
         // Updating the resource with an additional timestamp
 		$leistung->update([

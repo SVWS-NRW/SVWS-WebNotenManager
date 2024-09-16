@@ -2,12 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\{Collection, Model};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany, HasMany};
 
 /**
  * The `Klasse` class represents a Laravel model for managing remarks associated with Klassen.
@@ -73,7 +70,7 @@ class Klasse extends Model
     protected $fillable = [
         'id', 'idJahrgang', 'kuerzel', 'kuerzelAnzeige', 'sortierung', 'editable_teilnoten', 'editable_noten',
 		'editable_mahnungen', 'editable_fehlstunden', 'toggleable_fehlstunden', 'editable_fb', 'editable_asv',
-		'editable_aue', 'editable_zb',
+		'editable_aue', 'editable_zb', 'edit_overrideable',
     ];
 
     /**
@@ -82,6 +79,7 @@ class Klasse extends Model
      * @var string[]
      */
     protected $casts = [
+		'edit_overrideable' => 'boolean',
 		'editable_teilnoten' => 'boolean',
 		'editable_noten' => 'boolean',
 		'editable_mahnungen' => 'boolean',

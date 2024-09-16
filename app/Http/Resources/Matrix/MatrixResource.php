@@ -39,6 +39,6 @@ class MatrixResource extends JsonResource
      */
     private function permission(bool $condition = false): bool
     {
-        return auth()->user()->isAdministrator() || $condition;
+        return auth()->user()->isAdministrator() || ($condition && $this->edit_overrideable);
     }
 }

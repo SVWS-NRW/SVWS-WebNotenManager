@@ -1,4 +1,5 @@
 export interface Matrix {
+    edit_overrideable: boolean;
     editable_teilnoten: boolean;
     editable_noten: boolean;
     editable_mahnungen: boolean;

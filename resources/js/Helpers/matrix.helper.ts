@@ -5,6 +5,7 @@ type ToggleableKeys = {
 }[keyof Klasse];
 
 let toggleable: ToggleableKeys[] = [
+    'edit_overrideable',
     'editable_teilnoten',
     'editable_noten',
     'editable_mahnungen',
