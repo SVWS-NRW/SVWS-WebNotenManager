@@ -8,4 +8,4 @@
 
 ## technische Dokumentation
 
-## Kontaktinfromationen
+## Kontaktinformationen
