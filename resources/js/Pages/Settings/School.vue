@@ -116,7 +116,7 @@
     }
 
     .content {
-        @apply px-6 grid md:grid-cols-2 col-span-3 gap-12 md:max-w-4xl
+        @apply grid md:grid-cols-2 col-span-3 gap-12 md:max-w-4xl px-6 
     }
 
     .content > div {
@@ -124,6 +124,6 @@
     }
 
     .button {
-        @apply justify-center top-4 w-24 left-3/4
+        @apply justify-center top-4 w-fit left-3/4
     }
 </style>

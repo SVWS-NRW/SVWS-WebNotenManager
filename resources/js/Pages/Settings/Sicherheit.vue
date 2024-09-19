@@ -6,6 +6,7 @@
             </SvwsUiHeader>
             <div class="form-control-area">
                 <div>
+                    <h3 class="text-headline-md">Kontoeinstellungen</h3>
                     <div class="form-control">
                         <SvwsUiTextInput v-model="data.form.mailer" :valid="() => !hasErrors('MAIL_MAILER')" type="text"
                             placeholder="Mailer"></SvwsUiTextInput>
@@ -59,7 +60,7 @@
                             {{ getError('MAIL_FROM_NAME') }}
                         </span>
                     </div>
-                    <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
+                    <SvwsUiButton id="save-button" @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
                 </div>
                 <div>
                     <h3 class="text-headline-md">Testmail</h3>
@@ -67,7 +68,7 @@
                         <SvwsUiTextInput v-model="recipient" type="text" placeholder="Empfänger"></SvwsUiTextInput>
                         <span class="error"></span>
                     </div>
-                    <SvwsUiButton @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton>
+                    <SvwsUiButton id="testmail-button" @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton>
                 </div>
             </div>
         </template>
@@ -190,11 +191,11 @@
     }
 
     .form-control-area {
-        @apply flex flex-col grid md:grid-cols-2 gap-10 max-w-[70rem] px-11 pt-6
+        @apply grid md:grid-cols-2 max-w-[68rem] px-6 pt-6
     }
 
     .form-control-area > div {
-        @apply flex flex-col gap-12 w-10/12 justify-start ml-6
+        @apply flex flex-col gap-12 w-9/12 justify-start ml-6
     }
 
     .form-control {
@@ -202,7 +203,7 @@
     }
 
     button {
-        @apply justify-center top-4 w-[35%] self-end
+        @apply justify-center top-4 w-fit self-end
     }
 
     .error {
