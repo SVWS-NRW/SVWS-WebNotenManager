@@ -45,16 +45,15 @@
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
 
-                    <!-- Teilleistungen -->
                     <template v-for="col in teilleistungCols" :key="col.key" v-slot:[`cell(${col.key})`]="{ value, rowIndex }">
                         <span v-if="value">
-                            <!-- TL_ID: {{ value.id }} <br /> Note: {{ value.note ?? 'null' }} -->
                             <!-- Hier kommt ein NoteInput, der Schickt die note an API endpunkt teilleistungen/update-note/{id}/{note} Karol -->
                              <!-- disabled false here only for testing reasons - Sílvia -->
                             <NoteInput :leistung="value" column="note" :teilleistung="true" :row-index="rowIndex" :disabled="false" @navigated="navigateTable"
                             ></NoteInput>
                         </span>
                     </template>
+
                     <!-- TODO: check rights and components used for all of them -->
                     <!-- removed disabled attribute for testing Karol -->
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
@@ -133,7 +132,7 @@
             klasseFilter.value =filterItems.value.selected.kuerzel;
             //TODO: check and complete
             getHiddenColumns(toggles);
-            teilleistungCols.value.forEach((c) => cols.value.push(c)) // Pushes the fetched TL Columns to global columns Karol
+            teilleistungCols.value.reverse().forEach((c) => cols.value.splice(4, 0, c)) // Pushes the fetched TL Columns to global columns after Kurs
         })
         .finally((): void => {
             mapFilters();
@@ -190,7 +189,6 @@
         .then((response: AxiosResponse): void => {
             rows.value = response.data.leistungen; // Fetches leistungen Sílvia
             teilleistungCols.value = response.data.columns; // Fetches columns Sílvia
-            console.log(rows.value);
         })
         .finally((): void => {
             //TODO: error
