@@ -78,6 +78,13 @@ class Schueler extends Model
         'istDaZFoerderung',
     ];
 
+    protected $casts = [
+        'bilingualeSprache' => 'string',
+        'istZieldifferent' => 'bool',
+        'istDaZFoerderung' => 'bool',
+    ];
+
+
 	public $timestamps = false;
 
     /**
@@ -145,7 +152,7 @@ class Schueler extends Model
      *
      * @return HasMany
      */
-    public function sprachenfolgen(): HasMany // TODO: not in json
+    public function sprachenfolge(): HasMany
     {
         return $this->hasMany(Sprachenfolge::class);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SecureImportRequest;
+use App\Http\Resources\DatenResource;
 use App\Http\Resources\Export\SchuelerResource;
 use App\Models\{Schueler, User};
 use App\Services\{DataImportService, GzipService};
@@ -72,23 +73,10 @@ class SecureTransferController extends Controller
      * @param GzipService $gzipService
      * @return Response
      */
-    public function export(GzipService $gzipService): JsonResponse|Response
+    public function export(GzipService $gzipService): Response
     {
-        // Get the data with all relations.
-        $schueler = Schueler::with([
-            'bemerkung',
-            'leistungen' => [
-                'note',
-            ],
-            'lernabschnitt' => [
-                'lernbereich1Note', 'lernbereich2Note', 'foerderschwerpunkt1Relation', 'foerderschwerpunkt2Relation',
-            ],
-        ])
-        ->get();
-
-        // Attempt to stringify the data.
         try {
-            return response()->json(SchuelerResource::collection($schueler));
+            $data = json_encode(new DatenResource([]));
         } catch (Exception $e) {
             return response([
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
@@ -97,7 +85,6 @@ class SecureTransferController extends Controller
 
 
         // As for now there is no counterpart on the server #347
-        /*
         try {
             return response($gzipService->encode($data));
         } catch (Exception $e) {
@@ -105,7 +92,6 @@ class SecureTransferController extends Controller
                 'message' => "Ein Fehler ist beim Komprimieren der Daten aufgetreten: {$e->getMessage()}",
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
-        */
     }
 
     /**

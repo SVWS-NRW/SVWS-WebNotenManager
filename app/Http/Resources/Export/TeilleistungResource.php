@@ -20,11 +20,15 @@ class TeilleistungResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->ext_id,
-            'artID' => $this->teilleistungsart?->ext_id,
+            'id' => $this->id,
+            'artID' => $this->teilleistungsart?->id,
+            'tsArtID' => $this->tsArtID,
             'datum' => $this->datum,
+            'tsDatum' => $this->tsDatum,
             'bemerkung' => $this->bemerkung,
-            'notenKuerzel' => $this->note?->kuerzel
+            'tsBemerkung' => $this->tsBemerkung,
+            'note' => $this->note?->kuerzel,
+            'tsNote' => $this->tsNote,
         ];
     }
 }

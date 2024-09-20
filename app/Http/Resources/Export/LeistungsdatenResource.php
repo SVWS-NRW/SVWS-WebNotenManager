@@ -22,10 +22,10 @@ class LeistungsdatenResource extends JsonResource
         return [
             'id' => $this->id,
             'lerngruppenID' => $this->lerngruppe->id,
-            'note' => $this->note?->kuerzel,
+            'note' => (string) $this->note?->kuerzel,
             'tsNote' => $this->tsNote,
-            'quartal' => $this->quartalnote?->kuerzel,
-            'tsQuartalNote' => $this->tsNoteQuartal,
+            'noteQuartal' => (string) $this->quartalnote?->kuerzel,
+            'tsNoteQuartal' => $this->tsNoteQuartal,
             'istSchriftlich' => $this->istSchriftlich,
             'abiturfach' => $this->abiturfach,
             'fehlstundenFach' => $this->fehlstundenFach,
@@ -37,8 +37,8 @@ class LeistungsdatenResource extends JsonResource
 			'neueZuweisungKursart' => $this->neueZuweisungKursart,
 			'istGemahnt' => (bool) $this->istGemahnt,
 			'tsIstGemahnt' => $this->tsIstGemahnt,
-			'mahndatum' => $this->mahndatum,
-            'teilleistungen' => [],
+			'mahndatum' => $this->mahndatum?->format('d.m.Y'),
+            'teilleistungen' => TeilleistungResource::collection($this->teilleistungen),
         ];
     }
 }

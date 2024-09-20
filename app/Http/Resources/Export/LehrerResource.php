@@ -24,6 +24,7 @@ class LehrerResource extends JsonResource
             'kuerzel' => $this->kuerzel,
             'nachname' => $this->nachname,
             'vorname' => $this->vorname,
+            'geschlecht' => $this->geschlecht,
             'eMailDienstlich' => $this->email,
         ];
     }

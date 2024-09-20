@@ -92,6 +92,7 @@ class Leistung extends Model
 	protected $casts = [
 		'mahndatum' => 'datetime',
         'istGemahnt' => 'boolean',
+        'istSchriftlich' => 'boolean',
 	];
 
     /**

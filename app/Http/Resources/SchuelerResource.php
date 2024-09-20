@@ -21,10 +21,15 @@ class SchuelerResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'klasseID' => $this->klasse->id,
+            'jahrgangID' => $this->jahrgang->id,
             'name' => implode(separator: ', ', array: [$this->nachname, $this->vorname]),
-            'vorname' => $this->vorname,
             'nachname' => $this->nachname,
+            'vorname' => $this->vorname,
             'geschlecht' => $this->geschlecht,
+            'bilingualeSprache' => $this->bilingualeSprache ?? 'null',
+            'istZieldifferent' => $this->istZieldifferent,
+            'istDaZFoerderung' => $this->istDaZFoerderung,
             'jahrgang_id' => $this->jahrgang->id,
             'bemerkungen' => new BemerkungResource(resource: $this->bemerkung),
         ];

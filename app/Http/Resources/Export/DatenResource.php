@@ -1,17 +1,7 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Export;
 
-use App\Http\Resources\Export\SchuelerResource;
-use App\Http\Resources\Export\FachResource;
-use App\Http\Resources\Export\FloskelgruppeResource;
-use App\Http\Resources\Export\FoerderschwerpunkteResource;
-use App\Http\Resources\Export\JahrgangResource;
-use App\Http\Resources\Export\KlasseResource;
-use App\Http\Resources\Export\LehrerResource;
-use App\Http\Resources\Export\NoteResource;
-use App\Http\Resources\Export\TeilleistungResource;
-use App\Http\Resources\Export\TeilleistungsartResource;
 use App\Models\Fach;
 use App\Models\Floskelgruppe;
 use App\Models\Foerderschwerpunkt;
@@ -59,7 +49,6 @@ class DatenResource extends JsonResource
             'fehlstundenSIIFachbezogen' => true,
             'schulform' => 'GY',
             'mailadresse' => 'mail@schule.nrw.de',
-            'schueler' => SchuelerResource::collection($schueler),
             //'noten' => NoteResource::collection(Note::all()),
             //'foerderschwerpunkte' => FoerderschwerpunkteResource::collection(Foerderschwerpunkt::all()),
             //'jahrgaenge' => JahrgangResource::collection(Jahrgang::all()),
@@ -69,6 +58,8 @@ class DatenResource extends JsonResource
             //'faecher' => FachResource::collection(Fach::all()),
             //'teilleistungsarten' => TeilleistungsartResource::collection(Teilleistungsart::all()),
             //'lerngruppen' => LerngruppeResource::collection(Lerngruppe::all()),
+            'schueler' => SchuelerResource::collection($schueler),
         ];
     }
 }
+

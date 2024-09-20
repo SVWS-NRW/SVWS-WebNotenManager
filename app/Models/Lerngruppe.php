@@ -67,6 +67,15 @@ class Lerngruppe extends Model
     ];
 
     /**
+     * Cast to native types
+     *
+     * @var string[]
+     */
+    protected $casts = [
+        'kID' => 'int',
+    ];
+
+    /**
      * The relations that own the model
      *
      * @return BelongsToMany

@@ -21,6 +21,7 @@ class FoerderschwerpunkteResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->id,
             'kuerzel' => $this->kuerzel,
             'beschreibung' => $this->beschreibung,
         ];
