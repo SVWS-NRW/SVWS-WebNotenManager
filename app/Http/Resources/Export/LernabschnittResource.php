@@ -26,8 +26,8 @@ class LernabschnittResource extends JsonResource
 			'fehlstundenGesamtUnentschuldigt' => $this->fehlstundenGesamtUnentschuldigt,
 			'tsFehlstundenGesamtUnentschuldigt' => $this->tsFehlstundenGesamtUnentschuldigt,
             'pruefungsordnung' => $this->pruefungsordnung,
-            'lernbereich1note' => (string) $this->lernbereich1Note?->kuerzel,
-            'lernbereich2note' => (string) $this->lernbereich2Note?->kuerzel,
+            'lernbereich1note' => $this->lernbereich1Note?->kuerzel,
+            'lernbereich2note' => $this->lernbereich2Note?->kuerzel,
             'foerderschwerpunkt1' => $this->foerderschwerpunkt1Relation?->kuerzel,
             'foerderschwerpunkt2' => $this->foerderschwerpunkt2Relation?->kuerzel,
         ];

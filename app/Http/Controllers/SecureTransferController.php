@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SecureImportRequest;
-use App\Http\Resources\DatenResource;
-use App\Http\Resources\Export\SchuelerResource;
-use App\Models\{Schueler, User};
+use App\Http\Resources\Export\DatenResource;
+use App\Models\User;
 use App\Services\{DataImportService, GzipService};
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
