@@ -83,7 +83,6 @@ class SecureTransferController extends Controller
             ], Status::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-
         // As for now there is no counterpart on the server #347
         try {
             return response($gzipService->encode($data));
