@@ -1,8 +1,10 @@
 <template>
     <AppLayout title="Benutzereinstellungen">
         <template #main>
-            <section>
-                <h2 class="text-headline">Spalteneinstellungen</h2>
+            <SvwsUiHeader>
+                Spalteneinstellungen
+            </SvwsUiHeader>
+            <div class="content">
                 <!-- Avoid "Uncaught (in promise) TypeError: Cannot read properties of undefined..." with conditional rendering  -->
                 <div v-if="user_settings.filters_meinunterricht">
                     <h3 class="text-headline-md">Mein Unterricht</h3>
@@ -27,8 +29,10 @@
                         <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.note" type="toggle">Note</SvwsUiCheckbox>
                         <SvwsUiCheckbox v-model="user_settings.filters_leistungsdatenuebersicht.fach" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
+                <div class="clear"></div>
+                
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
-            </section>
+            </div>
         </template>
         <template #secondaryMenu>
             <UserSettingsMenu :lastLogin="props.auth.lastLogin" :email="props.auth.user.email"></UserSettingsMenu>
@@ -41,7 +45,7 @@
     import AppLayout from '@/Layouts/AppLayout.vue';
     import axios, { AxiosResponse } from 'axios';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+    import { SvwsUiButton, SvwsUiCheckbox, SvwsUiHeader } from '@svws-nrw/svws-ui';
     import UserSettingsMenu from '@/Components/UserSettingsMenu.vue';
     import { Auth } from '@/Interfaces/Interface';
 
@@ -111,15 +115,15 @@
 
 
 <style scoped>
-    section {
-        @apply p-6 space-y-12 ml-6
+    .content {
+        @apply grid md:grid-cols-2 col-span-3 gap-12 md:max-w-4xl px-6 
     }
 
-    section > div {
-        @apply flex flex-col gap-3 items-start
+    .content > div {
+        @apply flex flex-col gap-5 justify-start ml-6
     }
 
-    button {
-        @apply self-start
+    .button {
+        @apply justify-center top-4 w-fit left-2/4
     }
 </style>
