@@ -4,10 +4,16 @@
             <section>
                 <h2 class="text-headline">Sicherheitseinstellungen</h2>
                 <div>
-                <h3 class="text-headline-md">2FA</h3>
-                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle">
-                        OTP
+                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" style="padding-bottom: 10px">
+                        Zwei-Faktor-Authentifizierung per E-Mail
                     </SvwsUiCheckbox>
+                    <div style="padding-right: 38%">
+                        <p>Hiermit aktivieren Sie die Zwei-Faktor-Authentifizierung per E-Mail. 
+                            Nach der Aktivierung werden Sie bei jedem Anmeldevorgang neben Ihrem Passwort zusätzlich einen einmaligen Bestätigungscode eingeben müssen. 
+                            Dieser Code wird Ihnen an die von Ihnen angegebene E-Mail-Adresse gesendet. Diese zusätzliche Sicherheitsmaßnahme sorgt dafür, dass Ihr Konto besser vor unbefugtem Zugriff geschützt ist.</p>
+                        <br />
+                        <p>Bitte stellen Sie sicher, dass Sie auf Ihre E-Mail-Adresse jederzeit Zugriff haben, da der Bestätigungscode bei jeder Anmeldung benötigt wird.</p>
+                    </div>
                 </div>
                 <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
             </section>
