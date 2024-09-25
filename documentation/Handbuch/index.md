@@ -82,7 +82,7 @@ Es kann nur einen einzigen technischen Administrator in der Datenbank geben. Bei
 
 ### weitere Benutzer importieren
 
-Alle Benutzer außer dem technischen Administrator können nur im SVWS-Server angelegt werden. Für diese Benutzer sind somit eine Schulnummer, eine E-Mail-Adresse und ein Lehrkraftkürzel eindeutig vorgegeben und in der Datenbank des SVWS-Servers eingetragen. Um nun diese Benutzer im Webnotenmagager zu importieren müssen Sie die [Synchronisation einrichten](###Synchronisation-einrichten).
+Alle Benutzer außer dem technischen Administrator können nur im SVWS-Server angelegt werden. Für diese Benutzer sind somit eine Schulnummer, eine E-Mail-Adresse und ein Lehrkraftkürzel eindeutig vorgegeben und in der Datenbank des SVWS-Servers eingetragen. Um nun diese Benutzer im Webnotenmagager zu importieren müssen Sie die [Synchronisation einrichten](#synchronisation-einrichten).
 
 ### Zugang als Lehrkraft
 
@@ -101,9 +101,15 @@ Hierbei muss natürlich bei der Einrichtung in der Administationsoberfläche des
 
 ## Synchronisation
 
+TBD
+
 ### Verfahrensbeschreibung
 
+TBD
+
 ### Synchronisation einrichten
+
+TBD
 
 ### Synchronisation löschen
 
