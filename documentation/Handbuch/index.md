@@ -52,8 +52,7 @@ In der .env Datei befinden sich die folgenden Parameter, analog zur graphischen 
 
 
 Variable    | Beispiel                      
---------    | --------                     
-
+--------    | -------- 
 MAIL_MAILER         | "smtp"                        
 MAIL_HOST           | "YourEmailHost.de"
 MAIL_PORT           | "465"
@@ -83,7 +82,7 @@ Es kann nur einen einzigen technischen Administrator in der Datenbank geben. Bei
 
 ### weitere Benutzer importieren
 
-Alle Benutzer außer dem technischen Administrator können nur im SVWS-Server angelegt werden. Für diese Benutzer sind somit eine Schulnummer, eine E-Mail-Adresse und ein Lehrkraftkürzel eindeutig vorgegeben und in der Datenbank des SVWS-Servers eingetragen. Um nun diese Benutzer im Webnotenmagager zu importieren müssen Sie die[Synchronisation einrichten](#Synchronisation-einrichten).
+Alle Benutzer außer dem technischen Administrator können nur im SVWS-Server angelegt werden. Für diese Benutzer sind somit eine Schulnummer, eine E-Mail-Adresse und ein Lehrkraftkürzel eindeutig vorgegeben und in der Datenbank des SVWS-Servers eingetragen. Um nun diese Benutzer im Webnotenmagager zu importieren müssen Sie die [Synchronisation einrichten](###Synchronisation-einrichten).
 
 ### Zugang als Lehrkraft
 
