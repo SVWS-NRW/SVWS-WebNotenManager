@@ -30,7 +30,7 @@ Route::controller(TeilleistungenController::class)
     ->prefix('teilleistungen')
     ->name('teilleistungen.')
     ->group(function (): void {
-        Route::get('/', 'index')->name('index');
+        Route::get('index/{reset}', 'index')->name('index');
         Route::get('/kurs/{id}', 'getKurs')->name('get_kurs');
         Route::get('/klasse/{klasse}', 'getKlasse')->name('get_klasse');
         Route::put('/update-note/{teilleistung}/{note}', 'updateNote')->name('update_note');

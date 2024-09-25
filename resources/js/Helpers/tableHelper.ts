@@ -1,11 +1,10 @@
 import { Leistung } from '@/Interfaces/Leistung';
 import { Schueler } from '@/Interfaces/Schueler';
-//TODO: here
-import { Teilleistung } from '@/Interfaces/Interface';
+import { Teilleistung } from '@/Interfaces/Teilleistung';
 
 const emptyValueDescription: string = 'Leer';
 
-const searchHelper = (model: Leistung|Schueler, search: string[], searchFilter: string): boolean => {
+const searchHelper = (model: Leistung|Teilleistung|Schueler, search: string[], searchFilter: string|null): boolean => {
     return search.some((searchString: string): boolean => model[searchString].toLocaleLowerCase().includes(
         searchFilter?.toLocaleLowerCase() ?? ''
     )
@@ -17,9 +16,9 @@ const multiSelectHelper = (model: Leistung|Teilleistung|Schueler, column: string
     });
 };
 
-//TODO:this is still just a dummy
+
 const selectHelper = (model: Leistung|Teilleistung|Schueler, column: string, fachItem: string): boolean => {
-        return (fachItem === 'Leer' ? null : fachItem) === model[column];
+        return fachItem === "" || fachItem === model[column];
 };
 
 

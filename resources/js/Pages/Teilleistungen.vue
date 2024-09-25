@@ -5,7 +5,6 @@
                 {{ title }}
             </SvwsUiHeader>
 
-            <!-- TODO: remove unnecessary elements if present -->
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
@@ -18,8 +17,7 @@
                             </SvwsUiButton>
                         </div>
                     </template>
-
-                    <!-- Erweiterte Filteroptionen -->
+                    
                     <div class="filter-area"></div>
                         <template #filterAdvanced>
                             <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
@@ -47,15 +45,13 @@
 
                     <template v-for="col in teilleistungCols" :key="col.key" v-slot:[`cell(${col.key})`]="{ value, rowIndex }">
                         <span v-if="value">
-                            <!-- Hier kommt ein NoteInput, der Schickt die note an API endpunkt teilleistungen/update-note/{id}/{note} Karol -->
-                             <!-- disabled false here only for testing reasons - Sílvia -->
+                             <!-- TODO: disabled false here only for testing reasons - Sílvia -->
                             <NoteInput :leistung="value" column="note" :teilleistung="true" :row-index="rowIndex" :disabled="false" @navigated="navigateTable"
                             ></NoteInput>
                         </span>
                     </template>
 
-                    <!-- TODO: check rights and components used for all of them -->
-                    <!-- removed disabled attribute for testing Karol -->
+                    <!-- TODO: removed disabled attribute for testing Karol -->
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
                         <NoteInput column="quartalnote" :leistung="rowData" :row-index="rowIndex"
                         ></NoteInput>
@@ -74,14 +70,12 @@
 
 <script setup lang="ts">
     import AppLayout from '@/Layouts/AppLayout.vue';
-    import axios, { AxiosPromise, AxiosResponse } from 'axios';
-    // TODO: refactor unnecessary elements
-    import { computed, onMounted, Ref, provide, ref, watch } from 'vue';
+    import axios, { AxiosResponse } from 'axios';
+    import { computed, onMounted, Ref, ref } from 'vue';
     import { mapFilterOptionsHelper, selectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiSelect, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { NoteInput, BemerkungButton, } from '@/Components/Components';
-    //TODO: Teilleistung
-    import { Teilleistung, Leistung} from '@/Interfaces/Interface';
+    import { Teilleistung } from '@/Interfaces/Interface';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     const title = 'Notenmanager - Teilleistungen';
@@ -101,19 +95,16 @@
     // The different filters on top of the screen may get input and thus the data from DB will be filtered and then displayed
     const rowsFiltered = computed(() => {
         return rows.value.filter((teilleistung: Teilleistung): boolean => {
-            if (searchFilter.value !== null) {
-                return searchHelper(teilleistung, ['name'], searchFilter.value);
-                //TODO: needs to be adjusted in order to work (multiselect)
-                //&& selectHelper(teilleistung, 'fach', fachFilter.value)
+            if (searchFilter.value !== null || fachFilter.value !== "") {
+                return searchHelper(teilleistung, ['name'], searchFilter.value)
+                && selectHelper(teilleistung, 'fach', fachFilter.value);
             }
             return true;
         })
     });
 
-    //TODO: interface
     // some columns may be displayed/hidden on demand
     const toggles = ref({
-        // This has to be dynamically adapted byt the teilleistungsCols Karol
         fach: false,
         kurs: false,
         quartalnoten: false,
@@ -122,17 +113,16 @@
 
     // Api Call - get default option for teilleistungen display
     onMounted((): Promise<void> => axios
-        .get(route('teilleistungen.index')) // Initial route Karol
+        .get(route('teilleistungen.index', "filteredTeilleistungen"))
         .then((response: AxiosResponse): void => {
-            rows.value = response.data.leistungen; // Fetches leistungen Karol
-            teilleistungCols.value = response.data.columns; // Fetches the columns Karol
+            rows.value = response.data.leistungen; // Fetches leistungen
+            teilleistungCols.value = response.data.columns; // Fetches the columns
             notes.value = response.data.notes;
             toggles.value = response.data.toggles;
             filterItems.value = response.data.filters;
+            //TODO: typing here
             klasseFilter.value =filterItems.value.selected.kuerzel;
-            //TODO: check and complete
-            getHiddenColumns(toggles);
-            teilleistungCols.value.reverse().forEach((c) => cols.value.splice(4, 0, c)) // Pushes the fetched TL Columns to global columns after Kurs
+            addTeilleistungen(teilleistungCols);
         })
         .finally((): void => {
             mapFilters();
@@ -147,28 +137,20 @@
 
     const cols: Ref<DataTableColumn[]> = ref([
         ...default_cols,
-        { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, toggleInvisible:true  },
-        { key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, toggleInvisible:true  },
+        { key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, toggle: true },
+        { key: 'kurs', label: 'Kurs', sortable: true, span: 1, minWidth: 5, toggle: true },
         { key: 'quartalnoten', label: 'Quartal', sortable: true, span: 1, minWidth: 6, toggle: true },
         { key: 'note', label: 'Note', sortable: true, span: 2, minWidth: 5, toggle: true },
     ]);
 
-    //TODO: interface / check if needed (actually unused now)
     //filters from settings or user settings determine whether columns are hidden or shown in the table
     const hiddenColumns = ref<Set<string>>(new Set<string>());
-    //filter names from DB do not match our cols; TODO: check whether it may be corrected at some point
-    const teilleistungenFiltersToCols = {
-        //and the rest
-        klasse: 'klasse',
-        kurs: 'kurs',
-    };
 
-    const getHiddenColumns = (toggles) => {
-        for (const filter in toggles.value) {
-            if (toggles.value[filter] === false) {
-                hiddenColumns.value.add(teilleistungenFiltersToCols[filter]);
-            }
-        }
+    // push the fetched TL Columns to global columns after Kurs
+    const addTeilleistungen = (teilleistungCols: Ref<DataTableColumn[]>)  => {
+    // reverse order for display because TLs are received from newest to latest atm
+        teilleistungCols.value.reverse().forEach((c) => cols.value.splice(4, 0, c)); 
+        teilleistungCols.value.reverse()[teilleistungCols.value.length - 1].span = 4;
     }
 
     // Filter
@@ -178,7 +160,6 @@
     const fachFilter: Ref <string> = ref("");
 
     //filterItems comes from controller and includes 3 objects (klasse, kurs and selected)
-    //TODO: correct related typing errors
     const filterItems: Ref<string[]> = ref([]);
     const klasseItems = ref(new Map());
     const kursItems = ref(new Map());
@@ -191,15 +172,25 @@
             teilleistungCols.value = response.data.columns; // Fetches columns Sílvia
         })
         .finally((): void => {
-            //TODO: error
             mapFilters();
         });
 
     const filterReset = (): void => {
-        searchFilter.value = "";
-        klasseFilter.value = "";
-        kursFilter.value = "";
-        fachFilter.value = "";
+        axios.get(route('teilleistungen.index', "unfilteredTeilleistungen"))
+        .then((response: AxiosResponse): void => {
+            rows.value = response.data.leistungen; // Fetches leistungen
+            teilleistungCols.value = response.data.columns; // Fetches the columns
+            notes.value = response.data.notes;
+            toggles.value = response.data.toggles;
+            filterItems.value = response.data.filters;
+        })
+        .finally((): void => {
+            mapFilters();
+            searchFilter.value = "";
+            klasseFilter.value = "";
+            kursFilter.value = "";
+            fachFilter.value = "";
+        })
     }
 
     const isFiltered = (): boolean => {
@@ -209,6 +200,7 @@
         || fachFilter.value !== ""
     }
 
+    //TODO: typing here (same as above)
     // dropdowns in header
     const mapFilters = (): void => {
         //klasse and kurs come separately from controller (together with "selected") while fach is fetched from DB results
@@ -244,6 +236,7 @@
 	}
 
     //TODO: not adjusted for Teilleistungen page yet, thus it isn't working for the moment
+    //TODO: does navigation ticket require more here?
     //direction (up/down within the column) and map name are received from child component
     const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
         switch (itemRefsName) {

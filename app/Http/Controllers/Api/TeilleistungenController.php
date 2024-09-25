@@ -19,13 +19,13 @@ class TeilleistungenController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(string $filteredTeilleistungen): JsonResponse
     {
-        //testing here for ticket
-        // Per default take first "Klasse"
-        $selected = Klasse::first();
-        //$selected = Klasse::skip(3)->first();
+        $selected = "";
+        //take first "Klasse" as default unless resetting filter
+        if ($filteredTeilleistungen == "filteredTeilleistungen")  $selected = Klasse::first();
         $collection = $this->getTeilleistungen($selected);
+
 
         $kurse = Lerngruppe::query()
             ->whereNotNull('kursartKuerzel')
@@ -73,8 +73,6 @@ class TeilleistungenController extends Controller
             return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
         }
        
-        //used to be this
-        //$collection = $this->getTeilleistungen($klasse);
         $collection = $this->getTeilleistungen($completeKlassen);
 
         return response()->json([
@@ -92,6 +90,32 @@ class TeilleistungenController extends Controller
     public function getKurs(string $kurs): JsonResponse
     {
         $collection = $this->getTeilleistungen($kurs);
+
+        return response()->json([
+            'leistungen' => $this->getLeistungen($collection),
+            'columns' => $this->getColumns($collection)
+        ]);
+    }
+
+        /**
+     * Get "Leistungen" for all Classes and Coursese
+     *
+     * @param string $all
+     * @return JsonResponse
+     */
+    public function getAllTeilleistungen(): JsonResponse
+    {
+        $collection = Leistung::query()
+        ->whereHas('teilleistungen')
+        ->with([
+            'schueler', 'note', 'teilleistungen' => [
+                'note', 'teilleistungsart',
+            ],
+        ])
+        ->whereHas(
+            'lerngruppe')
+        ->get();
+        
 
         return response()->json([
             'leistungen' => $this->getLeistungen($collection),
@@ -167,10 +191,9 @@ class TeilleistungenController extends Controller
      * @param Note $note
      * @return JsonResponse
      */
-    //public function updateNote(Teilleistung $teilleistung, Note $note): JsonResponse
     public function updateNote(Teilleistung $teilleistung, string $kuerzel): JsonResponse
     {
-                //Get all notes present in the noten DB table Sílvia
+        //Get all notes present in the noten DB table Sílvia
         $allNotes = Note::query()
             ->orderBy('sortierung')
             ->pluck('id', 'kuerzel')
@@ -182,19 +205,11 @@ class TeilleistungenController extends Controller
 				->where('kuerzel', '=', $kuerzel)
                 ->pluck('id')
 				->firstOrFail();
-                //TODO: typing and response?
 		} catch (Exception $e) {
 			return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
 		}
 
         try {
-            //Ask karol about this
-            // $teilleistung->note()->associate($kuerzel);
-            // $teilleistung->tsNote = now();
-            // $teilleistung->save();
-
-            //return response()->json('success');
-
             $teilleistung->update([
                 'note_id' => $noteId,
                 'tsNote' => now()->format('Y-m-d H:i:s.u'),
@@ -235,7 +250,7 @@ class TeilleistungenController extends Controller
                 fn (Builder $query): Builder => $query->when(
                     $item instanceof Klasse,
                     fn (Builder $query): Builder => $query->whereBelongsTo($item),
-                    fn (Builder $query): Builder => $query->where('kursartKuerzel', '=', $item),
+                    fn (Builder $query): Builder => $query->where('kursartKuerzel', 'like', '%' . $item . '%'),
                 )
             )
             ->get();
@@ -265,7 +280,9 @@ class TeilleistungenController extends Controller
                         'id' => $art->id,
                         'key' => $this->teilleistungKey($art),
                         'label' => $art->bezeichnung,
+                        'sortable' => true,
                         'sortierung' => $art->sortierung,
+                        'toggle' => true,
                     ];
                 });
         })->toArray();
