@@ -45,7 +45,7 @@ DB_PASSWORD     | WenomDatabasePassword
 Für die grundlegende Autorisierung der einzelnen Benutzer ist eine "No-Reply"-E-Mail-Adresse erforderlich. Die Konfiguration dieser E-Mail-Adresse kann durch den technischen Administrator in der .env-Datei vorgenommen werden oder auch zu einem späteren Zeitpunkt durch einen eingeloggten Benutzer mit entsprechenden Admin-Rechten in der graphischen Oberfläche eingetragen werden. Hierzu gehen Sie zu "Einstellungen" und dann auf "Mailkonfiguration". 
 
 
-![Mailkonfiguration](graphics/Synchronisation_Einrichtung.png)
+![Mailkonfiguration](graphics/Mailkonfiguration.png)
 
 
 In der .env Datei befinden sich die folgenden Parameter, analog zur graphischen Oberfläche: 
@@ -66,7 +66,7 @@ MAIL_FROM_NAME      | "WeNoM - WebNotenManager"
 
 ## Benutzerverwaltung 
 
-### technischer Administrator einrichten
+### technischen Administrator einrichten
 
 Bei der Ersteinrichtung muss ein technischer Administrator eingerichtet werden. Dieser soll die Synchronisation mit dem SVWS-Server einrichten und dürchführen können. Nach erfolgreicher Einrichtung der Datenbank kann von einem zuständigen Administrator mit folgendem Befehl ein technischer Administrator angelegt werden. 
 
