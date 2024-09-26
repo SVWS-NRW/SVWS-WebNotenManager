@@ -22,9 +22,9 @@ class LeistungsdatenResource extends JsonResource
         return [
             'id' => $this->id,
             'lerngruppenID' => $this->lerngruppe->id,
-            'note' => (string) $this->note?->kuerzel,
+            'note' => $this->note?->kuerzel,
             'tsNote' => $this->tsNote,
-            'noteQuartal' => (string) $this->quartalnote?->kuerzel,
+            'noteQuartal' => $this->quartalnote?->kuerzel,
             'tsNoteQuartal' => $this->tsNoteQuartal,
             'istSchriftlich' => $this->istSchriftlich,
             'abiturfach' => $this->abiturfach,
