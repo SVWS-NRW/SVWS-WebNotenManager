@@ -54,7 +54,7 @@ class DatenResource extends JsonResource
             'jahrgaenge' => JahrgangResource::collection(Jahrgang::all()),
             'klassen' => KlasseResource::collection(Klasse::all()),
             'floskelgruppen' => FloskelgruppeResource::collection(Floskelgruppe::all()),
-            'lehrer' => LehrerResource::collection(User::all()),
+            'lehrer' => LehrerResource::collection(User::lehrer()->get()),
             'faecher' => FachResource::collection(Fach::all()),
             'teilleistungsarten' => TeilleistungsartResource::collection(Teilleistungsart::all()),
             'lerngruppen' => LerngruppeResource::collection(Lerngruppe::all()),
