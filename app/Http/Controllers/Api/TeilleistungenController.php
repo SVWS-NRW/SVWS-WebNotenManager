@@ -10,6 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\{Collection, Str};
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TeilleistungenController extends Controller
 {
@@ -18,11 +19,13 @@ class TeilleistungenController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(string $filteredTeilleistungen): JsonResponse
     {
-        // Per default take first "Klasse"
-        $selected = Klasse::first();
+        $selected = "";
+        //take first "Klasse" as default unless resetting filter
+        if ($filteredTeilleistungen == "filteredTeilleistungen")  $selected = Klasse::first();
         $collection = $this->getTeilleistungen($selected);
+
 
         $kurse = Lerngruppe::query()
             ->whereNotNull('kursartKuerzel')
@@ -60,9 +63,17 @@ class TeilleistungenController extends Controller
      * @param Klasse $klasse
      * @return JsonResponse
      */
-    public function getKlasse(Klasse $klasse): JsonResponse
+    public function getKlasse(string $klasseKuerzel): JsonResponse
     {
-        $collection = $this->getTeilleistungen($klasse);
+        try {
+            $completeKlassen = Klasse::query()
+                ->where('kuerzel', '=', $klasseKuerzel)
+                ->firstOrFail();
+        } catch (NotFoundHttpException $e) {
+            return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
+        }
+       
+        $collection = $this->getTeilleistungen($completeKlassen);
 
         return response()->json([
             'leistungen' => $this->getLeistungen($collection),
@@ -81,7 +92,33 @@ class TeilleistungenController extends Controller
         $collection = $this->getTeilleistungen($kurs);
 
         return response()->json([
-            'leistungen' => $collection,
+            'leistungen' => $this->getLeistungen($collection),
+            'columns' => $this->getColumns($collection)
+        ]);
+    }
+
+        /**
+     * Get "Leistungen" for all Classes and Coursese
+     *
+     * @param string $all
+     * @return JsonResponse
+     */
+    public function getAllTeilleistungen(): JsonResponse
+    {
+        $collection = Leistung::query()
+        ->whereHas('teilleistungen')
+        ->with([
+            'schueler', 'note', 'teilleistungen' => [
+                'note', 'teilleistungsart',
+            ],
+        ])
+        ->whereHas(
+            'lerngruppe')
+        ->get();
+        
+
+        return response()->json([
+            'leistungen' => $this->getLeistungen($collection),
             'columns' => $this->getColumns($collection)
         ]);
     }
@@ -103,8 +140,8 @@ class TeilleistungenController extends Controller
                 'fach' => $leistung->lerngruppe->fach->kuerzel,
                 'kurs' => $leistung->lerngruppe->kursartKuerzel,
                 'klasse' => $leistung->lerngruppe->klasse->kuerzelAnzeige,
-                'note' => $leistung->note?->id,
-                'quartalnoten' => $leistung->quartalnote?->kuerzel,
+                'note' => $leistung->note?->kuerzel,
+                'quartalnote' => $leistung->quartalnote?->kuerzel,
             ];
 
             $leistungen[] = [...$base, ...$this->mapTeilleistungen($leistung)];
@@ -154,14 +191,32 @@ class TeilleistungenController extends Controller
      * @param Note $note
      * @return JsonResponse
      */
-    public function updateNote(Teilleistung $teilleistung, Note $note): JsonResponse
+    public function updateNote(Teilleistung $teilleistung, string $kuerzel): JsonResponse
     {
-        try {
-            $teilleistung->note()->associate($note);
-            $teilleistung->tsNote = now();
-            $teilleistung->save();
+        //Get all notes present in the noten DB table Sílvia
+        $allNotes = Note::query()
+            ->orderBy('sortierung')
+            ->pluck('id', 'kuerzel')
+            ->toArray();
 
-            return response()->json('success');
+        // Attempting to note_id the specified 'kuerzel'.
+        try {
+			$noteId= Note::query()
+				->where('kuerzel', '=', $kuerzel)
+                ->pluck('id')
+				->firstOrFail();
+		} catch (Exception $e) {
+			return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
+		}
+
+        try {
+            $teilleistung->update([
+                'note_id' => $noteId,
+                'tsNote' => now()->format('Y-m-d H:i:s.u'),
+            ]);
+    
+            // Returning a JSON response with a 204 No Content status.
+            return response()->json(status: Response::HTTP_NO_CONTENT);
         } catch (QueryException $e) {
             return response()->json([
                 'error' => 'Database query error',
@@ -195,7 +250,7 @@ class TeilleistungenController extends Controller
                 fn (Builder $query): Builder => $query->when(
                     $item instanceof Klasse,
                     fn (Builder $query): Builder => $query->whereBelongsTo($item),
-                    fn (Builder $query): Builder => $query->where('kursartKuerzel', '=', $item),
+                    fn (Builder $query): Builder => $query->where('kursartKuerzel', 'like', '%' . $item . '%'),
                 )
             )
             ->get();
@@ -225,7 +280,9 @@ class TeilleistungenController extends Controller
                         'id' => $art->id,
                         'key' => $this->teilleistungKey($art),
                         'label' => $art->bezeichnung,
+                        'sortable' => true,
                         'sortierung' => $art->sortierung,
+                        'toggle' => true,
                     ];
                 });
         })->toArray();

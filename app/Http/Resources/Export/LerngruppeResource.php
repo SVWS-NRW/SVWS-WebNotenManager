@@ -20,7 +20,7 @@ class LerngruppeResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->ext_id,
+            'id' => $this->id,
             'kID' => $this->kID,
             'fachID' => $this->fach?->id,
             'kursartID' => $this->kursartID,

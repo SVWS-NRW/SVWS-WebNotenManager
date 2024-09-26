@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\{
     FachbezogeneBemerkung, FachbezogeneFloskeln, Fehlstunden, Floskeln, Klassenleitung, Leistungsdatenuebersicht,
-    Mahnungen, MeinUnterricht, Noten, SchuelerBemerkung, TwoFAAuthentication, TeilleistungenController,
+    Mahnungen, MeinUnterricht, Noten, SchuelerBemerkung, TeilleistungenController,
 };
 use App\Http\Controllers\Api\Settings\{
     EnvController, MatrixController, SettingsController, UserSettingsController
@@ -30,7 +30,7 @@ Route::controller(TeilleistungenController::class)
     ->prefix('teilleistungen')
     ->name('teilleistungen.')
     ->group(function (): void {
-        Route::get('/', 'index')->name('index');
+        Route::get('index/{reset}', 'index')->name('index');
         Route::get('/kurs/{id}', 'getKurs')->name('get_kurs');
         Route::get('/klasse/{klasse}', 'getKlasse')->name('get_klasse');
         Route::put('/update-note/{teilleistung}/{note}', 'updateNote')->name('update_note');
@@ -93,19 +93,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     });
 
 Route::middleware('auth:sanctum')->group(function () {
-
-    // Defines the Two-Factor Authentication route group
-    Route::controller(TwoFAAuthentication::class)
-        //testing 2fa here
-        //should probably be up there (let's think about it)
-        ->group(function (): void {
-            Route::post('activate2FA', 'activate2FA')->name('activate2FA');
-            ;
-            Route::delete('deactivate2FA', 'deactivate2FA')->name('deactivate2FA');
-            ;
-        });
-
-
     // Defines the Fehlstunden controller route group
     Route::controller(Fehlstunden::class)
         ->name('api.fehlstunden.')
@@ -126,6 +113,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('filters', 'getAllFilters')->name('get_all_filters');
             Route::get('filters/{group}', 'getFilters')->name('get_filters');
             Route::get('user-data', 'getLastLogin')->name('get_last_login');
+            Route::post('get-settings', 'getSettings')->name('get_settings');
+            Route::post('set-settings', 'setSettings')->name('set_settings');
         });
 
     // Defines the Fachbezogene Bemerkung controller route group

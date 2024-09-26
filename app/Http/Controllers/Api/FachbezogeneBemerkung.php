@@ -21,7 +21,10 @@ class FachbezogeneBemerkung extends Controller
     public function __invoke(Leistung $leistung): JsonResponse
 	{
         // Checking if the 'klasse' related to the 'schueler' of the 'leistung' is editable.
-		abort_unless($leistung->schueler->klasse->editable_fb, Response::HTTP_FORBIDDEN);
+        abort_unless(
+            $leistung->schueler->klasse->editable_fb && $leistung->schueler->klasse->edit_overrideable,
+            Response::HTTP_FORBIDDEN
+        );
 
         // Updating the resource with an additional timestamp
 		$leistung->update([

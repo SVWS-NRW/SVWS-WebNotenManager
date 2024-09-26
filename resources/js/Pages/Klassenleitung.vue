@@ -19,7 +19,8 @@
                     </template>
                     
                     <template #filterAdvanced>
-                        <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                        <!-- <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" /> -->
+                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
                         <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter"
                         />
                     </template>

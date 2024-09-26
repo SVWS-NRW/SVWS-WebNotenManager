@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class);
             $table->json('filters_leistungsdatenuebersicht')->nullable();
             $table->json('filters_meinunterricht')->nullable();
+            $table->boolean('twofactor_otp')->default(false);
             $table->timestamps();
         });
     }

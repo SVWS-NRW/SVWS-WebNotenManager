@@ -78,18 +78,6 @@ class Bemerkung extends Model
     ];
 
     /**
-     * Casts to types
-     *
-     * @var array<string, string> $casts
-     */
-    protected $casts = [
-        'tsASV' => 'datetime',
-        'tsAUE' => 'datetime',
-        'tsZB' => 'datetime',
-        'tsIndividuelleVersetzungsbemerkungen' => 'datetime',
-    ];
-
-    /**
      * The relation that owns the model
      *
      * @return BelongsTo

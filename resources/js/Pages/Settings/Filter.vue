@@ -29,6 +29,7 @@
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.note" :value="1" type="toggle">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fach" :value="1" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
+                <div class="clear"></div>
 
                 <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
             </div>
@@ -147,7 +148,7 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12 max-w-lg
+        @apply grid md:grid-cols-2 col-span-3 gap-12 md:max-w-4xl px-6 
     }
 
     .content > div {
@@ -155,6 +156,6 @@
     }
 
     .button {
-        @apply self-start
+        @apply justify-center top-4 w-fit left-2/4
     }
 </style>

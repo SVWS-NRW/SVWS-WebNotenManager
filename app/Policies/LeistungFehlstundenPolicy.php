@@ -29,8 +29,13 @@ class LeistungFehlstundenPolicy
 			return true;
 		}
 
+        // Dissallow if the edit was not overriden
+        if (!$leistung->schueler->klasse->edit_overrideable) {
+			return false;
+		}
+
         // Disallow if the Schueler Klasse doesn't have editable Fehlstunden.
-		if (!$leistung->schueler->klasse->editable_fehlstunden) {
+		if (!$leistung->schueler->klasse->editable_fehlstunden ) {
 			return false;
 		}
 

@@ -17,7 +17,7 @@
         ></SvwsUiTextInput>
     </strong>
 </template>
-
+ on
 
 <script setup lang="ts">
     import { watch, ref, Ref } from 'vue';
@@ -30,6 +30,7 @@
         disabled: boolean,
         rowIndex: number,
         column: 'quartalnote'|'note',
+        teilleistung: boolean;
     }>();
 
     const emit = defineEmits(['navigated','updatedItemRefs'])
@@ -58,16 +59,30 @@
         debounce = setTimeout((): Promise<string | null> => saveNote(), 500);
     })
 
-    const saveNote = (): Promise<string | null> => axios
-        .post(route('api.noten', { leistung: props.leistung,  type: noteType.value }), { note: note.value })
-        .then((): string | null => props.leistung[props.column] = note.value)
-        .catch((): string | null => {
-            if (props.leistung[props.column] === null) {
-                return note.value = ""
-            } else {
-                return note.value = props.leistung[props.column]
-            }
-        });
+    //return type Promise<string | null>???
+    const saveNote = () => {
+        if (props.teilleistung) {
+            axios.put(route('teilleistungen.update_note', { teilleistung: props.leistung, note: note.value }))
+                .then((): string | null => props.leistung[props.column] = note.value)
+                .catch((): string | null => {
+                    if (props.leistung[props.column] === null) {
+                        return note.value = ""
+                    } else {
+                        return note.value = props.leistung[props.column]
+                    }
+                })
+        } else {
+            axios.post(route('api.noten', { leistung: props.leistung, type: noteType.value }), { note: note.value })
+                .then((): string | null => props.leistung[props.column] = note.value)
+                .catch((): string | null => {
+                    if (props.leistung[props.column] === null) {
+                        return note.value = ""
+                    } else {
+                        return note.value = props.leistung[props.column]
+                    }
+                });
+        }
+    }
 
     const valid = (): boolean => !lowScoreArray.includes(note.value as string);
 </script>

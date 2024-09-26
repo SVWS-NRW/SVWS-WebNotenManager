@@ -33,7 +33,6 @@
                         <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
                         <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
                         <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="item => item" v-model="noteFilter" />
-
                     </template>
 
                     <template #cell(klasse)="{ value, rowData }">
@@ -181,7 +180,7 @@
     const allNotes: Ref<string[]> = ref([]);
 
 
-    const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value);
+    const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value );
 
     onMounted((): Promise<void> => axios
         .get(route('api.leistungsdatenuebersicht'))

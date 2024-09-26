@@ -5,65 +5,71 @@
                 {{ title }}
             </SvwsUiHeader>
             <div class="form-control-area">
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.mailer" :valid="() => !hasErrors('MAIL_MAILER')" type="text"
-                        placeholder="Mailer"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_MAILER')" class="error">
-                        {{ getError('MAIL_MAILER') }}
-                    </span>
+                <div>
+                    <h3 class="text-headline-md">Kontoeinstellungen</h3>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="data.form.mailer" :valid="() => !hasErrors('MAIL_MAILER')" type="text"
+                            placeholder="Mailer"></SvwsUiTextInput>
+                        <span v-if="hasErrors('MAIL_MAILER')" class="error">
+                            {{ getError('MAIL_MAILER') }}
+                        </span>
+                    </div>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="data.form.host" :valid="() => !hasErrors('MAIL_HOST')" type="text"
+                            placeholder="HOST_URL"></SvwsUiTextInput>
+                        <span v-if="hasErrors('MAIL_HOST')" class="error">
+                            {{ getError('MAIL_HOST') }}
+                        </span>
+                    </div>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="data.form.port" :valid="() => !hasErrors('MAIL_PORT')" type="text"
+                            placeholder="PORT"></SvwsUiTextInput>
+                        <span v-if="hasErrors('MAIL_PORT')" class="error">
+                            {{ getError('MAIL_PORT') }}
+                        </span>
+                    </div>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="data.form.username" :valid="() => !hasErrors('MAIL_USERNAME')"
+                            type="text" placeholder="Benutzername"></SvwsUiTextInput>
+                        <span v-if="hasErrors('MAIL_USERNAME')" class="error">
+                            {{ getError('MAIL_USERNAME') }}
+                        </span>
+                    </div>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="data.form.password" :valid="() => !hasErrors('MAIL_PASSWORD')"
+                            type="password" placeholder="Passwort"></SvwsUiTextInput>
+                        <span v-if="hasErrors('MAIL_PASSWORD')" class="error">
+                            {{ getError('MAIL_PASSWORD') }}
+                        </span>
+                    </div>
+                    <div class="form-control">
+                        <SvwsUiSelect v-model="data.form.encryption" :items="verschluesselungOptions"
+                            :item-text="item => item" label="Verschlüsselung"></SvwsUiSelect>
+                    </div>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="data.form.from_address" :valid="() => !hasErrors('MAIL_FROM_ADDRESS')"
+                            type="email" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
+                        <span v-if="hasErrors('MAIL_FROM_ADDRESS')" class="error">
+                            {{ getError('MAIL_FROM_ADDRESS') }}
+                        </span>
+                    </div>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="data.form.from_name" :valid="() => !hasErrors('MAIL_FROM_NAME')"
+                            type="text" placeholder="Absender"></SvwsUiTextInput>
+                        <span v-if="hasErrors('MAIL_FROM_NAME')" class="error">
+                            {{ getError('MAIL_FROM_NAME') }}
+                        </span>
+                    </div>
+                    <SvwsUiButton id="save-button" @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
                 </div>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.host" :valid="() => !hasErrors('MAIL_HOST')" type="text"
-                        placeholder="HOST_URL"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_HOST')" class="error">
-                        {{ getError('MAIL_HOST') }}
-                    </span>
+                <div>
+                    <h3 class="text-headline-md">Testmail</h3>
+                    <div class="form-control">
+                        <SvwsUiTextInput v-model="recipient" type="text" placeholder="Empfänger"></SvwsUiTextInput>
+                        <span class="error"></span>
+                    </div>
+                    <SvwsUiButton id="testmail-button" @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton>
                 </div>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.port" :valid="() => !hasErrors('MAIL_PORT')" type="text"
-                        placeholder="PORT"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_PORT')" class="error">
-                        {{ getError('MAIL_PORT') }}
-                    </span>
-                </div>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.username" :valid="() => !hasErrors('MAIL_USERNAME')" type="text"
-                        placeholder="Benutzername"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_USERNAME')" class="error">
-                        {{ getError('MAIL_USERNAME') }}
-                    </span>
-                </div>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.password" :valid="() => !hasErrors('MAIL_PASSWORD')" type="password"
-                        placeholder="Passwort"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_PASSWORD')" class="error">
-                        {{ getError('MAIL_PASSWORD') }}
-                    </span>
-                </div>
-                <div class="form-control">
-                    <SvwsUiSelect v-model="data.form.encryption" :items="verschluesselungOptions" :item-text="item => item" label="Verschlüsselung"></SvwsUiSelect>
-                </div>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.from_address" :valid="() => !hasErrors('MAIL_FROM_ADDRESS')"
-                        type="email" placeholder="No-Reply-Adresse"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_FROM_ADDRESS')" class="error">
-                        {{ getError('MAIL_FROM_ADDRESS') }}
-                    </span>
-                </div>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="data.form.from_name" :valid="() => !hasErrors('MAIL_FROM_NAME')" type="text"
-                        placeholder="Absender"></SvwsUiTextInput>
-                    <span v-if="hasErrors('MAIL_FROM_NAME')" class="error">
-                        {{ getError('MAIL_FROM_NAME') }}
-                    </span>
-                </div>
-                <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
-                <h3 class="text-headline-md">Testmail</h3>
-                <div class="form-control">
-                    <SvwsUiTextInput v-model="recipient" type="text" placeholder="Empfänger"></SvwsUiTextInput>
-                    <span class="error"></span>
-                </div>
-                <SvwsUiButton @click="sendTestmail" type="secondary">Testmail senden</SvwsUiButton> 
             </div>
         </template>
         <template #secondaryMenu>
@@ -184,32 +190,20 @@
         @apply flex items-center justify-start gap-6 ml-6
     }
 
-    .content {
-        @apply px-6 flex flex-col gap-12 max-w-lg ml-6
-    }
-
-    .content>div {
-        @apply flex flex-col gap-5 justify-start
-    }
-
-    section {
-        @apply p-6 space-y-12
-    }
-
-    section>div {
-        @apply flex flex-col gap-3 items-start
-    }
-
-    button {
-        @apply self-start
-    }
-
     .form-control-area {
-        @apply flex flex-col gap-10 max-w-[32rem] px-11 pt-6
+        @apply grid md:grid-cols-2 max-w-[68rem] px-6 pt-6
+    }
+
+    .form-control-area > div {
+        @apply flex flex-col gap-12 w-9/12 justify-start ml-6
     }
 
     .form-control {
         @apply -my-2
+    }
+
+    button {
+        @apply justify-center top-4 w-fit self-end
     }
 
     .error {

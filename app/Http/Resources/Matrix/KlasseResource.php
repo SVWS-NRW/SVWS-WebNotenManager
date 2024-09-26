@@ -23,6 +23,7 @@ class KlasseResource extends JsonResource
 			'id' => $this->id,
 			'kuerzel' => $this->kuerzel,
 			'sortierung' => $this->sortierung,
+			'edit_overrideable' => $this->edit_overrideable,
 			'editable_teilnoten' => $this->editable_teilnoten,
 			'editable_noten' => $this->editable_noten,
 			'editable_mahnungen' => $this->editable_mahnungen,
