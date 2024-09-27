@@ -4,7 +4,7 @@
             <section>
                 <h2 class="text-headline">Sicherheitseinstellungen</h2>
                 <div>
-                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" style="padding-bottom: 10px">
+                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" @update:modelValue="saveSettings" style="padding-bottom: 10px">
                         Zwei-Faktor-Authentifizierung per E-Mail
                     </SvwsUiCheckbox>
                     <div style="padding-right: 38%">
@@ -15,7 +15,6 @@
                         <p>Bitte stellen Sie sicher, dass Sie auf Ihre E-Mail-Adresse jederzeit Zugriff haben, da der Bestätigungscode bei jeder Anmeldung benötigt wird.</p>
                     </div>
                 </div>
-                <SvwsUiButton @click="saveSettings" class="button">Speichern</SvwsUiButton>
             </section>
         </template>
         <template #secondaryMenu>
@@ -65,9 +64,5 @@
 
     section > div {
         @apply flex flex-col gap-3 items-start
-    }
-
-    button {
-        @apply self-start
     }
 </style>
