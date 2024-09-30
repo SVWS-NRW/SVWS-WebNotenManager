@@ -3,7 +3,7 @@
 ## Visual Sudio Code einrichten
 
 ### Vorbereitungen:
-	
+
 + Visual Studio Code installieren
 + MariaDB installieren und eine neue Datenbank (z.B. wenom) anlegen
 + php (Version 8.2) installieren und in den Umgebungsvariablen „Path“ anpassen
@@ -41,4 +41,3 @@ npm run build
 
 + Im Terminal `php artisan serve` ausführen
 + Im Browser http://127.0.0.1:8000 aufrufen
-	
