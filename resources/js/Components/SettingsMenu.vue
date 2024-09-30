@@ -21,7 +21,7 @@
                     <template #label>Synchronisation</template>
                 </SvwsUiMenuItem>
                 <SvwsUiMenuItem @click="navigate('settings.2fa')" :active="route().current('settings.2fa')">
-                    <template #label>Zweifaktor Authentisierung</template>
+                    <template #label>Sicherheitseinstellungen</template>
                 </SvwsUiMenuItem>
 
             </div>
