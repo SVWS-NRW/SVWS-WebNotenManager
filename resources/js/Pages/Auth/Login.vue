@@ -22,6 +22,10 @@
 
                     <h2 class="headline-4">{{ settings.general.name }}</h2>
 
+                    <span v-if="hasErrors('generic')" class="error">
+                        {{ getError('generic')}}
+                    </span>
+
                     <div class="form-control">
                         <SvwsUiTextInput
                             v-model="data.form.email"
@@ -104,7 +108,19 @@
         data.processing = true;
         axios.post(route('login'), data.form)
             .then((): void => Inertia.get(route('mein_unterricht')))
-            .catch((error: any): AxiosError => data.errors = error.response.data.errors)
+            .catch((error: any) => {
+                switch (error.response.status) {
+                    case 404:
+                        data.errors = {
+                            generic: [
+                                'Ein Benutzerkonto mit dem angegebenen Passwort oder der E-Mail-Adresse existiert nicht.'
+                            ]
+                        }
+                        break;
+                    default:
+                        data.errors = error.response.data
+                }
+            })
             .finally((): boolean => data.processing = false);
     };
 </script>

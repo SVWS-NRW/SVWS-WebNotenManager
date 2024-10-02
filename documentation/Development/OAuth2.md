@@ -26,7 +26,7 @@ Diese werden beim Einloggen vom SWVS-Server auf den WeNoM-Server im nächsten Ka
 ---
 ### Login
 
-```bash 
+```bash
 curl -X POST http://localhost/oauth/token \
      -H 'Content-Type: application/x-www-form-urlencoded' \
      -u CLIENT_ID:CLIENT_SECRET \
@@ -37,7 +37,7 @@ curl -X POST http://localhost/oauth/token \
 |Success|200|`{"token_type":"Bearer","expires_in":EXPIRATION_DATE,"access_token":"ACCESS_TOKEN"}`|
 |Error|401|`{"error":"invalid_client","error_description":"Client authentication failed","message":"Client authentication failed"}`|
 
-Das `ACCESS_TOKEN` muss gespeichert werden und bei jede zukunftige Abfrage mitgelifert werden. 
+Das `ACCESS_TOKEN` muss gespeichert werden und bei jede zukunftige Abfrage mitgelifert werden.
 
 ---
 
@@ -65,7 +65,7 @@ curl -X POST http://localhost/api/secure/import \
 
 |Type|Code|Response|
 |---|---|---|
-|Success|200|| 
+|Success|200||
 |Error|401|`{"message":"Unauthenticated."}`|
 |Error|400|`{"message":"Ein Fehler ist beim JSON-Dekodierung aufgetreten."}`|
 |Error|400|`{"message":"Schulnummer nicht gültig."}`|
@@ -82,14 +82,13 @@ curl -X GET http://localhost/api/secure/export \
 
 |Type|Code|Response|
 |---|---|---|
-|Success|200|`Binary output`| 
+|Success|200|`Binary output`|
 |Error|401|`{"message":"Unauthenticated."}`|
-|Error|500|`{"message":"Ein Fehler ist beim AES-CBC Verschlüsseln aufgetreten"}`|
 |Error|500|`{"message":"Ein Fehler ist beim Komprimieren der Daten aufgetreten"}`|
 ---
 
 ## Truncate
-Alle Tabellen ausser `migrations, users, oauth_clients, settings` werden geleert. Aus die Tabelle `users` werden alle Benutzer entfernt die haben die `administrator` Flag gesetzt auf `false`. 
+Alle Tabellen ausser `migrations, users, oauth_clients, settings` werden geleert. Aus die Tabelle `users` werden alle Benutzer entfernt die haben die `administrator` Flag gesetzt auf `false`.
 
 ```bash
 curl -X POST http://localhost/api/secure/truncate \
@@ -99,7 +98,7 @@ curl -X POST http://localhost/api/secure/truncate \
 
 |Type|Code|Response|
 |---|---|---|
-|Success|200|`{"message": {"tables": {"kept": 4,"kept_tables": ["migrations","users","oauth_clients","settings"],"truncated": 31},"users": {"kept": 1,"deleted": 0}}}`|
+|Success|200|`{"message": {"tables": {"kept": 4,"kept_tables": [ 'migrations', 'users', 'oauth_clients', 'settings', 'oauth_access_tokens', '2fa_auth_codes', 'oauth_auth_codes', 'oauth_personal_access_clients', 'oauth_refresh_tokens', 'password_resets', 'personal_access_tokens', 'sessions', 'user_login', 'user_settings', 'users', ],"truncated": 31}}}`|
 |Error|401|`{"message":"Unauthenticated."}`|
 
 ### Response
@@ -107,6 +106,3 @@ curl -X POST http://localhost/api/secure/truncate \
      - `.kept` - Anzahl Tabellen die nicht geleert worden sind.
      - `.kept_tables` - Liste von Tabellen die nicht geleert worden sind.
      - `.truncated` - Anzahl Tabellen die geleert worden sind.
-- `users`
-     - `.kept` - Anzahl Benutzer die nicht geloescht worden sind.
-     - `.deleted` - Anzahl Benutzer die geloescht worden sind.

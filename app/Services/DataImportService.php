@@ -583,7 +583,6 @@ class DataImportService
         if (count($teilleistungen[$key]) == 0) {
             return;
         }
-
         $this->importTeilleistungen($leistung, $teilleistungen[$key], $key);
     }
 
@@ -600,7 +599,6 @@ class DataImportService
         $noten = Note::all()->pluck('id', 'kuerzel')->toArray();
 
         $uniqueArray = $this->uniqueTeilleistungen($array);
-
         collect($uniqueArray)
             // ID
             ->filter(fn (array $row): bool => $this->hasValidInt($row, $key, 'id'))
@@ -823,7 +821,7 @@ class DataImportService
             ->filter(fn (array $array): bool => $this->hasValidValue($array, $key, 'bezeichnung'))
             ->filter(fn (array $array): bool => $this->hasValidInt($array, $key, 'sortierung'))
             ->filter(fn (array $array): bool => $this->hasUniqueValue($array, $key, $collection, 'sortierung'))
-            ->filter(fn (array $array): bool => $this->hasValidInt($array, $key, 'gewichtung'))
+            ->filter(fn (array $array): bool => $this->hasValidValue($array, $key, 'gewichtung'))
             ->each(fn (array $array): Teilleistungsart => Teilleistungsart::create($array));
     }
 
