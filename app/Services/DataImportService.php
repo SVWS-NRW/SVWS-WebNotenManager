@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\{
-    Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt, Lerngruppe,
-    Note, Schueler, User, Teilleistungsart, Teilleistung,
+    Daten, Bemerkung, Fach, Floskelgruppe, Floskel, Foerderschwerpunkt, Jahrgang, Klasse, Leistung, Lernabschnitt,
+    Lerngruppe, Note, Schueler, User, Teilleistungsart, Teilleistung,
 };
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\{Collection, Model};
@@ -19,9 +19,7 @@ class DataImportService
         'success' => [],
     ];
 
-    // TODO: TO be removed by karol
     private array $existingNoten = [];
-    // TODO: TO be removed by karol
     private array $existingFoerderschwerpunkte = [];
 
     /**
@@ -40,6 +38,7 @@ class DataImportService
      */
     public function execute(): static
     {
+        $this->importDaten();
         $this->importLehrer();
         $this->importJahrgaenge();
         $this->importKlassen();
@@ -64,6 +63,29 @@ class DataImportService
     public function response(): JsonResponse
     {
         return response()->json($this->status);
+    }
+
+    /**
+     * Creates or updates the Daten model.
+     *
+     * @return void
+     */
+    public function importDaten(): void
+    {
+        Daten::firstOrCreate()->update([
+            'enmRevision' => $this->data['enmRevision'],
+            'schulnummer' => $this->data['schulnummer'],
+            'schuljahr' => $this->data['schuljahr'],
+            'anzahlAbschnitte' => $this->data['anzahlAbschnitte'],
+            'aktuellerAbschnitt' => $this->data['aktuellerAbschnitt'],
+            'publicKey' => $this->data['publicKey'],
+            'lehrerID' => $this->data['lehrerID'],
+            'fehlstundenEingabe' => $this->data['fehlstundenEingabe'],
+            'fehlstundenSIFachbezogen' => $this->data['fehlstundenSIFachbezogen'],
+            'fehlstundenSIIFachbezogen' => $this->data['fehlstundenSIIFachbezogen'],
+            'schulform' => $this->data['schulform'],
+            'mailadresse' => $this->data['mailadresse'],
+        ]);
     }
 
     /**

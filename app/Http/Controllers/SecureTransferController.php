@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SecureImportRequest;
 use App\Http\Resources\Export\DatenResource;
+use App\Models\Daten;
 use App\Models\User;
 use App\Services\{DataImportService, GzipService};
 use Exception;
@@ -75,7 +76,7 @@ class SecureTransferController extends Controller
     public function export(GzipService $gzipService): Response
     {
         try {
-            $data = json_encode(new DatenResource([]));
+            $data = json_encode(new DatenResource(Daten::firstOrCreate()));
         } catch (Exception $e) {
             return response([
                 'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",

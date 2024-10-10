@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * The `Daten` class represents a Laravel model for managing remarks associated with Daten.
@@ -70,14 +69,4 @@ class Daten extends Model
         'lerher_id', 'fehlstundenEingabe', 'fehlstundenSIFachbezogen', 'fehlstundenSIIFachbezogen', 'schulform',
         'mailadresse',
     ];
-
-    /**
-     * The relation that owns the model
-     *
-     * @return BelongsTo
-     */
-    public function lehrer(): BelongsTo // TODO: CHeck lehrer
-    {
-        return $this->belongsTo(User::class, 'lehrer_id', 'id');
-    }
 }
