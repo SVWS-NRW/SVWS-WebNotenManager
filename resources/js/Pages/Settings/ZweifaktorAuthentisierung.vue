@@ -4,12 +4,19 @@
             <SvwsUiHeader>
                 {{ title }}
             </SvwsUiHeader>
-            <div class="form-control-area">
+            <div class="content">
                 <div>
-                    <SvwsUiCheckbox v-model="enabled" :value="true" type="toggle">Zweifaktor Authentisierung
+                    <SvwsUiCheckbox v-model="enabled" :value="true" type="toggle">Zwei-Faktor-Authentifizierung per E-Mail
                     </SvwsUiCheckbox>
                 </div>
-                <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton>
+                <div style="padding-right: 28%">
+                    <p>Mit der Aktivierung der Zwei-Faktor-Authentifizierung per E-Mail wird diese für alle User verpflichtend.</p>
+                    <p>Nach der Aktivierung ist bei jedem Anmeldevorgang neben dem Passwort zusätzlich die Eingabe eines einmaligen Bestätigungscodes erforderlich.
+                    Dieser Code wird an die im System gespeicherte E-Mail-Adresse gesendet. Die zusätzliche Sicherheitsmaßnahme dient dem Schutz Ihres Systems
+                    vor unbefugtem Zugriff.</p>
+                    <p>Bitte stellen Sie sicher, dass alle Benutzer Zugriff auf ihre E-Mail-Konten haben.</p>
+                </div>
+                <!-- <SvwsUiButton @click="saveSettings" :disabled="!isDirty">Speichern</SvwsUiButton> -->
             </div>
         </template>
         <template #secondaryMenu>
@@ -33,7 +40,7 @@
         auth: Object,
     });
 
-    const title = 'Zweifaktor Authentisierung';
+    const title = 'Sicherheitseinstellungen';
 
     //TODO: fetch 2FA data from backend
     const enabled = ref(false);
@@ -72,32 +79,16 @@
         @apply flex items-center justify-start gap-6 ml-6
     }
 
+    /* button {
+        @apply self-start
+    } */
+
     .content {
-        @apply px-6 flex flex-col gap-12 max-w-lg ml-6
+        @apply px-11 flex flex-col gap-12
     }
 
     .content>div {
         @apply flex flex-col gap-5 justify-start
-    }
-
-    section {
-        @apply p-6 space-y-12
-    }
-
-    section>div {
-        @apply flex flex-col gap-3 items-start
-    }
-
-    button {
-        @apply self-start
-    }
-
-    .form-control-area {
-        @apply flex flex-col gap-10 max-w-[32rem] px-11 pt-6
-    }
-
-    .form-control {
-        @apply -my-2
     }
 
     .error {
