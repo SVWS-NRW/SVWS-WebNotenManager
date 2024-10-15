@@ -63,8 +63,8 @@
                         <NoteInput column="quartalnote" :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
-                    <template #cell(istGemahnt)="{ value, rowData }">
-                        <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" />
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
+                        <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" :row-index="rowIndex" />
                     </template>
 
                     <template #cell(fs)="{ value, rowData, rowIndex }">

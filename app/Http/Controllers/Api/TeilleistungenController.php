@@ -26,7 +26,6 @@ class TeilleistungenController extends Controller
         if ($filteredTeilleistungen == "filteredTeilleistungen")  $selected = Klasse::first();
         $collection = $this->getTeilleistungen($selected);
 
-
         $kurse = Lerngruppe::query()
             ->whereNotNull('kursartKuerzel')
             ->distinct()
@@ -142,10 +141,15 @@ class TeilleistungenController extends Controller
                 'klasse' => $leistung->lerngruppe->klasse->kuerzelAnzeige,
                 'note' => $leistung->note?->kuerzel,
                 'quartalnote' => $leistung->quartalnote?->kuerzel,
+                'editable_noten' => $leistung->schueler->klasse->editable_noten,
+                'editable_teilnoten' => $leistung->schueler->klasse->editable_teilnoten
             ];
 
             $leistungen[] = [...$base, ...$this->mapTeilleistungen($leistung)];
         }
+        
+        // Sort Leistungen per klasseKuerzel (eg. 5a, 6b...)
+        usort($leistungen, fn (array $a, array $b): bool => $a['klasse'] >  $b['klasse']);
 
         return $leistungen;
     }
@@ -167,7 +171,6 @@ class TeilleistungenController extends Controller
                 'note' => $teilleistung->note?->kuerzel,
             ];
         }
-
         return $array;
     }
 

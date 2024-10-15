@@ -43,22 +43,20 @@
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" />
                     </template>
 
-                    <template v-for="col in teilleistungCols" :key="col.key" v-slot:[`cell(${col.key})`]="{ value, rowIndex }">
-                        <span v-if="value">
-                             <!-- TODO: disabled false here only for testing reasons - Sílvia -->
-                            <NoteInput :leistung="value" column="note" :teilleistung="true" :row-index="rowIndex" :disabled="false" @navigated="navigateTable"
+                    <template v-for="col in teilleistungCols" :key="col.key" v-slot:[`cell(${col.key})`]="{ value, rowData, rowIndex }">
+                        <span>
+                            <NoteInput column="note" :leistung="value" :teilleistung="true" :teilleistungId="col.id" :row-index="rowIndex" :disabled="!rowData.editable_teilnoten" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                             ></NoteInput>
                         </span>
                     </template>
 
-                    <!-- TODO: removed disabled attribute for testing Karol -->
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
-                        <NoteInput column="quartalnote" :leistung="rowData" :row-index="rowIndex"
+                        <NoteInput column="quartalnote" :leistung="rowData" :row-index="rowIndex" :disabled="!rowData.editable_noten" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
-                    <!-- removed disabled attribute for testing Karol -->
+                    
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" column="note" :row-index="rowIndex" :teilleistung="false" :disabled="false" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput column="note" :leistung="rowData" :row-index="rowIndex" :teilleistung="false" :disabled="!rowData.editable_noten" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
                 </SvwsUiTable>
@@ -78,19 +76,29 @@
     import { Teilleistung } from '@/Interfaces/Interface';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
+    //TODO: testing here for type issues
+    interface FilterItem {
+    [index: string]: string,
+    klassen: string;
+    kurse: string;
+    selected: string;
+}
+
     const title = 'Notenmanager - Teilleistungen';
 
     //TODO: Refactoring? -> call all this from a helper for all tables?
     //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
+    //Teilleistungen maps are declared dynamically when population takes place
     const itemRefsNoteInput = ref(new Map());
     const itemRefsQuartalNoteInput = ref(new Map());
+    const itemRefsTLNoteInputList: Ref<any[]> = ref([]);
 
     // Data received from DB
-    const rows: Ref<Teilleistung[]> = ref([]);
+    const rows: Ref<Teilleistung[]|Teilleistung[]> = ref([]);
 
     const notes: Ref<string[]> = ref([]);
 
-    const teilleistungCols: Ref<DataTableColumn[]> = ref([]); // Holds the fetched/refetched Columns Karol
+    const teilleistungCols: Ref<DataTableColumn[]> = ref([]); // Holds the fetched/refetched Columns
 
     // The different filters on top of the screen may get input and thus the data from DB will be filtered and then displayed
     const rowsFiltered = computed(() => {
@@ -120,8 +128,8 @@
             notes.value = response.data.notes;
             toggles.value = response.data.toggles;
             filterItems.value = response.data.filters;
-            //TODO: typing here
-            klasseFilter.value =filterItems.value.selected.kuerzel;
+            //TODO: solve typing problem here
+            klasseFilter.value = filterItems.value.selected.kuerzel;
             addTeilleistungen(teilleistungCols);
         })
         .finally((): void => {
@@ -149,8 +157,11 @@
     // push the fetched TL Columns to global columns after Kurs
     const addTeilleistungen = (teilleistungCols: Ref<DataTableColumn[]>)  => {
     // reverse order for display because TLs are received from newest to latest atm
+    // populate map with TL-ids; TODO: refactor
+        teilleistungCols.value.reverse().forEach((c) => itemRefsTLNoteInputList.value[c.id] = ref(new Map()));
         teilleistungCols.value.reverse().forEach((c) => cols.value.splice(4, 0, c)); 
         teilleistungCols.value.reverse()[teilleistungCols.value.length - 1].span = 4;
+        
     }
 
     // Filter
@@ -160,7 +171,7 @@
     const fachFilter: Ref <string> = ref("");
 
     //filterItems comes from controller and includes 3 objects (klasse, kurs and selected)
-    const filterItems: Ref<string[]> = ref([]);
+    const filterItems: Ref<FilterItem[]> = ref([]);
     const klasseItems = ref(new Map());
     const kursItems = ref(new Map());
     const fachItems: Ref<string[]> = ref([]);
@@ -168,8 +179,8 @@
     const dropdownsFilterHelper = (filterName: string, filterValue: string) => axios
         .get(route('teilleistungen.get_'+ filterName, filterValue))
         .then((response: AxiosResponse): void => {
-            rows.value = response.data.leistungen; // Fetches leistungen Sílvia
-            teilleistungCols.value = response.data.columns; // Fetches columns Sílvia
+            rows.value = response.data.leistungen; // Fetches leistungen
+            teilleistungCols.value = response.data.columns; // Fetches columns
         })
         .finally((): void => {
             mapFilters();
@@ -179,6 +190,7 @@
         axios.get(route('teilleistungen.index', "unfilteredTeilleistungen"))
         .then((response: AxiosResponse): void => {
             rows.value = response.data.leistungen; // Fetches leistungen
+            //console.log(rows.value);
             teilleistungCols.value = response.data.columns; // Fetches the columns
             notes.value = response.data.notes;
             toggles.value = response.data.toggles;
@@ -218,13 +230,18 @@
                 itemRefsNoteInput.value.set(rowIndex, el);
                 break;
             default:
-                console.log("Map not found: " + itemRefsName)
+                //TODO: code in general, refactor and typing issues
+                // populate all itemREfsTeilleistungen dynamically
+                let TLId: string|null;
+                itemRefsName.startsWith("itemRefsTeilleistung") ? TLId = itemRefsName.slice(itemRefsName.length - 1) : console.log("Map not found." + itemRefsName)
+                itemRefsTLNoteInputList.value[TLId].value.set(rowIndex, el);
+
         }
 	}
 
     //table navigation actions (go up/down within the column)
 	function next(id: number, itemRefs: Ref) {
-		const el = itemRefs.value.get(id + 1);
+        const el = itemRefs.value.get(id + 1);
 		if (el)
             el.input.select();
 	}
@@ -236,19 +253,22 @@
 	}
 
     //TODO: not adjusted for Teilleistungen page yet, thus it isn't working for the moment
-    //TODO: does navigation ticket require more here?
     //direction (up/down within the column) and map name are received from child component
     const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
         switch (itemRefsName) {
-            case "itemRefsNoteInput":
+            case "itemRefsquartalnoteInput":
+                direction === "next" ? next(rowIndex, itemRefsQuartalNoteInput) : previous(rowIndex, itemRefsQuartalNoteInput);
+                break;
+            case "itemRefsnoteInput":
                 direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
                 break;
-            case "itemRefsKa_1":
-                direction === "next" ? next(rowIndex, itemRefsfs) : previous(rowIndex, itemRefsfs);
+            case "itemRefsTeilleistung1Input":
+                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
                 break;
-            // and so on
             default:
-                console.log("itemRefs map not found");
+                let TLId: string = "";
+                itemRefsName.startsWith("itemRefsTeilleistung") ? TLId = itemRefsName.slice(itemRefsName.length - 1) : console.log("Map not found." + itemRefsName);
+                direction === "next" ? next(rowIndex, itemRefsTLNoteInputList.value[TLId]) : previous(rowIndex, itemRefsTLNoteInputList.value[TLId]);
         }
 	}
 
