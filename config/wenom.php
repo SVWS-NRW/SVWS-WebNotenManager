@@ -2,7 +2,7 @@
 
 return [
     'version' => '0.1.5',
-    'npm' => '0.9.0',
+    'npm' => '0.9.3',
     'schulnummer' => env('SCHULNUMMER'),
     'aes_password' => env('AES_PASSWORD'),
     'aes_salt' => env('AES_SALT'),

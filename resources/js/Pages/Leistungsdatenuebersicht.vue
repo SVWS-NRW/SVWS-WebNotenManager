@@ -10,7 +10,7 @@
             </SvwsUiHeader>
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"
-                    :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
+                    :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns" :allowArrowKeySelection=true>
                     <template #filter>
                         <div class="filter-area-icon">
                             <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator"
@@ -64,7 +64,7 @@
                     </template>
 
                     <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
-                        <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" :row-index="rowIndex" />
+                        <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
                     <template #cell(fs)="{ value, rowData, rowIndex }">
@@ -127,6 +127,8 @@
     const itemRefsQuartalNoteInput = ref(new Map());
     const itemRefsfs = ref(new Map());
     const itemRefsfsu = ref(new Map());
+    //testing here for ticket 341
+    const mahnungIndicator = ref(new Map());
 
     const rows: Ref<Leistung[]> = ref([]);
 
@@ -294,6 +296,10 @@
             case "itemRefsfsu":
                 itemRefsfsu.value.set(rowIndex, el);
                 break;
+            //testing here for ticket 341
+            case "mahnungIndicator":
+                mahnungIndicator.value.set(rowIndex, el);
+                break;
             default:
                 console.log("Map not found." + itemRefsName)
         }
@@ -326,6 +332,10 @@
                 break;
             case "itemRefsfsu":
                 direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
+                break;
+            //testing here for ticket 341
+            case "mahnungIndicator":
+                direction === "next" ? next(rowIndex, mahnungIndicator) : previous(rowIndex, mahnungIndicator);
                 break;
             default:
                 console.log("itemRefs map not found");

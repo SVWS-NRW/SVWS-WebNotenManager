@@ -11,7 +11,7 @@
             </SvwsUiHeader>
             <div class="content-area">
                 <!-- Tabelle mit SvwsUiTable -->
-                <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
+                <SvwsUiTable :items="rowsFiltered" :allowArrowKeySelection ="false" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
                 :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
 
                     <template #filter>
@@ -65,7 +65,7 @@
                     </template>
 
                     <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
-                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"/>
+                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
                     <template #cell(fs)="{ value, rowData, rowIndex }">
@@ -279,7 +279,6 @@
                 itemRefsfs.value.set(rowIndex, el);
                 break;
             case "itemRefsfsu":
-                //console.log("frunk");
                 itemRefsfsu.value.set(rowIndex, el);
                 break;
             case "mahnungIndicator":
