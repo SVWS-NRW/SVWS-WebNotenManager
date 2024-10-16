@@ -11,8 +11,8 @@ Hierzu gibt es grundsätlich 4 Funktionen:
 - Zurücksetzen
 - (Synchronisation als Hintereinanderausführung von Export und Import)
 
-Zu sicheren Kommunikation wird das [OAth2-Verfahren](OAuth2.md) eingesetzt. 
-Die Versionsnummer der Schnittstelle befindet sich in config/wenpm.php.
+Zu sicheren Kommunikation wird das [OAth2-Verfahren](OAuth2.md) eingesetzt.  
+Die Versionsnummer der Schnittstelle wird in der Datei 'config/wenpm.php' verwaltet.
 
 
 ## API Schnittstelle
