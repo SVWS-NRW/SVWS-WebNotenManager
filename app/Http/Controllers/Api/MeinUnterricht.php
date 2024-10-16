@@ -47,6 +47,9 @@ class MeinUnterricht extends Controller
             ->sortBy([
                 'schueler.klasse.kuerzel', 'schueler.nachname', 'lerngruppe.fach.kuerzelAnzeige',
             ]);
+        
+        // Sort Leistungen per klasseKuerzel (eg. 5a, 6b...)
+        // usort($leistungen, fn (array $a, array $b): bool => $a['klasse'] >  $b['klasse']);
 
         //Get all notes present in the noten DB table
         $allNotes = Note::query()

@@ -7,7 +7,7 @@
 
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
-                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
+                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false" :allowArrowKeySelection="true">
 
                     <template #filter>
                         <div class="filter-area-icon">
