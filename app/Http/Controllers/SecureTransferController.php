@@ -59,10 +59,16 @@ class SecureTransferController extends Controller
             ], Status::HTTP_BAD_REQUEST);
         }
 
+        // Validating the 'enmRevision' from the decoded JSON.
+        if ($json['enmRevision'] != config('wenom.revision')) {
+            return response()->json(['message' => 'Die Revisionsnummern der Synchronisation stimmt nicht mit der des SVWS-Servers überein. Die Sychronisation wird abgebrochen.'], Status::HTTP_UPGRADE_REQUIRED);
+        }
+
         // Validating the 'schulnummer' from the decoded JSON.
         if ($json['schulnummer'] != config('wenom.schulnummer')) {
             return response()->json(['message' => 'Schulnummer nicht gültig'], Status::HTTP_BAD_REQUEST);
         }
+
         // Executing the import service with the validated data and returning a response.
         return (new DataImportService($json))->execute()->response();
     }

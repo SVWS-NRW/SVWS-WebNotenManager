@@ -69,7 +69,7 @@ curl -X POST http://localhost/api/secure/import \
 |Error|401|`{"message":"Unauthenticated."}`|
 |Error|400|`{"message":"Ein Fehler ist beim JSON-Dekodierung aufgetreten."}`|
 |Error|400|`{"message":"Schulnummer nicht gültig."}`|
-|Error|?|TBD: Import errors|
+|Error|426|`{"message":"Die Revisionsnummern der Synchronisation stimmt nicht mit der des SVWS-Servers überein. Die Sychronisation wird abgebrochen.."}`|
 ---
 
 ## Export
