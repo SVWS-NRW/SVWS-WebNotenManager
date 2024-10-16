@@ -12,7 +12,7 @@ Hierzu gibt es grundsätlich 4 Funktionen:
 - (Synchronisation als Hintereinanderausführung von Export und Import)
 
 Zu sicheren Kommunikation wird das [OAth2-Verfahren](OAuth2.md) eingesetzt.  
-Die Versionsnummer der Schnittstelle wird in der Datei 'config/wenpm.php' verwaltet.
+Die Versionsnummer der Schnittstelle wird in der Datei 'config/wenom.php' verwaltet.
 
 
 ## API Schnittstelle
