@@ -6,7 +6,7 @@
             </SvwsUiHeader>
             <div class="content">
                 <div>
-                    <SvwsUiCheckbox v-model="enabled" :value="true" type="toggle">Zwei-Faktor-Authentifizierung per E-Mail
+                    <SvwsUiCheckbox @click="saveSettings(enabled)" v-model="enabled" :value="true" type="toggle">Zwei-Faktor-Authentifizierung per E-Mail
                     </SvwsUiCheckbox>
                 </div>
                 <div style="padding-right: 28%">
@@ -48,25 +48,26 @@
     const storedDataForm: Ref<String> = ref('');
     const isDirty: Ref<boolean> = ref(true);
 
-        //backend doesn't exist yet
-    // axios.get(route('api.xxx'))
-    //     .then((response: AxiosResponse): void => {
-    //         //
-    //     });
+    //backend doesn't exist yet
+    // it does now :D - K
+    axios.get(route('api.settings.two_factor_authentication'))
+        .then((response: AxiosResponse): void => enabled.value = response.data);
 
     //TODO: save 2FA data too
-    const saveSettings = () => 
-    // axios
-    //     .put(route('api.xxx'), {
-    //     })
-    //     .then((): void => apiSuccess())
+    const saveSettings = (value: boolean) => axios.put(route('api.settings.two_factor_authentication'), {enabled: value})
+        .then((response: AxiosResponse): void => {
+            apiSuccess();
+            console.log(response.data, value); // Just for testing - K
+        });
 
     //TODO: check if wanted when backend is ready
+    /* Ich hab das auskomentiert weil es bei mir Fehler verursacht hatte. - K
     watch(() => data.form, (): void => {
         isDirty.value = JSON.stringify(data.form) !== storedDataForm.value;
     }, {
         deep: true,
     });
+    */
 </script>
 
 

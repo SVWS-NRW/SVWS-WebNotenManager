@@ -4,6 +4,7 @@ return [
     'version' => '0.1.5',
     'npm' => '0.9.0',
     'revision' => -1,
+    'two_factor_authentication' => env('TWO_FACTOR_AUTHENTICATION', false),
     'schulnummer' => env('SCHULNUMMER'),
     'aes_password' => env('AES_PASSWORD'),
     'aes_salt' => env('AES_SALT'),
