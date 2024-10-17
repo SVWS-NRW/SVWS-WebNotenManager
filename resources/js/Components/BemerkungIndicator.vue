@@ -12,7 +12,6 @@
     import { Schueler, Leistung } from '@/Interfaces/Interface';
     import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
     import { formatBasedOnGender } from '@/Helpers/bemerkungen.helper';
-    import { SvwsUiCheckbox } from '@svws-nrw/svws-ui';
     import { computed, Ref, ref } from 'vue';
     
 
@@ -48,7 +47,7 @@
     }
 
     .bemerkung {
-        @apply truncate leading-5
+        @apply truncate w-screen
     }
 
     #more-icon {

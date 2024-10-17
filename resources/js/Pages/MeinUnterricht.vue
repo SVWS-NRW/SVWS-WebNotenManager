@@ -12,7 +12,7 @@
             <div class="content-area">
                 <!-- Tabelle mit SvwsUiTable -->
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
-                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
+                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false" :allowArrowKeySelection="true">
 
                     <template #filter>
                         <div class="filter-area-icon">
@@ -59,30 +59,25 @@
                         ></NoteInput>
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'note' -->
                     <template #cell(note)="{ value, rowData, rowIndex }">
                         <NoteInput column="note" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'istGemahnt' -->
-                    <template #cell(istGemahnt)="{ value, rowData }">
-                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" />
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
+                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fs' -->
                     <template #cell(fs)="{ value, rowData, rowIndex }">
                         <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fsu' -->
                     <template #cell(fsu)="{ value, rowData,  rowIndex}">
                         <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fachbezogeneBemerkungen' -->
                     <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
                         <BemerkungIndicator :model="rowData" :bemerkung="rowData['fachbezogeneBemerkungen']"
                             @clicked="selectLeistung(rowData, true)" floskelgruppe="fb" />
@@ -100,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, onMounted, Ref, ref } from 'vue';
+    import { computed, onMounted, Ref, ref, toRaw} from 'vue';
     import axios, { AxiosResponse } from 'axios';
     import { Head } from '@inertiajs/inertia-vue3';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
@@ -108,7 +103,6 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
-    import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     //Correlation filter names and column names on this page
@@ -131,6 +125,8 @@
     const itemRefsQuartalNoteInput = ref(new Map());
     const itemRefsfs = ref(new Map());
     const itemRefsfsu = ref(new Map());
+    //testing here for ticket 341
+    const mahnungIndicator = ref(new Map());
 
     // Data received from DB
     const rows: Ref<Leistung[]> = ref([]);
@@ -267,8 +263,11 @@
         noteItems.value = Array.from(Object.values(allNotes.value));
     };
 
+    //TODO: find out why Mahnung is not being updated like the others
+    //TODO: adjust name if necessary; if so: make into helper under Helpers
     //input html element and reference map name are determined by child
     function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
+        //console.log(itemRefsName);
         switch (itemRefsName) {
             case "itemRefsquartalnoteInput":
                 itemRefsQuartalNoteInput.value.set(rowIndex, el);
@@ -282,20 +281,23 @@
             case "itemRefsfsu":
                 itemRefsfsu.value.set(rowIndex, el);
                 break;
+            case "mahnungIndicator":
+                mahnungIndicator.value.set(rowIndex, el);
+                break;
             default:
                 console.log("Map not found: " + itemRefsName)
         }
 	}
 
     //table navigation actions (go up/down within the column)
-	function next(id: number, itemRefs: Ref) {
-		const el = itemRefs.value.get(id + 1);
-		if (el)
-            el.input.select();
+	function next(id: number, item: Ref) {
+		const el = item.value.get(id + 1);
+        console.log(el.$nextTick);
+		el.input ? el.input.select() : console.log("no input");
 	}
 
-	const previous = (id: number, itemRefs: Ref) => {
-        const el = itemRefs.value.get(id - 1);
+	const previous = (id: number, item: Ref) => {
+        const el = item.value.get(id - 1);
 		if (el)
         el.input.select();
 	}
@@ -314,6 +316,10 @@
                 break;
             case "itemRefsfsu":
                 direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
+                break;
+            //testing here for ticket 341
+            case "mahnungIndicator":
+                direction === "next" ? next(rowIndex, mahnungIndicator) : previous(rowIndex, mahnungIndicator);
                 break;
             default:
                 console.log("itemRefs map not found");

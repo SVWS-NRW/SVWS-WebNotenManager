@@ -11,7 +11,7 @@
             </div>
 
             <SvwsUiTable v-if="isEditable" :items="rowsFiltered" :columns="columns" :clickable="true"
-                :count="true" :filtered="filtered()" :filterReset="filterReset">
+                :count="true" :filtered="filtered()" :filterReset="filterReset" :allowArrowKeySelection="true">
                 <template #filterAdvanced>
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
                 </template>

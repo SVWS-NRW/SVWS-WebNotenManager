@@ -8,7 +8,7 @@
                 <section class="flex flex-col w-full gap-4">
                     <div class="content-area">
                         <!-- INFO: collapsible is not a valid attribute as it was for SvwsUiTable -->
-                        <SvwsUiTable :columns="columns" :noData="false" :filterOpen="true" v-if="Object.entries(jahrgaenge).length || klassen.length">
+                        <SvwsUiTable v-if="Object.entries(jahrgaenge).length || klassen.length" :columns="columns" :noData="false" :filterOpen="true" :allowArrowKeySelection="true">
                             <template #body>
                                 <!-- Klassen ohne Jahrgaenge -->
                                 <span v-if="klassen.length">

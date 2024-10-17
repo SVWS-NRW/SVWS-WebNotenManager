@@ -22,8 +22,8 @@ const selectHelper = (model: Leistung|Teilleistung|Schueler, column: string, fac
 };
 
 
-const mapFilterOptionsHelper = (rows: Leistung[]|Schueler[], column: string): string[] => Array.from(
-    new Set(rows.map((model: Leistung|Schueler): string => model[column] ?? emptyValueDescription))
+const mapFilterOptionsHelper = (rows: Leistung[]|Schueler[]|Teilleistung[], column: string): string[] => Array.from(
+    new Set(rows.map((model: Leistung|Schueler|Teilleistung): string => model[column] ?? emptyValueDescription))
 );
 
 export {

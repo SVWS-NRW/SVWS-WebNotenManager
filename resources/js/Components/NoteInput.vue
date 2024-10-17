@@ -21,21 +21,22 @@
 
 <script setup lang="ts">
     import { watch, ref, Ref } from 'vue';
-    import { Leistung } from '@/Interfaces/Interface';
+    import { Leistung, Teilleistung } from '@/Interfaces/Interface';
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui';
     import axios from 'axios';
 
     const props = defineProps<{
-        leistung: Leistung,
+        leistung: Leistung|Teilleistung|string,
         disabled: boolean,
         rowIndex: number,
         column: 'quartalnote'|'note',
-        teilleistung: boolean;
+        teilleistung?: boolean;
+        teilleistungId?: any;
     }>();
 
     const emit = defineEmits(['navigated','updatedItemRefs'])
 
-    const itemRefsNoteInputName: string = 'itemRefs' + props.column + 'Input';
+    const itemRefsNoteInputName: string = props.teilleistung ? 'itemRefsTeilleistung' + props.teilleistungId : 'itemRefs' + props.column + 'Input';
 
     const navigated = ( direction: string, rowIndex: number, itemRefsNoteInputName: string) : void => emit("navigated", direction, rowIndex, itemRefsNoteInputName)
 
