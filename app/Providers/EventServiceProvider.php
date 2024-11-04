@@ -32,7 +32,7 @@ class EventServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot(): void {
-        User::observe(UserObserver::class);
+        User::observe(new UserObserver(User::all()));
     }
 
     /**

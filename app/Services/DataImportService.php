@@ -62,6 +62,24 @@ class DataImportService
      */
     public function response(): JsonResponse
     {
+        $errorMessages = session('import-error', []);
+        $successMessages = session('import-success', []);
+
+        foreach ($errorMessages as $errorMessage) {
+            $this->status['error'][][] = [
+                'message' => $errorMessage['message'],
+                'data' => $errorMessage['data'] ?? null,
+                'errors' => $errorMessage['errors'] ?? null,
+            ];
+        }
+
+        foreach ($successMessages as $message) {
+            $this->status['success'][][] = [
+                'message' => $message['message'],
+                'data' => $message['data'] ?? null,
+            ];
+        }
+
         return response()->json($this->status);
     }
 
@@ -89,8 +107,8 @@ class DataImportService
     }
 
     /**
-     * Creates or updates the Lehrer model. (tested)
-     * The id is stored under "ext_id" since we have system users as well.
+     * Creates or updates the Lehrer model.
+     * The id is stored under "ext_id" since we have administrator users as well.
      *
      * @return void
      */
@@ -102,24 +120,7 @@ class DataImportService
             return;
         }
 
-        // Check if email is correct. If not, fallback to temporary random email that will be updated in the future.
-        $checkEmail = function (array $row) use ($key): array {
-            // Maps the email and falls back to null
-            $email = $row['email'] = $row['eMailDienstlich'] ?? null;
-
-            // Sets notification that the email is not valid. A temporary email will be assigned in UserObserver
-            if (!$email || $email == '' || is_null($email)) {
-                $this->setStatus($key, '"eMailDienstlich" ist leer oder ungueltig', $row['id']);
-            }
-
-            unset($row['eMailDienstlich']);
-
-            return $row;
-        };
-
-        collect($this->data[$key])
-            ->map($checkEmail)
-            ->each(fn (array $row): User => User::updateOrCreate(['ext_id' => $row['id']], $row));
+        collect($this->data[$key])->each(fn (array $row): User => User::updateOrCreate(['ext_id' => $row['id']], $row));
     }
 
     /**
@@ -951,6 +952,19 @@ class DataImportService
         return sprintf('%s@%s', Str::random(32), Str::random(32));
     }
 
+    /**
+     * Set update or create success status
+     *
+     * @param string $key
+     * @param bool $recentlyCreated
+     * @param array|string|int|null $data
+     */
+    private function setUpdateOrCreateSuccessStatus(string $key, bool $recentlyCreated, array|string|int|null $data = null): void
+    {
+        $message = sprintf('%s Ressource wurde erfolgreich %s.', ucfirst($key), $recentlyCreated ? 'angelegt' : 'aktualisiert');
+        $this->setStatus($key, $message, $data, 'success');
+    }
+
     private function setSuccessStatus(string $id, string $message, array|string|int|null $data = null): void
     {
         $this->setStatus($id, $message, $data, 'success');
@@ -1439,12 +1453,7 @@ class DataImportService
      */
     private function isUnique(array $row, Collection $existing, string $key, string $context): bool
     {
-        if ($existing->filter(fn (mixed $item): bool => $item[$key] ==  $row[$key])->count() > 0) {
-            $this->setStatus($context, "Ressource mit diesen '{$key}' existiert bereits", $row[$key]);
-            return false;
-        }
-
-        return true;
+        return $existing->filter(fn (mixed $item): bool => $item[$key] == $row[$key])->count() == 0;
     }
 
     /**

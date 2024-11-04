@@ -61,7 +61,7 @@ class SecureTransferController extends Controller
 
         // Validating the 'enmRevision' from the decoded JSON.
         if ($json['enmRevision'] != config('wenom.revision')) {
-            return response()->json(['message' => 'Die Revisionsnummern der Synchronisation stimmt nicht mit der des SVWS-Servers überein. Die Sychronisation wird abgebrochen.'], Status::HTTP_UPGRADE_REQUIRED);
+  //          return response()->json(['message' => 'Die Revisionsnummern der Synchronisation stimmt nicht mit der des SVWS-Servers überein. Die Sychronisation wird abgebrochen.'], Status::HTTP_UPGRADE_REQUIRED);
         }
 
         // Validating the 'schulnummer' from the decoded JSON.
