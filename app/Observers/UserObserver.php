@@ -28,7 +28,7 @@ class UserObserver
         $user->password = app()->environment('production') ? Str::random(32) : Hash::make('password');
 
         // Ignore unrelated columns
-        unset($user->eMailDienstlich, $user->id);
+        unset($user->eMailDienstlich, $user->id, $user->passwordHash, $user->tsPasswordHash);
 
         // Show success message
         session()->push('import-success', [
@@ -50,7 +50,7 @@ class UserObserver
         $user->geschlecht = $this->validateGender($user, $user->getOriginal('geschlecht'));
 
         // Ignore unrelated columns
-        unset($user->eMailDienstlich, $user->id);
+        unset($user->eMailDienstlich, $user->id, $user->passwordHash, $user->tsPasswordHash);
 
         // Show success message
         session()->push('import-success', [

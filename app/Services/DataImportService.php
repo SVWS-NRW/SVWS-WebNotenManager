@@ -652,7 +652,7 @@ class DataImportService
             )
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'tsBemerkung', $key))
             // Datum
-            ->filter(fn (array $row): bool => $this->isValidValue($row, 'datum', $key))
+            ->filter(fn (array $row): bool => $this->isValidValue($row, 'datum', $key, nullable: true, emptable: true))
             ->filter(fn (array $row): bool => $this->isValidValue($row, 'tsDatum', $key))
             ->each(function (array $row) use ($leistung): void {
                 $model = Teilleistung::firstOrNew(['id' => $row['id']], $row);
