@@ -509,7 +509,7 @@ class DataImportService
                 $row['klasse_id'] = $row['klasseID'];
                 $row['jahrgang_id'] = $row['jahrgangID'];
                 $row['geschlecht'] = $this->gender($row, Schueler::GENDERS);
-                unset($row['klasseID'], $row['jahrgangID']);
+                unset($row['klasseID'], $row['jahrgangID'], $row['ankreuzkompetenzen']);
 
                 // TODO: Temporary unset. TO BE CLEARED
                 unset($row['sprachenfolge'], $row['zp10'], $row['bkabschluss']);
