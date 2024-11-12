@@ -173,8 +173,9 @@ class DataImportService
         // Existing "Klassenlehrer"
         $klassenlehrer = fn (array $row): array => User::query()
             ->whereIn('ext_id', (array) $row['klassenlehrer'])
-            ->pluck('ext_id')
+            ->pluck('id')
             ->toArray();
+
 
         $klassen = Klasse::all();
         $jahrgaenge = Jahrgang::all();
@@ -319,6 +320,12 @@ class DataImportService
 
         $lerngruppen = Lerngruppe::all();
 
+        // Existing "Klassenlehrer"
+        $klassenlehrer = fn (array $row): array => User::query()
+            ->whereIn('ext_id', (array) $row['lehrerID'])
+            ->pluck('id')
+            ->toArray();
+
         collect($this->data['lerngruppen'])
             ->filter(fn (array $array): bool => $this->hasValidId($array, 'lerngruppen', $lerngruppen))
             ->filter(fn (array $array): bool => $this->hasValidInt($array, 'lerngruppen', 'kID'))
@@ -385,9 +392,9 @@ class DataImportService
 
                 return true;
             })
-            ->each(function (array $array): void {
+            ->each(function (array $array) use ($klassenlehrer): void {
                 $lerngruppe = Lerngruppe::create(Arr::except($array, 'lehrerID'));
-                $lerngruppe->lehrer()->attach($array['lehrerID']);
+                $lerngruppe->lehrer()->attach($klassenlehrer($array));
             });
     }
 
