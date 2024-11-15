@@ -147,7 +147,6 @@
             storedDataForm.value = JSON.stringify(data.form);
         });
 
-    //TODO: save 2FA data too
     const saveSettings = () => axios
         .put(route('api.settings.mail_send_credentials'), {
             'MAIL_MAILER': data.form.mailer,

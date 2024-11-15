@@ -16,8 +16,8 @@ class TwoFactorAuthenticationController extends Controller
      */
     public function get(): JsonResponse
 	{
-        return response()->json((bool) config('wenom.two_factor_authentication'), Response::HTTP_OK);
-	}
+        return response()->json(config('wenom.two_factor_authentication'), Response::HTTP_OK);
+    }
 
     /**
      * Set the setting value

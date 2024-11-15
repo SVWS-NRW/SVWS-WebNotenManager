@@ -103,6 +103,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     });
 
 Route::middleware('auth:sanctum')->group(function () {
+    
+    // Retrieves general 2fa setting
+    Route::get('get-general-2fa-setting', [TwoFactorAuthenticationController::class, 'get'])
+    ->name('api.settings.general_two_factor_authentication');
+
     // Defines the Fehlstunden controller route group
     Route::controller(Fehlstunden::class)
         ->name('api.fehlstunden.')
@@ -123,8 +128,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('filters', 'getAllFilters')->name('get_all_filters');
             Route::get('filters/{group}', 'getFilters')->name('get_filters');
             Route::get('user-data', 'getLastLogin')->name('get_last_login');
-            Route::post('get-settings', 'getSettings')->name('get_settings');
-            Route::post('set-settings', 'setSettings')->name('set_settings');
+            Route::get('get-personal-setting-two-factor', 'getSettingTwoFactor')->name('get_personal_setting_two_factor');
+            Route::put('set-personal-setting-two-factor', 'setSettingTwoFactor')->name('set_personal_setting_two_factor');
         });
 
     // Defines the Fachbezogene Bemerkung controller route group

@@ -36,12 +36,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
  */
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'twofactor.otp'])->group(function () {
 
-    // Defines the Two-Factor Authentication route
-	//testing 2FA here - tbr
-	// Route::inertia(uri: 'two-factor.login', component: 'TwoFactorAuthentication')
-	// 	->name(name: 'two-factor.login')
-	// 	->middleware(middleware: 'two.fa');
-
     // Defines the Mein Unterricht route
 	Route::inertia('/', 'MeinUnterricht')->name('mein_unterricht')->middleware('has.lerngruppen');
 

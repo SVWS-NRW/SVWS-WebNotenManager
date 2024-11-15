@@ -4,11 +4,10 @@
             <section>
                 <h2 class="text-headline">Sicherheitseinstellungen</h2>
                 <div>
-                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" @update:modelValue="saveSettings" style="padding-bottom: 10px" :disabled="two_fa_disabled">
+                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" @update:modelValue="saveSettings" style="padding-bottom: 10px" :disabled="two_fa_disabled && !props.auth.administrator">
                         Zwei-Faktor-Authentifizierung per E-Mail
                     </SvwsUiCheckbox>
-                    <div if="two_fa_disabled" style="color: magenta;">
-                        <!-- @Silvia, refactore das bitte nach Deine Art - K -->
+                    <div v-if="two_fa_disabled && !props.auth.administrator" style="color: magenta;">
                         TODO: Erklaerung warum disabled? - Karol
                     </div>
                     <div style="padding-right: 38%">
@@ -32,7 +31,7 @@
     import AppLayout from '@/Layouts/AppLayout.vue';
     import axios, { AxiosResponse } from 'axios';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
-    import { SvwsUiButton, SvwsUiCheckbox } from '@svws-nrw/svws-ui';
+    import { SvwsUiCheckbox } from '@svws-nrw/svws-ui';
     import UserSettingsMenu from '@/Components/UserSettingsMenu.vue';
     import { Auth } from '@/Interfaces/Interface';
 
@@ -40,23 +39,22 @@
         auth: Auth
     }>();
 
-    // @Silvia, refactore das bitte nach Deine Art - K
-    const two_fa_disabled: Ref<boolean> = ref(true);
+    const two_fa_disabled: Ref<boolean> = ref(false);
 
-    const user_settings: Ref<{twofactor_otp: boolean}> = ref({
-        twofactor_otp: true
+    const user_settings: Ref<{twofactor_otp: number}> = ref({
+        twofactor_otp: 0
     });
 
-    axios.post(route('user_settings.get_settings'), ['twofactor_otp'])
-        .then((response: AxiosResponse): AxiosResponse => user_settings.value = response.data
-    );
+    //General system settings
+    axios.get(route('api.settings.general_two_factor_authentication'))
+        .then((response: AxiosResponse) => two_fa_disabled.value = response.data);
 
-    // @Silvia, refactore das bitte nach Deine Art - K
-    axios.get(route('api.settings.two_factor_authentication'))
-        .then((response: AxiosResponse): void => two_fa_disabled.value = response.data);
+    //user settings
+    axios.get(route('user_settings.get_personal_setting_two_factor'))
+        .then((response: AxiosResponse) => user_settings.value.twofactor_otp = response.data.twofactor_otp);
 
     const saveSettings = () => axios
-        .post(route('user_settings.set_settings'), {
+        .put(route('user_settings.set_personal_setting_two_factor'), {
             'twofactor_otp': user_settings.value.twofactor_otp,
         })
         .then((): void => apiSuccess())

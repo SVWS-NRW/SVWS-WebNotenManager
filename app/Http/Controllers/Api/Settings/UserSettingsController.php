@@ -7,6 +7,7 @@ use App\Http\Requests\Settings\FilterValidationRequest;
 use App\Models\UserSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\ItemNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -69,18 +70,16 @@ class UserSettingsController extends Controller
     }
 
     /**
-     * Get settings dynamically
+     * Get personal setting only
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function getSettings(Request $request): JsonResponse
+    public function getSettingTwoFactor(Request $request): bool | JsonResponse
     {
-        // TODO: Add request Karol
-        $columns = $request->all();
-        $settings = auth()->user()?->userSettings()->select($columns)->first();
+        $personalOtpSetting = auth()->user()?->userSettings()->select('twofactor_otp')->first();
 
-        return response()->json($settings);
+        return response()->json($personalOtpSetting);
     }
 
     /**
@@ -89,7 +88,7 @@ class UserSettingsController extends Controller
      * @param FilterValidationRequest $request
      * @return JsonResponse
      */
-    public function setSettings(Request $request): JsonResponse
+    public function setSettingTwoFactor(Request $request): JsonResponse
     {
         // TODO: Add request Karol
         // Updating or creating the user settings for the authenticated user with the specified filter values.

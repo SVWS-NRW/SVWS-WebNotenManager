@@ -56,10 +56,6 @@
                             {{ getError('password') }}
                         </span>
                     </div>
-                    <!-- Earlier:
-                    <SvwsUiCheckbox v-model="data.form.remember" :disabled="data.processing" v-on:keyup.enter="submit">
-                        Angemeldet bleiben
-                    </SvwsUiCheckbox> -->
 
                     <div id="buttons">
                         <SvwsUiButton @click="submit()" :disabled="data.processing">Anmelden</SvwsUiButton>

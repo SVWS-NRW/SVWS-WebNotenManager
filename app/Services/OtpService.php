@@ -47,8 +47,9 @@ class OtpService
      * @param string $otp
      * @return bool
      */
-    public function verifyOtp(User $user, string $otp): bool
+    public function verifyOtp(User $user, string|null $otp): bool
     {
+        if ($otp == null) return false;
         return Cache::get('otp_' . $user->id) == $otp;
     }
 
