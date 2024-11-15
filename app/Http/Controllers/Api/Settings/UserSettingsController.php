@@ -90,7 +90,6 @@ class UserSettingsController extends Controller
      */
     public function setSettingTwoFactor(Request $request): JsonResponse
     {
-        // TODO: Add request Karol
         // Updating or creating the user settings for the authenticated user with the specified filter values.
         UserSetting::updateOrCreate(['user_id' => auth()->id()], $request->all());
 

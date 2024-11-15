@@ -258,27 +258,17 @@ class User extends Authenticatable
      */
     public function mustVerifyOtp(): bool
     {
-        //TODO: refactor
         // Admin can override the setting
-        if ((bool) config('wenom.two_factor_authentication')) {
-            if (auth()->user()->is_administrator == false) {
-                return true;
+        if (session()->get('otp_verified') == false) {
+            if ((bool) config('wenom.two_factor_authentication')) {
+                if ($this->isAdministrator() == false) {
+                    return true;
+                } else {
+                    return !($this?->userSettings?->twofactor_otp === false);
+                }
             }
-        } else {
-            return $this->checkUserStatus();
+            return $this?->userSettings?->twofactor_otp === true;
         }
-        
-        return $this->checkUserStatus();
-    }
-
-    /**
-     * Defines if current user must verify via OTP when globa setting is false
-     *
-     * @return bool
-     */
-    public function checkUserStatus(): bool
-    {
-        return $this?->userSettings?->twofactor_otp == true
-            && session()->get('otp_verified') == false;
+        return false;
     }
 }

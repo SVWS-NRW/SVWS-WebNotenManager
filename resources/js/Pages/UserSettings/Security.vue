@@ -10,6 +10,9 @@
                     <div v-if="two_fa_disabled && !props.auth.administrator" style="color: magenta;">
                         TODO: Erklaerung warum disabled? - Karol
                     </div>
+                    <div v-if="user_settings.twofactor_otp === undefined && props.auth.administrator" style="color: magenta;">
+                        TODO: Info nur für admins, dass personal setting IST NICHT INAKTIV SONDERN NOCH NICHT GESETZT - Sivia
+                    </div>
                     <div style="padding-right: 38%">
                         <p>Hiermit aktivieren Sie die Zwei-Faktor-Authentifizierung per E-Mail.
                             Nach der Aktivierung werden Sie bei jedem Anmeldevorgang neben Ihrem Passwort zusätzlich einen einmaligen Bestätigungscode eingeben müssen.
