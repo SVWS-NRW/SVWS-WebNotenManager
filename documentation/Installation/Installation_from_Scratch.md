@@ -225,36 +225,37 @@ WENOM_TECH_ADMIN=YourUser@YourDomain.de
 WENOM_TECH_ADMIN_PW=YourTechadminPW
 #
 NODE_MAJOR=20
+GITSOURCE=https://github.com/SVWS-NRW/SVWS-WebNotenManager
 #
-rm -rf /app/webnotenmanager/
+rm -rf /app/SVWS-WebNotenManager/
 cd /app
 #
 # Das GIT-Repository unter dem entsprechenden Verzeichnis /app clonen
-git clone https://git.svws-nrw.de/phpprojekt/webnotenmanager
+git clone $GITSOURCE
 #
 # Composer ausführen
 export COMPOSER_ALLOW_SUPERUSER=1
-cd /app/webnotenmanager/
+cd /app/SVWS-WebNotenManager/
 composer install
 #
 # Wenom Konfiguration erstellen
-cp /app/webnotenmanager/.env.example /app/webnotenmanager/.env
+cp .env.example .env
 #
 # URL anpassen
-sed  -i 's/APP_URL.*$/APP_URL=https:\/\/'$FQDN'/' /app/webnotenmanager/.env
+sed  -i 's/APP_URL.*$/APP_URL=https:\/\/'$FQDN'/' .env
 #
 # Datenbank zugangsdaten einstellen
-sed  -i 's/DB_DATABASE.*$/DB_DATABASE=webnotenmanager/' /app/webnotenmanager/.env
-sed  -i 's/DB_USERNAME.*$/DB_USERNAME=wenom/' /app/webnotenmanager/.env
-sed  -i 's/DB_PASSWORD.*$/DB_PASSWORD='$WENOM_DB_PW'/' /app/webnotenmanager/.env
+sed  -i 's/DB_DATABASE.*$/DB_DATABASE=webnotenmanager/' .env
+sed  -i 's/DB_USERNAME.*$/DB_USERNAME=wenom/' .env
+sed  -i 's/DB_PASSWORD.*$/DB_PASSWORD='$WENOM_DB_PW'/' .env
 #
 # schulnummer eintragen 
-sed  -i 's/SCHULNUMMER.*$/SCHULNUMMER='$SCHULNUMMER'/' /app/webnotenmanager/.env
+sed  -i 's/SCHULNUMMER.*$/SCHULNUMMER='$SCHULNUMMER'/' .env
 #
 # ggf. APP_DEBUG=false auf true setzen (Laravel setzt dann automatisch den LOG_LEVEL auf debug, 
 # wenn nichts anderes in der .env Datei angegeben wird. 
 # APP_DEBUG auf true setzen
-#sed -i 's/^APP_DEBUG=.*/APP_DEBUG=true/' "/app/webnotenmanager/.env"
+#sed -i 's/^APP_DEBUG=.*/APP_DEBUG=true/' ".env"
 #
 # Key fürs Backend generieren, Wenom kompilieren, leeres schemata erstellen
 php artisan key:generate
@@ -266,7 +267,7 @@ php artisan migrate:fresh # Erzeugt ein leeres Schema
 # php artisan db:seed --class=JsonImportSeeder # Importiert aus dem Json ins Schema testdaten
 php artisan passport:install # Erstellt die Keys fürs OAuth Verfahren
 #
-chmod -R 777 /app/webnotenmanager/
+chmod -R 777 /app/SVWS-WebNotenManager
 #
 # Adminuser erstellen:
 #  php artisan create:admin-user --user=wenom@gmail.com --password=meinpasswort
