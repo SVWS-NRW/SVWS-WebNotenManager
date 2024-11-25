@@ -212,7 +212,9 @@ systemctl reload apache2
 # Bei Debian 12 unkritisch, da standartmäßig ausgeschaltet
 ```
 
-## WeNoM Installation direkt aus den Sources (Wichtig: dieses Skript bezieht sich auf die Konfiguration aus den o. g. Skriten)
+## WeNoM Installation direkt aus den Sources 
+
+**Wichtig: dieses Skript bezieht sich auf die Konfiguration aus den o. g. Skripten**
 
 ```bash 
 #!/bin/bash
