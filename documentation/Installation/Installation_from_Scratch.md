@@ -28,6 +28,9 @@ WENOM_TECH_ADMIN=YourUser@YourDomain.de
 WENOM_TECH_ADMIN_PW=YourTechadminPW
 #
 NODE_MAJOR=20
+GITSOURCE=https://github.com/SVWS-NRW/SVWS-WebNotenManager
+INSTALLPATH=/app/SVWS-WebNotenManager
+# !BITTE bei diesen Verzeichnisnamen bleiben!
 #
 #
 # Software aktualisieren und nachinstallieren
@@ -39,26 +42,26 @@ apt install -y curl zip dnsutils nmap net-tools nano git ca-certificates gnupg a
 #
 # Neuen User für den Dienst einrichten
 useradd	-m -G users -s /bin/bash wenom
-mkdir -p /app/webnotenmanager/public
-chmod -R 777 /app/webnotenmanager
+mkdir -p $INSTALLPATH/public
+chmod -R 777 $INSTALLPATH
 chown -R wenom:wenom /app
 #
-# innerhalb der folgenden <VirtualHost>-Blocks "DocumentRoot /app/webnotenmanager/public/" anpassen
+# innerhalb der folgenden <VirtualHost>-Blocks "DocumentRoot /app/SVWS-WebNotenManager/public/" anpassen
 # /etc/apache2/sites-available/000-default.conf     
- sed  -i 's/DocumentRoot.*$/DocumentRoot \/app\/webnotenmanager\/public/' /etc/apache2/sites-available/000-default.conf 
+ sed  -i 's/DocumentRoot.*$/DocumentRoot \/app\/SVWS-WebNotenManager\/public/' /etc/apache2/sites-available/000-default.conf 
 # /etc/apache2/sites-available/000-default-le-ssl.conf
- sed  -i 's/DocumentRoot.*$/DocumentRoot \/app\/webnotenmanager\/public/' /etc/apache2/sites-available/000-default-le-ssl.conf 
+ sed  -i 's/DocumentRoot.*$/DocumentRoot \/app\/SVWS-WebNotenManager\/public/' /etc/apache2/sites-available/000-default-le-ssl.conf 
 # /etc/apache2/sites-available/default-ssl.conf
- sed  -i 's/DocumentRoot.*$/DocumentRoot \/app\/webnotenmanager\/public/' /etc/apache2/sites-available/default-ssl.conf
+ sed  -i 's/DocumentRoot.*$/DocumentRoot \/app\/SVWS-WebNotenManager\/public/' /etc/apache2/sites-available/default-ssl.conf
 #
 # unter /etc/apache2/apache2.conf den folgenden Eintrag neu am Ende in des File schreiben
-# <Directory /app/webnotenmanager/public/>
+# <Directory /app/SVWS-WebNotenManager/public/>
 #   Options Indexes FollowSymLinks
 #   AllowOverride All
 #   Require all granted
 # </Directory>
 echo "
-<Directory /app/webnotenmanager/public/>
+<Directory /app/SVWS-WebNotenManager/public/>
    Options Indexes FollowSymLinks
    AllowOverride All
    Require all granted
@@ -101,7 +104,7 @@ systemctl restart apache2
 rm /var/www/html/index.html
 #
 # optional zum Testen
-echo "<?php phpinfo(); ?>" | tee /app/webnotenmanager/public/info.php
+echo "<?php phpinfo(); ?>" | tee /app/SVWS-WebNotenManager/public/info.php
 #
 # composer Installieren
 export COMPOSER_ALLOW_SUPERUSER=1
@@ -223,11 +226,13 @@ WENOM_DB_PW=YourDbUser
 # 
 WENOM_TECH_ADMIN=YourUser@YourDomain.de
 WENOM_TECH_ADMIN_PW=YourTechadminPW
+# !Bitte bei diesen Verzeichnamen verbleiben!
 #
 NODE_MAJOR=20
 GITSOURCE=https://github.com/SVWS-NRW/SVWS-WebNotenManager
+INSTALLPATH=/app/SVWS-WebNotenManager
 #
-rm -rf /app/SVWS-WebNotenManager/
+rm -rf $INSTALLPATH
 cd /app
 #
 # Das GIT-Repository unter dem entsprechenden Verzeichnis /app clonen
