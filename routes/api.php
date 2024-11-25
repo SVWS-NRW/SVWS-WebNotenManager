@@ -24,10 +24,11 @@ Route::controller(SecureTransferController::class)
         Route::get('export', 'export')->name('export');
         Route::post('import', 'import')->name('import');
         Route::post('truncate', 'truncate')->name('truncate');
+        Route::delete('delete', 'delete')->name('delete');
     });
 
 Route::controller(TeilleistungenController::class)
-    //->middleware('client')
+    ->middleware('client')
     ->prefix('teilleistungen')
     ->name('teilleistungen.')
     ->group(function (): void {
@@ -103,7 +104,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     });
 
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     // Retrieves general 2fa setting
     Route::get('get-general-2fa-setting', [TwoFactorAuthenticationController::class, 'get'])
     ->name('api.settings.general_two_factor_authentication');

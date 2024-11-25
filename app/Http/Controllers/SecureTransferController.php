@@ -10,6 +10,7 @@ use App\Services\{DataImportService, GzipService};
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response as Status;
 
@@ -148,5 +149,19 @@ class SecureTransferController extends Controller
                 ],
             ],
         ]);
+    }
+
+    /**
+     * Delete the database.
+     *
+     * https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/405
+     *
+     * @return JsonResponse
+     */
+    public function delete(): JsonResponse
+    {
+        Artisan::call('migrate:fresh');
+
+        return response()->json(status: Status::HTTP_NO_CONTENT);
     }
 }

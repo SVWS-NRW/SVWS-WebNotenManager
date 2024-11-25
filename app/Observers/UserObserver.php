@@ -22,6 +22,7 @@ class UserObserver
 
         // Perform validations with fallback values.
         $user->email = $this->validateEmail($user, $this->safeEmail(32));
+        $user->email_valid = $this->validEmail($user);
         $user->geschlecht = $this->validateGender($user, User::FALLBACK_GENDER);
 
         // Set password while creating. In devmode password is "password".
@@ -47,6 +48,7 @@ class UserObserver
     {
         // Perform validations with fallback values.
         $user->email = $this->validateEmail($user, $user->getOriginal('email'));
+        $user->email_valid = $this->validEmail($user);
         $user->geschlecht = $this->validateGender($user, $user->getOriginal('geschlecht'));
 
         // Ignore unrelated columns
@@ -68,6 +70,31 @@ class UserObserver
     private function safeEmail(int $length = 16): string
     {
         return sprintf('%s@%s', Str::random($length), Str::random($length));
+    }
+
+    /**
+     * Check whether the email is valid
+     *
+     * @param User $user
+     * @param string|null $fallback
+     * @return bool
+     */
+    private function validEmail(User $user, string|null $fallback = null): bool
+    {
+        $validator = Validator::make(
+            ['email' => $user->eMailDienstlich],
+            ['email' => ['required', 'email:rfc,dns']]
+        );
+
+        if ($validator->valid()) {
+            return true;
+        }
+
+        if ($fallback) {
+            $this->invalidEmailErrorMessage($user, $fallback, $validator->errors()->all());
+        }
+
+        return false;
     }
 
     /**
@@ -93,17 +120,10 @@ class UserObserver
             return $fallback;
         }
 
-        // Validate the email
-        $validator = Validator::make(
-            ['email' => $user->eMailDienstlich],
-            ['email' => ['required', 'email:rfc,dns']]
-        );
-
-        if ($validator->valid()) {
+        if ($this->validEmail($user)) {
             return strtolower($user->eMailDienstlich);
         }
 
-        $this->invalidEmailErrorMessage($user, $fallback, $validator->errors()->all());
         return $fallback;
     }
 
