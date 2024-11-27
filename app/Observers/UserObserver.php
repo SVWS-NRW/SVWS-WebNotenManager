@@ -31,11 +31,24 @@ class UserObserver
         // Ignore unrelated columns
         unset($user->eMailDienstlich, $user->id, $user->passwordHash, $user->tsPasswordHash);
 
-        // Show success message
-        session()->push('import-success', [
-            'message' => 'Die Lehrer Ressource wurde erfolgreich angelegt.',
-            'data' => $user->toArray(),
-        ]);
+        if ($user->email_valid) {
+            // Show success message
+            session()->push('import-success', [
+                'message' => 'Die Lehrer Ressource wurde erfolgreich angelegt.',
+                'data' => [
+                    'ext_id' => $user->ext_id,
+                ],
+            ]);
+        } else {
+            // Show success message
+            session()->push('import-error', [
+                'message' => 'Lehrer: Importfehler',
+                'data' => [
+                    'ext_id' => $user->ext_id,
+                    'email' => $user->email,
+                ],
+            ]);
+        }
     }
 
     /**
@@ -54,11 +67,25 @@ class UserObserver
         // Ignore unrelated columns
         unset($user->eMailDienstlich, $user->id, $user->passwordHash, $user->tsPasswordHash);
 
-        // Show success message
-        session()->push('import-success', [
-            'message' => 'Die Lehrer Ressource wurde erfolgreich aktualisiert.',
-            'data' => $user->toArray(),
-        ]);
+        if ($user->email_valid) {
+            // Show success message
+            session()->push('import-success', [
+                'message' => 'Die Lehrer Ressource wurde erfolgreich aktualisiert.',
+                'data' => [
+                    'ext_id' => $user->ext_id,
+                    'email' => $user->email,
+                ],
+            ]);
+        } else {
+            // Show success message
+            session()->push('import-error', [
+                'message' => 'Lehrer: Importfehler',
+                'data' => [
+                    'ext_id' => $user->ext_id,
+                    'email' => $user->email,
+                ],
+            ]);
+        }
     }
 
     /**
