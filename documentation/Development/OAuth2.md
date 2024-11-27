@@ -87,11 +87,11 @@ curl -X GET http://localhost/api/secure/export \
 |Error|500|`{"message":"Ein Fehler ist beim Komprimieren der Daten aufgetreten"}`|
 ---
 
-## Truncate
+## Reset
 Alle Tabellen ausser `migrations, users, oauth_clients, settings` werden geleert. Aus die Tabelle `users` werden alle Benutzer entfernt die haben die `administrator` Flag gesetzt auf `false`.
 
 ```bash
-curl -X POST http://localhost/api/secure/truncate \
+curl -X POST http://localhost/api/secure/reset \
      -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
      -H 'Accept: application/json'
 ```

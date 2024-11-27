@@ -24,7 +24,7 @@ Route::controller(SecureTransferController::class)
         Route::get('export', 'export')->name('export');
         Route::post('import', 'import')->name('import');
         Route::post('truncate', 'truncate')->name('truncate');
-        Route::delete('delete', 'delete')->name('delete');
+        Route::post('reset', 'reset')->name('reset');
     });
 
 

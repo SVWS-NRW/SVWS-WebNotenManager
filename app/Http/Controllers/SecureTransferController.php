@@ -101,13 +101,13 @@ class SecureTransferController extends Controller
     }
 
     /**
-     * Truncate the database.
+     * Reset the database.
      * Deletes all imported users except the system users (missing ext_id)
      * Does not truncate oauth_clients in order to keep the Oauth2 connection.
      *
      * @return JsonResponse
      */
-    public function truncate(): JsonResponse
+    public function reset(): JsonResponse
     {
         // List of tables not to be truncated
         $excludedTables = [
@@ -152,13 +152,13 @@ class SecureTransferController extends Controller
     }
 
     /**
-     * Delete the database.
+     * Truncate the database.
      *
      * https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/405
      *
      * @return JsonResponse
      */
-    public function delete(): JsonResponse
+    public function truncate(): JsonResponse
     {
         Artisan::call('migrate:fresh');
 
