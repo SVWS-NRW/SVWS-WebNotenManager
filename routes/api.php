@@ -27,16 +27,6 @@ Route::controller(SecureTransferController::class)
         Route::delete('delete', 'delete')->name('delete');
     });
 
-Route::controller(TeilleistungenController::class)
-    ->middleware('client')
-    ->prefix('teilleistungen')
-    ->name('teilleistungen.')
-    ->group(function (): void {
-        Route::get('index/{reset}', 'index')->name('index');
-        Route::get('/kurs/{id}', 'getKurs')->name('get_kurs');
-        Route::get('/klasse/{klasse}', 'getKlasse')->name('get_klasse');
-        Route::put('/update-note/{teilleistung}/{note}', 'updateNote')->name('update_note');
-    });
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'administrator'])
     ->group(function (): void {
@@ -103,8 +93,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 
     });
 
-Route::middleware('auth:sanctum')->group(function () {
-
+Route::middleware('auth:sanctum')->group(function (): void {
     // Retrieves general 2fa setting
     Route::get('get-general-2fa-setting', [TwoFactorAuthenticationController::class, 'get'])
     ->name('api.settings.general_two_factor_authentication');
@@ -168,4 +157,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Defines the Klassenleitung controller route group
     Route::get('klassenleitung', Klassenleitung::class)
         ->name('api.klassenleitung');
+
+    Route::controller(TeilleistungenController::class)
+        ->prefix('teilleistungen')
+        ->name('teilleistungen.')
+        ->group(function (): void {
+            Route::get('index/{reset}', 'index')->name('index');
+            Route::get('/kurs/{id}', 'getKurs')->name('get_kurs');
+            Route::get('/klasse/{klasse}', 'getKlasse')->name('get_klasse');
+            Route::put('/update-note/{teilleistung}/{note}', 'updateNote')->name('update_note');
+        });
 });
