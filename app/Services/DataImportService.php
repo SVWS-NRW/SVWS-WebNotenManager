@@ -120,7 +120,9 @@ class DataImportService
             return;
         }
 
-        collect($this->data[$key])->each(fn (array $row): User => User::updateOrCreate(['ext_id' => $row['id']], $row));
+        collect($this->data[$key])
+            ->map(fn (array $row): array => array_merge($row, ['email' => $row['eMailDienstlich']]))
+            ->each(fn (array $row): User => User::updateOrCreate(['ext_id' => $row['id']], $row));
     }
 
     /**

@@ -109,7 +109,7 @@ class UserObserver
     private function validEmail(User $user, string|null $fallback = null): bool
     {
         $validator = Validator::make(
-            ['email' => $user->eMailDienstlich],
+            ['email' => $user->email],
             ['email' => ['required', 'email:rfc,dns']]
         );
 
@@ -140,7 +140,7 @@ class UserObserver
         // Check if user with given email address and different id already exists. #393
         $existingUser = User::query()
             ->where('ext_id', '!=', $user->id)
-            ->where(['email' => $user->eMailDienstlich]);
+            ->where(['email' => $user->email]);
 
         if ($existingUser->exists()) {
             $this->userExistsErrorMessage($user, $existingUser, $fallback);
@@ -148,7 +148,7 @@ class UserObserver
         }
 
         if ($this->validEmail($user)) {
-            return strtolower($user->eMailDienstlich);
+            return strtolower($user->email);
         }
 
         return $fallback;
@@ -206,7 +206,7 @@ class UserObserver
             'message' => $message,
             'data' => [
                 'id' => $user->ext_id,
-                'email' => $user->eMailDienstlich,
+                'email' => $user->email,
             ],
             'errors' => $errors,
         ]);
@@ -228,7 +228,7 @@ class UserObserver
         session()->push('import-error', [
             'message' => $message,
             'data' => [
-                'email' => $user->eMailDienstlich,
+                'email' => $user->email,
                 'current_id' => $user->ext_id,
                 'existing_id' => $existingUser->first()->ext_id,
             ],
