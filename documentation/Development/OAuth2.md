@@ -106,3 +106,17 @@ curl -X POST http://localhost/api/secure/reset \
      - `.kept` - Anzahl Tabellen die nicht geleert worden sind.
      - `.kept_tables` - Liste von Tabellen die nicht geleert worden sind.
      - `.truncated` - Anzahl Tabellen die geleert worden sind.
+---
+
+## Truncate
+Alle Tabellen werden gelert. Equivalent von `php artisan migrate:fresh`.
+
+```bash
+curl -X POST http://localhost/api/secure/truncate \
+     -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+     -H 'Accept: application/json'
+```
+
+|Type|Code|
+|---|---|
+|No response|204|
