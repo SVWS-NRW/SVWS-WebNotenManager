@@ -7,8 +7,8 @@
                     <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" @update:modelValue="saveSettings" style="padding-bottom: 10px" :disabled="two_fa_disabled && !props.auth.administrator">
                         Zwei-Faktor-Authentifizierung per E-Mail
                     </SvwsUiCheckbox>
-                    <div v-if="two_fa_disabled && !props.auth.administrator" style="color: magenta;">
-                        TODO: Erklaerung warum disabled? - Karol
+                    <div v-if="two_fa_disabled && !props.auth.administrator">
+                        Die Zwei-Faktor-Authentifizierung per E-Mail wurde global vom Systemadministrator für alle Benutzer verpflichtend eingeschaltet.
                     </div>
                     <div v-if="user_settings.twofactor_otp === undefined && props.auth.administrator" style="color: magenta;">
                         TODO: Info nur für admins, dass personal setting IST NICHT INAKTIV SONDERN NOCH NICHT GESETZT - Sivia

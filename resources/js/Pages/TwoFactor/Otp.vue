@@ -29,7 +29,6 @@
                             Falls Sie keine E-Mail erhalten haben, überprüfen Sie bitte Ihren Spam-Ordner
                             oder fordern Sie einen neuen Code an.
                         </p>
-                        <span style="color: magenta; font-weight: bold">Proofreading!</span>
                         <div class="form-control">
                             <SvwsUiTextInput
                                 type="text"
