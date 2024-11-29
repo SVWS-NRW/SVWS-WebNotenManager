@@ -27,7 +27,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
     ->prefix('two-factor/otp')
     ->group(function (): void {
-        Route::inertia('/', 'TwoFactor/Otp')->name('otp');
+        Route::inertia('/', 'TwoFactor/Otp')->name('otp')->middleware('otp.pending');
         Route::post('/verify', [OtpController::class, 'verify'])->name('otp.verify');
     });
 

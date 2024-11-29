@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Cache;
 
 class TwoFactorOtp
 {
@@ -18,11 +19,9 @@ class TwoFactorOtp
     public function handle(Request $request, Closure $next): Response
     {
         // Check if OTP is required for the route
-
-        /* @var User $user|null */
         $user = auth()->user();
 
-        if ($user?->mustVerifyOtp() ?? false) {
+        if ($user?->mustVerifyOtp() && Cache::get('otp_' . $user->id)) {
             return redirect()->route('otp');
         }
 

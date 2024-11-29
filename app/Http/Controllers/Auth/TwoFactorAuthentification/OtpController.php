@@ -17,7 +17,6 @@ class OtpController extends Controller
      * @return  Inertia
      */
     public function verify(OtpService $service, Request $request): RedirectResponse
-    //testing here for ticket 9 (try was not there, just trying)
     {
         $user = auth()->user();
         $verified = $service->verifyOtp($user, $request->code);
@@ -26,8 +25,8 @@ class OtpController extends Controller
             return back()->withErrors(['twoFACode' => 'OTP inkorrekt']);
         }
 
+        //Otp is not needed anymore
         $service->forgetOtp($user);
-        session()->put('otp_verified', true);
 
         return redirect()->route('leistungsdatenuebersicht');
     }

@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 		'has.lerngruppen' => \App\Http\Middleware\CheckIfLerngruppen::class,
         'twofactor.otp' => \App\Http\Middleware\TwoFactorOtp::class,
+        'otp.pending' => \App\Http\Middleware\CheckIfOtpPending::class,
     ];
 }

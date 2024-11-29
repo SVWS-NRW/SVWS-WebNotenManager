@@ -4,14 +4,11 @@
             <section>
                 <h2 class="text-headline">Sicherheitseinstellungen</h2>
                 <div>
-                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" @update:modelValue="saveSettings" style="padding-bottom: 10px" :disabled="two_fa_disabled && !props.auth.administrator">
+                    <SvwsUiCheckbox v-model="user_settings.twofactor_otp" type="toggle" @update:modelValue="saveSettings" style="padding-bottom: 10px" :disabled="two_fa_disabled">
                         Zwei-Faktor-Authentifizierung per E-Mail
                     </SvwsUiCheckbox>
-                    <div v-if="two_fa_disabled && !props.auth.administrator">
+                    <div v-if="two_fa_disabled">
                         Die Zwei-Faktor-Authentifizierung per E-Mail wurde global vom Systemadministrator für alle Benutzer verpflichtend eingeschaltet.
-                    </div>
-                    <div v-if="user_settings.twofactor_otp === undefined && props.auth.administrator" style="color: magenta;">
-                        TODO: Info nur für admins, dass personal setting IST NICHT INAKTIV SONDERN NOCH NICHT GESETZT - Sivia
                     </div>
                     <div style="padding-right: 38%">
                         <p>Hiermit aktivieren Sie die Zwei-Faktor-Authentifizierung per E-Mail.
