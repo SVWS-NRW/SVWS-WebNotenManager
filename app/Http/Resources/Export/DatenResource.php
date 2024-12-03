@@ -37,8 +37,8 @@ class DatenResource extends JsonResource
         ->get();
 
         return [
-            'enmRevision' => $this->enmRevision,
-            'schulnummer' => $this->schulnummer,
+            'enmRevision' => config('wenom.revision'),
+            'schulnummer' => config('wenom.schulnummer'),
             'schuljahr' => $this->schuljahr,
             'anzahlAbschnitte' => $this->anzahlAbschnitte,
             'aktuellerAbschnitt' => $this->aktuellerAbschnitt,

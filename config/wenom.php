@@ -5,7 +5,7 @@ return [
     'npm' => '1.0.1',
     'revision' => 1,
     'two_factor_authentication' => env('TWO_FACTOR_AUTHENTICATION', false),
-    'schulnummer' => env('SCHULNUMMER'),
+    'schulnummer' => env('SCHULNUMMER', null),
     'aes_password' => env('AES_PASSWORD'),
     'aes_salt' => env('AES_SALT'),
     'mail_send_credentials' => [
