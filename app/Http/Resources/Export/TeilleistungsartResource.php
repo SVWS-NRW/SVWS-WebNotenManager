@@ -23,7 +23,7 @@ class TeilleistungsartResource extends JsonResource
             'id' => $this->id,
             'bezeichnung' => $this->bezeichnung,
             'sortierung' => $this->sortierung,
-            'gewichtung' => $this->gewichtung,
+            'gewichtung' => (float) $this->gewichtung,
         ];
     }
 }
