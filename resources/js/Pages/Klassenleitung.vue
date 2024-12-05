@@ -7,9 +7,20 @@
 
             <div class="content-area">
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :clickable="true" :count="true" :filtered="isFiltered()"
-                    :filterReset="filterReset" :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}">
+                    :filterReset="filterReset" :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :allowArrowKeySelection="true">
+                    
+                    <template #filter>
+                        <div class="filter-area-icon">
+                            <SvwsUiButton @click="exportToFile()" type="transparent" size="big"
+                                :class="'hover:opacity-100 focus-visible:opacity-100 export-button'">
+                                <ri-download-2-line></ri-download-2-line>csv
+                            </SvwsUiButton>
+                        </div>
+                    </template>
+                    
                     <template #filterAdvanced>
-                        <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                        <!-- <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" /> -->
+                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
                         <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter"
                         />
                     </template>
@@ -52,9 +63,10 @@
     import axios, { AxiosPromise, AxiosResponse } from 'axios';
     import { computed, onMounted, Ref, ref } from 'vue';
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
-    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiMultiSelect, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { Schueler, Klassenleitung } from '@/Interfaces/Interface';
     import { BemerkungIndicator, FehlstundenInput, BemerkungButton, BemerkungEditor } from '@/Components/Components';
+    import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     const title = 'Notenmanager - Klassenleitung';
 
@@ -108,6 +120,11 @@
     };
 
     const isFiltered = (): boolean => klasseFilter.value.length > 0 || searchFilter.value !== null;
+
+    const exportToFile = (): void => {
+        exportDataToCSV(cols.value, null, rowsFiltered.value, 'Klassenleitung');
+    };
+
 </script>
 
 
@@ -118,6 +135,10 @@
 
     .content-area {
         @apply mx-4 overflow-auto ml-6
+    }
+
+    .filter-area-icon {
+        @apply -m-1.5
     }
 </style>
 

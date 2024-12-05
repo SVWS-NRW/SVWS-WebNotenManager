@@ -1,4 +1,6 @@
-### Laravel 
+# Verzeichnisübersicht
+
+### Laravel
 * App\Actions\*
 * App\Console\*
 * App\Exceptions\*
@@ -37,3 +39,4 @@
 * App\Services\*
 * config\wenom.php
 * resources\js\*
+* documentation\*

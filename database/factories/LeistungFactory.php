@@ -2,10 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Leistung;
-use App\Models\Lerngruppe;
-use App\Models\Note;
-use App\Models\Schueler;
+use App\Models\{Leistung, Lerngruppe, Note, Schueler};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +15,7 @@ class LeistungFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     * @var Leistung<\Illuminate\Database\Eloquent\Model>
      */
     protected $model = Leistung::class;
 
@@ -56,6 +53,16 @@ class LeistungFactory extends Factory
     public function withNote(): LeistungFactory
     {
 		return $this->withTimestamp('note_id', 'tsNote', Note::Factory());
+    }
+
+    /**
+     * Indicate that the model has Quartalnote.
+     *
+     * @return LeistungFactory
+     */
+    public function withNoteQuartal(): LeistungFactory
+    {
+		return $this->withTimestamp('note_quartal_id', 'tsNoteQuartal', Note::Factory());
     }
 
     /**

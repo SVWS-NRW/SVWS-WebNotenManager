@@ -29,6 +29,7 @@ class NoteFactory extends Factory
         return [
             'kuerzel' => $this->faker->unique(false)->word(),
             'text' => $this->faker->word(),
+            'sortierung' => $this->faker->unique()->numberBetween(1, 1_000_000),
         ];
     }
 

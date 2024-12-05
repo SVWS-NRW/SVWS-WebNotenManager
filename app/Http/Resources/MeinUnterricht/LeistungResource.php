@@ -33,6 +33,7 @@ class LeistungResource extends JsonResource
             'lehrer' => $this->lerngruppe->lehrer->pluck('kuerzel')->implode(', '),
             'kurs' => $this->lerngruppe->kursartID !== null ? $this->lerngruppe->bezeichnung : '',
             'note' => $this->note?->kuerzel,
+            'quartalnote' => $this->quartalnote?->kuerzel,
             'istGemahnt' => $this->istGemahnt,
             'mahndatum' => $this->mahndatum,
             'fs' => $this->fehlstundenFach,

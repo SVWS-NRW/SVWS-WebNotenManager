@@ -1,16 +1,17 @@
 <template>
     <SvwsUiSecondaryMenu>
         <template #headline>
-            <div>
-                <h2>Persönliche Einstellungen</h2>
+                Persönliche Einstellungen
                 <p class="login">Letzter Login: {{ props.lastLogin }}</p>
                 <p class="login">Ihre E-Mail-Adresse: {{ props.email }}</p>
-            </div>
         </template>
         <template #content>
             <div class="container">
                 <SvwsUiMenuItem @click="navigate('user_settings.filter')" :active="route().current('user_settings.filter')">
                     <template #label>Spalteneinstellungen</template>
+                </SvwsUiMenuItem>
+                <SvwsUiMenuItem @click="navigate('user_settings.security')" :active="route().current('user_settings.security')">
+                    <template #label>Sicherheitseinstellungen</template>
                 </SvwsUiMenuItem>
             </div>
         </template>
@@ -40,11 +41,11 @@
 
 <style scoped>
     .container {
-        @apply flex flex-col gap-3 mx-[1.1rem]
+        @apply flex flex-col leading-3 mx-[1.1rem]
     }
 
     .login {
-        @apply text-sm text-gray-500;
+        @apply text-sm mt-2 text-black opacity-50;
     }
-    
+
 </style>

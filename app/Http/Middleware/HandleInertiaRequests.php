@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Settings\FilterSettings;
 use App\Settings\GdprSettings;
 use App\Settings\GeneralSettings;
@@ -70,6 +71,11 @@ class HandleInertiaRequests extends Middleware
 				'matrix' => app(MatrixSettings::class),
 				'gdpr' => app(GdprSettings::class),
 			],
+            'info' => [
+                'administrator' => $user && $user->is_administrator ? [
+                    'invalidEmailCount' => User::withInvalidEmail()->count(),
+                ] : null,
+            ],
             // Share the application's version and npm configuration.
             'version' => config('wenom.version'),
             'npm' => config('wenom.npm'),

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('kuerzel');
             $table->string('kuerzelAnzeige');
             $table->integer('sortierung');
+			$table->boolean('edit_overrideable')->default(true);
 			$table->boolean('editable_teilnoten')->default(true);
 			$table->boolean('editable_noten')->default(true);
 			$table->boolean('editable_mahnungen')->default(true);

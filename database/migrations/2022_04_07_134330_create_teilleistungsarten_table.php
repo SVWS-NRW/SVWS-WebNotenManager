@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('bezeichnung');
             $table->integer('sortierung')->nullable();
-            $table->double('gewichtung')->nullable();
+            $table->decimal('gewichtung', 3, 1)->nullable();
             $table->timestamps();
         });
     }

@@ -9,6 +9,7 @@ import {Matrix} from "@/Interfaces/Matrix";
 import {Occurrence} from "@/Interfaces/Occurrence";
 import {Pronoun} from "@/Interfaces/Pronoun";
 import {Leistung} from "@/Interfaces/Leistung";
+import {Teilleistung} from "@/Interfaces/Teilleistung";
 import {Schueler} from "@/Interfaces/Schueler";
 import {Settings} from "@/Interfaces/Settings";
 import {TableColumnToggle} from "@/Interfaces/TableColumnToggle";
@@ -21,6 +22,7 @@ export type {
     Floskelgruppe,
     Klassenleitung,
     Leistung,
+    Teilleistung,
     LoginFormData,
     MailSendCredentialsFormData,
     Matrix,

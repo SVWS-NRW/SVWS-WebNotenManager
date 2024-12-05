@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SecureImportRequest;
-use App\Http\Resources\Export\SchuelerResource;
-use App\Models\Schueler;
+use App\Http\Resources\Export\DatenResource;
+use App\Models\Daten;
 use App\Models\User;
 use App\Services\{DataImportService, GzipService};
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\{DB, Schema};
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response as Status;
 
 /**
@@ -35,7 +36,8 @@ class SecureTransferController extends Controller
      * @param GzipService $gzipService
      * @return JsonResponse|Response
      */
-    public function import(SecureImportRequest $request, GzipService $gzipService): Response|JsonResponse {
+    public function import(SecureImportRequest $request, GzipService $gzipService): Response|JsonResponse
+    {
         // Retrieving the uploaded file from the request.
         $file = $request->file('file');
 
@@ -58,10 +60,16 @@ class SecureTransferController extends Controller
             ], Status::HTTP_BAD_REQUEST);
         }
 
+        // Validating the 'enmRevision' from the decoded JSON.
+        if ($json['enmRevision'] != config('wenom.revision')) {
+  //          return response()->json(['message' => 'Die Revisionsnummern der Synchronisation stimmt nicht mit der des SVWS-Servers überein. Die Sychronisation wird abgebrochen.'], Status::HTTP_UPGRADE_REQUIRED);
+        }
+
         // Validating the 'schulnummer' from the decoded JSON.
         if ($json['schulnummer'] != config('wenom.schulnummer')) {
             return response()->json(['message' => 'Schulnummer nicht gültig'], Status::HTTP_BAD_REQUEST);
         }
+
         // Executing the import service with the validated data and returning a response.
         return (new DataImportService($json))->execute()->response();
     }
@@ -74,10 +82,15 @@ class SecureTransferController extends Controller
      */
     public function export(GzipService $gzipService): Response
     {
-        // Fetching data to be exported and converting it to JSON.
-        $data = SchuelerResource::collection(Schueler::exportCollection())->toJson();
+        try {
+            $data = json_encode(new DatenResource(Daten::firstOrCreate()));
+        } catch (Exception $e) {
+            return response([
+                'message' => "Ein Fehler ist beim Json Enkodierung der Daten aufgetreten: {$e->getMessage()}",
+            ], Status::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
-        // Attempt to GZIP encode the encrypted data.
+        // As for now there is no counterpart on the server #347
         try {
             return response($gzipService->encode($data));
         } catch (Exception $e) {
@@ -88,29 +101,31 @@ class SecureTransferController extends Controller
     }
 
     /**
-     * Truncate the database.
+     * Reset the database.
      * Deletes all imported users except the system users (missing ext_id)
      * Does not truncate oauth_clients in order to keep the Oauth2 connection.
      *
      * @return JsonResponse
      */
-    public function truncate(): JsonResponse
+    public function reset(): JsonResponse
     {
         // List of tables not to be truncated
         $excludedTables = [
-            'migrations', 'users', 'oauth_clients', 'settings',
+            'migrations', 'users', 'oauth_clients', 'settings', 'oauth_access_tokens',
         ];
 
         // Disable foreign key checks to avoid constraint violations
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // Preparing tables from the schema to be truncated, skips excluded tables.
-        $tablesToTruncate = Arr::where(
-            Schema::getConnection()->getDoctrineSchemaManager()->listTableNames(),
-            fn (string $tableName): bool => !in_array($tableName, $excludedTables)
-        );
+        // Get a list of all tables in the database
+        $tables = DB::select('SHOW TABLES');
+        $tables = array_map('current', $tables); // Convert objects to an array of table names
+
+        // Preparing tables from the schema to be truncated, skipping excluded tables
+        $tablesToTruncate = Arr::where($tables, fn (string $tableName): bool => !in_array($tableName, $excludedTables));
+
         // Truncate the tables
-        collect($tablesToTruncate)->each(fn (string $tableName) => DB::table($tableName)->truncate());
+        collect($tablesToTruncate)->each(fn (string $tableName): null => DB::table($tableName)->truncate());
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
@@ -118,8 +133,9 @@ class SecureTransferController extends Controller
         // Remove all imported users
         $usersToDelete = User::lehrer();
         $deletedUserCount = $usersToDelete->count();
-        $usersToDelete->each(fn (User $user) => $user->delete());
+        $usersToDelete->each(fn (User $user): bool => $user->delete());
 
+        // Return the response in JSON format
         return response()->json([
             'message' => [
                 'tables' => [
@@ -133,5 +149,19 @@ class SecureTransferController extends Controller
                 ],
             ],
         ]);
+    }
+
+    /**
+     * Truncate the database.
+     *
+     * https://git.svws-nrw.de/phpprojekt/webnotenmanager/-/issues/405
+     *
+     * @return JsonResponse
+     */
+    public function truncate(): JsonResponse
+    {
+        Artisan::call('migrate:fresh');
+
+        return response()->json(status: Status::HTTP_NO_CONTENT);
     }
 }

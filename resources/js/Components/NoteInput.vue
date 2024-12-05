@@ -9,7 +9,7 @@
             :disabled="props.disabled"
             :valid="() => valid()"
             style="font-weight: bold;"
-            :ref="(el) => updateItemRefs(rowIndex, el as Element, 'itemRefsNoteInput')"
+            :ref="(el) => updateItemRefs(rowIndex, el as Element, itemRefsNoteInputName)"
             @click="$event.target.select()"
             @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
             @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
@@ -17,20 +17,26 @@
         ></SvwsUiTextInput>
     </strong>
 </template>
-
+ on
 
 <script setup lang="ts">
     import { watch, ref, Ref } from 'vue';
-    import { Leistung } from '@/Interfaces/Interface';
+    import { Leistung, Teilleistung } from '@/Interfaces/Interface';
     import { SvwsUiTextInput } from '@svws-nrw/svws-ui';
+    import axios from 'axios';
 
     const props = defineProps<{
-        leistung: Leistung,
+        leistung: Leistung|Teilleistung|string,
         disabled: boolean,
         rowIndex: number,
+        column: 'quartalnote'|'note',
+        teilleistung?: boolean;
+        teilleistungId?: any;
     }>();
 
     const emit = defineEmits(['navigated','updatedItemRefs'])
+
+    const itemRefsNoteInputName: string = props.teilleistung ? 'itemRefsTeilleistung' + props.teilleistungId : 'itemRefs' + props.column + 'Input';
 
     const navigated = ( direction: string, rowIndex: number, itemRefsNoteInputName: string) : void => emit("navigated", direction, rowIndex, itemRefsNoteInputName)
 
@@ -40,11 +46,13 @@
     }
 
     const navigate = (direction: string, rowIndex: number): void => {
-        navigated(direction, rowIndex, "itemRefsNoteInput");
+        navigated(direction, rowIndex, itemRefsNoteInputName);
     }
 
     const lowScoreArray: Array<string> = ['6', '5-', '5', '5+', '4-'];
-    const note: Ref<string | null> = ref(props.leistung.note);
+    //type of note can be note or quartalnote
+    const note: Ref<string | null> = props.column == "note"  ? ref(props.leistung.note) : ref(props.leistung.quartalnote)
+    const noteType: Ref<string | null> = props.column == "note"  ? ref("note") : ref("note_quartal")
 
     let debounce: ReturnType<typeof setTimeout>;
     watch(note, (): void => {
@@ -52,16 +60,30 @@
         debounce = setTimeout((): Promise<string | null> => saveNote(), 500);
     })
 
-    const saveNote = (): Promise<string | null> => axios
-        .post(route('api.noten', props.leistung), { note: note.value })
-        .then((): string | null => props.leistung.note = note.value)
-        .catch((): string | null => {
-            if (props.leistung.note === null) {
-                return note.value = ""
-            } else {
-                return note.value = props.leistung.note
-            }
-        });
+    //return type Promise<string | null>???
+    const saveNote = () => {
+        if (props.teilleistung) {
+            axios.put(route('teilleistungen.update_note', { teilleistung: props.leistung, note: note.value }))
+                .then((): string | null => props.leistung[props.column] = note.value)
+                .catch((): string | null => {
+                    if (props.leistung[props.column] === null) {
+                        return note.value = ""
+                    } else {
+                        return note.value = props.leistung[props.column]
+                    }
+                })
+        } else {
+            axios.post(route('api.noten', { leistung: props.leistung, type: noteType.value }), { note: note.value })
+                .then((): string | null => props.leistung[props.column] = note.value)
+                .catch((): string | null => {
+                    if (props.leistung[props.column] === null) {
+                        return note.value = ""
+                    } else {
+                        return note.value = props.leistung[props.column]
+                    }
+                });
+        }
+    }
 
     const valid = (): boolean => !lowScoreArray.includes(note.value as string);
 </script>

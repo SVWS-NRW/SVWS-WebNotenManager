@@ -11,14 +11,10 @@ class ImportFaecherTest extends TestCase
 {
     use RefreshDatabase;
 
-    const TABLE = 'faecher';
+    public const TABLE = 'faecher';
 
-    /**
-     * It creates fach
-     *
-     * @return void
-     */
-    public function test_it_creates_fach(): void
+    /** It creates fach */
+    public function test_it_creates(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -44,12 +40,8 @@ class ImportFaecherTest extends TestCase
         ->assertDatabaseCount('faecher', 1);
     }
 
-    /**
-     * It does not update fach
-     *
-     * @return void
-     */
-    public function test_it_does_not_update_fach(): void
+    /** It does not update */
+    public function test_it_does_not_update(): void
     {
         Fach::factory()->create([
             'id' => 1,
@@ -81,12 +73,8 @@ class ImportFaecherTest extends TestCase
             ]);
     }
 
-    /**
-     * It does not create fach with negative id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_negative_id(): void
+    /** It does not create with negative "ID" */
+    public function test_it_does_not_create_with_negative_id(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -107,12 +95,8 @@ class ImportFaecherTest extends TestCase
         ])->assertDatabaseCount('noten', 0);
     }
 
-    /**
-     * It does not create fach with non-integer id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_non_integer_id(): void
+    /** It does not create with non-integer "ID" */
+    public function test_it_does_not_create_with_non_integer_id(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -132,12 +116,8 @@ class ImportFaecherTest extends TestCase
     }
 
 
-    /**
-     * It does not create fach with missing id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_missing_id(): void
+    /** It does not create with missing "ID" */
+    public function test_it_does_not_create_with_missing_id(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -155,12 +135,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create fach with empty id
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_empty_id(): void
+    /** It does not create fach with empty "ID" */
+    public function test_it_does_not_create_with_empty_id(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -179,12 +155,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create fach with existing Kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_existing_kurzel(): void
+    /** It does not create with existing Kuerzel */
+    public function test_it_does_not_create_with_existing_kurzel(): void
     {
         Fach::factory()->create([
             'kuerzel' => 'existingKuerzel',
@@ -206,12 +178,9 @@ class ImportFaecherTest extends TestCase
 
         $this->assertDatabaseCount(self::TABLE, 1);
     }
-    /**
-     * It does not create fach with empty kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_empty_kuerzel(): void
+
+    /** It does not create with empty kuerzel */
+    public function test_it_does_not_create_with_empty_kuerzel(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -230,12 +199,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create fach with missing kuerzel
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_missing_kuerzel(): void
+    /** It does not create with missing kuerzel */
+    public function test_it_does_not_create_with_missing_kuerzel(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -253,12 +218,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create fach with missing sortierung
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_missing_sortierung(): void
+    /** It does not create with missing sortierung */
+    public function test_it_does_not_create_with_missing_sortierung(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -276,12 +237,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create fach with empty sortierung
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_empty_sortierung(): void
+    /** It does not create with empty sortierung */
+    public function test_it_does_not_create_with_empty_sortierung(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -300,12 +257,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create fach with existing sortierung
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_existing_sortierung(): void
+    /** It does not create with existing sortierung */
+    public function test_it_does_not_create_with_existing_sortierung(): void
     {
         Fach::factory()->create([
             'sortierung' => 10,
@@ -328,12 +281,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 1);
     }
 
-    /**
-     * It does not create fach with missing "istFremdsprache"
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_missing_istFremdsprache(): void
+    /** It does not create with missing "istFremdsprache" */
+    public function test_it_does_not_create_with_missing_istFremdsprache(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -351,12 +300,8 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It does not create fach with empty "istFremdsprache"
-     *
-     * @return void
-     */
-    public function test_it_does_not_create_fach_with_empty_istFremdsprache(): void
+    /** It does not create with empty "istFremdsprache" */
+    public function test_it_does_not_create_with_empty_istFremdsprache(): void
     {
         $data = json_decode('{
             "faecher": [
@@ -375,11 +320,7 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It returns when the "faecher" array is empty
-     *
-     * @return void
-     */
+    /** It returns when the "faecher" array is empty */
     public function test_it_returns_when_the_faecher_array_is_missing(): void
     {
         $data = json_decode('{}', true);
@@ -389,11 +330,7 @@ class ImportFaecherTest extends TestCase
         $this->assertDatabaseCount(self::TABLE, 0);
     }
 
-    /**
-     * It returns when the "faecher" array is empty
-     *
-     * @return void
-     */
+    /** It returns when the "faecher" array is empty */
     public function test_it_returns_when_the_faecher_array_is_empty(): void
     {
         $data = json_decode('{

@@ -11,7 +11,7 @@ use Illuminate\Http\Response;
 /**
  * Defining the MeinUnterricht middleware
  */
-class MeinUnterricht
+class CheckIfLerngruppen
 {
     /**
      * Handle an incoming request.

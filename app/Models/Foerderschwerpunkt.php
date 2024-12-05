@@ -39,7 +39,7 @@ class Foerderschwerpunkt extends Model
      * @var string[]
      */
     protected $fillable = [
-        'id', 'kuerzel', 'beschreibung',
+        'id', 'kuerzel', 'beschreibung', 'sortierung',
     ];
 
     /**

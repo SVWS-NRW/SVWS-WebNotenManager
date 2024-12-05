@@ -2,27 +2,31 @@
 
 use App\Http\Controllers\Api\{
     FachbezogeneBemerkung, FachbezogeneFloskeln, Fehlstunden, Floskeln, Klassenleitung, Leistungsdatenuebersicht,
-    Mahnungen, MeinUnterricht, Noten, SchuelerBemerkung, TwoFAAuthentication
+    Mahnungen, MeinUnterricht, Noten, SchuelerBemerkung, TeilleistungenController,
 };
 use App\Http\Controllers\Api\Settings\{
     EnvController, MatrixController, SettingsController, UserSettingsController
 };
 use App\Http\Controllers\{PassportController, SecureTransferController};
+use App\Http\Controllers\Api\Settings\TwoFactorAuthenticationController;
+use App\Http\Controllers\TestMailController;
 use Illuminate\Support\Facades\Route;
 
 /*
  * Define a controller route for SecureTransferController with middleware and prefix
  */
 Route::controller(SecureTransferController::class)
-	->middleware('client')
+    ->middleware('client')
     ->prefix('secure')
     ->name('secure.')
-	->group(function (): void {
-		Route::get('check', 'check')->name('check');
-		Route::get('export', 'export')->name('export');
-		Route::post('import', 'import')->name('import');
-		Route::post('truncate', 'truncate')->name('truncate');
-	});
+    ->group(function (): void {
+        Route::get('check', 'check')->name('check');
+        Route::get('export', 'export')->name('export');
+        Route::post('import', 'import')->name('import');
+        Route::post('truncate', 'truncate')->name('truncate');
+        Route::post('reset', 'reset')->name('reset');
+    });
+
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'administrator'])
     ->group(function (): void {
@@ -40,11 +44,24 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::resource('settings/passport', PassportController::class)
             ->only('index', 'store');
 
+        // Sends a test mail to username address
+        Route::post('settings/send-testmail', [TestMailController::class, 'sendTestMail'])
+            ->name('settings.mail_test');
+
         // TODO: To be checked by Karol
         Route::controller(SettingsController::class)
             ->prefix('settings')
             ->name('api.settings.')
             ->group(function (): void {
+                // Defines the matrix settings controller route group for administrators
+                Route::controller(TwoFactorAuthenticationController::class)
+                    ->prefix('two_factor_authentication')
+                    ->name('two_factor_authentication')
+                    ->group(function () {
+                        Route::get('', 'get');
+                        Route::put('', 'set');
+                    });
+
                 // Defines the matrix settings controller route group for administrators
                 Route::controller(MatrixController::class)
                     ->prefix('matrix')
@@ -76,28 +93,21 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 
     });
 
-Route::middleware('auth:sanctum')->group(function () {
-
-    // Defines the Two-Factor Authentication route group
-	Route::controller(TwoFAAuthentication::class)
-        //testing 2fa here
-        //should probably be up there (let's think about it)
-		->group(function(): void {
-			Route::post('activate2FA', 'activate2FA')->name('activate2FA');;
-			Route::delete('deactivate2FA', 'deactivate2FA')->name('deactivate2FA');;
-	    });
-
+Route::middleware('auth:sanctum')->group(function (): void {
+    // Retrieves general 2fa setting
+    Route::get('get-general-2fa-setting', [TwoFactorAuthenticationController::class, 'get'])
+    ->name('api.settings.general_two_factor_authentication');
 
     // Defines the Fehlstunden controller route group
-	Route::controller(Fehlstunden::class)
-		->name('api.fehlstunden.')
-		->prefix('fehlstunden.')
-		->group(function (): void {
-			Route::post('fs/{leistung}', 'fs')->name('fs');
-			Route::post('fsu/{leistung}', 'fsu')->name('fsu');
-			Route::post('gfs/{schueler}', 'gfs')->name('gfs');
-			Route::post('gfsu/{schueler}', 'gfsu')->name('gfsu');
-		});
+    Route::controller(Fehlstunden::class)
+        ->name('api.fehlstunden.')
+        ->prefix('fehlstunden.')
+        ->group(function (): void {
+            Route::post('fs/{leistung}', 'fs')->name('fs');
+            Route::post('fsu/{leistung}', 'fsu')->name('fsu');
+            Route::post('gfs/{schueler}', 'gfs')->name('gfs');
+            Route::post('gfsu/{schueler}', 'gfsu')->name('gfsu');
+        });
 
     // Defines the user settings controller route group
     Route::controller(UserSettingsController::class)
@@ -108,41 +118,53 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('filters', 'getAllFilters')->name('get_all_filters');
             Route::get('filters/{group}', 'getFilters')->name('get_filters');
             Route::get('user-data', 'getLastLogin')->name('get_last_login');
+            Route::get('get-personal-setting-two-factor', 'getSettingTwoFactor')->name('get_personal_setting_two_factor');
+            Route::put('set-personal-setting-two-factor', 'setSettingTwoFactor')->name('set_personal_setting_two_factor');
         });
 
     // Defines the Fachbezogene Bemerkung controller route group
-	Route::post('fachbezogene-bemerkung/{leistung}', FachbezogeneBemerkung::class)
-		->name('api.fachbezogene_bemerkung');
+    Route::post('fachbezogene-bemerkung/{leistung}', FachbezogeneBemerkung::class)
+        ->name('api.fachbezogene_bemerkung');
 
     // Defines the Mahnung controller route group
-	Route::post('mahnung/{leistung}', Mahnungen::class)
-		->name('api.mahnung');
+    Route::post('mahnung/{leistung}', Mahnungen::class)
+        ->name('api.mahnung');
 
     // Defines the Noten controller route group
-	Route::post('noten/{leistung}', Noten::class)
-		->name('api.noten');
+    Route::post('noten/{leistung}/{type?}', Noten::class)
+        ->name('api.noten');
 
     // Defines the Schueler Bemerkung controller route group
-	Route::post('schueler-bemerkung/{schueler}', SchuelerBemerkung::class)
-		->name('api.schueler_bemerkung');
+    Route::post('schueler-bemerkung/{schueler}', SchuelerBemerkung::class)
+        ->name('api.schueler_bemerkung');
 
     // Defines the Floskeln controller route group
-	Route::get('floskeln/{floskelgruppe}', Floskeln::class)
-		->name('api.floskeln');
+    Route::get('floskeln/{floskelgruppe}', Floskeln::class)
+        ->name('api.floskeln');
 
     // Defines the Fachbezogene Floskeln controller route group
-	Route::get('fachbezogene-floskeln/{fach}', FachbezogeneFloskeln::class)
-		->name('api.fachbezogene_floskeln');
+    Route::get('fachbezogene-floskeln/{fach}', FachbezogeneFloskeln::class)
+        ->name('api.fachbezogene_floskeln');
 
     // Defines the Leistungsdatenuebersicht controller route group
-	Route::get('leistungsdatenuebersicht', Leistungsdatenuebersicht::class)
-		->name('api.leistungsdatenuebersicht');
+    Route::get('leistungsdatenuebersicht', Leistungsdatenuebersicht::class)
+        ->name('api.leistungsdatenuebersicht');
 
     // Defines the Mein Unterricht controller route group
-	Route::get('mein-unterricht', MeinUnterricht::class)
-		->name('api.mein_unterricht');
+    Route::get('mein-unterricht', MeinUnterricht::class)
+        ->name('api.mein_unterricht');
 
     // Defines the Klassenleitung controller route group
-	Route::get('klassenleitung', Klassenleitung::class)
-		->name('api.klassenleitung');
+    Route::get('klassenleitung', Klassenleitung::class)
+        ->name('api.klassenleitung');
+
+    Route::controller(TeilleistungenController::class)
+        ->prefix('teilleistungen')
+        ->name('teilleistungen.')
+        ->group(function (): void {
+            Route::get('index/{reset}', 'index')->name('index');
+            Route::get('/kurs/{id}', 'getKurs')->name('get_kurs');
+            Route::get('/klasse/{klasse}', 'getKlasse')->name('get_klasse');
+            Route::put('/update-note/{teilleistung}/{note}', 'updateNote')->name('update_note');
+        });
 });

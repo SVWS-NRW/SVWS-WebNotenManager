@@ -20,12 +20,12 @@ class JsonImportSeeder extends Seeder
      */
 	public function run(): void
 	{
-		$json = File::get("{$this->path}/gesamt-01.json");
+		$json = File::get("{$this->path}/ENMGesamt.json");
 
 		$service = new DataImportService(
 			json_decode($json, true)
 		);
 
-		$service->import();
+		$service->execute();
 	}
 }

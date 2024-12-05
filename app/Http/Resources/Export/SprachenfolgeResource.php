@@ -20,9 +20,9 @@ class SprachenfolgeResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'sprache' => $this->fach->kuerzel, // TODO: whats the difference between this nach fachkuerzel
-            'fachID' => $this->fach->id,
-            'fachKuerzel' => $this->fach->kuerzel,
+            'sprache' => $this->fach?->kuerzel,
+            'fachID' => $this->fach?->id,
+            'fachKuerzel' => $this->fach?->kuerzel,
             'reihenfolge' => $this->reihenfolge,
             'belegungVonJahrgang' => $this->belegungVonJahrgang,
             'belegungVonAbschnitt' => $this->belegungVonAbschnitt,

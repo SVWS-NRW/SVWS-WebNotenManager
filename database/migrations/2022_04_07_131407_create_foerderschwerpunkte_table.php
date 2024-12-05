@@ -18,6 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('kuerzel')->unique();
             $table->text('beschreibung');
+            $table->integer('sortierung');
         });
     }
 

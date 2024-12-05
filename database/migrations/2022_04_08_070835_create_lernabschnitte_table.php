@@ -18,9 +18,9 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Schueler::class);
 			$table->integer('fehlstundenGesamt')->nullable();
-			$table->timestamp('tsFehlstundenGesamt', 3)->default(now());
+			$table->timestamp('tsFehlstundenGesamt', 3)->nullable();
 			$table->integer('fehlstundenGesamtUnentschuldigt')->nullable();
-			$table->timestamp('tsFehlstundenGesamtUnentschuldigt', 3)->default(now());
+			$table->timestamp('tsFehlstundenGesamtUnentschuldigt', 3)->nullable();
             $table->string('pruefungsordnung');
             $table->unsignedBigInteger('lernbereich1note')->nullable();
             $table->unsignedBigInteger('lernbereich2note')->nullable();

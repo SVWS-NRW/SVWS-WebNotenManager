@@ -34,6 +34,8 @@
                     <SvwsUiTextInput v-model="settings.hosting_provider_address" placeholder="[Anschrift des Hosters]"></SvwsUiTextInput>
                 </div>
 
+                <div class="clear"></div>
+
                 <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
             </div>
         </template>
@@ -114,14 +116,14 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12 max-w-lg ml-6
+        @apply grid md:grid-cols-2 col-span-3 gap-12 md:max-w-4xl px-6 
     }
 
     .content > div {
-        @apply flex flex-col gap-5 justify-start
+        @apply flex flex-col gap-5 justify-start ml-6
     }
 
     .button {
-        @apply self-start
+        @apply justify-center top-4 w-fit left-3/4
     }
 </style>

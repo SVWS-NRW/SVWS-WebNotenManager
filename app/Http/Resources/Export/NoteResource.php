@@ -20,6 +20,7 @@ class NoteResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->sortierung,
             'kuerzel' => $this->kuerzel,
             'notenpunkte' => $this->notenpunkte,
             'text' => $this->text,

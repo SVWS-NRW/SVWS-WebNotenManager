@@ -12,7 +12,16 @@
             <div class="content-area">
                 <!-- Tabelle mit SvwsUiTable -->
                 <SvwsUiTable :items="rowsFiltered" :columns="cols" :toggle-columns="true" clickable count noDataText="" :sortByAndOrder= "{ key: 'klasse', order: true}"
-                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false">
+                :filtered="isFiltered()" :filterReset="filterReset" :hiddenColumns="hiddenColumns" :filterOpen="false" :allowArrowKeySelection="true">
+
+                    <template #filter>
+                        <div class="filter-area-icon">
+                            <SvwsUiButton @click="exportToFile()" type="transparent" size="big"
+                                :class="'hover:opacity-100 focus-visible:opacity-100 export-button'">
+                                <ri-download-2-line></ri-download-2-line>csv
+                            </SvwsUiButton>
+                        </div>
+                    </template>
 
                     <!-- Erweiterte Filteroptionen -->
                     <template #filterAdvanced>
@@ -45,36 +54,30 @@
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
 
-                    <!-- TODO: ticket 260; nothing comes from db yet -->
-                    <template #cell(quartal)="{ value, rowData, rowIndex }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
-                    </template>
-
-
-                    <!-- BemerkungButton in der Zelle 'note' -->
-                    <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                    <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
+                        <NoteInput column="quartalnote" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         ></NoteInput>
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'istGemahnt' -->
-                    <template #cell(istGemahnt)="{ value, rowData }">
-                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" />
+                    <template #cell(note)="{ value, rowData, rowIndex }">
+                        <NoteInput column="note" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        ></NoteInput>
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fs' -->
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
+                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
+                    </template>
+
                     <template #cell(fs)="{ value, rowData, rowIndex }">
                         <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fsu' -->
                     <template #cell(fsu)="{ value, rowData,  rowIndex}">
                         <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
                         />
                     </template>
 
-                    <!-- BemerkungButton in der Zelle 'fachbezogeneBemerkungen' -->
                     <template #cell(fachbezogeneBemerkungen)="{ value, rowData }">
                         <BemerkungIndicator :model="rowData" :bemerkung="rowData['fachbezogeneBemerkungen']"
                             @clicked="selectLeistung(rowData, true)" floskelgruppe="fb" />
@@ -92,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, onMounted, Ref, ref } from 'vue';
+    import { computed, onMounted, Ref, ref, toRaw} from 'vue';
     import axios, { AxiosResponse } from 'axios';
     import { Head } from '@inertiajs/inertia-vue3';
     import { Leistung, TableColumnToggle } from '@/Interfaces/Interface';
@@ -100,15 +103,15 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
-    import { handleExport } from '@/Helpers/exportHelper';
-    import { mapToggleToDatabaseField } from '@/Helpers/columnMappingHelper';
+    import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     //Correlation filter names and column names on this page
     interface MeinUnterrichtFiltersToCols {
         [index: string]: string,
         fach: string,
         kurs: string,
-        teilleistungen: string,
+        //Teilleistungen column hidden here for the time being (ticket 386)
+        //teilleistungen: string,
         quartalnoten: string,
         note: string,
         mahnungen: string,
@@ -120,8 +123,11 @@
 
     //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
     const itemRefsNoteInput = ref(new Map());
+    const itemRefsQuartalNoteInput = ref(new Map());
     const itemRefsfs = ref(new Map());
     const itemRefsfsu = ref(new Map());
+    //testing here for ticket 341
+    const mahnungIndicator = ref(new Map());
 
     // Data received from DB
     const rows: Ref<Leistung[]> = ref([]);
@@ -140,7 +146,8 @@
 
     // some columns may be displayed/hidden on demand
     const toggles: Ref<TableColumnToggle> = ref({
-        teilleistungen: false,
+        //s. ticket 386
+        //teilleistungen: false,
         quartalnoten: false,
         mahnungen: false,
         bemerkungen: false,
@@ -177,7 +184,8 @@
         const result = [...default_cols];
             result.push({ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false, toggle: true });
             result.push({ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false, toggle: true });
-            result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15, toggle: true });
+            //Teilleistungen column hidden here for the time being (ticket 386)
+            // result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 15, toggle: true });
             result.push({ key: 'quartalnoten', label: 'Quartal', sortable: true, span: 1, minWidth: 6, toggle: true });
             result.push({ key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 5, toggle: true });
             result.push({ key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8, toggle: true });
@@ -193,7 +201,8 @@
     const filtersToCols: MeinUnterrichtFiltersToCols = {
         fach: 'fach',
         kurs: 'kurs',
-        teilleistungen: 'teilnoten',
+        //Teilleistungen column hidden here for the time being (ticket 386)
+        //teilleistungen: 'teilnoten',
         quartalnoten: 'quartalnoten',
         note: 'note',
         mahnungen: 'istGemahnt',
@@ -258,10 +267,16 @@
         noteItems.value = Array.from(Object.values(allNotes.value));
     };
 
+    //TODO: find out why Mahnung is not being updated like the others
+    //TODO: adjust name if necessary; if so: make into helper under Helpers
     //input html element and reference map name are determined by child
     function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
+        //console.log(itemRefsName);
         switch (itemRefsName) {
-            case "itemRefsNoteInput":
+            case "itemRefsquartalnoteInput":
+                itemRefsQuartalNoteInput.value.set(rowIndex, el);
+                break;
+            case "itemRefsnoteInput":
                 itemRefsNoteInput.value.set(rowIndex, el);
                 break;
             case "itemRefsfs":
@@ -270,20 +285,23 @@
             case "itemRefsfsu":
                 itemRefsfsu.value.set(rowIndex, el);
                 break;
+            case "mahnungIndicator":
+                mahnungIndicator.value.set(rowIndex, el);
+                break;
             default:
-                console.log("Map not found.")
+                console.log("Map not found: " + itemRefsName)
         }
 	}
 
     //table navigation actions (go up/down within the column)
-	function next(id: number, itemRefs: Ref) {
-		const el = itemRefs.value.get(id + 1);
-		if (el)
-            el.input.select();
+	function next(id: number, item: Ref) {
+		const el = item.value.get(id + 1);
+        console.log(el.$nextTick);
+		el.input ? el.input.select() : console.log("no input");
 	}
 
-	const previous = (id: number, itemRefs: Ref) => {
-        const el = itemRefs.value.get(id - 1);
+	const previous = (id: number, item: Ref) => {
+        const el = item.value.get(id - 1);
 		if (el)
         el.input.select();
 	}
@@ -291,7 +309,10 @@
     //direction (up/down within the column) and map name are received from child component
     const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
         switch (itemRefsName) {
-            case "itemRefsNoteInput":
+            case "itemRefsquartalnoteInput":
+                direction === "next" ? next(rowIndex, itemRefsQuartalNoteInput) : previous(rowIndex, itemRefsQuartalNoteInput);
+                break;
+            case "itemRefsnoteInput":
                 direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
                 break;
             case "itemRefsfs":
@@ -300,43 +321,18 @@
             case "itemRefsfsu":
                 direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
                 break;
+            //testing here for ticket 341
+            case "mahnungIndicator":
+                direction === "next" ? next(rowIndex, mahnungIndicator) : previous(rowIndex, mahnungIndicator);
+                break;
             default:
                 console.log("itemRefs map not found");
         }	
 	}    
 
-    /**
-     * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
-     * @param type - Der Exporttyp ('csv' oder 'excel').
-     */
-    const exportToFile = (type: string): void => {
-        // Bestimme die zu exportierenden Spalten basierend auf den Benutzereinstellungen
-        const visibleColumns: string[] = [
-            "klasse",
-            "nachname",
-            "vorname",
-            ...Object.keys(toggles.value).filter((col: string) => toggles.value[col as keyof TableColumnToggle])
-        ];
-        
-        // Ordne sichtbare Spalten den entsprechenden Datenbankfeldern zu
-        const mappedColumns: string[] = visibleColumns.map((col: string) => mapToggleToDatabaseField(col as keyof TableColumnToggle));
-
-        // Bereite Daten für den Export vor, indem relevante Spalten ausgewählt werden
-        const exportData = rowsFiltered.value.map((row: Leistung) => {
-            const rowData: Record<string, any> = {};
-            mappedColumns.forEach((col: string) => {
-                // Überprüfe, ob die Spalte 'istGemahnt' ist und die Werte auf 'ja' oder 'nein' abbilde
-                if (col === 'istGemahnt')
-                    rowData[col] = row[col as keyof Leistung] ? 'ja' : 'nein';
-                else
-                    rowData[col] = row[col as keyof Leistung];
-            });
-            return rowData;
-        });
-
-        // Rufe den allgemeinen Export-Handler mit den vorbereiteten Daten auf
-        handleExport(exportData, type, 'leistungsdatenübersicht');
-    }
+    const exportToFile = (): void => {
+        exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'meinUnterricht');
+    };
 </script>
 
 
@@ -360,6 +356,10 @@
 
     .myToggles {
         @apply m-4
+    }
+
+    .filter-area-icon {
+        @apply -m-1.5
     }
 
 </style>

@@ -21,7 +21,7 @@ class JahrgangResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->ext_id,
+            'id' => $this->id,
             'kuerzel' => $this->kuerzel,
             'kuerzelAnzeige' => $this->kuerzelAnzeige,
             'beschreibung' => $this->beschreibung,

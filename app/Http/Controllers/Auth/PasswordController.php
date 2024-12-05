@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\FirstLoginRequest;
+use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Models\User;
 use App\Notifications\RequestPasswordNotification;
 use Hash;
@@ -45,14 +46,8 @@ class PasswordController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(UpdatePasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
         $response = Password::reset(
             $request->only('email', 'token', 'password', 'password_confirmation'),
             function ($user, $password) {

@@ -4,8 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{Hash, Validator};
 
 class CreateAdminUser extends Command
 {
@@ -14,14 +13,14 @@ class CreateAdminUser extends Command
      *
      * @var string
      */
-    protected $signature = 'create:admin-user';
+    protected $signature = 'create:admin-user {--user=} {--password=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Ersteinrichtung ein technischer Admin';
+    protected $description = 'Erstelle einen Admin-Benutzer. Optionale Parameter: --email, --password';
 
     /**
      * Validation rules
@@ -29,8 +28,15 @@ class CreateAdminUser extends Command
      * @var array
      */
     private array $validationRules = [
-        'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
-        'password' => ['required', 'string', 'min:8'],
+        'email' => [
+            'required', 'email:rfc,dns', 'unique:users,email',
+        ],
+        'password' => [
+            'required', 'string', 'min:8', 'confirmed',
+        ],
+        'password_confirmation' => [
+            'required', 'string', 'min:8',
+        ],
     ];
 
     /**
@@ -41,6 +47,7 @@ class CreateAdminUser extends Command
     private array $customAttributes = [
         'email' => 'E-Mail-Adresse',
         'password' => 'Passwort',
+        'password_confirmation' => 'Password Bestätigung',
     ];
 
     /**
@@ -50,16 +57,20 @@ class CreateAdminUser extends Command
      */
     public function handle(): int
     {
-        // Get input from console
-        $email = $this->ask($this->customAttributes['email']);
-        $password = $this->secret($this->customAttributes['password']);
+        // Get input from console or arguments
+        $email = $this->option('user') ?? $this->ask($this->customAttributes['email']);
+        $password = $this->option('password') ?? $this->secret($this->customAttributes['password']);
+        $passwordConfirmation = $this->option('password')
+            ?? $this->secret($this->customAttributes['password_confirmation']);
+
+        $data = [
+            'email' => $email,
+            'password' => $password,
+            'password_confirmation' => $passwordConfirmation,
+        ];
 
         // Validate input
-        $validator = Validator::make(
-            data: ['email' => $email, 'password' => $password],
-            rules: $this->validationRules,
-            customAttributes: $this->customAttributes,
-        );
+        $validator = Validator::make($data, $this->validationRules, [], $this->customAttributes);
 
         // Show error messages if validator fails
         if ($validator->fails()) {
@@ -72,11 +83,18 @@ class CreateAdminUser extends Command
             return Command::FAILURE;
         }
 
-        // Create the user
-        User::factory()->administrator()->create(['email' => $email, 'password' => Hash::make($password)]);
+        // Create the user (without events prepared only for the importer)
+        User::withoutEvents(fn (): User => User::factory()->administrator()->create([
+            'vorname' => 'admin',
+            'nachname' => 'admin',
+            'kuerzel' => 'admin',
+            'email' => $email,
+            'password' => Hash::make($password),
+        ]));
 
         // Display the success message
-        $this->info('Technischer Admin wurde erfolgreich angelegt');
+        $this->info("Technischer Admin wurde erfolgreich angelegt mit die E-Mail-Adresse: {$email}");
+
         return Command::SUCCESS;
     }
 }

@@ -24,14 +24,10 @@ class MatrixController extends Controller
     public function index(): JsonResponse
     {
         // Retrieving Jahrgang resources, ordering them, and then grouping by Stufe.
-        $jahrgaenge = JahrgangResource::collection(
-            Jahrgang::orderedWithKlassenOrdered()
-        )->collection->groupBy('stufe');
+        $jahrgaenge = JahrgangResource::collection(Jahrgang::orderedWithKlassenOrdered())->collection->groupBy('stufe');
 
         // Retrieving Klasse resources that do not belong to a Jahrgang, ordered.
-        $klassen = KlasseResource::collection(
-            Klasse::notBelongingToJahrgangOrdered()
-        );
+        $klassen = KlasseResource::collection(Klasse::notBelongingToJahrgangOrdered());
 
         // Returning the Jahrgang and Klasse data in a JSON response.
         return response()->json(['jahrgaenge' => $jahrgaenge, 'klassen' => $klassen], Response::HTTP_OK);
@@ -46,7 +42,7 @@ class MatrixController extends Controller
     {
         // Specifying the fields that can be updated.
         $only = [
-            'editable_teilnoten', 'editable_noten', 'editable_mahnungen', 'editable_fehlstunden',
+            'edit_overrideable', 'editable_teilnoten', 'editable_noten', 'editable_mahnungen', 'editable_fehlstunden',
             'toggleable_fehlstunden', 'editable_fb', 'editable_asv', 'editable_aue', 'editable_zb',
         ];
 

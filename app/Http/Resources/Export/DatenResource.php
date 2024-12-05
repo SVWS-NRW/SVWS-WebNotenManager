@@ -2,40 +2,64 @@
 
 namespace App\Http\Resources\Export;
 
+use App\Models\Fach;
+use App\Models\Floskelgruppe;
+use App\Models\Foerderschwerpunkt;
+use App\Models\Jahrgang;
+use App\Models\Klasse;
+use App\Models\Lerngruppe;
+use App\Models\Note;
 use App\Models\Schueler;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Teilleistungsart;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * The `DatenResource` class is a JSON resource for formatting and presenting 'Daten' data.
- *
- * @package App\Http\Resources\Export
- */
 class DatenResource extends JsonResource
 {
     /**
-     * Transform the data into a JSON array.
+     * Transform the resource into an array.
      *
-     * @param $request
-     * @return array
+     * @return array<string, mixed>
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
-		$schueler = Schueler::query()
-			->with(['leistungen', 'bemerkung'])
-			->whereHas('leistungen', fn (Builder $leistung): Builder =>
-				$leistung->whereIn('lerngruppe_id', $this->lehrer->lerngruppen->pluck('id')->toArray())
-			)
-			->get();
+        // Get the data with all relations.
+        $schueler = Schueler::with([
+            'bemerkung',
+            'leistungen' => [
+                'note',
+            ],
+            'lernabschnitt' => [
+                'lernbereich1Note', 'lernbereich2Note', 'foerderschwerpunkt1Relation', 'foerderschwerpunkt2Relation',
+            ],
+        ])
+        ->get();
 
         return [
-            'enmRevision' => $this->enmRevision,
+            'enmRevision' => config('wenom.revision'),
+            'schulnummer' => config('wenom.schulnummer'),
             'schuljahr' => $this->schuljahr,
             'anzahlAbschnitte' => $this->anzahlAbschnitte,
             'aktuellerAbschnitt' => $this->aktuellerAbschnitt,
-			'schulform' => $this->schulform,
-			'lehrerID' => $this->lehrer->ext_id,
+            'publicKey' => $this->publicKey,
+            'lehrerID' => $this->lehrerID,
+            'fehlstundenEingabe' => $this->fehlstundenEingabe,
+            'fehlstundenSIFachbezogen' => $this->fehlstundenSIFachbezogen,
+            'fehlstundenSIIFachbezogen' => $this->fehlstundenSIIFachbezogen,
+            'schulform' => $this->schulform,
+            'mailadresse' => $this->mailadresse,
+            'noten' => NoteResource::collection(Note::all()),
+            'foerderschwerpunkte' => FoerderschwerpunkteResource::collection(Foerderschwerpunkt::all()),
+            'jahrgaenge' => JahrgangResource::collection(Jahrgang::all()),
+            'klassen' => KlasseResource::collection(Klasse::all()),
+            'floskelgruppen' => FloskelgruppeResource::collection(Floskelgruppe::all()),
+            'lehrer' => LehrerResource::collection(User::lehrer()->get()),
+            'faecher' => FachResource::collection(Fach::all()),
+            'teilleistungsarten' => TeilleistungsartResource::collection(Teilleistungsart::all()),
+            'lerngruppen' => LerngruppeResource::collection(Lerngruppe::all()),
             'schueler' => SchuelerResource::collection($schueler),
         ];
     }
 }
+

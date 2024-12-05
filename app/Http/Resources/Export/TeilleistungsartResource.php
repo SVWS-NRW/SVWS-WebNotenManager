@@ -20,10 +20,10 @@ class TeilleistungsartResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->ext_id,
+            'id' => $this->id,
             'bezeichnung' => $this->bezeichnung,
             'sortierung' => $this->sortierung,
-            'gewichtung' => $this->gewichtung,
+            'gewichtung' => (float) $this->gewichtung,
         ];
     }
 }

@@ -2,8 +2,10 @@
 
 return [
     'version' => '0.1.5',
-    'npm' => '0.8.14',
-    'schulnummer' => env('SCHULNUMMER'),
+    'npm' => '1.0.1',
+    'revision' => 1,
+    'two_factor_authentication' => env('TWO_FACTOR_AUTHENTICATION', false),
+    'schulnummer' => env('SCHULNUMMER', null),
     'aes_password' => env('AES_PASSWORD'),
     'aes_salt' => env('AES_SALT'),
     'mail_send_credentials' => [
@@ -17,8 +19,7 @@ return [
         'from_name' => env('MAIL_FROM_NAME'),
     ],
     'filters' => [
-        'meinunterricht' =>
-         [
+        'meinunterricht' => [
             'teilleistungen' => env('FILTERS_MEINUNTERRICHT_TEILLEISTUNGEN', false),
             'mahnungen' => env('FILTERS_MEINUNTERRICHT_MAHNUNGEN', true),
             'fehlstunden' => env('FILTERS_MEINUNTERRICHT_FEHLSTUNDEN', false),

@@ -20,6 +20,9 @@
                 <SvwsUiMenuItem @click="navigate('settings.synchronisation')" :active="route().current('settings.synchronisation')">
                     <template #label>Synchronisation</template>
                 </SvwsUiMenuItem>
+                <SvwsUiMenuItem @click="navigate('settings.2fa')" :active="route().current('settings.2fa')">
+                    <template #label>Sicherheitseinstellungen</template>
+                </SvwsUiMenuItem>
 
             </div>
         </template>
@@ -37,7 +40,7 @@
 
 <style scoped>
     .container {
-        @apply flex flex-col gap-3 mx-[1.1rem]
+        @apply flex flex-col gap-1 mx-[1.1rem]
     }
 
 </style>

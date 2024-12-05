@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\{HasOne, HasMany, BelongsToMany};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -74,29 +73,31 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @method static Builder|User administrator()
  * @method static Builder|User lehrer()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserLogin> $loginLogs
+ * @property-read int|null $login_logs_count
  * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
-	use HasApiTokens;
-	use HasFactory;
-	use HasProfilePhoto;
-	use Notifiable;
-	use TwoFactorAuthenticatable;
+    use HasApiTokens;
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
 
     /*
      * Define a list of allowed genders
      *
      * @return string[]
      */
-	const GENDERS = ['m', 'w', 'd', 'x'];
+    public const GENDERS = ['m', 'w', 'd', 'x'];
 
     /*
     * Define the fallback gender
     *
     * @return string
     */
-    const FALLBACK_GENDER = 'x';
+    public const FALLBACK_GENDER = 'x';
 
     /**
      * Define the fillable attributes for mass assignment
@@ -104,7 +105,8 @@ class User extends Authenticatable
      * @var string[]
      */
     protected $fillable = [
-		'id', 'ext_id', 'kuerzel', 'vorname', 'nachname', 'geschlecht', 'email', 'password', 'is_administrator',
+        'id', 'ext_id', 'kuerzel', 'vorname', 'nachname', 'geschlecht', 'email', 'email_valid', 'password',
+        'is_administrator',
     ];
 
     /**
@@ -113,10 +115,10 @@ class User extends Authenticatable
      * @var string[]
      */
     protected $hidden = [
-		'password',
-		'remember_token',
-		'two_factor_recovery_codes',
-		'two_factor_secret',
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
@@ -126,7 +128,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-		'administrator' => 'boolean',
+        'administrator' => 'boolean',
         'settings' => 'object',
     ];
 
@@ -139,35 +141,48 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    /**
-     * The relations that own the model
-     *
-     * @return BelongsToMany
-     */
-	public function lerngruppen(): BelongsToMany
-	{
-		return $this->belongsToMany(Lerngruppe::class, 'lerngruppe_user');
-	}
+    /** @var bool $otpVerified */
+    protected bool $otpVerified = false;
 
     /**
      * The relations that own the model
      *
      * @return BelongsToMany
      */
-	public function klassen(): BelongsToMany
-	{
-		return $this->belongsToMany(Klasse::class, 'klasse_user');
-	}
+    public function lerngruppen(): BelongsToMany
+    {
+        return $this->belongsToMany(Lerngruppe::class, 'lerngruppe_user');
+    }
+
+    /**
+     * The relations that own the model
+     *
+     * @return BelongsToMany
+     */
+    public function klassen(): BelongsToMany
+    {
+        return $this->belongsToMany(Klasse::class, 'klasse_user');
+    }
 
     /**
      * The related model that is owned by the model
      *
      * @return HasOne
      */
-	public function daten(): HasOne // TODO Karol
-	{
-		return $this->hasOne(Daten::class);
-	}
+    public function daten(): HasOne // TODO Karol
+    {
+        return $this->hasOne(Daten::class);
+    }
+
+    /**
+     * Scope a query to only include users with invalid email.
+     *
+     * @return void
+     */
+    public function scopeWithInvalidEmail(Builder $query): void
+    {
+        $query->where('email_valid', false);
+    }
 
     /**
      * Scope a query to only include administrator users.
@@ -195,19 +210,19 @@ class User extends Authenticatable
      * @return bool
      */
     public function isAdministrator(): bool
-	{
-		return $this->is_administrator;
-	}
+    {
+        return $this->is_administrator;
+    }
 
     /**
      * Determine whether user is an administrator
      *
      * @return bool
      */
-	public function isLehrer(): bool
-	{
-		return ! $this->isAdministrator();
-	}
+    public function isLehrer(): bool
+    {
+        return ! $this->isAdministrator();
+    }
 
     /**
      * The related model that is owned by the model
@@ -229,7 +244,7 @@ class User extends Authenticatable
     {
         $filterColumn = "filters_{$column}";
 
-        return $this->userSettings()->exists()
+        return $this->userSettings()->exists() && $this->userSettings->$filterColumn !== null
             ? json_decode(json_encode($this->userSettings->$filterColumn), true)
             : config("wenom.filters.{$column}");
     }
@@ -242,5 +257,18 @@ class User extends Authenticatable
     public function loginLogs(): HasMany
     {
         return $this->hasMany(UserLogin::class);
+    }
+
+    /**
+     * Defines if current user must verify via OTP
+     *
+     * @return bool
+     */
+    public function mustVerifyOtp(): bool
+    {
+        if ((bool) config('wenom.two_factor_authentication') || $this?->userSettings?->twofactor_otp == true) {
+            return true;
+        }
+        return false;
     }
 }

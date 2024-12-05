@@ -20,7 +20,7 @@ class FachResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->ext_id,
+            'id' => $this->id,
             'kuerzel' => $this->kuerzel,
             'kuerzelAnzeige' => $this->kuerzelAnzeige,
             'sortierung' => $this->sortierung,

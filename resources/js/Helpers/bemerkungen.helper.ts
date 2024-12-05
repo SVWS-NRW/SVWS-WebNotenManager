@@ -38,34 +38,51 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
 	if (!text) {
 		return '';
 	}
+	
+	const namePattern: RegExp = /\$Name\$|\$Vorname\$|\$Nachname\$/;
+    const genderPattern: RegExp = /&([^%]*)%([^&]*)&/g;
 
-	const pattern: RegExp = /\$VORNAME\$ \$NACHNAME\$|\$VORNAME\$|\$Vorname\$|\$NACHNAME\$/;
-
-	let pronouns: Pronoun = {
+	const pronouns: Pronoun = {
 		m: 'Er',
 		w: 'Sie',
 	};
 
-	let pronoun: string | null = pronouns[model.geschlecht] !== undefined ? pronouns[model.geschlecht] : null;
+	const pronoun: string | null = pronouns[model.geschlecht] !== undefined ? pronouns[model.geschlecht] : null;
 
-	let initialOccurrence: Occurrence = {
-		"$vorname$ $nachname$": [model.vorname, model.nachname].join(' '),
+	const initialOccurrence: Occurrence = {
+		"$name$": [model.vorname, model.nachname].join(' '),
 		"$vorname$": model.vorname,
 		"$nachname$": model.nachname,
 	};
-
-	let succeedingOccurrences: Occurrence = {
-		"$vorname$ $nachname$": pronoun ?? model.vorname,
+	const succeedingOccurrences: Occurrence = {
+		"$name$": pronoun ?? model.vorname,
 		"$vorname$": pronoun ?? model.vorname,
 		"$nachname$": null
 	};
 
-	return text.replace(new RegExp(pattern,"i"), (matched: string): string => {
-		return initialOccurrence[matched.toLowerCase()];
-	})
-	.replaceAll(new RegExp(pattern ,"gi"), (matched: string): string => {
-		return succeedingOccurrences[matched.toLowerCase()];
-	});
+	return text
+        // Replace the first occurrence of the namePattern with the name of the "Schueler".
+        .replace(new RegExp(namePattern, "i"), (matched: string): string => {
+            return initialOccurrence[matched.toLowerCase()];
+        })
+        // Replace any following occurrence of the namePattern with the correct pronoun and capitalised/small depending on sentence position
+        //TODO: dativ case is not foreseen but is present in some floskeln (no specific pattern applied in floskeln, though)
+		.replaceAll(new RegExp(namePattern, "gi"), ((matched, offset, fullString) => {
+			let formatedReturnValue: string = succeedingOccurrences[matched.toLowerCase()];
+			return fullString.charAt(offset - 2) ===  "." ? formatedReturnValue : formatedReturnValue.toLowerCase();
+        })
+	)
+        // Replace any other word with the specific pattern selecting the results by gender.
+        .replace(genderPattern, (matched: string, maleText, femaleText): string => {
+            switch (model?.geschlecht) {
+                case 'm':
+					return maleText
+                case 'w':
+					return femaleText;
+                default:
+                    return matched + " !!!!!! D/X Geschlecht !!!!!!";
+            };
+        });
 }
 
 //TODO: check if this function is actually not needed anymore (seems to be the case)
@@ -97,21 +114,13 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 	}
 };
 
+//previously with possibly several checkboxes: Ref<Floskel[]|FachbezogeneFloskel[] and selectedFloskeln.value.map, and so on
+//TODO: correct type issue
 const addSelectedToBemerkung = (
 	bemerkung: Ref<string|null>,
-	selectedFloskeln: Ref<Floskel[]|FachbezogeneFloskel[]>,
+	selectedFloskel: Floskel|FachbezogeneFloskel,
 ): void => {
-	let floskeln: string = selectedFloskeln.value.map((selected: Floskel|FachbezogeneFloskel): string => {
-		return selected.text;
-	}).join(' ');
-
-	selectedFloskeln.value = [];
-	bemerkung.value = [bemerkung.value, floskeln].join(' ').trim();
-}
-
-const selectFloskeln = (floskeln: Floskel[] | FachbezogeneFloskel[], selectedFloskeln: Ref<Floskel[]>): void => {
-	selectedFloskeln.value = [];
-	floskeln.forEach((floskel: any): Number => selectedFloskeln.value.push(floskel));
+	bemerkung.value = bemerkung.value ? bemerkung.value + " " + selectedFloskel.text : selectedFloskel.text;
 }
 
 const saveBemerkung = (
@@ -142,7 +151,6 @@ export {
     formatBasedOnGender,
 	closeEditor,
     addSelectedToBemerkung,
-	selectFloskeln,
 	saveBemerkung,
     pasteShortcut,
     multiselect,

@@ -2,8 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Team;
-use App\Models\User;
+use App\Models\{Team, User};
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
@@ -12,6 +11,7 @@ use Laravel\Jetstream\Features;
  * Factory for creating User model instances.
  *
  * @package Database\Factories
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -57,7 +57,7 @@ class UserFactory extends Factory
      *
      * @return UserFactory
      */
-	public function administrator(): UserFactory
+	public function administrator(): Factory
 	{
 		return $this->state(fn (): array  => ['is_administrator' => true]);
 	}
@@ -65,9 +65,9 @@ class UserFactory extends Factory
     /**
      * Indicate that the model is lehrer.
      *
-     * @return UserFactory
+     * @return Factory
      */
-	public function lehrer(): UserFactory
+	public function lehrer(): Factory
 	{
 		return $this->state(fn (): array  => ['is_administrator' => false]);
 	}
@@ -75,9 +75,9 @@ class UserFactory extends Factory
     /**
      * Indicate that the model has Personal Team.
      *
-     * @return UserFactory
+     * @return Factory
      */
-	public function withPersonalTeam(): UserFactory
+	public function withPersonalTeam(): Factory
 	{
 		if (! Features::hasTeamFeatures()) {
 			return $this->state([]);

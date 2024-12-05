@@ -1,98 +1,116 @@
- import ExcelJS from 'exceljs';
+import { DataTableColumn } from "@svws-nrw/svws-ui";
 
 /**
- * Handles the export of data to different formats such as CSV or Excel.
- * @param data - The data to be exported.
- * @param type - The type of export (e.g., 'csv', 'excel').
+ * Exports tabledata as a CSV file.
+ * 
+ * @param cols - The visible columns of the table.
+ * @param hiddenColumns - The columns that are hidden.
+ * @param rowsFiltered - The filtered data for export.
  * @param fileName - The name of the file to be downloaded.
  */
-export const handleExport = (data: Record<string, any>[], type: string, fileName: string): void => {
-    // Check the export type and call the corresponding export function
-    if (type === 'csv') {
-        const csvData = convertToCSV(data);
-        downloadCSV(csvData, fileName);
-    } else if (type === 'excel') {
-        downloadExcel(data, fileName);
-    }
+export const exportDataToCSV = <T extends Record<string, any>>(
+    cols: DataTableColumn[], 
+    hiddenColumns: Set<string> | null,
+    rowsFiltered: T[], 
+    fileName: string
+): void => {
+    const visibleColumns = cols.filter(col => !hiddenColumns || !hiddenColumns.has(col.key));
+    const keyAndLabel = visibleColumns.map(col => ({ key: col.key, label: col.label || col.key }));
+
+    // Add separate columns for first name and last name
+    const extendedKeyAndLabel = keyAndLabel.reduce((acc, col) => {
+        if (col.key === 'name') {
+            acc.push({ key: 'nachname', label: 'Nachname' });
+            acc.push({ key: 'vorname', label: 'Vorname' });
+        } else {
+            acc.push(col);
+        }
+        return acc;
+    }, [] as { key: string; label: string }[]);
+
+    const exportData: Record<string, string>[] = rowsFiltered.map(row =>
+        extendedKeyAndLabel.reduce((filteredRow: Record<string, string>, col) => {
+            let value = row[col.key];
+            if (col.key === 'name') {
+                const [nachname, vorname] = splitName(value);
+                filteredRow['nachname'] = nachname;
+                filteredRow['vorname'] = vorname;
+            } else {
+                if (value === true) {
+                    value = 'ja';
+                } else if (value === false) {
+                    value = 'nein';
+                } else if (value === undefined || value === null) {
+                    value = '';
+                } else {
+                    value = String(value);
+                }
+                filteredRow[col.key] = value;
+            }
+            return filteredRow;
+        }, {})
+    );
+
+    downloadCSV(arrayToCSV(exportData, extendedKeyAndLabel), fileName);
 };
+
 
 /**
- * Converts data to a CSV-formatted string.
+ * Splits a full name into last name and first name.
+ * 
+ * @param fullName - The full name to be split.
+ * @returns An array with last name and first name.
+ */
+const splitName = (fullName: string): [string, string] => {
+    const [nachname, vorname] = fullName.split(',').map(part => part.trim());
+    return [nachname || '', vorname || ''];
+};
+
+
+/**
+ * Converts array data to a CSV-formatted string.
+ * 
  * @param data - The data to be converted.
+ * @param columns - The columns to be included in the CSV.
  * @returns A CSV-formatted string.
  */
-const convertToCSV = (data: Record<string, any>[]): string => {
-    // Check if the data array is empty and handle the case
-    if (data.length === 0) {
-        return ''; // TODO: Handle the case where data is an empty array
-    }
+const arrayToCSV = (
+    data: Record<string, any>[], 
+    columns: { key: string; label: string }[]
+): string => {
+    const headers = columns.map(col => `"${col.label}"`).join(';');
 
-    // Generate CSV header and body
-    const header = Object.keys(data[0]).join(';') + '\n';
-    const body = data.map(item => Object.values(item).join(';')).join('\n');
-    return header + body;
+    const rows = data.map(row =>
+        columns.map(col => {
+            let value = row[col.key].replace(/"/g, '""');
+            return `"${value}"`;
+        }).join(';')
+    );
+
+    return [headers, ...rows].join('\n');
 };
+
 
 /**
  * Downloads CSV data as a file.
+ * 
  * @param csvData - The CSV-formatted data.
  * @param title - The title to be used for the downloaded file.
  */
-const downloadCSV = (csvData: string, title: String) => {
-    // Create a Blob from the CSV data
-    const blob = new Blob([csvData], { type: 'text/csv' });
-    
-    // Create a URL for the Blob
+const downloadCSV = (
+    csvData: string, 
+    title: string
+): void => {
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
 
-    // Create a link element for the download
     const a = document.createElement('a');
     a.href = url;
-    a.download = title+'.csv';
-    
-    // Append the link to the body, trigger a click, and remove the link
+    a.download = `${title}.csv`;
+
     document.body.appendChild(a);
-    a.click()
+    a.click();
     document.body.removeChild(a);
 
-    // Revoke the Object URL to free up resources
     window.URL.revokeObjectURL(url);
-}
-
-/**
- * Downloads data in Excel format with selected columns.
- * @param data - The data to be exported to Excel.
- * @param fileName - The name of the Excel file.
- */
-const downloadExcel = (data: Record<string, any>[], fileName: string): void => {
-    // Use the keys from the first data row as visible columns
-    const visibleColumns: string[] = Object.keys(data[0]);
-
-    // Create a new Excel workbook and worksheet
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet(fileName);
-
-    // Add column headers to the worksheet
-    worksheet.addRow(visibleColumns);
-
-    // Add data rows
-    data.forEach(row => {
-        const rowData = visibleColumns.map(col => row[col]);
-        worksheet.addRow(rowData);
-    });
-
-    // Create a Blob for the Excel file
-    workbook.xlsx.writeBuffer().then(buffer => {
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const url = window.URL.createObjectURL(blob);
-
-        // Create a link and click it to start the download
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName+'.xlsx';
-        a.click();
-
-        // Revoke the Object URL to free up resources
-        window.URL.revokeObjectURL(url);
-    });
 };

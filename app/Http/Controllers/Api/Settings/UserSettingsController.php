@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\FilterValidationRequest;
 use App\Models\UserSetting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\ItemNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -62,6 +64,34 @@ class UserSettingsController extends Controller
     {
         // Updating or creating the user settings for the authenticated user with the specified filter values.
         UserSetting::updateOrCreate(['user_id' => auth()->id()], $request->safe($this->filterColumns));
+
+        // Returning a JSON response with a 204 No Content status, indicating successful processing.
+        return response()->json(status: Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Get personal setting only
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getSettingTwoFactor(Request $request): bool | JsonResponse
+    {
+        $personalOtpSetting = auth()->user()?->userSettings()->select('twofactor_otp')->first();
+
+        return response()->json($personalOtpSetting);
+    }
+
+    /**
+     * Updates or creates settings for the authenticated user.
+     *
+     * @param FilterValidationRequest $request
+     * @return JsonResponse
+     */
+    public function setSettingTwoFactor(Request $request): JsonResponse
+    {
+        // Updating or creating the user settings for the authenticated user with the specified filter values.
+        UserSetting::updateOrCreate(['user_id' => auth()->id()], $request->all());
 
         // Returning a JSON response with a 204 No Content status, indicating successful processing.
         return response()->json(status: Response::HTTP_NO_CONTENT);

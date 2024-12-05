@@ -6,17 +6,26 @@
                 @input="bemerkung = $event.target.value" @keydown="onKeyDown" />
 
             <div class="buttons">
-                <SvwsUiButton v-if="isEditable" @click="add" :disabled="selectedRows.length === 0">Zuweisen</SvwsUiButton>
-                <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Speichern</SvwsUiButton>
+                <SvwsUiButton v-if="isEditable" :disabled="!isDirty" @click="save">Zuweisen</SvwsUiButton>
                 <SvwsUiButton @click="close" :type="isDirty && isEditable ? 'danger' : 'secondary'">Schließen</SvwsUiButton>
             </div>
 
-            <SvwsUiTable v-if="isEditable" v-model="selectedRows" :items="rowsFiltered" :columns="columns" clickable count
-                :selectable="isEditable" :filtered="filtered()" :filterReset="filterReset">
+            <SvwsUiTable v-if="isEditable" :items="rowsFiltered" :columns="columns" clickable count
+                :filtered="filtered()" :filterReset="filterReset" :allowArrowKeySelection="true">
                 <template #filterAdvanced>
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
                     <SvwsUiMultiSelect v-if="niveauItems.length" label="Niveau" :items="niveauItems" :item-text="item => item" v-model="niveauFilter" />
                     <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
+                </template>
+                <template #cell(kuerzel)="{ value, rowIndex }">
+                    <button @click="add(rows[rowIndex])">
+                    {{ value }}
+                    </button>
+                </template>
+                <template #cell(text)="{ value, rowIndex }">
+                    <button @click="add(rows[rowIndex])" class="text-cell-button">
+                    {{ value }}
+                    </button>
                 </template>
             </SvwsUiTable>
         </SvwsUiInputWrapper>
@@ -46,7 +55,6 @@
     }>();
 
     const rows: Ref<FachbezogeneFloskel[]> = ref([]);
-    const selectedRows: Ref<FachbezogeneFloskel[]> = ref([]);
     const columns: Ref<DataTableColumn[]> = ref([
         { key: 'kuerzel', label: 'Kürzel', sortable: true, minWidth: 6 },
         { key: 'text', label: 'Text', sortable: true, span: 5 },
@@ -65,8 +73,6 @@
     watch((): Leistung => props.leistung, (): void => setup());
     watch((): string | null => bemerkung.value, (): void => {
         isDirty.value = storedBemerkung.value !== bemerkung.value;
-        //TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
-        bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
     });
 
     const setup = (): void => {
@@ -113,35 +119,48 @@
         .map((item: FachbezogeneFloskel): string => item[column])
         .filter((value: string, index: number, self: string[]): boolean => self.indexOf(value) === index);
 
-    const rowsFiltered = computed((): FachbezogeneFloskel[] => {
-        return rows.value.filter((floskel: FachbezogeneFloskel): boolean => {
+    const rowsFiltered = computed((): FachbezogeneFloskel[] =>
+    rows.value
+        .filter((floskel: FachbezogeneFloskel): boolean => {
             return (search(searchFilter, floskel.kuerzel) || search(searchFilter, floskel.text))
                 && multiselect(niveauFilter, floskel.niveau)
-                && multiselect(jahrgangFilter, floskel.jahrgang);
-        });
-    });
+                && multiselect(jahrgangFilter, floskel.jahrgang)
+        })
+        .map((floskel: FachbezogeneFloskel): FachbezogeneFloskel => ({
+            ...floskel, text: floskel.text
+        }))
+    );
 
     // Button actions
-    const add = (): void => addSelectedToBemerkung(bemerkung, selectedRows);
+    const add = (selectedRow: FachbezogeneFloskel): void => addSelectedToBemerkung(bemerkung, selectedRow);
+
     const close = (): void => closeEditor(isDirty, (): void => emit('close'));
-    const save = (): Promise<void> => axios
-        .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: bemerkung.value })
-        .then((): void => {
-            storedBemerkung.value = bemerkung.value;
-            isDirty.value = false;
-            emit('updated', bemerkung.value);
-        })
-        .catch((error: AxiosError): void => {
-            alert('Speichern nicht möglich!');
-            console.log(error);
-        });
+//TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
+    const save = (): void => {
+        bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
+        axios
+            .post(route('api.fachbezogene_bemerkung', props.leistung.id), { bemerkung: bemerkung.value })
+            .then((): void => {
+                storedBemerkung.value = bemerkung.value;
+                isDirty.value = false;
+                emit('updated', bemerkung.value);
+            })
+            .catch((error: AxiosError): void => {
+                alert('Speichern nicht möglich!');
+                console.log(error);
+            });
+    }
 
     const onKeyDown = (event: KeyboardEvent): void => pasteShortcut(event, bemerkung, rows);
 
-</script>
+</script>   
 
 <style scoped>
     .buttons {
         @apply flex justify-end gap-3 mt-3 mb-3
+    }
+
+    .text-cell-button {
+        @apply text-left
     }
 </style>

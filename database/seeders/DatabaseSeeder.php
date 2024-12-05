@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 /**
@@ -12,6 +13,8 @@ use Illuminate\Database\Seeder;
  */
 class DatabaseSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     /**
      * Run the seeder.
      *
@@ -21,14 +24,9 @@ class DatabaseSeeder extends Seeder
     {
         // Create a default administrator user
         User::factory()->create([
-			'email' => 'user@user.com',
+			'email' => 'user@test.com',
+			'email_valid' => true,
 			'is_administrator' => true,
 		]);
-
-        // Call other specific seeders to populate additional data
-        $this->call([
-            // TODO: To be removed, temporary testing route #239 by Karol
-            // JsonImportSeeder::class,
-        ]);
     }
 }

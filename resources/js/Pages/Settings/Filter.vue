@@ -7,7 +7,8 @@
             <div class="content">
                 <div>
                     <h3 class="text-headline-md">Mein Unterricht</h3>
-                    <SvwsUiCheckbox v-model="meinunterrichtSettings.teilleistungen" :value="true" type="toggle">Teilleistungen</SvwsUiCheckbox>
+                    <!-- TLs hidden in both tables for the momment according to ticket 386 -->
+                    <!-- <SvwsUiCheckbox v-model="meinunterrichtSettings.teilleistungen" :value="true" type="toggle">Teilleistungen</SvwsUiCheckbox> -->
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.mahnungen" :value="1" type="toggle">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.fehlstunden" :value="1" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="meinunterrichtSettings.bemerkungen" :value="1" type="toggle">Fachbezogene Bemerkungen</SvwsUiCheckbox>
@@ -19,7 +20,7 @@
 
                 <div>
                     <h3 class="text-headline-md">Leistungsdatenübersicht</h3>
-                    <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.teilleistungen" :value="true" type="toggle">Teilleistungen</SvwsUiCheckbox>
+                    <!-- <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.teilleistungen" :value="true" type="toggle">Teilleistungen</SvwsUiCheckbox> -->
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fachlehrer" :value="1" type="toggle">Fachlehrer</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.mahnungen" :value="1" type="toggle">Mahnungen</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fehlstunden" :value="1" type="toggle">Fachbezogene Fehlstunden</SvwsUiCheckbox>
@@ -29,6 +30,7 @@
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.note" :value="1" type="toggle">Note</SvwsUiCheckbox>
                     <SvwsUiCheckbox v-model="leistungsdatenuebersichtSettings.fach" :value="1" type="toggle">Fach</SvwsUiCheckbox>
                 </div>
+                <div class="clear"></div>
 
                 <SvwsUiButton @click="saveSettings" class="button" :disabled="!isDirty">Speichern</SvwsUiButton>
             </div>
@@ -147,7 +149,7 @@
     }
 
     .content {
-        @apply px-6 flex flex-col gap-12 max-w-lg
+        @apply grid md:grid-cols-2 col-span-3 gap-12 md:max-w-4xl px-6 
     }
 
     .content > div {
@@ -155,6 +157,6 @@
     }
 
     .button {
-        @apply self-start
+        @apply justify-center top-4 w-fit left-2/4
     }
 </style>

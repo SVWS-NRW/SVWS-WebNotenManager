@@ -4,13 +4,13 @@
         @click="emit('clicked')"
         :aria-label="bemerkungButtonAriaLabel()"
     >
-        {{ value }}
+        {{ value }}   
     </button>
 </template>
 
 
 <script setup lang="ts">
-    import { Leistung, Schueler } from '@/Interfaces/Interface';
+    import { Leistung, Schueler, Teilleistung } from '@/Interfaces/Interface';
     import { floskelgruppen } from '@/Interfaces/Floskelgruppe';
 
     interface EmitsOptions {
@@ -20,7 +20,7 @@
     const emit = defineEmits<EmitsOptions>();
 
     const props = defineProps<{
-        model: Leistung|Schueler,
+        model: Leistung|Schueler|Teilleistung,
         floskelgruppe: any,
         value: any,
     }>();

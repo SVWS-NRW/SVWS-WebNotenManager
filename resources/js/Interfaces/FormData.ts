@@ -37,7 +37,7 @@ export interface MailSendCredentialsFormData {
 
 export interface TwoFA {
 	form: {
-		twoFACode: string,
+		code: string,
 		email: string,
 	},
 	processing: boolean,

@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Daten;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * Factory for creating Daten model instances.
  *
  * @package Database\Factories
+ * @extends Illuminate\Database\Eloquent\Factories\Factory<Daten>
  */
 class DatenFactory extends Factory
 {
@@ -29,11 +29,10 @@ class DatenFactory extends Factory
     {
         return [
             'enmRevision' => rand(1, 10),
-            'schuljahr' => rand(2000, 2022),
+            'schuljahr' => rand(2000, now()->year),
             'anzahlAbschnitte' => rand(1, 4),
             'aktuellerAbschnitt' => rand(1, 4),
-            'lehrerID' => $this->faker->unique()->numberBetween(1, 1_000_000),
-            'user_id' => User::factory(),
+            'lehrerID' => $this->faker->numberBetween(1, 1_000_000),
         ];
     }
 

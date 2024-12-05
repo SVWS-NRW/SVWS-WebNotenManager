@@ -20,9 +20,15 @@ class LerngruppeResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->id,
+            'kID' => (int) $this->kID,
+            'fachID' => $this->fachID,
             'kursartID' => $this->kursartID,
             'bezeichnung' => $this->bezeichnung,
-            'fach_id' => $this->fach_id,
+            'kursartKuerzel' => $this->kursartKuerzel,
+            'bilingualeSprache' => $this->bilingualeSprache,
+            'lehrerID' => $this->lehrer->pluck('id'),
+            'wochenstunden' => $this->wochenstunden,
         ];
     }
 }

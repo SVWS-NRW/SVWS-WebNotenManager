@@ -21,6 +21,7 @@ return new class extends Migration
 			$table->string('nachname');
 			$table->string('geschlecht');
 			$table->string('email')->unique();
+			$table->boolean('email_valid')->default(false);
 			$table->timestamp('email_verified_at')->nullable();
 			$table->string('password');
 			$table->boolean('is_administrator')->default(false);

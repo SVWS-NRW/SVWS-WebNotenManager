@@ -53,7 +53,7 @@ class Kernel extends HttpKernel
      *
      * @var array<string, class-string|string>
      */
-    protected $routeMiddleware = [
+    protected $middlewareAliases = [
         'administrator' => \App\Http\Middleware\RedirectIfAdministrator::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
@@ -67,7 +67,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-		'mein.unterricht' => \App\Http\Middleware\MeinUnterricht::class,
-        'two.fa' => \App\Http\Middleware\Check2FA::class,
+		'has.lerngruppen' => \App\Http\Middleware\CheckIfLerngruppen::class,
+        'twofactor.otp' => \App\Http\Middleware\TwoFactorOtp::class,
+        'otp.pending' => \App\Http\Middleware\CheckIfOtpPending::class,
     ];
 }

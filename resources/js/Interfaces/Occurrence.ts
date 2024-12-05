@@ -1,6 +1,6 @@
 export interface Occurrence {
 	[index: string]: any,
-	'$vorname$ $nachname$': string,
+	'$name$': string,
 	'$vorname$': string,
 	'$nachname$': string | null,
 }

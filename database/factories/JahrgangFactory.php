@@ -29,9 +29,9 @@ class JahrgangFactory extends Factory
         return [
             'kuerzel' => $this->faker->word(),
             'kuerzelAnzeige' => $this->faker->word(),
-            'beschreibung' => $this->faker->catchPhrase(),
+            'beschreibung' => $this->faker->paragraph(),
             'stufe' => $this->faker->word(),
-            'sortierung' => rand(min: 1, max: 15)
+            'sortierung' => $this->faker->unique()->numberBetween(1, 1_000_000),
         ];
     }
 }

@@ -9,20 +9,21 @@
                 {{ title }}
             </SvwsUiHeader>
             <div class="content-area">
-                <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"  
-                    :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns">
+                <SvwsUiTable :items="rowsFiltered" :columns="cols" clickable count noDataText="" :toggle-columns="true" :filtered="isFiltered()" :filterReset="filterReset"
+                    :filterOpen="false" :sortByAndOrder="{ key: 'klasse', order: true}" :hiddenColumns="hiddenColumns" :allowArrowKeySelection="true">
                     <template #filter>
                         <div class="filter-area-icon">
-                        <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator" 
-                            :class="'hover:opacity-100 focus-visible:opacity-100'"
-                            :type="leistungEditable ? 'primary' : 'transparent'" size="big">
-                            <ri-pencil-fill></ri-pencil-fill>
-                        </SvwsUiButton>
+                            <SvwsUiButton @click="leistungEditableToggle()" v-if="lehrerCanOverrideFachlehrer || props.auth.administrator"
+                                :class="'hover:opacity-100 focus-visible:opacity-100'"
+                                :type="leistungEditable ? 'primary' : 'transparent'" size="big">
+                                <ri-pencil-fill></ri-pencil-fill>edit
+                            </SvwsUiButton>
                         </div>
                         <div class="filter-area-icon">
-                        <SvwsUiButton class="export-button" type="transparent" size="big"
-                        :class="'hover:opacity-100 focus-visible:opacity-100'" @click="exportToFile('csv')"><ri-download-2-line></ri-download-2-line>
-                        </SvwsUiButton>
+                            <SvwsUiButton @click="exportToFile()" type="transparent" size="big"
+                                :class="'hover:opacity-100 focus-visible:opacity-100 export-button'">
+                                <ri-download-2-line></ri-download-2-line>csv
+                            </SvwsUiButton>
                         </div>
                     </template>
                     <template #filterAdvanced>
@@ -32,7 +33,6 @@
                         <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
                         <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
                         <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="item => item" v-model="noteFilter" />
-
                     </template>
 
                     <template #cell(klasse)="{ value, rowData }">
@@ -54,17 +54,17 @@
                     <template #cell(lehrer)="{ value, rowData }">
                         <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
                     </template>
-                    
+
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
+                        <NoteInput column="note" :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
-                    <template #cell(quartal)="{ value, rowData, rowIndex }">
-                        <BemerkungButton :value="value" :model="rowData" floskelgruppe="fb" @clicked="selectLeistung(rowData)" />
+                    <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
+                        <NoteInput column="quartalnote" :leistung="rowData" :disabled="inputDisabled(rowData.editable.noten)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
-                    <template #cell(istGemahnt)="{ value, rowData }">
-                        <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" />
+                    <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
+                        <MahnungIndicator :leistung="rowData" :disabled="inputDisabled(rowData.editable.mahnungen)" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
                     </template>
 
                     <template #cell(fs)="{ value, rowData, rowIndex }">
@@ -82,7 +82,7 @@
             </div>
         </template>
         <template v-slot:aside v-if="selectedLeistung">
-            <FbEditor :leistung="selectedLeistung" @updated="selectedLeistung.fachbezogeneBemerkungen = $event;" @close="selectedLeistung = null" 
+            <FbEditor :leistung="selectedLeistung" @updated="selectedLeistung.fachbezogeneBemerkungen = $event;" @close="selectedLeistung = null"
                 :editable="leistungEditable"></FbEditor>
         </template>
     </AppLayout>
@@ -98,7 +98,7 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungButton, BemerkungIndicator, FbEditor, FehlstundenInput, MahnungIndicator, NoteInput, } from '@/Components/Components';
-    import { handleExport } from '@/Helpers/exportHelper';
+    import { exportDataToCSV } from '@/Helpers/exportHelper';
     import { Auth } from '@/Interfaces/Interface';
 
     let props = defineProps<{
@@ -111,9 +111,11 @@
         fach: string,
         kurs: string,
         fachlehrer: string,
-        teilleistungen: string,
+        //hidden here according to ticket 386
+        //teilleistungen: string,
         quartalnoten: string,
         note: string,
+        quartalnote: string,
         mahnungen: string,
         fehlstunden: string,
         bemerkungen: string,
@@ -123,8 +125,11 @@
 
     //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
     const itemRefsNoteInput = ref(new Map());
+    const itemRefsQuartalNoteInput = ref(new Map());
     const itemRefsfs = ref(new Map());
     const itemRefsfsu = ref(new Map());
+    //testing here for ticket 341
+    const mahnungIndicator = ref(new Map());
 
     const rows: Ref<Leistung[]> = ref([]);
 
@@ -152,7 +157,7 @@
 
     //these columns can be hidden/displayed on the page, which can overwrite the platform general settings under Einstellungen/Filter
     const toggles: Ref<TableColumnToggle> = ref({
-        teilleistungen: false,
+        //teilleistungen: false,
         quartalnoten: false,
         fachlehrer: false,
         mahnungen: false,
@@ -178,7 +183,7 @@
     const allNotes: Ref<string[]> = ref([]);
 
 
-    const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value);
+    const inputDisabled = (condition: boolean): boolean => !(condition && leistungEditable.value );
 
     onMounted((): Promise<void> => axios
         .get(route('api.leistungsdatenuebersicht'))
@@ -204,7 +209,8 @@
         result.push({ key: 'fach', label: 'Fach', sortable: true, span: 1, minWidth: 5, disabled: false, toggle: true });
         result.push({ key: 'kurs', label: 'Kurs', sortable: true, span: 2, minWidth: 5, disabled: false, toggle: true });
         result.push({ key: 'lehrer', label: 'Fachlehrer', sortable: true, span: 2, minWidth: 7, toggle: true });
-        result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 6, toggle: true });
+        //Teilleistungen column hidden here for the time being (ticket 386)
+        //result.push({ key: 'teilnoten', label: 'Teilnoten', sortable: true, span: 5, minWidth: 6, toggle: true });
         result.push({ key: 'quartalnoten', label: 'Quartal', sortable: true, span: 1, minWidth: 6, toggle: true });
         result.push({ key: 'note', label: 'Note', sortable: true, span: 1, minWidth: 6, toggle: true });
         result.push({ key: 'istGemahnt', label: 'Mahnungen', sortable: true, span: 1, minWidth: 8, toggle: true });
@@ -221,7 +227,8 @@
         fach: 'fach',
         kurs: 'kurs',
         fachlehrer: 'lehrer',
-        teilleistungen: 'teilnoten',
+        //Teilleistungen column hidden here for the time being (ticket 386)
+        //teilleistungen: 'teilnoten',
         quartalnoten: "quartalnoten",
         note: 'note',
         mahnungen: 'istGemahnt',
@@ -280,8 +287,11 @@
     //input html element and reference map name are determined by child
     function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
         switch (itemRefsName) {
-            case "itemRefsNoteInput":
+            case "itemRefsnoteInput":
                 itemRefsNoteInput.value.set(rowIndex, el);
+                break;
+            case "itemRefsquartalnoteInput":
+                itemRefsQuartalNoteInput.value.set(rowIndex, el);
                 break;
             case "itemRefsfs":
                 itemRefsfs.value.set(rowIndex, el);
@@ -289,8 +299,12 @@
             case "itemRefsfsu":
                 itemRefsfsu.value.set(rowIndex, el);
                 break;
+            //testing here for ticket 341
+            case "mahnungIndicator":
+                mahnungIndicator.value.set(rowIndex, el);
+                break;
             default:
-                console.log("Map not found.")
+                console.log("Map not found." + itemRefsName)
         }
 	}
 
@@ -310,7 +324,10 @@
     //direction (up/down within the column) and map name are received from child component
     const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
         switch (itemRefsName) {
-            case "itemRefsNoteInput":
+            case "itemRefsquartalnoteInput":
+                direction === "next" ? next(rowIndex, itemRefsQuartalNoteInput) : previous(rowIndex, itemRefsQuartalNoteInput);
+                break;
+            case "itemRefsnoteInput":
                 direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
                 break;
             case "itemRefsfs":
@@ -319,33 +336,18 @@
             case "itemRefsfsu":
                 direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
                 break;
+            //testing here for ticket 341
+            case "mahnungIndicator":
+                direction === "next" ? next(rowIndex, mahnungIndicator) : previous(rowIndex, mahnungIndicator);
+                break;
             default:
                 console.log("itemRefs map not found");
-        }	
+        }
 	}
 
-    /**
-     * Exportiert Daten in einer Datei im angegebenen Format (CSV oder Excel).
-     * TODO: explain how here and delete duplicated comments
-     * @param type - Der Exporttyp ('csv' oder 'excel').
-     */
-     const exportToFile = (type: string): void => {
-        // Bereite Daten für den Export vor, indem relevante Spalten ausgewählt werden
-        const exportData = rowsFiltered.value.map((row: Leistung) => {
-            const rowData: Record<string, any> = {};
-            mappedColumns.forEach((col: string) => {
-                // Überprüfe, ob die Spalte 'istGemahnt' ist und die Werte auf 'ja' oder 'nein' abbilde
-                if (col === 'istGemahnt')
-                    rowData[col] = row[col as keyof Leistung] ? 'ja' : 'nein';
-                else
-                    rowData[col] = row[col as keyof Leistung];
-            });
-            return rowData;
-        });
-
-        // Rufe den allgemeinen Export-Handler mit den vorbereiteten Daten auf
-        handleExport(exportData, type, 'leistungsdatenübersicht');
-    }
+    const exportToFile = (): void => {
+        exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'Leistungsdaten');
+    };
 
 </script>
 

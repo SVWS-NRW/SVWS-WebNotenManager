@@ -6,6 +6,6 @@ return new class extends SettingsMigration
 {
     public function up(): void
     {
-		$this->migrator->add(property: 'matrix.lehrer_can_override_fachlehrer', value: false);
+		$this->migrator->add('matrix.lehrer_can_override_fachlehrer', true);
     }
 };

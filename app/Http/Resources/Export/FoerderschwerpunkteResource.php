@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Export;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * The `FoerderschwerpunkteResource` class is a JSON resource for formatting and presenting 'Foerderschwerpunkte' data.
@@ -21,6 +20,7 @@ class FoerderschwerpunkteResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->sortierung,
             'kuerzel' => $this->kuerzel,
             'beschreibung' => $this->beschreibung,
         ];
