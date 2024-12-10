@@ -82,7 +82,7 @@ Es kann nur einen einzigen technischen Administrator in der Datenbank geben. Bei
 
 ### weitere Benutzer importieren
 
-Alle Benutzer außer dem technischen Administrator können nur im SVWS-Server angelegt werden. Für diese Benutzer sind somit eine Schulnummer, eine E-Mail-Adresse und ein Lehrkraftkürzel eindeutig vorgegeben und in der Datenbank des SVWS-Servers eingetragen. Um nun diese Benutzer im Webnotenmagager zu importieren müssen Sie die [Synchronisation einrichten](#synchronisation-einrichten).
+Alle Benutzer außer dem technischen Administrator können nur im SVWS-Server angelegt werden. Für diese Benutzer sind somit eine Schulnummer, eine E-Mail-Adresse und ein Lehrkraftkürzel eindeutig vorgegeben und in der Datenbank des SVWS-Servers eingetragen. Um nun diese Benutzer in den Webnotenmagager zu importieren, müssen Sie die [Synchronisation einrichten](#synchronisation-einrichten).
 
 ### Zugang als Lehrkraft
 
@@ -101,7 +101,8 @@ Hierbei muss natürlich bei der Einrichtung in der Administationsoberfläche des
 
 ## Synchronisation
 
-TBD
+Die Synchronisation wird initial durch den SVWS-Server angestoßen. Aus dem sicheren Schulverwaltungsnetz wird die Webadresse des WENOM-Servers aufgerufen, um eine Authentisierung per OAuth2-Verfahren durchzuführen. Nach erfolgreicher Authentisierung wird durch den SVWS-Server ein Datenpaket im gezippten JSON-Form und an den Webnotenmanager geschickt. Dieses Paket enthält Basisdaten sowie Synchronisationsdaten. Die Basisdaten, wie beispielsweise Lehrerdaten oder Notendefinitionen, werden in den Webnotenmanager importiert und gegebenenfalls bereits vorhandene Einstellungen werden überschrieben. Dadurch wird sichergestellt, dass die aktuellen Vorgaben aus dem SVWS-Server auch im Webnotenmanager verfügbar sind. Die Synchronisationsdaten, wie beispielsweise Teilleistungen, Noten oder Bemerkungen, sind mit einem Zeitstempel versehen. Beim Import dieser Daten überprüft der Webnotenmanager, ob die übermittelten Informationen oder die gegebenenfalls gespeicherten Informationen ein jüngeres Datum aufweisen. Beim Import wird die neueste Information übernommen. Im Anschluss erfolgt eine Meldung über die erfolgreiche Beendigung des Vorgangs an den SVWS-Server. Danach holt sich der SVWS-Server per Aufruf der Schnittstelle des WENOM-Servers die Synchronisationsdaten ab. Auch hier wird der Zeitstempel vom SVWS-Server überprüft und nur der neueste Eintrag übernommen. Somit ist gewährleistet, dass nach Abschluss einer Synchronisation in beiden Systemen nur der letzte Eintrag gespeichert ist.
+
 
 ### Verfahrensbeschreibung
 
