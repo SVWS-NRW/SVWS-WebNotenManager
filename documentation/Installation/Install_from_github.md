@@ -143,7 +143,7 @@ npm run build
 #
 php artisan app:install
 php artisan migrate:fresh --force
-php artisan create:admin-user
+php artisan create:admin-user --user=$WENOM_TECH_ADMIN --password=$WENOM_TECH_ADMIN_PW
 php artisan passport:install --force
 #
 ### Neuen User fuer den Dienst einrichten
