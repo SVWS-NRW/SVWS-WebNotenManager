@@ -1,5 +1,5 @@
 ```bash
-!/bin/bash
+#!/bin/bash
 #
 # Wenom Installation auf Debian 12 - hier bitte Daten individuell anpassen:
 #
@@ -124,7 +124,7 @@ mysql -e "CREATE DATABASE $MARIADB_SCHEMA;"
 # Rechte setzen
 mysql -e "GRANT ALL PRIVILEGES ON $MARIADB_SCHEMA.* TO '$MARIADB_USER'@'localhost';"
 # Root-Passwort setzen und Rechte neu laden
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MARIADB_PW'; FLUSH PRIVILEGES;"
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MARIADB_ROOT_PW'; FLUSH PRIVILEGES;"
 #
 #
 ### WENOM installieren
