@@ -15,6 +15,7 @@ WENOM_TECH_ADMIN=YourUser@YourDomain.de
 WENOM_TECH_ADMIN_PW=YourTechadminPW
 # mail - smtp Einstellungen
 MAIL_HOST=YourMailHost.de
+MAIL_PORT=465
 MAIL_USERNAME=YourUsername
 MAIL_PASSWORD=YourPassword
 MAIL_ENCRYPTION=tls
@@ -45,11 +46,10 @@ apt install -y curl zip dnsutils nmap net-tools nano mc git ca-certificates gnup
 ### DocumentRoot anpassen
 mkdir -p ${INSTALLPATH}/public
 sed -i "s|DocumentRoot.*$|DocumentRoot ${INSTALLPATH}/public|" /etc/apache2/sites-available/000-default.conf
-sed -i "s|DocumentRoot.*$|DocumentRoot ${INSTALLPATH}/public|" /etc/apache2/sites-available/000-default-le-ssl.conf
 sed -i "s|DocumentRoot.*$|DocumentRoot ${INSTALLPATH}/public|" /etc/apache2/sites-available/default-ssl.conf
 #
 echo "
-<Directory /app/${INSTALLPATH}/public/>
+<Directory ${INSTALLPATH}/public/>
    Options Indexes FollowSymLinks
    AllowOverride All
    Require all granted
@@ -60,6 +60,7 @@ echo "
 #
 a2enmod ssl
 a2enmod rewrite
+a2enside default-ssl.conf
 systemctl restart apache2
 systemctl status apache2 --no-pager
 #
@@ -155,6 +156,7 @@ sed -i "s|SCHULNUMMER=.*$|SCHULNUMMER=${SCHULNUMMER}|" .env
 #
 #
 sed -i "s|MAIL_HOST=.*$|MAIL_HOST=${MAIL_HOST}|" .env
+sed -i "s|MAIL_PORT=.*$|MAIL_PORT=${MAIL_PORT}|" .env
 sed -i "s|MAIL_USERNAME=.*$|MAIL_USERNAME=${MAIL_USERNAME}|" .env
 sed -i "s|MAIL_PASSWORD=.*$|MAIL_PASSWORD=${MAIL_PASSWORD}|" .env
 sed -i "s|MAIL_ENCRYPTION=.*$|MAIL_ENCRYPTION=${MAIL_ENCRYPTION}|" .env
