@@ -37,7 +37,7 @@ export COMPOSER_ALLOW_SUPERUSER=1
 ### Software aktualisieren und installieren
 #
 apt update && apt upgrade -y
-apt install -y curl zip dnsutils nmap net-tools nano mc git ca-certificates gnupg2 apache2 lsb-release apt-transport-https ca-certificates
+apt install -y curl zip unzip dnsutils nmap net-tools nano mc git ca-certificates gnupg2 apache2 lsb-release apt-transport-https
 #
 #
 ### Apache2 konfigurieren
@@ -81,14 +81,14 @@ a2dismod mpm_prefork && a2enmod mpm_event
 wget -qO /etc/apt/keyrings/php.gpg https://packages.sury.org/php/apt.gpg
 echo "deb [signed-by=/etc/apt/keyrings/php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 apt update
-apt install -y php libapache2-mod-fcgid 
-apt install -y php-{cli,fpm,curl,gd,mbstring,soap,bcmath,tokenizer,xml,xmlrpc,zip,mysql,pdo} 
+apt install -y php$PHPVERSION libapache2-mod-fcgid 
+apt install -y php$PHPVERSION-{cli,fpm,curl,gd,mbstring,soap,bcmath,tokenizer,xml,xmlrpc,zip,mysql,pdo,intl} 
 #
 #
 ### Konfiguriere Apache2, um PHP ueber FastCGI zu verwenden
 #
 a2enmod proxy_fcgi setenvif
-a2enconf $PHPVERSION-fpm
+a2enconf php$PHPVERSION-fpm
 systemctl restart apache2
 systemctl status apache2 --no-pager
 #
@@ -178,7 +178,7 @@ npm run build
 #
 php artisan migrate:fresh --force
 php artisan create:admin-user --user=$WENOM_TECH_ADMIN --password=$WENOM_TECH_ADMIN_PW
-php artisan passport:install --force
+php artisan passport:install --force --no-interaction
 #
 # Auf Produktion Modus zurückstellen
 sed -i "s|APP_ENV=.*$|APP_ENV=production|" .env
