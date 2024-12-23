@@ -60,7 +60,7 @@ echo "
 #
 a2enmod ssl
 a2enmod rewrite
-a2enside default-ssl.conf
+a2ensite default-ssl.conf
 systemctl restart apache2
 systemctl status apache2 --no-pager
 #
