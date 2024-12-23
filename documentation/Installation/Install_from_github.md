@@ -80,6 +80,7 @@ node -v
 a2dismod mpm_prefork && a2enmod mpm_event
 wget -qO /etc/apt/keyrings/php.gpg https://packages.sury.org/php/apt.gpg
 echo "deb [signed-by=/etc/apt/keyrings/php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+apt update
 apt install -y php libapache2-mod-fcgid 
 apt install -y php-{cli,fpm,curl,gd,mbstring,soap,bcmath,tokenizer,xml,xmlrpc,zip,mysql,pdo} 
 #
