@@ -18,7 +18,7 @@ MAIL_HOST=YourMailHost.de
 MAIL_PORT=465
 MAIL_USERNAME=YourUsername
 MAIL_PASSWORD=YourPassword
-MAIL_ENCRYPTION=tls
+MAIL_ENCRYPTION=ssl
 MAIL_FROM_ADDRESS="noreply@example.com"
 #########################################################
 #
