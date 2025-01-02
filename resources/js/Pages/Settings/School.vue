@@ -7,6 +7,7 @@
             <div class="content">
                 <div>
                     <h3 class="headline-3">Schule</h3>
+                    <SvwsUiTextInput v-model="schulNummer" placeholder="Schulnummer" readonly></SvwsUiTextInput>
                     <SvwsUiTextInput v-model="settings.name" placeholder="Name der Schule"></SvwsUiTextInput>
                     <SvwsUiTextInput v-model="settings.address" placeholder="Adresse der Schule"></SvwsUiTextInput>
                     <SvwsUiTextInput v-model="settings.email" placeholder="E-Mail Adresse der Schule"></SvwsUiTextInput>
@@ -53,13 +54,14 @@
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
     import { SvwsUiHeader, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
+    import { usePage } from '@inertiajs/inertia-vue3';
 
     let props = defineProps({
         auth: Object,
     });
 
     interface Settings {
-        name: number,
+        name: string,
         address: string,
         email: string,
         management_name: string,
@@ -75,6 +77,9 @@
     }
 
     const title = 'Schuldaten';
+
+    const schulNummer = usePage().props.value.schoolNumber as string;
+    console.log(schulNummer);
 
     const settings: Ref<Settings> = ref({} as Settings);
     const storedSettings: Ref<String> = ref('');
