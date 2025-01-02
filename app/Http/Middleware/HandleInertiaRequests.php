@@ -62,6 +62,8 @@ class HandleInertiaRequests extends Middleware
             'auth.lastLogin' => $lastLogin,
             // Share the school's name from configuration.
             'schoolName' => config('app.school_name'),
+            // Share the school's number from configuration.
+            'schoolNumber' => config('wenom.schulnummer'),
             // Share url from configuration.
             'appUrl' => config('app.url'),
             // Share various application settings.
