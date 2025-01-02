@@ -11,8 +11,7 @@
                         Die Zwei-Faktor-Authentifizierung per E-Mail wurde global vom Systemadministrator für alle Benutzer verpflichtend eingeschaltet.
                     </div>
                     <div style="padding-right: 38%">
-                        <p>Hiermit aktivieren Sie die Zwei-Faktor-Authentifizierung per E-Mail.
-                            Nach der Aktivierung werden Sie bei jedem Anmeldevorgang neben Ihrem Passwort zusätzlich einen einmaligen Bestätigungscode eingeben müssen.
+                        <p>Bei jedem Anmeldevorgang muss neben Ihrem Passwort zusätzlich einen einmaligen Bestätigungscode eingeben werden. 
                             Dieser Code wird Ihnen an die von Ihnen angegebene E-Mail-Adresse gesendet. Diese zusätzliche Sicherheitsmaßnahme sorgt dafür, dass Ihr Konto besser vor unbefugtem Zugriff geschützt ist.</p>
                         <br />
                         <p>Bitte stellen Sie sicher, dass Sie auf Ihre E-Mail-Adresse jederzeit Zugriff haben, da der Bestätigungscode bei jeder Anmeldung benötigt wird.</p>
