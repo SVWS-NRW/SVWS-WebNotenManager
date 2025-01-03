@@ -10,4 +10,4 @@ Der WebNotenManager (WeNoM) kann als Plattform außerhalb des Schulverwaltungsne
 
 ## [technische Dokumentation](./documentation/Development)
 
-## [Kontaktinformationen](https://doku.svws-nrw.de/Teamarbeit/)
+## [Kontaktinformationen](https://doku.svws-nrw.de/admin/Teamarbeit/)
