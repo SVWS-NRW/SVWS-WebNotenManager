@@ -27,11 +27,6 @@
     
     const bemerkungCheckboxStatus = computed(() => (props.bemerkung === null || props.bemerkung === "" )  ? false : true);
 
-    //testing here for ticket 338
-    const bemerkungTabindex = computed(() => {
-        return (props.bemerkung === null || props.bemerkung === "" ) ? -1 : 0
-    });
-
     const bemerkungButtonAriaLabel = (schueler: Schueler): string => { 
         return `${floskelgruppen[props.floskelgruppe]} für ${schueler.vorname} ${schueler.nachname} öffnen`;
     }

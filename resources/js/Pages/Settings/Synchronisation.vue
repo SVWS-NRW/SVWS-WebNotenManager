@@ -7,12 +7,12 @@
             <div class="content">
                 <p v-if="clientExists">Letzte Änderung: {{ convertedClientRecordTimestamp }}</p>
                 <div>Klicken Sie auf den Button, um einen neuen Zugang für den SVWS-Server einzurichten.
-                    <SvwsUiButton @click="openModal()" type="secondary">
+                    <SvwsUiButton @click="showModal = true" type="secondary">
                         Generieren
                     </SvwsUiButton>
                 </div>
             </div>
-            <SvwsUiModal id="clientModal" ref="modal" :show="showModal" size="medium">
+            <SvwsUiModal id="clientModal" v-model:show="showModal" size="medium">
                 <template #modalTitle>
                     {{ modalTitle }}
                 </template>
@@ -30,7 +30,7 @@
                     <div class="buttons-block">
                         <SvwsUiButton v-if="!newClientCreated" @click="adjustSettings()" type="secondary">Generieren
                         </SvwsUiButton>
-                        <SvwsUiButton @click="closeModal()" type="secondary">Schließen</SvwsUiButton>
+                        <SvwsUiButton @click="showModal = false" type="secondary">Schließen</SvwsUiButton>
                     </div>
                 </template>
             </SvwsUiModal>
@@ -65,24 +65,15 @@
 
     const title = 'Synchronisation';
 
-    //TODO: name is always SVWS-Server now, so some things here are probably not necessary anymore
-    const newClientName: string = usePage().props.value.schoolName as string;
     const clientRecord: Ref<ClientRecord> = ref({} as ClientRecord);
     const url: string = usePage().props.value.appUrl as string;
     const clientExists: Ref<boolean> = ref(false);
     const convertedClientRecordTimestamp: Ref<string> = ref("");
     const newClientCreated: Ref<boolean> = ref(false);
     const newClientDataInfo: Ref<HTMLDivElement>= ref({} as HTMLDivElement);
-    const modal = ref<any>(null);
     const modalTitle: Ref<string> = ref("Warnung");
     const adjustSettingsInfo: Ref<string> = ref("Es müssen die Einstellungen im zugehörigen SVWS-Server angepasst werden.");
-    const _showModal: Ref<boolean> = ref(false);
-
-    const showModal = (): Ref<boolean> => _showModal;
-
-    const openModal = (): boolean => _showModal.value = true;
-
-    const closeModal = (): boolean => _showModal.value = false;
+    const showModal: Ref<boolean> = ref(false)
 
     const copyToClipboard = (receivedClientDataInfo: HTMLDivElement, position: number): void => {
         const textToCopy: string[] = receivedClientDataInfo.innerText.slice(74).split(" \n");
@@ -118,8 +109,8 @@
             .catch((error: any): void => apiError(error));
     }
 
-    watch(() => _showModal.value, () => {
-        if (_showModal.value == false) {
+    watch(() => showModal.value, () => {
+        if (showModal.value == false) {
 
             newClientCreated.value = false;
             modalTitle.value = "Warnung";

@@ -6,7 +6,6 @@
         </span>
 
         <span class="bemerkung">
-        <!-- TODO: correct known error message; see FbEditor, line 69 -->
             {{ formatBasedOnGender(props.bemerkung, props.model) }}
         </span>
     </button>

@@ -16,7 +16,6 @@
                         <template #label>Notenmanager</template>
                     </SvwsUiMenuItem>
 
-                    <!-- TODO: visibility? -->
                     <SvwsUiMenuItem
                         v-if="visible('teilleistungen')"
                         :active="activePage('teilleistungen')"

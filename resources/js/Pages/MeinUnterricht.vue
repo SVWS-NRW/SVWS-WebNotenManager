@@ -26,11 +26,11 @@
                     <!-- Erweiterte Filteroptionen -->
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
-                        <SvwsUiMultiSelect label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
-                        <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
-                        <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
-                        <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="item => item" v-model="noteFilter" />
+                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="(item: any) => item" v-model="klasseFilter" />
+                        <SvwsUiMultiSelect label="Jahrgang" :items="jahrgangItems" :item-text="(item: any) => item" v-model="jahrgangFilter" />
+                        <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="(item: any) => item" v-model="fachFilter" />
+                        <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="(item: any) => item" v-model="kursFilter" />
+                        <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="(item: any) => item" v-model="noteFilter" />
                     </template>
 
                     <!-- Individuelle Zellen-Template -->
@@ -267,11 +267,9 @@
         noteItems.value = Array.from(Object.values(allNotes.value));
     };
 
-    //TODO: find out why Mahnung is not being updated like the others
     //TODO: adjust name if necessary; if so: make into helper under Helpers
     //input html element and reference map name are determined by child
-    function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
-        //console.log(itemRefsName);
+    function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {    
         switch (itemRefsName) {
             case "itemRefsquartalnoteInput":
                 itemRefsQuartalNoteInput.value.set(rowIndex, el);

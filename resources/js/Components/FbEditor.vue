@@ -14,8 +14,8 @@
                 :filtered="filtered()" :filterReset="filterReset" :allowArrowKeySelection="true">
                 <template #filterAdvanced>
                     <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                    <SvwsUiMultiSelect v-if="niveauItems.length" label="Niveau" :items="niveauItems" :item-text="item => item" v-model="niveauFilter" />
-                    <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
+                    <SvwsUiMultiSelect v-if="niveauItems.length" label="Niveau" :items="niveauItems" :item-text="(item: any)  => item" v-model="niveauFilter" />
+                    <SvwsUiMultiSelect v-if="jahrgangItems.length" label="Jahrgang" :items="jahrgangItems" :item-text="(item: any)  => item" v-model="jahrgangFilter" />
                 </template>
                 <template #cell(kuerzel)="{ value, rowIndex }">
                     <button @click="add(rows[rowIndex])">
@@ -135,7 +135,6 @@
     const add = (selectedRow: FachbezogeneFloskel): void => addSelectedToBemerkung(bemerkung, selectedRow);
 
     const close = (): void => closeEditor(isDirty, (): void => emit('close'));
-//TODO: tsErrors: correct because helper calls types.ts while Component calls single interface file; hence the error
     const save = (): void => {
         bemerkung.value = formatBasedOnGender(bemerkung.value, props.leistung);
         axios

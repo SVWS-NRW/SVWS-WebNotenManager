@@ -2,7 +2,7 @@
 
 return [
     'version' => '0.1.5',
-    'npm' => '1.0.1',
+    'npm' => '1.0.2',
     'revision' => 1,
     'two_factor_authentication' => env('TWO_FACTOR_AUTHENTICATION', false),
     'schulnummer' => env('SCHULNUMMER', null),

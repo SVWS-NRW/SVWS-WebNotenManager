@@ -19,9 +19,8 @@
                     </template>
                     
                     <template #filterAdvanced>
-                        <!-- <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" /> -->
-                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
-                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter"
+                        <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
+                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="(item: any) => item" v-model="klasseFilter"
                         />
                     </template>
                     <template #cell(klasse)="{ value, rowData }">
@@ -50,7 +49,6 @@
         </template>
 
         <template v-slot:aside v-if="selectedSchueler">
-            <!-- TODO: correct this -->
             <BemerkungEditor :schueler="selectedSchueler" :floskelgruppe="selectedFloskelgruppe" :bemerkung="selectedSchueler[selectedFloskelgruppe.toUpperCase()]"
                 @updated="selectedSchueler[selectedFloskelgruppe.toUpperCase()] = $event;" @close="selectedSchueler = null"></BemerkungEditor>
         </template>

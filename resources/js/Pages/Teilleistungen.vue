@@ -21,9 +21,9 @@
                     <div class="filter-area"></div>
                         <template #filterAdvanced>
                             <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                            <SvwsUiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" @update:modelValue="dropdownsFilterHelper('klasse', klasseFilter)" />
-                            <SvwsUiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" @update:modelValue="dropdownsFilterHelper('kurs', kursFilter)"/>
-                            <SvwsUiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
+                            <SvwsUiSelect label="Klasse" :items="klasseItems" :item-text="(item: any) => item" v-model="klasseFilter" @update:modelValue="dropdownsFilterHelper('klasse', klasseFilter)" />
+                            <SvwsUiSelect label="Kurs" :items="kursItems" :item-text="(item: any) => item" v-model="kursFilter" @update:modelValue="dropdownsFilterHelper('kurs', kursFilter)"/>
+                            <SvwsUiSelect label="Fach" :items="fachItems" :item-text="(item: any) => item" v-model="fachFilter" />
                         </template>
 
                     <!-- data from DB -->
@@ -76,13 +76,18 @@
     import { Teilleistung } from '@/Interfaces/Interface';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
-    //TODO: testing here for type issues
     interface FilterItem {
-    [index: string]: string,
-    klassen: string;
-    kurse: string;
-    selected: string;
-}
+        [index: string]: {},
+        klassen: {},
+        kurse: {},
+        selected: {
+            kuerzel: string,
+        },
+    }
+
+    interface RefMap {
+        value: Map<string, Element>,
+    }
 
     const title = 'Notenmanager - Teilleistungen';
 
@@ -91,7 +96,7 @@
     //Teilleistungen maps are declared dynamically when population takes place
     const itemRefsNoteInput = ref(new Map());
     const itemRefsQuartalNoteInput = ref(new Map());
-    const itemRefsTLNoteInputList: Ref<any[]> = ref([]);
+    const itemRefsTLNoteInputList: Ref<RefMap[], any> = ref([]);
 
     // Data received from DB
     const rows: Ref<Teilleistung[]|Teilleistung[]> = ref([]);
@@ -128,8 +133,7 @@
             notes.value = response.data.notes;
             toggles.value = response.data.toggles;
             filterItems.value = response.data.filters;
-            //TODO: solve typing problem here
-            klasseFilter.value = filterItems.value.selected.kuerzel;
+            klasseFilter.value = filterItems.value!.selected.kuerzel;
             addTeilleistungen(teilleistungCols);
         })
         .finally((): void => {
@@ -157,7 +161,6 @@
     // push the fetched TL Columns to global columns after Kurs
     const addTeilleistungen = (teilleistungCols: Ref<DataTableColumn[]>)  => {
     // reverse order for display because TLs are received from newest to latest atm
-    // populate map with TL-ids; TODO: refactor
         teilleistungCols.value.reverse().forEach((c) => itemRefsTLNoteInputList.value[c.id] = ref(new Map()));
         teilleistungCols.value.reverse().forEach((c) => cols.value.splice(4, 0, c)); 
         teilleistungCols.value.reverse()[teilleistungCols.value.length - 1].span = 4;
@@ -171,7 +174,7 @@
     const fachFilter: Ref <string> = ref("");
 
     //filterItems comes from controller and includes 3 objects (klasse, kurs and selected)
-    const filterItems: Ref<FilterItem[]> = ref([]);
+    const filterItems = ref<FilterItem>();
     const klasseItems = ref(new Map());
     const kursItems = ref(new Map());
     const fachItems: Ref<string[]> = ref([]);
@@ -212,12 +215,11 @@
         || fachFilter.value !== ""
     }
 
-    //TODO: typing here (same as above)
     // dropdowns in header
     const mapFilters = (): void => {
         //klasse and kurs come separately from controller (together with "selected") while fach is fetched from DB results
-        klasseItems.value = new Map(Object.entries(filterItems.value.klassen));
-        kursItems.value = new Map(Object.entries(filterItems.value.kurse));
+        klasseItems.value = new Map(Object.entries(filterItems.value!.klassen));
+        kursItems.value = new Map(Object.entries(filterItems.value!.kurse));
         fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
     };
 
@@ -232,10 +234,9 @@
             default:
                 //TODO: code in general, refactor and typing issues
                 // populate all itemREfsTeilleistungen dynamically
-                let TLId: string|null;
+                let TLId: string = "";
                 itemRefsName.startsWith("itemRefsTeilleistung") ? TLId = itemRefsName.slice(itemRefsName.length - 1) : console.log("Map not found." + itemRefsName)
                 itemRefsTLNoteInputList.value[TLId].value.set(rowIndex, el);
-
         }
 	}
 
@@ -252,7 +253,7 @@
         el.input.select();
 	}
 
-    //TODO: not adjusted for Teilleistungen page yet, thus it isn't working for the moment
+    //TODO: refactoring for all tables
     //direction (up/down within the column) and map name are received from child component
     const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
         switch (itemRefsName) {

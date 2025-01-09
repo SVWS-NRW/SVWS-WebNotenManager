@@ -1,7 +1,7 @@
 import { Ref } from 'vue';
 import axios, { AxiosError } from 'axios';
 
-import { FachbezogeneFloskel, Schueler, Leistung } from '../types';
+import { FachbezogeneFloskel, Schueler, Leistung } from '@/Interfaces/Interface';
 
 import { Occurrence } from "@/Interfaces/Occurrence"; // TODO: Move these 3 to types
 import { Pronoun } from "@/Interfaces/Pronoun";
@@ -85,7 +85,7 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
         });
 }
 
-//TODO: check if this function is actually not needed anymore (seems to be the case)
+//TODO: check if this function is actually not needed anymore (seems to be the case because it's called from two files which aren't used)
 const tableFilter = (
 	floskel: FachbezogeneFloskel,
 	column: string,
@@ -114,8 +114,6 @@ const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 	}
 };
 
-//previously with possibly several checkboxes: Ref<Floskel[]|FachbezogeneFloskel[] and selectedFloskeln.value.map, and so on
-//TODO: correct type issue
 const addSelectedToBemerkung = (
 	bemerkung: Ref<string|null>,
 	selectedFloskel: Floskel|FachbezogeneFloskel,

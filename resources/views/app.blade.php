@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
-        <link rel="icon" href= {{ config('app.url') }}>
+        <link rel="icon" href= {{ config('app.url') . 'favicon.svg' }}>
         @vite('resources/js/app.ts')
         @routes
         @inertiaHead

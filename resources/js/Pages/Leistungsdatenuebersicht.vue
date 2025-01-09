@@ -28,11 +28,11 @@
                     </template>
                     <template #filterAdvanced>
                         <SvwsUiTextInput type="search" placeholder="Suche" v-model="searchFilter" />
-                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="item => item" v-model="klasseFilter" />
-                        <SvwsUiMultiSelect label="Jahrgang" :items="jahrgangItems" :item-text="item => item" v-model="jahrgangFilter" />
-                        <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="item => item" v-model="fachFilter" />
-                        <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="item => item" v-model="kursFilter" />
-                        <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="item => item" v-model="noteFilter" />
+                        <SvwsUiMultiSelect label="Klasse" :items="klasseItems" :item-text="(item: any) => item" v-model="klasseFilter" />
+                        <SvwsUiMultiSelect label="Jahrgang" :items="jahrgangItems" :item-text="(item: any) => item" v-model="jahrgangFilter" />
+                        <SvwsUiMultiSelect label="Fach" :items="fachItems" :item-text="(item: any) => item" v-model="fachFilter" />
+                        <SvwsUiMultiSelect label="Kurs" :items="kursItems" :item-text="(item: any) => item" v-model="kursFilter" />
+                        <SvwsUiMultiSelect label="Note" :items="noteItems" :item-text="(item: any) => item" v-model="noteFilter" />
                     </template>
 
                     <template #cell(klasse)="{ value, rowData }">
@@ -115,7 +115,6 @@
         //teilleistungen: string,
         quartalnoten: string,
         note: string,
-        quartalnote: string,
         mahnungen: string,
         fehlstunden: string,
         bemerkungen: string,
@@ -222,7 +221,6 @@
 
     //filters from settings or user settings determine whether columns are hidden or shown in the table
     const hiddenColumns = ref<Set<string>>(new Set<string>());
-    //filter names from DB do not match our cols; TODO: check whether it may be corrected at some point
     const filtersToCols: LeistungsdatenuebersichtFiltersToCols = {
         fach: 'fach',
         kurs: 'kurs',

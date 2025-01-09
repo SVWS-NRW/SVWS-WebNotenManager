@@ -44,7 +44,7 @@
                     </div>
                     <div class="form-control">
                         <SvwsUiSelect v-model="data.form.encryption" :items="verschluesselungOptions"
-                            :item-text="item => item" label="Verschlüsselung"></SvwsUiSelect>
+                            :item-text="(item: any) => item" label="Verschlüsselung"></SvwsUiSelect>
                     </div>
                     <div class="form-control">
                         <SvwsUiTextInput v-model="data.form.from_address" :valid="() => !hasErrors('MAIL_FROM_ADDRESS')"
@@ -83,7 +83,6 @@
     import { Ref, ref, watch, reactive } from 'vue';
     import AppLayout from '@/Layouts/AppLayout.vue';
     import axios, { AxiosResponse } from 'axios';
-    import { Inertia } from '@inertiajs/inertia';
     import SettingsMenu from '@/Components/SettingsMenu.vue';
     import { apiError, apiSuccess } from '@/Helpers/api.helper';
     import { SvwsUiHeader, SvwsUiButton, SvwsUiCheckbox, SvwsUiTextInput, SvwsUiSelect } from '@svws-nrw/svws-ui';
@@ -94,9 +93,6 @@
     });
 
     const title = 'Mailkonfiguration';
-
-    //TODO: fetch 2FA data from backend
-    const enabled = ref(false);
 
         //items (iterable group of strings) for SvwsUiSelect; these strings are displayed as dropdown options within the element
     const verschluesselungOptions = reactive<string[]>([

@@ -1,6 +1,6 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
-module.exports = {
+export default {
 	prefix: '', // For WeNoM
 	darkMode: 'class',
 	content: [
