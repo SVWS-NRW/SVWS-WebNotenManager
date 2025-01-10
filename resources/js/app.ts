@@ -1,7 +1,7 @@
 import './bootstrap';
 import './../css/app.css';
 import '@svws-nrw/svws-ui/style.css';
-import { createApp, h, Plugin } from 'vue';
+import { createApp, h, Plugin, DefineComponent } from 'vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createInertiaApp, InertiaApp, InertiaAppProps } from '@inertiajs/inertia-vue3';
 import eventBus from '@/event-bus';
@@ -16,7 +16,7 @@ if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.match
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')) as Promise<DefineComponent>,
     setup({el, app, props, plugin}: { el: Element, app: InertiaApp, props: InertiaAppProps, plugin: Plugin }): void | any {
         return createApp({render: () => h(app, props)})
             .use(plugin)

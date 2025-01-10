@@ -85,24 +85,6 @@ const formatBasedOnGender = (text: string | null, model: Schueler | Leistung): s
         });
 }
 
-//TODO: check if this function is actually not needed anymore (seems to be the case because it's called from two files which aren't used)
-const tableFilter = (
-	floskel: FachbezogeneFloskel,
-	column: string,
-	value: Ref<Number>,
-	containsOnlyEmptyOption: boolean = false,
-): boolean => {
-	if (containsOnlyEmptyOption && value.value == null) {
-		return floskel[column] == null;
-	}
-
-	if (value.value == 0) {
-		return true;
-	}
-
-	return floskel[column as keyof Floskel] == value.value["index"];
-};
-
 const closeEditor = (isDirty: Ref<boolean>, callback: any): void => {
 	const changesNotSavedWarning: string =
         'Achtung die Änderungen sind noch nicht gespeichert! Diese gehen verloren, wenn Sie fortfahren.';
@@ -145,7 +127,6 @@ const saveBemerkung = (
 
 export {
     search,
-	tableFilter,
     formatBasedOnGender,
 	closeEditor,
     addSelectedToBemerkung,
