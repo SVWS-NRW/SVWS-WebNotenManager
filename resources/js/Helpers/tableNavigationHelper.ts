@@ -1,20 +1,15 @@
-import { VNodeRef, nextTick, ref, Ref } from "vue";
+import { ref, Ref } from "vue";
 
-//rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
+//rows will be a reference map which will allow navigation within indexable elements in the tables
 const itemRefsNoteInput = ref(new Map());
 const itemRefsQuartalNoteInput = ref(new Map());
 const itemRefsfs = ref(new Map());
 const itemRefsfsu = ref(new Map());
-//testing here for ticket 341
 const mahnungIndicator = ref(new Map());
 
-//input html element and reference map name are determined by child
-function updateNavigableItems(
-    rowIndex: number,
-    el: Element,
-    itemRefsName: string
-): void {
-    switch (itemRefsName) {
+//navigable element names are determined by child
+function updateNavigableItems(rowIndex: number, el: Element, navigableElementName: string): void {
+    switch (navigableElementName) {
         case "itemRefsquartalnoteInput":
             itemRefsQuartalNoteInput.value.set(rowIndex, el);
             break;
@@ -31,7 +26,7 @@ function updateNavigableItems(
             mahnungIndicator.value.set(rowIndex, el);
             break;
         default:
-            console.log("Map not found: " + itemRefsName);
+            console.log("Map not found: " + navigableElementName);
     }
 }
 
@@ -73,7 +68,6 @@ const navigateTable = (
                 ? next(rowIndex, itemRefsfsu)
                 : previous(rowIndex, itemRefsfsu);
             break;
-        //testing here for ticket 341
         case "mahnungIndicator":
             direction === "next"
                 ? next(rowIndex, mahnungIndicator)
