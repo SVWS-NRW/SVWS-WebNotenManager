@@ -7,7 +7,7 @@
         v-else
         v-model="model"
         :disabled="props.disabled"
-        :ref="(el) => updateItemRefs(rowIndex, el as Element, itemRefsName)"
+        :ref="(el) => updateNavigableItems(rowIndex, el as Element, itemRefsName)"
         @click="$event.target.select()"
         @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
         @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
@@ -29,15 +29,15 @@
         rowIndex: number,
     }>();
 
-    const emit = defineEmits(['navigated','updatedItemRefs'])
+    const emit = defineEmits(['navigated','updatedNavigableItems'])
 
     const itemRefsName: string = 'itemRefs' + props.column;
 
     const navigated = ( direction: string, rowIndex: number, itemRefs: string) : void => emit("navigated", direction, rowIndex, itemRefsName)
 
     //corresponding itemRefs map in the parent gets a new pair every time the FehlstundenInput "itemRefsName" is uploaded
-    const updateItemRefs = (rowIndex: number, el: Element, itemRefsName: string): void => {
-        emit("updatedItemRefs", rowIndex, el, itemRefsName)
+    const updateNavigableItems = (rowIndex: number, el: Element, itemRefsName: string): void => {
+        emit("updatedNavigableItems", rowIndex, el, itemRefsName)
     }
 
     const navigate = (direction: string, rowIndex: number): void => {

@@ -45,18 +45,18 @@
 
                     <template v-for="col in teilleistungCols" :key="col.key" v-slot:[`cell(${col.key})`]="{ value, rowData, rowIndex }">
                         <span>
-                            <NoteInput column="note" :leistung="value" :teilleistung="true" :teilleistungId="col.id" :row-index="rowIndex" :disabled="!rowData.editable_teilnoten" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                            <NoteInput column="note" :leistung="value" :teilleistung="true" :teilleistungId="col.id" :row-index="rowIndex" :disabled="!rowData.editable_teilnoten" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems"
                             ></NoteInput>
                         </span>
                     </template>
 
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
-                        <NoteInput column="quartalnote" :leistung="rowData" :row-index="rowIndex" :disabled="!rowData.editable_noten" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput column="quartalnote" :leistung="rowData" :row-index="rowIndex" :disabled="!rowData.editable_noten" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems"
                         ></NoteInput>
                     </template>
                     
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput column="note" :leistung="rowData" :row-index="rowIndex" :teilleistung="false" :disabled="!rowData.editable_noten" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput column="note" :leistung="rowData" :row-index="rowIndex" :teilleistung="false" :disabled="!rowData.editable_noten" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems"
                         ></NoteInput>
                     </template>
                 </SvwsUiTable>
@@ -74,7 +74,7 @@
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiSelect, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { NoteInput, BemerkungButton, } from '@/Components/Components';
     import { Teilleistung } from '@/Interfaces/Interface';
-    import { updateItemRefs, navigateTable } from '@/Helpers/tableNavigationHelper';
+    import { updateNavigableItems, navigateTable } from '@/Helpers/tableNavigationHelper';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     interface FilterItem {

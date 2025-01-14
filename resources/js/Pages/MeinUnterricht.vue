@@ -55,26 +55,26 @@
                     </template>
 
                     <template #cell(quartalnoten)="{ value, rowData, rowIndex }">
-                        <NoteInput column="quartalnote" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput column="quartalnote" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems"
                         ></NoteInput>
                     </template>
 
                     <template #cell(note)="{ value, rowData, rowIndex }">
-                        <NoteInput column="note" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <NoteInput column="note" :leistung="rowData" :disabled="!rowData.editable.noten" :row-index="rowIndex" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems"
                         ></NoteInput>
                     </template>
 
                     <template #cell(istGemahnt)="{ value, rowData, rowIndex }">
-                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs" />
+                        <MahnungIndicator :leistung="rowData" :disabled="!rowData.editable.mahnungen" :row-index="rowIndex" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems" />
                     </template>
 
                     <template #cell(fs)="{ value, rowData, rowIndex }">
-                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <FehlstundenInput column="fs" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems"
                         />
                     </template>
 
                     <template #cell(fsu)="{ value, rowData,  rowIndex}">
-                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedItemRefs="updateItemRefs"
+                        <FehlstundenInput column="fsu" :model="rowData" :disabled="!rowData.editable.fehlstunden" :row-index="rowIndex" @navigated="navigateTable" @updatedNavigableItems="updateNavigableItems"
                         />
                     </template>
 
@@ -103,7 +103,7 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
-    import { updateItemRefs, navigateTable } from '@/Helpers/tableNavigationHelper';
+    import { updateNavigableItems, navigateTable } from '@/Helpers/tableNavigationHelper';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     //Correlation filter names and column names on this page

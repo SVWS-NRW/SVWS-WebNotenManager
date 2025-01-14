@@ -8,9 +8,8 @@ const itemRefsfsu = ref(new Map());
 //testing here for ticket 341
 const mahnungIndicator = ref(new Map());
 
-//TODO: adjust name if necessary; if so: make into helper under Helpers
 //input html element and reference map name are determined by child
-function updateItemRefs(
+function updateNavigableItems(
     rowIndex: number,
     el: Element,
     itemRefsName: string
@@ -85,4 +84,4 @@ const navigateTable = (
     }
 };
 
-export { updateItemRefs, navigateTable };
+export { updateNavigableItems, navigateTable };

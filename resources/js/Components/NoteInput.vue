@@ -9,7 +9,7 @@
             :disabled="props.disabled"
             :valid="() => valid()"
             style="font-weight: bold;"
-            :ref="(el) => updateItemRefs(rowIndex, el as Element, itemRefsNoteInputName)"
+            :ref="(el) => updateNavigableItems(rowIndex, el as Element, itemRefsNoteInputName)"
             @click="$event.target.select()"
             @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
             @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
@@ -34,15 +34,15 @@
         teilleistungId?: any;
     }>();
 
-    const emit = defineEmits(['navigated','updatedItemRefs'])
+    const emit = defineEmits(['navigated','updatedNavigableItems'])
 
     const itemRefsNoteInputName: string = props.teilleistung ? 'itemRefsTeilleistung' + props.teilleistungId : 'itemRefs' + props.column + 'Input';
 
     const navigated = ( direction: string, rowIndex: number, itemRefsNoteInputName: string) : void => emit("navigated", direction, rowIndex, itemRefsNoteInputName)
 
     //corresponding itemRefs map in the parent gets a new pair every time the NoteInput "itemRefsNoteInputName" is uploaded
-    const updateItemRefs = (rowIndex: number, el: Element, itemRefsNoteInputName: string): void => {
-        emit("updatedItemRefs", rowIndex, el, itemRefsNoteInputName)
+    const updateNavigableItems = (rowIndex: number, el: Element, itemRefsNoteInputName: string): void => {
+        emit("updatedNavigableItems", rowIndex, el, itemRefsNoteInputName)
     }
 
     const navigate = (direction: string, rowIndex: number): void => {

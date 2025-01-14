@@ -21,7 +21,7 @@
     <span>
         <span v-if="props.leistung.mahndatum" aria-description="Ist gemahnt mit Mahndatum">
             <SvwsUiCheckbox v-model="gemahnt" @click="checkboxActions($event)" color="success" readonly
-                :ref="(el) => updateItemRefs(rowIndex, el as Element, mahnungIndicator)"
+                :ref="(el) => updateNavigableItems(rowIndex, el as Element, mahnungIndicator)"
                 @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
                 @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
                 @keydown.enter.stop.prevent="navigate('next', props.rowIndex)">
@@ -29,7 +29,7 @@
         </span>
         <span v-else-if="leistung.istGemahnt" aria-description="Ist gemahnt ohne Mahndatum">
             <SvwsUiCheckbox v-model="gemahnt" @click="checkboxActions($event);" color="error" readonly
-                :ref="(el) => updateItemRefs(rowIndex, el as Element, mahnungIndicator)"
+                :ref="(el) => updateNavigableItems(rowIndex, el as Element, mahnungIndicator)"
                 @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
                 @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
                 @keydown.enter.stop.prevent="navigate('next', props.rowIndex)">
@@ -37,7 +37,7 @@
         </span>
         <span v-else aria-description="Ist nicht gemahnt">
             <SvwsUiCheckbox v-model="notGemahnt" @click="checkboxActions($event);" readonly
-                :ref="(el) => updateItemRefs(rowIndex, el as Element, mahnungIndicator)"
+                :ref="(el) => updateNavigableItems(rowIndex, el as Element, mahnungIndicator)"
                 @keydown.up.stop.prevent="navigate('previous', props.rowIndex)"
                 @keydown.down.stop.prevent="navigate('next', props.rowIndex)"
                 @keydown.enter.stop.prevent="navigate('next', props.rowIndex)">
@@ -61,16 +61,16 @@ const props = defineProps<{
 }>();
 
 //TODO: unify names if only one function is applied in the end
-const emit = defineEmits(['navigated', 'updatedItemRefs'])
+const emit = defineEmits(['navigated', 'updatedNavigableItems'])
 
 const mahnungIndicator: string = 'mahnungIndicator';
 
 const navigated = (direction: string, rowIndex: number, mahnungIndicator: string): void => emit("navigated", direction, rowIndex, mahnungIndicator)
 
 //corresponding item map in the parent gets a new pair every time MahungIndicator is uploaded
-const updateItemRefs = (rowIndex: number, el: Element, mahnungIndicator: string): void => {
+const updateNavigableItems = (rowIndex: number, el: Element, mahnungIndicator: string): void => {
     //console.log(mahnungIndicator);
-    emit("updatedItemRefs", rowIndex, el, mahnungIndicator)
+    emit("updatedNavigableItems", rowIndex, el, mahnungIndicator)
 }
 
 const navigate = (direction: string, rowIndex: number): void => {
