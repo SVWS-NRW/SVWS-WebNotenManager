@@ -1,4 +1,5 @@
-<template>
+<!-- TBR -->
+<!-- <template>
     <div :class="{ red: leistung.istGemahnt, green: leistung.mahndatum }">
         <button
             @click="modal.openModal()"
@@ -24,7 +25,7 @@
     </div>
 
     <!-- TODO: check if this needs latest adjustments or can be ignored/deleted since this page isn't used anywhere   -->
-    <SvwsUiModal ref="modal">
+    <!-- <SvwsUiModal ref="modal">
         <template #modalTitle>
             {{ leistung.vorname }} {{ leistung.nachname }}
             <SvwsUiBadge variant="primary">
@@ -40,12 +41,13 @@
             <SvwsUiButton @click="modal.closeModal()" type="secondary">Schließen</SvwsUiButton>
         </template>
     </SvwsUiModal>
-</template>
+</template> -->
 
 
 <script setup lang="ts">
     import { reactive, ref } from 'vue';
     import { Leistung } from '@/Interfaces/Interface';
+    // take this
     import { CellRef, setCellRefs, navigateTable } from '@/Helpers/tableNavigationHelper';
     import { SvwsUiBadge, SvwsUiButton, SvwsUiModal } from '@svws-nrw/svws-ui';
     import moment from 'moment';
@@ -74,4 +76,4 @@
         @apply text-green-500
     }
 
-</style>
+</style> -->

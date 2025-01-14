@@ -74,6 +74,7 @@
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiSelect, SvwsUiTextInput, SvwsUiButton } from '@svws-nrw/svws-ui';
     import { NoteInput, BemerkungButton, } from '@/Components/Components';
     import { Teilleistung } from '@/Interfaces/Interface';
+    import { updateItemRefs, navigateTable } from '@/Helpers/tableNavigationHelper';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     interface FilterItem {
@@ -90,13 +91,6 @@
     }
 
     const title = 'Notenmanager - Teilleistungen';
-
-    //TODO: Refactoring? -> call all this from a helper for all tables?
-    //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
-    //Teilleistungen maps are declared dynamically when population takes place
-    const itemRefsNoteInput = ref(new Map());
-    const itemRefsQuartalNoteInput = ref(new Map());
-    const itemRefsTLNoteInputList: Ref<RefMap[], any> = ref([]);
 
     // Data received from DB
     const rows: Ref<Teilleistung[]|Teilleistung[]> = ref([]);
@@ -222,56 +216,6 @@
         kursItems.value = new Map(Object.entries(filterItems.value!.kurse));
         fachItems.value = mapFilterOptionsHelper(rows.value, 'fach');
     };
-
-    function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {
-        switch (itemRefsName) {
-            case "itemRefsquartalnoteInput":
-                itemRefsQuartalNoteInput.value.set(rowIndex, el);
-                break;
-            case "itemRefsnoteInput":
-                itemRefsNoteInput.value.set(rowIndex, el);
-                break;
-            default:
-                //TODO: code in general, refactor and typing issues
-                // populate all itemREfsTeilleistungen dynamically
-                let TLId: string = "";
-                itemRefsName.startsWith("itemRefsTeilleistung") ? TLId = itemRefsName.slice(itemRefsName.length - 1) : console.log("Map not found." + itemRefsName)
-                itemRefsTLNoteInputList.value[TLId].value.set(rowIndex, el);
-        }
-	}
-
-    //table navigation actions (go up/down within the column)
-	function next(id: number, itemRefs: Ref) {
-        const el = itemRefs.value.get(id + 1);
-		if (el)
-            el.input.select();
-	}
-
-	const previous = (id: number, itemRefs: Ref) => {
-        const el = itemRefs.value.get(id - 1);
-		if (el)
-        el.input.select();
-	}
-
-    //TODO: refactoring for all tables
-    //direction (up/down within the column) and map name are received from child component
-    const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
-        switch (itemRefsName) {
-            case "itemRefsquartalnoteInput":
-                direction === "next" ? next(rowIndex, itemRefsQuartalNoteInput) : previous(rowIndex, itemRefsQuartalNoteInput);
-                break;
-            case "itemRefsnoteInput":
-                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
-                break;
-            case "itemRefsTeilleistung1Input":
-                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
-                break;
-            default:
-                let TLId: string = "";
-                itemRefsName.startsWith("itemRefsTeilleistung") ? TLId = itemRefsName.slice(itemRefsName.length - 1) : console.log("Map not found." + itemRefsName);
-                direction === "next" ? next(rowIndex, itemRefsTLNoteInputList.value[TLId]) : previous(rowIndex, itemRefsTLNoteInputList.value[TLId]);
-        }
-	}
 
     const exportToFile = (): void => {
         exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'Teilleistungen');

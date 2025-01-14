@@ -103,6 +103,7 @@
     import { mapFilterOptionsHelper, multiSelectHelper, searchHelper } from '@/Helpers/tableHelper';
     import { SvwsUiHeader, DataTableColumn, SvwsUiTable, SvwsUiTextInput, SvwsUiMultiSelect, SvwsUiButton, } from '@svws-nrw/svws-ui';
     import { BemerkungIndicator, MahnungIndicator, NoteInput, FehlstundenInput, FbEditor, BemerkungButton, } from '@/Components/Components';
+    import { updateItemRefs, navigateTable } from '@/Helpers/tableNavigationHelper';
     import { exportDataToCSV } from '@/Helpers/exportHelper';
 
     //Correlation filter names and column names on this page
@@ -120,14 +121,6 @@
     };
 
     const title = 'Notenmanager - mein Unterricht';
-
-    //rows will receive a reference map which will allow navigation within the three input columns of MeinUnterricht
-    const itemRefsNoteInput = ref(new Map());
-    const itemRefsQuartalNoteInput = ref(new Map());
-    const itemRefsfs = ref(new Map());
-    const itemRefsfsu = ref(new Map());
-    //testing here for ticket 341
-    const mahnungIndicator = ref(new Map());
 
     // Data received from DB
     const rows: Ref<Leistung[]> = ref([]);
@@ -266,67 +259,6 @@
         jahrgangItems.value = mapFilterOptionsHelper(rows.value, 'jahrgang');
         noteItems.value = Array.from(Object.values(allNotes.value));
     };
-
-    //TODO: adjust name if necessary; if so: make into helper under Helpers
-    //input html element and reference map name are determined by child
-    function updateItemRefs(rowIndex: number, el: Element, itemRefsName: string): void {    
-        switch (itemRefsName) {
-            case "itemRefsquartalnoteInput":
-                itemRefsQuartalNoteInput.value.set(rowIndex, el);
-                break;
-            case "itemRefsnoteInput":
-                itemRefsNoteInput.value.set(rowIndex, el);
-                break;
-            case "itemRefsfs":
-                itemRefsfs.value.set(rowIndex, el);
-                break;
-            case "itemRefsfsu":
-                itemRefsfsu.value.set(rowIndex, el);
-                break;
-            case "mahnungIndicator":
-                mahnungIndicator.value.set(rowIndex, el);
-                break;
-            default:
-                console.log("Map not found: " + itemRefsName)
-        }
-	}
-
-    //table navigation actions (go up/down within the column)
-	function next(id: number, item: Ref) {
-		const el = item.value.get(id + 1);
-        console.log(el.$nextTick);
-		el.input ? el.input.select() : console.log("no input");
-	}
-
-	const previous = (id: number, item: Ref) => {
-        const el = item.value.get(id - 1);
-		if (el)
-        el.input.select();
-	}
-
-    //direction (up/down within the column) and map name are received from child component
-    const navigateTable = (direction: string, rowIndex: number, itemRefsName: string): void => {
-        switch (itemRefsName) {
-            case "itemRefsquartalnoteInput":
-                direction === "next" ? next(rowIndex, itemRefsQuartalNoteInput) : previous(rowIndex, itemRefsQuartalNoteInput);
-                break;
-            case "itemRefsnoteInput":
-                direction === "next" ? next(rowIndex, itemRefsNoteInput) : previous(rowIndex, itemRefsNoteInput);
-                break;
-            case "itemRefsfs":
-                direction === "next" ? next(rowIndex, itemRefsfs) : previous(rowIndex, itemRefsfs);
-                break;
-            case "itemRefsfsu":
-                direction === "next" ? next(rowIndex, itemRefsfsu) : previous(rowIndex, itemRefsfsu);
-                break;
-            //testing here for ticket 341
-            case "mahnungIndicator":
-                direction === "next" ? next(rowIndex, mahnungIndicator) : previous(rowIndex, mahnungIndicator);
-                break;
-            default:
-                console.log("itemRefs map not found");
-        }	
-	}    
 
     const exportToFile = (): void => {
         exportDataToCSV(cols.value, hiddenColumns.value, rowsFiltered.value, 'meinUnterricht');
